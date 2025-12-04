@@ -1,0 +1,272 @@
+/* ========== 왼쪽 사이드바 컴포넌트 ========== */
+
+/* 실시간 상태 */
+.live-status-card {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(155, 89, 182, 0.1));
+    border: 1px solid rgba(26, 188, 156, 0.2);
+    border-radius: 16px;
+}
+
+.live-status-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px var(--teal);
+}
+
+.live-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--teal);
+}
+
+.live-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.live-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.live-stat-label {
+    color: var(--light-gray);
+}
+
+.live-stat-value {
+    font-weight: 600;
+    color: var(--white);
+}
+
+.live-stat-value.highlight {
+    color: var(--gold);
+}
+
+/* 핫 랭킹 카드 */
+.hot-ranking-card {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(255, 51, 102, 0.08), rgba(255, 153, 0, 0.05));
+    border: 1px solid rgba(255, 51, 102, 0.2);
+    border-radius: 16px;
+}
+
+.hot-ranking-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.fire-icon {
+    animation: flicker 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
+}
+
+.hot-ranking-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.hot-ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.hot-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hot-item:hover {
+    background: rgba(255, 51, 102, 0.15);
+    transform: translateX(4px);
+}
+
+.hot-rank {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.hot-rank.gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; }
+.hot-rank.silver { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
+.hot-rank.bronze { background: linear-gradient(135deg, #cd7f32, #b87333); color: #fff; }
+
+.hot-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.hot-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hot-meta {
+    font-size: 0.65rem;
+    color: var(--light-gray);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* 유형별 통계 */
+.type-stats-card {
+    padding: 1rem;
+    background: var(--dark);
+    border: 1px solid #222;
+    border-radius: 16px;
+}
+
+.type-stats-header {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--light-gray);
+    margin-bottom: 0.75rem;
+}
+
+.type-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.type-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.type-stat-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.type-stat-item.active {
+    background: var(--purple);
+    background: linear-gradient(135deg, var(--purple), #8e44ad);
+}
+
+.type-emoji {
+    font-size: 1rem;
+}
+
+.type-name {
+    flex: 1;
+}
+
+.type-count {
+    color: var(--light-gray);
+    font-size: 0.65rem;
+}
+
+/* HOT 랭킹 타입 아이콘 */
+.hot-type-icon {
+    margin-right: 0.3rem;
+    font-size: 0.9rem;
+}
+
+/* 모드별 정보 카드 */
+.mode-info-card {
+    padding: 1rem;
+    background: var(--dark);
+    border: 1px solid #222;
+    border-radius: 16px;
+}
+
+.mode-info-card.tarot-theme {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(103, 58, 183, 0.08));
+    border-color: rgba(155, 89, 182, 0.3);
+}
+
+.mode-info-card.fortune-theme {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.08));
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.mode-info-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--white);
+}
+
+.mode-info-content {
+    font-size: 0.8rem;
+    color: var(--light-gray);
+    line-height: 1.5;
+}
+
+.mode-info-content p {
+    margin: 0 0 0.75rem 0;
+}
+
+.tarot-spreads,
+.fortune-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.spread-tag,
+.fortune-tag {
+    padding: 0.3rem 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: var(--light-gray);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.spread-tag:hover {
+    background: rgba(155, 89, 182, 0.3);
+    color: var(--white);
+}
+
+.fortune-tag:hover {
+    background: rgba(255, 193, 7, 0.3);
+    color: var(--white);
+}

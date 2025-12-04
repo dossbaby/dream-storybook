@@ -1,0 +1,229 @@
+/* ========== 통합 꿈 속삭임 섹션 ========== */
+.whispers-section {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.08), rgba(255, 51, 102, 0.05));
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+}
+
+.whispers-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.15);
+}
+
+.whispers-icon {
+    font-size: 1.2rem;
+}
+
+.whispers-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.whispers-count {
+    font-size: 0.75rem;
+    color: var(--light-gray);
+    margin-left: auto;
+}
+
+.whisper-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.whisper-input textarea {
+    width: 100%;
+    padding: 0.9rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--white);
+    font-size: 0.9rem;
+    resize: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.whisper-input textarea:focus {
+    outline: none;
+    border-color: var(--purple);
+}
+
+.whisper-input textarea::placeholder {
+    color: var(--light-gray);
+}
+
+.whisper-input button {
+    align-self: flex-end;
+    padding: 0.7rem 1.5rem;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.whisper-input button:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+.whisper-input button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.whispers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.no-whispers {
+    text-align: center;
+    color: var(--light-gray);
+    font-size: 0.85rem;
+    padding: 2rem 1rem;
+    font-style: italic;
+}
+
+.whisper-item {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    padding: 0.9rem;
+    transition: all 0.2s;
+}
+
+.whisper-item:hover {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.whisper-item.interpretation-type {
+    border-left: 3px solid var(--purple);
+}
+
+.whisper-item.comment-type {
+    border-left: 3px solid var(--teal);
+}
+
+.whisper-type-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.interpretation-type .whisper-type-badge {
+    background: rgba(155, 89, 182, 0.2);
+    color: var(--purple);
+}
+
+.comment-type .whisper-type-badge {
+    background: rgba(26, 188, 156, 0.2);
+    color: var(--teal);
+}
+
+.whisper-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.whisper-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.whisper-author {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.whisper-time {
+    font-size: 0.7rem;
+    color: var(--light-gray);
+}
+
+.whisper-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.whisper-actions button {
+    background: none;
+    border: none;
+    color: var(--light-gray);
+    font-size: 0.7rem;
+    cursor: pointer;
+    padding: 0.2rem 0.4rem;
+}
+
+.whisper-actions button:hover {
+    color: var(--accent);
+}
+
+.whisper-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 0.5rem;
+}
+
+.whisper-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.whisper-edit input {
+    width: 100%;
+    padding: 0.6rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--purple);
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 0.85rem;
+}
+
+.whisper-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.whisper-edit-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.whisper-edit-actions button:first-child {
+    background: var(--gray);
+    color: var(--white);
+}
+
+.whisper-edit-actions button:last-child {
+    background: var(--purple);
+    color: white;
+}

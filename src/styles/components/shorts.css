@@ -1,0 +1,474 @@
+/* ========== 쇼츠 모드 ========== */
+.shorts-mode-btn {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.shorts-mode-btn:hover {
+    transform: scale(1.1);
+}
+
+.feed-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.shorts-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--black);
+    z-index: 400;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.shorts-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.shorts-container {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.shorts-card {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+}
+
+.shorts-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+}
+
+.shorts-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.shorts-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 100%);
+    text-align: center;
+}
+
+.shorts-type {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.shorts-content h2 {
+    font-size: 1.75rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+}
+
+.shorts-content p {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.shorts-author {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+}
+
+.shorts-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.shorts-nav button {
+    width: 44px;
+    height: 44px;
+    background: var(--dark);
+    border: 1px solid #333;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shorts-nav button:hover:not(:disabled) {
+    background: var(--gray);
+    border-color: var(--accent);
+}
+
+.shorts-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.shorts-nav span {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+}
+
+/* ========== 쇼츠 스와이프 힌트 ========== */
+.shorts-swipe-hint {
+    position: absolute;
+    bottom: 8rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    animation: swipeHintFade 2s ease-in-out infinite;
+}
+
+.shorts-swipe-hint span {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.1em;
+}
+
+@keyframes swipeHintFade {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 0.7; transform: translateY(-5px); }
+}
+
+.shorts-progress {
+    display: flex;
+    gap: 6px;
+    margin-top: 1.5rem;
+}
+
+.shorts-progress-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.shorts-progress-dot.active {
+    background: var(--accent);
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+/* ========== 쇼츠 모달 ========== */
+.shorts-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shorts-modal {
+    width: 100%;
+    max-width: 400px;
+    height: 90vh;
+    max-height: 800px;
+    background: var(--black);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.shorts-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.shorts-modal .shorts-close {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.shorts-title {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.shorts-count {
+    font-size: 0.8rem;
+    color: var(--light-gray);
+    margin-left: auto;
+}
+
+.shorts-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--light-gray);
+}
+
+.shorts-empty span {
+    font-size: 3rem;
+}
+
+.shorts-modal .shorts-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.shorts-swipe-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.shorts-modal .shorts-card {
+    position: absolute;
+    inset: 0;
+    display: flex;
+}
+
+.shorts-card-bg {
+    position: absolute;
+    inset: 0;
+}
+
+.shorts-card-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.shorts-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.shorts-card-content {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 5rem 1.5rem 2rem;
+    flex: 1;
+}
+
+.shorts-modal .shorts-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.shorts-modal .shorts-author img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.shorts-modal .shorts-author span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.shorts-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.75rem;
+    background: rgba(155, 89, 182, 0.3);
+    border-radius: 15px;
+    font-size: 0.75rem;
+    width: fit-content;
+    margin-bottom: 0.5rem;
+}
+
+.shorts-dream-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.shorts-verdict {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+}
+
+.shorts-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.shorts-keyword {
+    padding: 0.25rem 0.6rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.shorts-view-detail {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.shorts-view-detail:hover {
+    background: #ff4477;
+    transform: scale(1.02);
+}
+
+.shorts-side-actions {
+    position: absolute;
+    right: 1rem;
+    bottom: 8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 10;
+}
+
+.shorts-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.shorts-action:hover {
+    transform: scale(1.1);
+}
+
+.shorts-action span:first-child {
+    font-size: 1.5rem;
+}
+
+.shorts-action span:last-child {
+    font-size: 0.75rem;
+}
+
+.shorts-action.liked span:first-child {
+    animation: heartPop 0.3s ease;
+}
+
+@keyframes heartPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+.shorts-modal .shorts-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.shorts-modal .shorts-nav button {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shorts-modal .shorts-nav button:hover:not(:disabled) {
+    background: var(--accent);
+}
+
+.shorts-modal .shorts-nav button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.shorts-modal .shorts-nav span {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+}

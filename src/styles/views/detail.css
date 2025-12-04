@@ -1,0 +1,370 @@
+/* ========== 상세보기 추가 요소 ========== */
+
+/* 상세 헤더 */
+.detail-header-bar {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #222;
+}
+
+.detail-author {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.detail-author img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.detail-author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-author-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.detail-time {
+    font-size: 0.65rem;
+    color: var(--light-gray);
+}
+
+.viewing-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    background: rgba(26, 188, 156, 0.12);
+    border: 1px solid rgba(26, 188, 156, 0.3);
+    border-radius: 15px;
+    font-size: 0.65rem;
+    color: var(--teal);
+}
+
+.viewing-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* 떠오르는 하트 */
+.floating-hearts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 300;
+    overflow: hidden;
+}
+
+.floating-heart {
+    position: absolute;
+    bottom: 30%;
+    font-size: 1.5rem;
+    animation: floatUp 2s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    50% { opacity: 1; transform: translateY(-100px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-200px) scale(0.8); }
+}
+
+/* 실시간 정보 카드들 */
+.live-info-cards {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.live-info-card {
+    padding: 0.75rem 1rem;
+    background: var(--dark);
+    border: 1px solid #222;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.live-info-card.viewers {
+    background: rgba(155, 89, 182, 0.08);
+    border-color: rgba(155, 89, 182, 0.2);
+}
+
+.live-info-card.similar {
+    background: rgba(255, 215, 0, 0.08);
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+.live-info-icon {
+    font-size: 1.25rem;
+}
+
+.live-info-text {
+    font-size: 0.75rem;
+    color: var(--white);
+    line-height: 1.4;
+}
+
+.live-info-text strong {
+    color: var(--gold);
+}
+
+/* 원본 꿈 */
+.original-dream-card {
+    width: 100%;
+    max-width: 380px;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--dark);
+    border-radius: 12px;
+}
+
+.original-label {
+    display: block;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--light-gray);
+    margin-bottom: 0.5rem;
+}
+
+.original-dream-card p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* 댓글 섹션 */
+.comments-section {
+    width: 100%;
+    max-width: 380px;
+    margin-top: 1.5rem;
+}
+
+.comments-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.comments-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.comments-count {
+    font-size: 0.75rem;
+    color: var(--light-gray);
+}
+
+.comment-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.comment-input input {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    background: var(--dark);
+    border: 1px solid #333;
+    border-radius: 25px;
+    color: var(--white);
+    font-size: 0.85rem;
+}
+
+.comment-input input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.comment-input button {
+    padding: 0.7rem 1.25rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 25px;
+    color: var(--white);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.comment-input button:hover {
+    background: #ff4477;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 2rem;
+}
+
+.no-comments {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.comment {
+    padding: 0.85rem;
+    background: var(--dark);
+    border-radius: 12px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.comment-header img {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+}
+
+.comment-author {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.comment-time {
+    font-size: 0.65rem;
+    color: var(--light-gray);
+    margin-left: auto;
+}
+
+.comment-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* ========== 뒤로가기 버튼 ========== */
+.back-btn {
+    position: fixed;
+    top: 70px;
+    left: 1.5rem;
+    width: 40px;
+    height: 40px;
+    background: var(--dark);
+    border: 1px solid #333;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: var(--gray);
+    border-color: var(--accent);
+}
+
+/* ========== 댓글 수정 ========== */
+.edit-comment-btn {
+    padding: 0.2rem 0.5rem;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--light-gray);
+    font-size: 0.6rem;
+    cursor: pointer;
+    margin-left: auto;
+    transition: all 0.2s;
+}
+
+.edit-comment-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.delete-comment-btn {
+    padding: 0.2rem 0.5rem;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--light-gray);
+    font-size: 0.6rem;
+    cursor: pointer;
+    margin-left: 0.3rem;
+    transition: all 0.2s;
+}
+
+.delete-comment-btn:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.comment-edit {
+    margin-top: 0.5rem;
+}
+
+.comment-edit input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background: var(--black);
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--white);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.comment-edit input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.comment-edit-actions button {
+    padding: 0.4rem 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.comment-edit-actions button:first-child {
+    background: var(--gray);
+    color: var(--white);
+}
+
+.comment-edit-actions button:last-child {
+    background: var(--accent);
+    color: var(--white);
+}

@@ -1,0 +1,494 @@
+/* ========== 중앙 메인 영역 ========== */
+
+/* 9:16 카드 컨테이너 */
+.card-container {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 인디케이터 */
+.card-indicators {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.indicator {
+    width: 28px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 2px;
+}
+
+.indicator.active {
+    background: var(--white);
+    width: 36px;
+}
+
+/* 9:16 카드 래퍼 */
+.card-wrapper {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 24px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+.card-stack {
+    display: flex;
+    height: 100%;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 스토리 카드 */
+.story-card {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.card-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.card-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.card-bg-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+}
+
+.card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+    z-index: 2;
+}
+
+.card-overlay.dark {
+    height: 45%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 70%, transparent 100%);
+}
+
+.card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 1.25rem;
+    padding-bottom: 1.5rem;
+}
+
+/* 카드 내 텍스트 가독성 향상 */
+.card-content * {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.card-content .card-label,
+.card-content .badge-desc,
+.card-content .rarity-label,
+.card-content .kw-word,
+.card-content .block-label {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.card-content .tarot-meaning,
+.card-content .meaning-detail,
+.card-content .kw-hidden,
+.card-content .reading-block p {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.card-label {
+    display: inline-block;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 0.75rem;
+    border-radius: 3px;
+}
+
+/* 꿈 유형 배지 */
+.dream-type-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(155, 89, 182, 0.2);
+    border: 1px solid var(--purple);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.badge-emoji {
+    font-size: 1.75rem;
+}
+
+.badge-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.badge-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.badge-desc {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* 희소성 배지 */
+.rarity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 215, 0, 0.12);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    margin-top: 1rem;
+}
+
+.rarity-label {
+    font-size: 0.65rem;
+    color: var(--gold);
+}
+
+.rarity-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+/* 카드 1: 꿈 */
+.card-title {
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.card-verdict {
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 500;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* 카드 2: 타로 */
+.tarot-info {
+    margin-bottom: 1rem;
+}
+
+.tarot-name {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+}
+
+.tarot-meaning {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.keywords-list-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.keyword-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+}
+
+.kw-word {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.kw-hidden {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--white);
+}
+
+/* 카드 3: 꿈의 의미 */
+.meaning-content {
+    padding-bottom: 1rem;
+}
+
+.meaning-section {
+    margin-bottom: 1rem;
+}
+
+.meaning-summary {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+}
+
+.meaning-detail {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.reading-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.reading-block {
+    padding: 0.6rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+}
+
+.block-label {
+    display: block;
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--light-gray);
+    margin-bottom: 0.2rem;
+}
+
+.reading-block p {
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.reading-block.warning {
+    background: rgba(255, 51, 102, 0.1);
+    border-left: 2px solid var(--accent);
+}
+
+.reading-block.warning .block-label {
+    color: var(--accent);
+}
+
+.reading-block.action {
+    background: rgba(255, 215, 0, 0.1);
+    border-left: 2px solid var(--gold);
+}
+
+.reading-block.action .block-label {
+    color: var(--gold);
+}
+
+.reading-block.action p {
+    font-weight: 600;
+}
+
+/* 카드 네비게이션 */
+.card-nav {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.nav-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--dark);
+    border: 1px solid #333;
+    color: var(--white);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: var(--gray);
+    border-color: var(--accent);
+}
+
+.nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* 카드 액션 바 */
+.card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    width: 100%;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.25rem;
+    background: var(--dark);
+    border: 1px solid #333;
+    border-radius: 25px;
+    color: var(--white);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    border-color: var(--accent);
+    background: rgba(255, 51, 102, 0.1);
+}
+
+.action-btn.liked {
+    background: rgba(255, 51, 102, 0.2);
+    border-color: var(--accent);
+}
+
+.action-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.action-btn.primary:hover {
+    background: #ff4477;
+}
+
+/* 저장/공개 버튼 */
+.save-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    width: 100%;
+}
+
+.save-btn {
+    flex: 1;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.save-btn.private {
+    background: var(--dark);
+    color: var(--white);
+    border: 1px solid #333;
+}
+
+.save-btn.private:hover {
+    border-color: var(--accent);
+}
+
+.save-btn.public {
+    background: var(--accent);
+    color: var(--white);
+}
+
+.save-btn.public:hover {
+    background: #ff4477;
+}
+
+/* 로그인 프롬프트 */
+.login-prompt {
+    margin-top: 1.25rem;
+    text-align: center;
+    padding: 1.25rem;
+    background: var(--dark);
+    border-radius: 16px;
+    width: 100%;
+}
+
+.login-prompt p {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    margin-bottom: 1rem;
+}
+
+.login-prompt button {
+    padding: 0.7rem 1.5rem;
+    background: var(--white);
+    border: none;
+    border-radius: 25px;
+    color: var(--black);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.login-prompt button:hover {
+    transform: scale(1.02);
+}
+
+/* 다시하기 버튼 */
+.restart-btn {
+    margin-top: 1rem;
+    padding: 0.6rem 1.5rem;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 25px;
+    color: var(--light-gray);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.restart-btn:hover {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}

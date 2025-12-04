@@ -1,0 +1,303 @@
+/* ========== 마이페이지 ========== */
+.my-page-content {
+    width: 100%;
+    max-width: 380px;
+}
+
+.my-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+    background: var(--dark);
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+}
+
+.my-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    border: 3px solid var(--accent);
+}
+
+.my-profile h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.my-profile p {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    margin-bottom: 1rem;
+}
+
+.logout-btn {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid #333;
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 51, 102, 0.1);
+    border-color: var(--accent);
+}
+
+.my-dreams {
+    padding: 1rem;
+    background: var(--dark);
+    border-radius: 16px;
+}
+
+.my-dreams h4 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #222;
+}
+
+/* ========== 마이페이지 추가 스타일 ========== */
+.nickname-btn {
+    padding: 0.5rem 1rem;
+    background: var(--purple);
+    border: none;
+    border-radius: 20px;
+    color: var(--white);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nickname-btn:hover {
+    background: #8e44ad;
+}
+
+.my-dreams-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.my-dream-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.my-dream-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.my-dream-thumb {
+    width: 50px;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my-dream-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.my-dream-thumb span {
+    font-size: 1.5rem;
+}
+
+.my-dream-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.my-dream-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.my-dream-date {
+    font-size: 0.7rem;
+    color: var(--gold);
+}
+
+.my-dream-type {
+    font-size: 0.65rem;
+    color: var(--light-gray);
+}
+
+.my-dream-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+}
+
+.visibility-badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+}
+
+.visibility-badge.public {
+    background: rgba(26, 188, 156, 0.2);
+    color: var(--teal);
+}
+
+.visibility-badge.private {
+    background: rgba(102, 102, 102, 0.2);
+    color: var(--light-gray);
+}
+
+.delete-btn {
+    padding: 0.3rem 0.6rem;
+    background: transparent;
+    border: 1px solid rgba(255, 51, 102, 0.3);
+    border-radius: 8px;
+    color: var(--accent);
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    background: rgba(255, 51, 102, 0.1);
+    border-color: var(--accent);
+}
+
+/* ========== 마이페이지 통계 ========== */
+.my-stats {
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(255, 51, 102, 0.05));
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+}
+
+.my-stats h4 {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    color: var(--light-gray);
+    margin-top: 0.25rem;
+}
+
+.stat-highlight {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(155, 89, 182, 0.15);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 0.75rem;
+}
+
+.stat-highlight-icon {
+    font-size: 1.75rem;
+}
+
+.stat-highlight-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.stat-highlight-label {
+    font-size: 0.65rem;
+    color: var(--light-gray);
+}
+
+.stat-highlight-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.stat-keywords {
+    padding: 0.75rem;
+    background: rgba(255, 215, 0, 0.08);
+    border-radius: 12px;
+}
+
+.stat-keywords-label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+}
+
+.stat-keywords-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.stat-keyword {
+    padding: 0.3rem 0.6rem;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 15px;
+    font-size: 0.75rem;
+    color: var(--gold);
+}

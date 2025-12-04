@@ -1,0 +1,238 @@
+/* ================================
+   포인트 모달
+   ================================ */
+
+.points-modal {
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    max-width: 400px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.points-modal-title {
+    font-size: 1.5rem;
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.points-current {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.points-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.points-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.points-free-uses {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 206, 209, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.free-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.free-count {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--teal);
+}
+
+.points-earn-section {
+    margin-bottom: 1.5rem;
+}
+
+.points-earn-section h3,
+.points-purchase-section h3 {
+    font-size: 1rem;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.earn-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.earn-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.earn-item.special {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.earn-icon {
+    font-size: 1.25rem;
+}
+
+.earn-desc {
+    flex: 1;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.earn-points {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.purchase-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.purchase-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.purchase-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+}
+
+.purchase-btn.popular {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.purchase-badge {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: var(--gold);
+    color: #1a1a2e;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.purchase-amount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+.purchase-price {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.points-login-prompt {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(138, 43, 226, 0.1);
+    border-radius: 12px;
+    text-align: center;
+}
+
+.points-login-prompt p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.75rem;
+}
+
+.login-prompt-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border: none;
+    border-radius: 20px;
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-prompt-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+}
+
+/* ================================
+   Nav Points Display
+   ================================ */
+
+.nav-points {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.75rem;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-points:hover {
+    background: rgba(255, 215, 0, 0.25);
+    transform: scale(1.05);
+}
+
+.points-icon {
+    font-size: 0.9rem;
+}
+
+.points-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gold);
+}
+
+/* ================================
+   반응형 조정
+   ================================ */
+
+@media (max-width: 480px) {
+    .points-modal {
+        padding: 1.5rem 1rem;
+    }
+}

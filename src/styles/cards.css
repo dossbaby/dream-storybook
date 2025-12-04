@@ -1,0 +1,72 @@
+/* ========== 추가 카드 스타일 (App.css에 없는 스타일만) ========== */
+
+/* 카드 이미지 플레이스홀더 - 피드용 */
+.card-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    font-size: 4rem;
+}
+
+/* ========== 피드 카드 확장 스타일 ========== */
+.feed-card-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.feed-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.feed-card-verdict {
+    font-size: 0.8rem;
+    color: var(--light-gray);
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.feed-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--light-gray);
+}
+
+/* ========== 카드 스와이프 힌트 ========== */
+.card-swipe-hint {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    animation: swipeHint 2s ease-in-out infinite;
+}
+
+.card-swipe-hint.left {
+    left: 1rem;
+}
+
+.card-swipe-hint.right {
+    right: 1rem;
+}
+
+@keyframes swipeHint {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}

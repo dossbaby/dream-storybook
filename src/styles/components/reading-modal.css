@@ -1,0 +1,313 @@
+/* ========== 상세 풀이 모달 (블로그 스타일) ========== */
+.detailed-reading-overlay {
+    z-index: 1000;
+    background: var(--black) !important; /* opacity 제거, solid 배경 */
+}
+
+.detailed-reading-modal {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    background: var(--dark-gray);
+    border-radius: 20px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.detailed-reading-modal::-webkit-scrollbar {
+    width: 4px;
+}
+
+.detailed-reading-modal::-webkit-scrollbar-thumb {
+    background: var(--purple);
+    border-radius: 2px;
+}
+
+/* 로딩 상태 */
+.detailed-reading-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 3rem;
+}
+
+.reading-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.loader-icon {
+    font-size: 4rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loader-text {
+    font-size: 1.1rem;
+    color: var(--light-gray);
+}
+
+.loader-bar {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.loader-progress {
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--accent));
+    border-radius: 2px;
+    animation: loadingProgress 2s ease-in-out infinite;
+}
+
+@keyframes loadingProgress {
+    0% { width: 0%; margin-left: 0; }
+    50% { width: 70%; margin-left: 0; }
+    100% { width: 30%; margin-left: 70%; }
+}
+
+/* 히어로 섹션 */
+.reading-hero {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.reading-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.reading-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 3rem 2rem 2rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.reading-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(138, 43, 226, 0.3);
+    border: 1px solid var(--purple);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--purple);
+    width: fit-content;
+}
+
+.reading-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+    margin: 0;
+}
+
+.reading-verdict {
+    font-size: 1.1rem;
+    color: var(--light-gray);
+    font-style: italic;
+    margin: 0;
+}
+
+/* 블로그 본문 */
+.reading-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 원문 인용 */
+.reading-quote {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(138, 43, 226, 0.1);
+    border-left: 4px solid var(--purple);
+    border-radius: 0 12px 12px 0;
+}
+
+.quote-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.reading-quote p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--light-gray);
+    line-height: 1.7;
+    font-style: italic;
+}
+
+/* 이미지 갤러리 */
+.reading-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    font-size: 0.8rem;
+    color: var(--white);
+    text-align: center;
+}
+
+/* 심층 분석 본문 */
+.reading-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.reading-section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--white);
+    margin: 1.5rem 0 0.75rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reading-section-title:first-child {
+    margin-top: 0;
+}
+
+.reading-paragraph {
+    font-size: 1rem;
+    color: var(--light-gray);
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* 키워드 태그 */
+.reading-keywords {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reading-modal .keywords-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-bottom: 0.75rem;
+}
+
+.keywords-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.reading-modal .keyword-tag {
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--gold);
+}
+
+/* 결과 액션 버튼들 */
+.result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.detailed-reading-btn {
+    padding: 0.9rem 1.5rem;
+    background: linear-gradient(135deg, var(--purple) 0%, var(--accent) 100%);
+    border: none;
+    border-radius: 12px;
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.detailed-reading-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+}
+
+.action-btn.detailed {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--accent) 100%);
+    color: var(--white);
+}
+
+.action-btn.detailed:hover {
+    transform: scale(1.05);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .detailed-reading-modal {
+        width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .reading-hero {
+        height: 250px;
+    }
+
+    .reading-title {
+        font-size: 1.4rem;
+    }
+
+    .reading-body {
+        padding: 1.5rem;
+    }
+
+    .reading-section-title {
+        font-size: 1.1rem;
+    }
+
+    .reading-paragraph {
+        font-size: 0.95rem;
+    }
+}

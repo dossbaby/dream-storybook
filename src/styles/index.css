@@ -1,0 +1,36 @@
+/* ========== Dream Storybook Styles ========== */
+
+/* Base */
+@import './base/variables.css';
+@import './base/reset.css';
+@import './base/responsive.css';
+
+/* Layouts */
+@import './layouts/main-layout.css';
+@import './layouts/navbar.css';
+@import './layouts/sidebar.css';
+
+/* Components */
+@import './components/toast.css';
+@import './components/modal.css';
+@import './components/analysis.css';
+@import './components/points.css';
+@import './components/feed.css';
+@import './components/story-card.css';
+@import './components/create.css';
+@import './components/shorts.css';
+@import './components/whispers.css';
+@import './components/reading-modal.css';
+
+/* Views */
+@import './views/tarot.css';
+@import './views/fortune.css';
+@import './views/detail.css';
+@import './views/mypage.css';
+
+/* Pages (SEO) */
+@import './pages/seo-pages.css';
+
+/* Themes */
+@import './themes.css';
+@import './cards.css';

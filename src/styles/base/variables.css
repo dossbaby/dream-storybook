@@ -1,0 +1,12 @@
+/* ========== CSS Variables ========== */
+:root {
+    --black: #0a0a0a;
+    --dark: #111;
+    --gray: #1a1a1a;
+    --light-gray: #666;
+    --white: #fafafa;
+    --accent: #ff3366;
+    --gold: #ffd700;
+    --purple: #9b59b6;
+    --teal: #1abc9c;
+}

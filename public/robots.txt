@@ -1,0 +1,14 @@
+# 꿈해몽 스토리북 - robots.txt
+User-agent: *
+Allow: /
+
+# SEO 페이지 허용
+Allow: /dream/
+Allow: /tarot/
+Allow: /fortune/
+Allow: /dreams
+Allow: /tarots
+Allow: /fortunes
+
+# 사이트맵
+Sitemap: https://dream-storybook.vercel.app/sitemap.xml

@@ -1,0 +1,473 @@
+/* ========== 분석 애니메이션 ========== */
+.analysis-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+.analysis-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.analysis-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(155, 89, 182, 0.2);
+    border-radius: 50%;
+    transition: all 0.5s ease;
+}
+
+.analysis-ring.active {
+    border-color: var(--purple);
+    animation: ringPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.3);
+}
+
+.analysis-ring.ring-2 {
+    width: 75%;
+    height: 75%;
+    animation-delay: 0.3s;
+}
+
+.analysis-ring.ring-2.active {
+    border-color: var(--accent);
+    animation: ringPulse 2s ease-in-out infinite 0.3s;
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+}
+
+.analysis-ring.ring-3 {
+    width: 50%;
+    height: 50%;
+    animation-delay: 0.6s;
+}
+
+.analysis-ring.ring-3.active {
+    border-color: var(--gold);
+    animation: ringPulse 2s ease-in-out infinite 0.6s;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+@keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+}
+
+.analysis-core {
+    font-size: 2.5rem;
+    animation: coreFloat 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(155, 89, 182, 0.5));
+}
+
+@keyframes coreFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.analysis-text {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: var(--white);
+    letter-spacing: 0.1em;
+    animation: textGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+    0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+    50% { opacity: 0.8; text-shadow: 0 0 20px rgba(155, 89, 182, 0.5); }
+}
+
+.analysis-phases {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+}
+
+.phase-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.phase-dot.active {
+    background: var(--purple);
+}
+
+.phase-dot.current {
+    background: var(--accent);
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+    animation: dotPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1.3); }
+    50% { transform: scale(1.5); }
+}
+
+/* ========== 꿈 테마 로딩 애니메이션 ========== */
+.dream-theme .analysis-animation {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 280px;
+    background: radial-gradient(ellipse at center, rgba(155, 89, 182, 0.12) 0%, transparent 70%);
+    overflow: hidden;
+}
+
+.dream-theme .analysis-circle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 꿈 테마 외곽 장식 */
+.dream-theme .analysis-circle::before {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border: 1px solid rgba(155, 89, 182, 0.25);
+    border-radius: 50%;
+    animation: dreamRingRotate 25s linear infinite;
+}
+
+.dream-theme .analysis-circle::after {
+    content: '☆ ☆ ☆ ☆ ☆ ☆';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    color: rgba(155, 89, 182, 0.4);
+    letter-spacing: 1.2em;
+    animation: dreamRingRotate 18s linear infinite reverse;
+    border-radius: 50%;
+}
+
+@keyframes dreamRingRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 꿈 테마 링 */
+.dream-theme .analysis-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(155, 89, 182, 0.2);
+    border-radius: 50%;
+    transition: all 0.5s ease;
+}
+
+.dream-theme .analysis-ring.active {
+    border-color: var(--purple);
+    box-shadow:
+        0 0 20px rgba(155, 89, 182, 0.5),
+        0 0 40px rgba(155, 89, 182, 0.2),
+        inset 0 0 15px rgba(155, 89, 182, 0.1);
+    animation: dreamRingPulse 2s ease-in-out infinite;
+}
+
+.dream-theme .analysis-ring.ring-2 {
+    width: 75%;
+    height: 75%;
+}
+
+.dream-theme .analysis-ring.ring-2.active {
+    border-color: #e056fd;
+    box-shadow:
+        0 0 25px rgba(224, 86, 253, 0.5),
+        inset 0 0 20px rgba(224, 86, 253, 0.1);
+    animation: dreamRingPulse 2s ease-in-out infinite 0.3s;
+}
+
+.dream-theme .analysis-ring.ring-3 {
+    width: 50%;
+    height: 50%;
+}
+
+.dream-theme .analysis-ring.ring-3.active {
+    border-color: #a29bfe;
+    box-shadow:
+        0 0 30px rgba(162, 155, 254, 0.5),
+        inset 0 0 25px rgba(162, 155, 254, 0.1);
+    animation: dreamRingPulse 2s ease-in-out infinite 0.6s;
+}
+
+@keyframes dreamRingPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.08);
+        opacity: 0.8;
+    }
+}
+
+/* 꿈 테마 코어 */
+.dream-theme .analysis-core {
+    font-size: 2.5rem;
+    z-index: 10;
+    animation: dreamCoreFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(155, 89, 182, 0.6));
+}
+
+@keyframes dreamCoreFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.1); }
+}
+
+/* 꿈 테마 텍스트 */
+.dream-theme .analysis-text {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #e056fd;
+    letter-spacing: 0.12em;
+    font-weight: 300;
+    animation: dreamTextGlow 2s ease-in-out infinite;
+}
+
+@keyframes dreamTextGlow {
+    0%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(224, 86, 253, 0.4);
+    }
+    50% {
+        opacity: 0.85;
+        text-shadow: 0 0 20px rgba(155, 89, 182, 0.6);
+    }
+}
+
+/* 꿈 테마 진행 점 */
+.dream-theme .phase-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(155, 89, 182, 0.2);
+    border: 1px solid rgba(155, 89, 182, 0.3);
+}
+
+.dream-theme .phase-dot.active {
+    background: linear-gradient(135deg, #9b59b6, #e056fd);
+    border-color: #9b59b6;
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+}
+
+.dream-theme .phase-dot.current {
+    background: linear-gradient(135deg, #e056fd, #a29bfe);
+    border-color: #e056fd;
+    box-shadow: 0 0 12px rgba(224, 86, 253, 0.6);
+}
+
+/* 꿈 테마 배경 파티클 */
+.dream-theme .analysis-animation::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(155, 89, 182, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(224, 86, 253, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px, 50px 50px;
+    animation: particleFloat 8s linear infinite;
+    pointer-events: none;
+}
+
+/* ========== 운세 테마 로딩 애니메이션 ========== */
+.fortune-theme .analysis-animation {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 280px;
+    background: radial-gradient(ellipse at center, rgba(26, 188, 156, 0.12) 0%, transparent 70%);
+    overflow: hidden;
+}
+
+.fortune-theme .analysis-circle.fortune-circle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 운세 테마 외곽 장식 */
+.fortune-theme .analysis-circle::before {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border: 1px solid rgba(26, 188, 156, 0.25);
+    border-radius: 50%;
+    animation: fortuneRingRotate 22s linear infinite;
+}
+
+.fortune-theme .analysis-circle::after {
+    content: '◇ ◇ ◇ ◇ ◇ ◇';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    color: rgba(26, 188, 156, 0.4);
+    letter-spacing: 1.2em;
+    animation: fortuneRingRotate 15s linear infinite reverse;
+    border-radius: 50%;
+}
+
+@keyframes fortuneRingRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 운세 테마 링 */
+.fortune-theme .analysis-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(26, 188, 156, 0.2);
+    border-radius: 50%;
+    transition: all 0.5s ease;
+}
+
+.fortune-theme .analysis-ring.active {
+    border-color: var(--teal);
+    box-shadow:
+        0 0 20px rgba(26, 188, 156, 0.5),
+        0 0 40px rgba(26, 188, 156, 0.2),
+        inset 0 0 15px rgba(26, 188, 156, 0.1);
+    animation: fortuneRingPulse 2s ease-in-out infinite;
+}
+
+.fortune-theme .analysis-ring.ring-2 {
+    width: 75%;
+    height: 75%;
+}
+
+.fortune-theme .analysis-ring.ring-2.active {
+    border-color: #00cec9;
+    box-shadow:
+        0 0 25px rgba(0, 206, 201, 0.5),
+        inset 0 0 20px rgba(0, 206, 201, 0.1);
+    animation: fortuneRingPulse 2s ease-in-out infinite 0.3s;
+}
+
+.fortune-theme .analysis-ring.ring-3 {
+    width: 50%;
+    height: 50%;
+}
+
+.fortune-theme .analysis-ring.ring-3.active {
+    border-color: #55efc4;
+    box-shadow:
+        0 0 30px rgba(85, 239, 196, 0.5),
+        inset 0 0 25px rgba(85, 239, 196, 0.1);
+    animation: fortuneRingPulse 2s ease-in-out infinite 0.6s;
+}
+
+@keyframes fortuneRingPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.08);
+        opacity: 0.8;
+    }
+}
+
+/* 운세 테마 코어 */
+.fortune-theme .analysis-core {
+    font-size: 2.5rem;
+    z-index: 10;
+    animation: fortuneCoreFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(26, 188, 156, 0.6));
+}
+
+@keyframes fortuneCoreFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.1); }
+}
+
+/* 운세 테마 텍스트 */
+.fortune-theme .analysis-text {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: var(--teal);
+    letter-spacing: 0.12em;
+    font-weight: 300;
+    animation: fortuneTextGlow 2s ease-in-out infinite;
+}
+
+@keyframes fortuneTextGlow {
+    0%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(26, 188, 156, 0.4);
+    }
+    50% {
+        opacity: 0.85;
+        text-shadow: 0 0 20px rgba(26, 188, 156, 0.6);
+    }
+}
+
+/* 운세 테마 진행 점 */
+.fortune-theme .phase-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(26, 188, 156, 0.2);
+    border: 1px solid rgba(26, 188, 156, 0.3);
+}
+
+.fortune-theme .phase-dot.active {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+    border-color: #1abc9c;
+    box-shadow: 0 0 8px rgba(26, 188, 156, 0.5);
+}
+
+.fortune-theme .phase-dot.current {
+    background: linear-gradient(135deg, #00cec9, #55efc4);
+    border-color: #00cec9;
+    box-shadow: 0 0 12px rgba(0, 206, 201, 0.6);
+}
+
+/* 운세 테마 배경 파티클 */
+.fortune-theme .analysis-animation::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle at 30% 20%, rgba(26, 188, 156, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 70% 80%, rgba(0, 206, 201, 0.03) 1px, transparent 1px);
+    background-size: 35px 35px, 55px 55px;
+    animation: particleFloat 9s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes particleFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-30px); }
+}

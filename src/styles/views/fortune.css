@@ -1,0 +1,258 @@
+/* ================================
+   운세 결과 뷰
+   ================================ */
+
+.fortune-result-container {
+    padding-bottom: 2rem;
+}
+
+.fortune-result-card {
+    background: linear-gradient(145deg, rgba(0, 100, 150, 0.3), rgba(20, 30, 60, 0.9));
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0, 206, 209, 0.2);
+}
+
+.fortune-result-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.fortune-header-image {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.fortune-result-emoji {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.fortune-result-title {
+    font-size: 1.5rem;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+}
+
+.fortune-result-type {
+    font-size: 0.85rem;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+}
+
+.fortune-result-verdict {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.fortune-score-container {
+    margin: 1rem auto;
+    max-width: 250px;
+}
+
+.fortune-score-bar {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.fortune-score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    border-radius: 5px;
+    transition: width 1s ease-out;
+}
+
+.fortune-score-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.fortune-affirmation {
+    font-style: italic;
+    color: var(--teal);
+    font-size: 0.95rem;
+    margin-top: 0.75rem;
+}
+
+.fortune-short-reading {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.fortune-short-reading p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.25rem;
+}
+
+.fortune-reveal {
+    background: linear-gradient(135deg, var(--teal), #4169e1);
+}
+
+.fortune-reveal:hover {
+    box-shadow: 0 8px 25px rgba(0, 206, 209, 0.4);
+}
+
+/* 시간대별 운세 */
+.fortune-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border-left: 3px solid var(--teal);
+}
+
+.timeline-icon {
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+}
+
+.timeline-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--teal);
+}
+
+.timeline-item p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0.5rem 0 0 0;
+}
+
+.fortune-detailed {
+    padding: 1rem;
+    background: rgba(0, 206, 209, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.fortune-detailed h3 {
+    font-size: 1rem;
+    color: var(--teal);
+    margin-bottom: 0.75rem;
+}
+
+.fortune-detailed p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+/* DO / DON'T 리스트 */
+.fortune-do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.do-list, .dont-list {
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.do-list {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.dont-list {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.do-list h4 {
+    color: #22c55e;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.dont-list h4 {
+    color: #ef4444;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.do-list ul, .dont-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.do-list li, .dont-list li {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.25rem 0;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.do-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #22c55e;
+}
+
+.dont-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #ef4444;
+}
+
+.fortune-compatibility {
+    padding: 1rem;
+    background: rgba(255, 105, 180, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.fortune-compatibility h4 {
+    color: #ff69b4;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.fortune-compatibility p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.lucky-elements.fortune-lucky {
+    background: rgba(0, 206, 209, 0.08);
+    border-color: rgba(0, 206, 209, 0.2);
+}
+
+.lucky-grid.extended {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.fortune-restart {
+    background: linear-gradient(135deg, var(--teal), #4169e1);
+}
