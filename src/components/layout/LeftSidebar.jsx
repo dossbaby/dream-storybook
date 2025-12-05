@@ -14,7 +14,7 @@ const LeftSidebar = ({
     onOpenTarotResult,
     onOpenFortuneResult,
     onTypeFilterChange,
-    onOpenSymbolShorts
+    onFilterBySymbol
 }) => {
     // 통합 HOT 랭킹 (꿈/타로/운세 합산)
     const getUnifiedHotList = () => {
@@ -134,7 +134,7 @@ const LeftSidebar = ({
                                         <span
                                             key={i}
                                             className={`symbol-tag hot ${kw.isRecent ? 'recent' : ''}`}
-                                            onClick={() => onOpenSymbolShorts(kw.word || kw)}
+                                            onClick={() => onFilterBySymbol(kw.word || kw)}
                                         >
                                             {kw.isRecent && <span className="symbol-new-dot"></span>}
                                             {kw.word || kw}
@@ -153,7 +153,7 @@ const LeftSidebar = ({
                                         <span
                                             key={i}
                                             className="symbol-tag"
-                                            onClick={() => onOpenSymbolShorts(kw)}
+                                            onClick={() => onFilterBySymbol(kw)}
                                         >
                                             {kw}
                                         </span>
@@ -166,18 +166,45 @@ const LeftSidebar = ({
             )}
 
             {mode === 'tarot' && (
-                <div className="mode-info-card tarot-theme">
-                    <div className="mode-info-header">🃏 타로 가이드</div>
-                    <div className="mode-info-content">
-                        <p>3장의 카드가 과거, 현재, 미래를 보여줍니다.</p>
-                        <div className="tarot-spreads">
-                            <span className="spread-tag">연애운</span>
-                            <span className="spread-tag">금전운</span>
-                            <span className="spread-tag">직장운</span>
-                            <span className="spread-tag">오늘의 조언</span>
+                <>
+                    {/* 타로 주제별 필터 */}
+                    <div className="unified-symbols-card tarot-theme">
+                        <div className="unified-symbols-header">
+                            <span>🃏</span>
+                            <span>타로 주제</span>
+                            <span className="symbol-hint">클릭해서 관련 리딩 보기</span>
+                        </div>
+                        <div className="symbol-section">
+                            <div className="symbol-tags">
+                                {[
+                                    { topic: '연애', emoji: '💕' },
+                                    { topic: '직장', emoji: '💼' },
+                                    { topic: '금전', emoji: '💰' },
+                                    { topic: '학업', emoji: '📚' },
+                                    { topic: '건강', emoji: '💪' },
+                                    { topic: '인간관계', emoji: '👥' },
+                                    { topic: '미래', emoji: '🔮' },
+                                    { topic: '결정', emoji: '⚖️' }
+                                ].map((item, i) => (
+                                    <span
+                                        key={i}
+                                        className="symbol-tag tarot-topic"
+                                        onClick={() => onFilterBySymbol(item.topic)}
+                                    >
+                                        {item.emoji} {item.topic}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                    <div className="mode-info-card tarot-theme">
+                        <div className="mode-info-header">🃏 타로 가이드</div>
+                        <div className="mode-info-content">
+                            <p>3장의 카드가 과거, 현재, 미래를 보여줍니다.</p>
+                        </div>
+                    </div>
+                </>
             )}
 
             {mode === 'fortune' && (

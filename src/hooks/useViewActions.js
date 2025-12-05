@@ -58,6 +58,7 @@ export const useViewActions = ({
         setDreamDescription('');
         setSavedDreamField('id', null);
         setSavedDreamField('isPublic', false);
+        setView('create'); // 입력 창으로 이동
     };
 
     // 타로 입력 뒤로가기

@@ -177,11 +177,11 @@
 }
 
 .dream-theme .analysis-ring.active {
-    border-color: var(--purple);
+    border-color: var(--phase-color, var(--purple));
     box-shadow:
-        0 0 20px rgba(155, 89, 182, 0.5),
-        0 0 40px rgba(155, 89, 182, 0.2),
-        inset 0 0 15px rgba(155, 89, 182, 0.1);
+        0 0 20px color-mix(in srgb, var(--phase-color, #9b59b6) 50%, transparent),
+        0 0 40px color-mix(in srgb, var(--phase-color, #9b59b6) 20%, transparent),
+        inset 0 0 15px color-mix(in srgb, var(--phase-color, #9b59b6) 10%, transparent);
     animation: dreamRingPulse 2s ease-in-out infinite;
 }
 
@@ -227,7 +227,8 @@
     font-size: 2.5rem;
     z-index: 10;
     animation: dreamCoreFloat 3s ease-in-out infinite;
-    filter: drop-shadow(0 0 20px rgba(155, 89, 182, 0.6));
+    filter: drop-shadow(0 0 20px var(--phase-color, rgba(155, 89, 182, 0.6)));
+    transition: filter 0.5s ease;
 }
 
 @keyframes dreamCoreFloat {
@@ -470,4 +471,58 @@
 @keyframes particleFloat {
     0% { transform: translateY(0); }
     100% { transform: translateY(-30px); }
+}
+
+/* ========== 타로 테마 동적 색상 ========== */
+.tarot-theme .analysis-circle.tarot-circle .analysis-ring.active {
+    border-color: var(--phase-color, #9b59b6);
+    box-shadow:
+        0 0 20px color-mix(in srgb, var(--phase-color, #9b59b6) 50%, transparent),
+        0 0 40px color-mix(in srgb, var(--phase-color, #9b59b6) 20%, transparent),
+        inset 0 0 15px color-mix(in srgb, var(--phase-color, #9b59b6) 10%, transparent);
+}
+
+.tarot-theme .analysis-core {
+    filter: drop-shadow(0 0 20px var(--phase-color, rgba(155, 89, 182, 0.6)));
+    transition: filter 0.5s ease;
+}
+
+.tarot-theme .analysis-text {
+    color: #d4a5ff;
+}
+
+.tarot-theme .phase-dot.active {
+    background: linear-gradient(135deg, #9b59b6, #a29bfe);
+}
+
+.tarot-theme .phase-dot.current {
+    background: linear-gradient(135deg, #fd79a8, #a29bfe);
+    box-shadow: 0 0 12px rgba(253, 121, 168, 0.6);
+}
+
+/* ========== 운세 테마 동적 색상 ========== */
+.fortune-theme .analysis-circle.fortune-circle .analysis-ring.active {
+    border-color: var(--phase-color, #1abc9c);
+    box-shadow:
+        0 0 20px color-mix(in srgb, var(--phase-color, #1abc9c) 50%, transparent),
+        0 0 40px color-mix(in srgb, var(--phase-color, #1abc9c) 20%, transparent),
+        inset 0 0 15px color-mix(in srgb, var(--phase-color, #1abc9c) 10%, transparent);
+}
+
+.fortune-theme .analysis-core {
+    filter: drop-shadow(0 0 20px var(--phase-color, rgba(26, 188, 156, 0.6)));
+    transition: filter 0.5s ease;
+}
+
+.fortune-theme .analysis-text {
+    color: #55efc4;
+}
+
+.fortune-theme .phase-dot.active {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+}
+
+.fortune-theme .phase-dot.current {
+    background: linear-gradient(135deg, #55efc4, #00cec9);
+    box-shadow: 0 0 12px rgba(85, 239, 196, 0.6);
 }

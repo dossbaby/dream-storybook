@@ -59,15 +59,18 @@ export const useTarotActions = ({
         if (tarot.selectedCards.length !== 3 || !tarot.question.trim()) return;
         setTarotField('phase', 'revealing'); // 로딩 애니메이션 표시
         setCurrentCard(0);
+
+        // 저장 상태 초기화 - 저장 전 상태로 설정
+        if (user) {
+            setSavedDreamField('id', null);
+            setSavedDreamField('isPublic', true); // 기본값 공개로 변경 (pSEO)
+        }
+
         const resultData = await generateTarotReadingHook(tarot.question, tarot.selectedCards);
         if (resultData) {
             setTarotField('result', resultData);
             setView('result');
-            // triggerCardReveal 제거 - 느린 rainbow effect 제거
-            if (user) {
-                setSavedDreamField('id', null);
-                setSavedDreamField('isPublic', true); // 기본값 공개로 변경 (pSEO)
-            }
+            // 저장은 useReading.js에서 자동으로 처리됨
         }
     };
 

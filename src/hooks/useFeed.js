@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../firebase';
 
 /**
@@ -29,12 +29,16 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         console.log('[useFeed] loadDreams called');
         setLoading(true);
         try {
-            const q = query(collection(db, 'dreams'), orderBy('createdAt', 'desc'), limit(100));
+            // 전체 꿈을 가져온 후 클라이언트에서 공개 필터링 (복합 인덱스 없이도 동작)
+            const q = query(collection(db, 'dreams'), orderBy('createdAt', 'desc'), limit(200));
             console.log('[useFeed] Fetching dreams from Firebase...');
             const snapshot = await getDocs(q);
-            console.log('[useFeed] Got', snapshot.docs.length, 'dreams');
-            let dreamsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(d => d.isPublic);
-            console.log('[useFeed] Public dreams:', dreamsList.length);
+            console.log('[useFeed] Got', snapshot.docs.length, 'total dreams');
+            // 공개된 꿈만 필터링
+            let dreamsList = snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter(d => d.isPublic === true);
+            console.log('[useFeed] Public dreams after filter:', dreamsList.length);
             console.log('[useFeed] activeTab:', activeTab);
 
             const now = new Date();
@@ -131,9 +135,14 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
     // 타로 피드 로드
     const loadTarots = useCallback(async () => {
         try {
-            const q = query(collection(db, 'tarots'), where('isPublic', '==', true), orderBy('createdAt', 'desc'), limit(50));
+            // 복합 인덱스 없이 동작하도록 클라이언트에서 필터링
+            const q = query(collection(db, 'tarots'), orderBy('createdAt', 'desc'), limit(100));
             const snapshot = await getDocs(q);
-            setTarotReadings(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+            const tarots = snapshot.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(t => t.isPublic === true);
+            console.log('[useFeed] Loaded', tarots.length, 'public tarots');
+            setTarotReadings(tarots);
         } catch (e) {
             console.error('Failed to load tarots:', e);
             setTarotReadings([]);
@@ -143,9 +152,14 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
     // 운세 피드 로드
     const loadFortunes = useCallback(async () => {
         try {
-            const q = query(collection(db, 'fortunes'), where('isPublic', '==', true), orderBy('createdAt', 'desc'), limit(50));
+            // 복합 인덱스 없이 동작하도록 클라이언트에서 필터링
+            const q = query(collection(db, 'fortunes'), orderBy('createdAt', 'desc'), limit(100));
             const snapshot = await getDocs(q);
-            setFortuneReadings(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+            const fortunes = snapshot.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(f => f.isPublic === true);
+            console.log('[useFeed] Loaded', fortunes.length, 'public fortunes');
+            setFortuneReadings(fortunes);
         } catch (e) {
             console.error('Failed to load fortunes:', e);
             setFortuneReadings([]);
@@ -198,15 +212,17 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
     // 초기 로드 플래그
     const initialLoadDone = useRef(false);
 
-    // 초기 로드 시 꿈 피드는 항상 로드 (RightSidebar용)
+    // 초기 로드 시 모든 피드 로드
     useEffect(() => {
         if (!initialLoadDone.current) {
             initialLoadDone.current = true;
             loadDreams();
+            loadTarots();
+            loadFortunes();
         }
-    }, [loadDreams]);
+    }, [loadDreams, loadTarots, loadFortunes]);
 
-    // 모드별 피드 로드 (모드 변경 시에만)
+    // 모드별 피드 리프레시 (모드 변경 시)
     const prevMode = useRef(mode);
     useEffect(() => {
         if (prevMode.current !== mode) {

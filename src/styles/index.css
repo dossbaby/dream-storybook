@@ -21,6 +21,9 @@
 @import './components/shorts.css';
 @import './components/whispers.css';
 @import './components/reading-modal.css';
+@import './components/slide-result.css';
+@import './components/cinematic-result.css';
+@import './components/royal-result.css';
 
 /* Views */
 @import './views/tarot.css';

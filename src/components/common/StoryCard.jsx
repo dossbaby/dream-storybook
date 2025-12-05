@@ -91,6 +91,13 @@ const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading }) => {
                     </div>
                     <div className="card-content">
                         <span className="card-label">🃏 {card.label}</span>
+                        {/* 사용자 질문 표시 */}
+                        {card.question && (
+                            <div className="user-question-badge">
+                                <span className="question-icon">💭</span>
+                                <span className="question-text">"{card.question}"</span>
+                            </div>
+                        )}
                         <div className="tarot-card-badge">
                             <span className="tarot-card-emoji">{card.card?.emoji}</span>
                             <span className="tarot-card-name">{card.card?.nameKo}</span>
@@ -151,6 +158,32 @@ const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading }) => {
                                 <span>📅 {card.luckyElements.day}</span>
                             </div>
                         )}
+                    </div>
+                </>
+            )}
+            {/* 타로 - 결론 카드 (운명의 선물) */}
+            {card.type === 'tarot-conclusion' && (
+                <>
+                    <div className="card-bg">
+                        {card.image ? <img src={card.image} alt="" /> : <div className="card-bg-placeholder" />}
+                        <div className="card-overlay tarot-overlay conclusion-overlay" />
+                    </div>
+                    <div className="card-glow-effect conclusion-glow">
+                        <div className="glow-sparkles">
+                            {[...Array(8)].map((_, idx) => <span key={idx} className="sparkle gold" style={{ '--i': idx }} />)}
+                        </div>
+                    </div>
+                    <div className="card-content conclusion-content">
+                        <span className="card-label conclusion-label">🎁 {card.label}</span>
+                        <div className="tarot-card-badge conclusion-badge">
+                            <span className="tarot-card-emoji">{card.card?.emoji}</span>
+                            <span className="tarot-card-name">{card.card?.nameKo}</span>
+                        </div>
+                        <p className="conclusion-reading">{card.reading}</p>
+                        <div className="conclusion-message">
+                            <span className="conclusion-icon">✨</span>
+                            <span className="conclusion-text">운명이 당신에게 보내는 선물</span>
+                        </div>
                     </div>
                 </>
             )}

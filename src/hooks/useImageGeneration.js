@@ -4,11 +4,11 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 export const useImageGeneration = () => {
     const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-    // 기본 스타일 상수
+    // 기본 스타일 상수 - 16:9 가로 비율
     const BASE_STYLES = {
-        dream: 'Beautiful anime illustration, Makoto Shinkai style. Soft lighting, dreamy atmosphere, pastel and deep blue palette, vertical 9:16, no text.',
-        tarot: 'Beautiful anime illustration, Makoto Shinkai style. Mystical tarot atmosphere. Soft lighting, dreamy atmosphere, purple and gold palette, vertical 9:16, no text.',
-        fortune: 'Beautiful anime illustration, Makoto Shinkai style. Celestial fortune atmosphere. Soft lighting, dreamy atmosphere, blue and gold palette, vertical 9:16, no text.'
+        dream: 'Beautiful anime illustration, Makoto Shinkai style. Soft lighting, dreamy atmosphere, pastel and deep blue palette, horizontal 16:9 widescreen aspect ratio, no text.',
+        tarot: 'Beautiful anime illustration, Makoto Shinkai style. Mystical tarot atmosphere. Soft lighting, dreamy atmosphere, purple and gold palette, horizontal 16:9 widescreen aspect ratio, no text.',
+        fortune: 'Beautiful anime illustration, Makoto Shinkai style. Celestial fortune atmosphere. Soft lighting, dreamy atmosphere, blue and gold palette, horizontal 16:9 widescreen aspect ratio, no text.'
     };
 
     // 단일 이미지 생성

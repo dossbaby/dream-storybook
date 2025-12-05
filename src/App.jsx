@@ -27,7 +27,6 @@ import ShareModal from './components/modals/ShareModal';
 import ReportModal from './components/modals/ReportModal';
 import PointsModal from './components/modals/PointsModal';
 import DetailedReadingModal from './components/modals/DetailedReadingModal';
-import SymbolShortsModal from './components/modals/SymbolShortsModal';
 import ToastNotifications from './components/common/ToastNotifications';
 import StoryCard from './components/common/StoryCard';
 import NavBar from './components/layout/NavBar';
@@ -42,6 +41,7 @@ import ResultView from './components/result/ResultView';
 import DreamDetailView from './components/detail/DreamDetailView';
 import MyPage from './components/my/MyPage';
 import FeedView from './components/feed/FeedView';
+import FloatingActionButton from './components/common/FloatingActionButton';
 
 function App() {
     // 로딩 상태 (그룹화)
@@ -85,8 +85,6 @@ function App() {
     const setDetailedReadingField = (key, value) => setDetailedReading(prev => ({ ...prev, [key]: value }));
     const [savedDream, setSavedDream] = useState({ id: null, isPublic: false });
     const setSavedDreamField = (key, value) => setSavedDream(prev => ({ ...prev, [key]: value }));
-    const [symbolShorts, setSymbolShorts] = useState({ view: null, dreams: [], currentIndex: 0 });
-    const setSymbolShortsField = (key, value) => setSymbolShorts(prev => ({ ...prev, [key]: value }));
 
     // 모드별 상태
     const [mode, setMode] = useState('tarot');
@@ -110,7 +108,7 @@ function App() {
         typeCounts, todayStats, onlineCount, loading: feedLoading, loadDreams, loadDreamsRef, loadTarotsRef, loadFortunesRef, loadMyDreamsRef
     } = useFeed(null, [], activeTab, filters, mode);
     const {
-        user, userNickname, setUserNickname, myDreams, setMyDreams, myStats, dreamTypes, loadMyDreams, handleNewDreamType
+        user, userNickname, setUserNickname, myDreams, setMyDreams, myTarots, myFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
     } = useAuth({ setLoadingState, checkAndAwardBadges, loadMyDreamsRef });
     const { userPoints, freeUsesLeft, addPoints } = usePoints(user);
     const {
@@ -121,17 +119,18 @@ function App() {
     const { viewingCount, recentViewers, similarDreamers, floatingHearts } = usePresence(selectedDream, user, userNickname, setSelectedDream);
     const { saveDream: saveFirebaseDream, saveTarot: saveFirebaseTarot, saveFortune: saveFirebaseFortune } = useFirebaseSave(user, userNickname, {
         onDreamSaved: () => { loadDreamsRef.current?.(); user && loadMyDreamsRef.current?.(user.uid); },
-        onTarotSaved: () => loadTarotsRef.current?.(),
-        onFortuneSaved: () => loadFortunesRef.current?.()
+        onTarotSaved: () => { loadTarotsRef.current?.(); user && loadMyTarots(user.uid); },
+        onFortuneSaved: () => { loadFortunesRef.current?.(); user && loadMyFortunes(user.uid); }
     });
     const { loading: readingLoading, error, progress, analysisPhase, generateDreamReading, generateTarotReading: generateTarotReadingHook, generateFortuneReading: generateFortuneReadingHook } = useReading({
         user, dreamTypes, onSaveDream: saveFirebaseDream, onSaveTarot: saveFirebaseTarot,
-        onSaveFortune: saveFirebaseFortune, onNewDreamType: handleNewDreamType, setToast, setDopaminePopup
+        onSaveFortune: saveFirebaseFortune, onNewDreamType: handleNewDreamType, setToast, setDopaminePopup, setSavedDreamField
     });
     const { aiReport, setAiReport, generateAiReport } = useAiReport(myDreams, dreamTypes, openModal, closeModal);
-    const { openSymbolShorts, nextShorts, prevShorts, toggleLike, openDreamDetail, generateDetailedReading } = useDreamActions({
-        user, dreams, selectedDream, setSelectedDream, symbolShorts, setSymbolShortsField,
-        setDetailedReadingField, setLoadingState, setCurrentCard, setView, loadInterpretations
+    const { filterBySymbol, toggleLike, openDreamDetail, generateDetailedReading } = useDreamActions({
+        user, dreams, selectedDream, setSelectedDream,
+        setDetailedReadingField, setLoadingState, setCurrentCard, setView, loadInterpretations,
+        setFilter, setMode
     });
 
     const { triggerCardReveal, startTarotSelection, toggleTarotCard, generateTarotReading } = useTarotActions({
@@ -187,9 +186,22 @@ function App() {
                 mode={mode}
                 user={user}
                 userPoints={userPoints}
+                onlineCount={onlineCount}
                 onModeChange={(newMode) => {
                     setMode(newMode);
-                    if (newMode === 'tarot') setTarotField('phase', 'question');
+                    // 모드 변경 시 이전 결과 초기화
+                    if (newMode === 'tarot') {
+                        setTarotField('phase', 'question');
+                        setResult(null);
+                        setFortuneField('result', null);
+                    } else if (newMode === 'dream') {
+                        resetTarot();
+                        setFortuneField('result', null);
+                    } else if (newMode === 'fortune') {
+                        setResult(null);
+                        resetTarot();
+                    }
+                    setSavedDream({ id: null, isPublic: false });
                 }}
                 onViewChange={setView}
                 onOpenPoints={() => openModal('points')}
@@ -219,7 +231,7 @@ function App() {
                     onOpenTarotResult={handleOpenTarotResult}
                     onOpenFortuneResult={handleOpenFortuneResult}
                     onTypeFilterChange={(val) => setFilter('type', val)}
-                    onOpenSymbolShorts={openSymbolShorts}
+                    onFilterBySymbol={filterBySymbol}
                 />
 
                 {/* 중앙 - 메인 콘텐츠 */}
@@ -254,10 +266,32 @@ function App() {
                             dreams={dreams}
                             tarotReadings={feedTarotReadings}
                             fortuneReadings={fortuneReadings}
+                            dreamTypes={dreamTypes}
+                            popularKeywords={popularKeywords}
+                            symbolFilter={filters.keyword}
                             onCreateClick={() => setView('create')}
                             onOpenDreamDetail={handleOpenDreamDetail}
                             onOpenTarotResult={handleOpenTarotResult}
                             onOpenFortuneResult={handleOpenFortuneResult}
+                            onKeywordFilter={(kw) => setFilter('keyword', kw)}
+                            onClearSymbolFilter={() => setFilter('keyword', null)}
+                            onModeChange={(newMode) => {
+                                setMode(newMode);
+                                if (newMode === 'tarot') {
+                                    setTarotField('phase', 'question');
+                                    setResult(null);
+                                    setFortuneField('result', null);
+                                } else if (newMode === 'dream') {
+                                    resetTarot();
+                                    setFortuneField('result', null);
+                                } else if (newMode === 'fortune') {
+                                    setResult(null);
+                                    resetTarot();
+                                }
+                                setSavedDream({ id: null, isPublic: false });
+                            }}
+                            user={user}
+                            onLoginRequired={handleGoogleLogin}
                         />
                     )}
 
@@ -271,14 +305,14 @@ function App() {
                             setShowKeywordHints={(v) => setLoadingState('showKeywordHints', v)}
                             keywordHints={keywordHints}
                             dreamSymbols={dreamSymbols}
-                            loading={loading.generating}
+                            loading={readingLoading}
                             analysisPhase={analysisPhase}
                             progress={progress}
                             error={error}
                             onBack={() => setView('feed')}
                             onGenerate={generateReading}
                             onAddKeywordHint={addKeywordHint}
-                            onOpenSymbolShorts={openSymbolShorts}
+                            onFilterBySymbol={filterBySymbol}
                         />
                     )}
 
@@ -308,7 +342,7 @@ function App() {
                             setFortuneType={(t) => setFortuneField('type', t)}
                             fortuneBirthdate={fortune.birthdate}
                             setFortuneBirthdate={(b) => setFortuneField('birthdate', b)}
-                            loading={loading.generating}
+                            loading={readingLoading}
                             analysisPhase={analysisPhase}
                             progress={progress}
                             error={error}
@@ -431,6 +465,8 @@ function App() {
                             BADGES={BADGES}
                             myStats={myStats}
                             myDreams={myDreams}
+                            myTarots={myTarots}
+                            myFortunes={myFortunes}
                             dreamTypes={dreamTypes}
                             calendar={calendar}
                             onBack={() => setView('feed')}
@@ -443,6 +479,8 @@ function App() {
                             getCalendarDays={getCalendarDays}
                             getDreamsForDate={getDreamsForDate}
                             onOpenDreamDetail={openDreamDetail}
+                            onOpenTarotDetail={(tarot) => { setTarot(prev => ({ ...prev, result: { ...tarot, showFullReading: true } })); setView('tarot-result'); }}
+                            onOpenFortuneDetail={(fortune) => { setFortune(prev => ({ ...prev, result: { ...fortune, showFullReading: true } })); setView('fortune-result'); }}
                             onToggleDreamVisibility={toggleDreamVisibility}
                             onDeleteDream={deleteDream}
                             formatTime={formatTime}
@@ -483,25 +521,6 @@ function App() {
                         dreamTypes={dreamTypes}
                     />
 
-                    {/* 상징 쇼츠 뷰 모달 */}
-                    <SymbolShortsModal
-                        symbolShortsView={symbolShorts.view}
-                        symbolDreams={symbolShorts.dreams}
-                        currentShortsIndex={symbolShorts.currentIndex}
-                        dreamTypes={dreamTypes}
-                        user={user}
-                        touchStart={touchStart}
-                        touchEnd={touchEnd}
-                        onClose={() => setSymbolShortsField('view', null)}
-                        onTouchStart={onTouchStart}
-                        onTouchMove={onTouchMove}
-                        onTouchEnd={onTouchEnd}
-                        onPrevShorts={prevShorts}
-                        onNextShorts={nextShorts}
-                        onToggleLike={toggleLike}
-                        onOpenDreamDetail={openDreamDetail}
-                    />
-
                 </main>
 
                 {/* 오른쪽 사이드바 - 피드 */}
@@ -521,6 +540,27 @@ function App() {
                     onCreateClick={() => setView('create')}
                 />
             </div>
+
+            {/* Floating Action Button */}
+            <FloatingActionButton
+                mode={mode}
+                onModeChange={(newMode) => {
+                    setMode(newMode);
+                    if (newMode === 'tarot') {
+                        setTarotField('phase', 'question');
+                        setResult(null);
+                        setFortuneField('result', null);
+                    } else if (newMode === 'dream') {
+                        resetTarot();
+                        setFortuneField('result', null);
+                    } else if (newMode === 'fortune') {
+                        setResult(null);
+                        resetTarot();
+                    }
+                    setSavedDream({ id: null, isPublic: false });
+                }}
+                onCreateClick={() => setView('create')}
+            />
         </div>
     );
 }

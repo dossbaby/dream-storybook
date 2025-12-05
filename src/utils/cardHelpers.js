@@ -6,11 +6,61 @@ export const getDreamCards = (dreamData) => dreamData ? [
     { type: 'meaning', label: '꿈의 의미', image: dreamData.meaningImage, dreamMeaning: dreamData.dreamMeaning, reading: dreamData.reading }
 ] : [];
 
-export const getTarotCards = (tarotData) => tarotData ? [
-    { type: 'tarot-past', label: '과거', image: tarotData.pastImage, card: tarotData.cards?.[0], title: tarotData.title, verdict: tarotData.verdict, rarity: tarotData.rarity, reading: tarotData.reading?.past },
-    { type: 'tarot-present', label: '현재', image: tarotData.presentImage, card: tarotData.cards?.[1], keywords: tarotData.keywords, reading: tarotData.reading?.present },
-    { type: 'tarot-future', label: '미래', image: tarotData.futureImage, card: tarotData.cards?.[2], cardMeaning: tarotData.cardMeaning, reading: tarotData.reading?.future, luckyElements: tarotData.luckyElements }
-] : [];
+export const getTarotCards = (tarotData) => {
+    if (!tarotData) return [];
+
+    // storyReading에서 카드별 분석 가져오기
+    const storyReading = tarotData.storyReading || {};
+
+    const baseCards = [
+        {
+            type: 'tarot-1',
+            label: '첫 번째 카드',
+            image: tarotData.card1Image || tarotData.pastImage,
+            card: tarotData.cards?.[0],
+            title: tarotData.title,
+            verdict: tarotData.verdict,
+            rarity: tarotData.rarity,
+            reading: storyReading.card1Analysis || tarotData.reading?.past,
+            question: tarotData.question
+        },
+        {
+            type: 'tarot-2',
+            label: '두 번째 카드',
+            image: tarotData.card2Image || tarotData.presentImage,
+            card: tarotData.cards?.[1],
+            keywords: tarotData.keywords,
+            reading: storyReading.card2Analysis || tarotData.reading?.present
+        },
+        {
+            type: 'tarot-3',
+            label: '세 번째 카드',
+            image: tarotData.card3Image || tarotData.futureImage,
+            card: tarotData.cards?.[2],
+            cardMeaning: tarotData.cardMeaning,
+            reading: storyReading.card3Analysis || tarotData.reading?.future,
+            luckyElements: tarotData.luckyElements
+        }
+    ];
+
+    // 결론 카드 추가 (4번째 카드)
+    // cards 배열에 4번째가 있거나, conclusionImage가 있거나, storyReading.conclusionCard가 있으면 추가
+    const conclusionCardData = tarotData.cards?.[3];
+    const hasConclusion = conclusionCardData || tarotData.conclusionImage || storyReading.conclusionCard;
+
+    if (hasConclusion) {
+        baseCards.push({
+            type: 'tarot-conclusion',
+            label: '운명의 선물',
+            image: tarotData.conclusionImage || tarotData.card4Image,
+            card: conclusionCardData || { name: '결론 카드', name_ko: '결론 카드', emoji: '🎁' },
+            isConclusion: true,
+            reading: storyReading.conclusionCard || tarotData.reading?.action
+        });
+    }
+
+    return baseCards;
+};
 
 export const getFortuneCards = (fortuneData) => fortuneData ? [
     { type: 'fortune-morning', label: '아침 운세', image: fortuneData.morningImage, title: fortuneData.title, verdict: fortuneData.verdict, score: fortuneData.score, rarity: fortuneData.rarity, reading: fortuneData.reading?.morning },

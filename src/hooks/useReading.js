@@ -15,7 +15,8 @@ export const useReading = ({
     onSaveFortune,
     onNewDreamType,
     setToast,
-    setDopaminePopup
+    setDopaminePopup,
+    setSavedDreamField
 }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -127,10 +128,11 @@ export const useReading = ({
         );
 
         try {
-            setAnalysisPhase(4);
+            // 분석 애니메이션 후 단계를 6으로 올림 (5개 메시지 완료 후 다음 단계)
+            setAnalysisPhase(6);
             setProgress('꿈을 읽는 중...');
 
-            const existingTypes = Object.keys(dreamTypes).join('/');
+            const existingTypesList = Object.entries(dreamTypes).map(([key, val]) => `${key}(${val.name})`).join(', ');
             const analysisPrompt = `너는 30년 경력의 무속인이자 융 심리학 전문가다.
 꿈을 보면 그 사람이 최근 겪고 있는 일, 숨기고 있는 감정, 본인도 모르는 욕망이 다 보인다.
 
@@ -140,10 +142,19 @@ export const useReading = ({
 3. 표면적 해석은 짧게, 진짜 의미는 소름끼칠 정도로 깊게.
 4. 마지막엔 반드시 행동 지침을 줘.
 
-## 꿈 유형
-기존 유형: ${existingTypes}
-만약 이 꿈이 기존 유형에 딱 맞지 않는 독특한 꿈이라면, 새로운 유형을 만들어도 좋아.
-새 유형을 만들 경우 newDreamType 필드를 채워줘.
+## 꿈 유형 - 매우 중요!!!
+기존 유형: ${existingTypesList}
+
+⚠️ 반드시 기존 유형 중 하나를 선택해! 새로운 유형은 정말 기존 유형 중 어떤 것도 맞지 않을 때만 만들어.
+대부분의 꿈은 기존 유형에 해당해. 예를 들어:
+- 무언가를 찾거나 탐험하는 꿈 → seeker(탐색자)
+- 누군가를 보호하거나 지키는 꿈 → guardian(수호자)
+- 자유롭게 떠도는 꿈 → wanderer(방랑자)
+- 아픔이나 치유와 관련된 꿈 → healer(치유자)
+- 예지몽이나 상징적 메시지 → prophet(예언자)
+- 어둠이나 두려움과 관련된 꿈 → shadow(그림자)
+
+newDreamType은 null로 설정하고, dreamType에 기존 유형 key를 넣어.
 
 꿈 내용: "${dreamDescription}"
 
@@ -223,8 +234,10 @@ keywords는 꿈에서 핵심 상징물 3개. 반드시 명사형으로 (예: 비
             // 자동 저장
             if (user && onSaveDream) {
                 setTimeout(async () => {
-                    const savedId = await onSaveDream(resultData, false, selectedDreamDate);
+                    const savedId = await onSaveDream(resultData, true, selectedDreamDate);
                     if (savedId) {
+                        setSavedDreamField?.('id', savedId);
+                        setSavedDreamField?.('isPublic', true);
                         setToast('live', { type: 'save', message: '자동으로 저장되었어요!' });
                         setTimeout(() => setToast('live', null), 3000);
                     }
@@ -240,9 +253,9 @@ keywords는 꿈에서 핵심 상징물 3개. 반드시 명사형으로 (예: 비
         } finally {
             setLoading(false);
         }
-    }, [user, dreamTypes, generateSingleImage, onSaveDream, onNewDreamType, setToast, setDopaminePopup]);
+    }, [user, dreamTypes, generateSingleImage, onSaveDream, onNewDreamType, setToast, setDopaminePopup, setSavedDreamField]);
 
-    // 타로 리딩 생성
+    // 타로 리딩 생성 (4장 카드 시스템 + 스토리텔링)
     const generateTarotReading = useCallback(async (question, selectedCards) => {
         if (selectedCards.length !== 3 || !question.trim()) {
             setError('질문과 3장의 카드가 필요합니다');
@@ -260,71 +273,119 @@ keywords는 꿈에서 핵심 상징물 3개. 반드시 명사형으로 (예: 비
         setAnalysisPhase(1);
         setProgress('카드가 당신을 읽고 있어요...');
 
-        const [past, present, future] = selectedCards;
+        const [card1, card2, card3] = selectedCards;
 
         await runAnalysisAnimation(
-            getTarotMessages(question, past, present, future),
+            getTarotMessages(question, card1, card2, card3),
             setAnalysisPhase, setProgress, null, setDopaminePopup
         );
 
         try {
-            setAnalysisPhase(4);
-            setProgress('카드를 해석하는 중...');
+            // 6단계: API 호출 단계 (5개의 애니메이션 메시지 이후)
+            setAnalysisPhase(6);
+            setProgress('운명의 이야기를 엮는 중...');
+
+            // 78장 덱에서 4번째 결론 카드 랜덤 선택 (선택된 3장 제외)
+            const { TAROT_DECK } = await import('../utils/constants');
+            const remainingCards = TAROT_DECK.filter(c => !selectedCards.find(s => s.id === c.id));
+            const conclusionCard = remainingCards[Math.floor(Math.random() * remainingCards.length)];
 
             const tarotPrompt = `너는 30년 경력의 신비로운 타로 마스터다.
-카드를 보면 그 사람의 과거, 현재, 미래가 다 보인다.
+카드 리딩을 할 때 단순한 해석이 아니라 그 사람의 인생 이야기를 들려주듯이 깊고 감동적으로 풀어낸다.
 
 ## 핵심 원칙
-1. 구체적으로 해석해라.
-2. 카드의 상징을 절대 무시하지 마.
-3. 표면적 해석은 짧게, 진짜 의미는 소름끼칠 정도로 깊게.
-4. 마지막엔 반드시 행동 지침을 줘.
+1. 과거/현재/미래 프레임이 아닌, 4장의 카드가 하나의 이야기를 만든다.
+2. 질문자가 "나를 정말 이해하고 있구나"라고 느끼게 해라.
+3. 표면적 해석 X, 카드의 상징과 질문의 맥락을 연결해 깊은 통찰을 줘.
+4. 마치 오래된 친구가 진심으로 조언하듯 따뜻하지만 솔직하게.
+5. 리딩은 최소 2000자 이상으로 풍성하게.
+
+## 주제 분류
+- 연애/직장/금전/학업/건강/인간관계/미래/결정 중 하나 선택
 
 질문: "${question}"
 
-선택된 카드:
-1. 과거 - ${past.nameKo} (${past.name}): ${past.meaning}
-2. 현재 - ${present.nameKo} (${present.name}): ${present.meaning}
-3. 미래 - ${future.nameKo} (${future.name}): ${future.meaning}
+선택된 카드 (질문자가 직접 뽑음):
+1. ${card1.nameKo} (${card1.name}): ${card1.meaning}
+2. ${card2.nameKo} (${card2.name}): ${card2.meaning}
+3. ${card3.nameKo} (${card3.name}): ${card3.meaning}
 
-JSON만 반환:
+결론 카드 (운명이 선물한 카드):
+4. ${conclusionCard.nameKo} (${conclusionCard.name}): ${conclusionCard.meaning}
+
+## JSON 형식으로만 반환:
 {
-  "title": "제목 (4-8글자)",
-  "verdict": "핵심 한마디 (20자 이내)",
-  "rarity": "0.1~5.0 사이 숫자 (카드 조합의 희귀도)",
-  "keywords": [{"word": "핵심 키워드", "surface": "표면적 의미", "hidden": "숨겨진 의미"}],
-  "reading": {"past": "과거 해석 (80자)", "present": "현재 해석 (80자)", "future": "미래 해석 (80자)", "action": "행동 지침 (50자)"},
-  "cardMeaning": {"summary": "핵심 의미 (100자)", "detail": "상세 해석 (200자)", "advice": "조언 (80자)"},
-  "shareText": "공유용 한 줄 (30자)",
-  "images": {"past": "과거 카드 장면 - ${past.name} 카드의 신비로운 장면 (영어 40단어)", "present": "현재 카드 장면 - ${present.name} 카드의 신비로운 장면 (영어 40단어)", "future": "미래 카드 장면 - ${future.name} 카드의 신비로운 장면 (영어 40단어)"},
-  "luckyElements": {"color": "행운의 색", "number": "행운의 숫자", "day": "행운의 요일"}
-}
-keywords는 이 리딩의 핵심 상징 3개.`;
+  "title": "제목 (4-8글자, 이 리딩을 한마디로)",
+  "verdict": "핵심 메시지 (20자 이내, 가슴에 남는 한마디)",
+  "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
+  "topic": "주제",
+  "rarity": "0.1~5.0 (카드 조합의 특별함)",
+  "keywords": [
+    {"word": "주제 키워드", "surface": "표면 의미", "hidden": "숨은 의미"},
+    {"word": "핵심 상징1", "surface": "표면 의미", "hidden": "숨은 의미"},
+    {"word": "핵심 상징2", "surface": "표면 의미", "hidden": "숨은 의미"}
+  ],
+  "storyReading": {
+    "opening": "도입부 (150자 이상) - 질문자의 현재 상황을 읽어낸다. '당신은 지금...'으로 시작. 공감과 이해.",
+    "card1Analysis": "${card1.nameKo} 해석 (300자 이상) - 이 카드가 왜 당신에게 왔는지, 어떤 메시지를 담고 있는지 깊게.",
+    "card2Analysis": "${card2.nameKo} 해석 (300자 이상) - 첫 번째 카드와의 연결고리, 새로운 관점.",
+    "card3Analysis": "${card3.nameKo} 해석 (300자 이상) - 세 카드가 만드는 이야기의 절정.",
+    "conclusionCard": "${conclusionCard.nameKo} 해석 (300자 이상) - 운명이 선물한 결론 카드. '그런데 카드가 하나 더 나왔어요...' 느낌으로 극적 반전 또는 확인.",
+    "synthesis": "종합 메시지 (200자 이상) - 4장의 카드가 함께 말하는 것. 스토리의 결말.",
+    "actionAdvice": "구체적 행동 조언 (100자 이상) - 오늘/이번 주에 실제로 할 수 있는 것",
+    "warning": "주의할 점 (80자) - 피해야 할 것, 조심할 것",
+    "timing": "행운의 타이밍 (50자) - 언제, 어떤 상황에서 행동하면 좋을지"
+  },
+  "shortReading": "요약 (50자) - 운명의 비밀 열기 전 티저",
+  "shareText": "공유용 (30자)",
+  "images": {
+    "card1": "${card1.name} 카드의 신비로운 장면, mystical tarot imagery, deep purple and gold, ethereal glow (영어 45단어)",
+    "card2": "${card2.name} 카드의 신비로운 장면, mystical tarot imagery, cosmic energy, magical atmosphere (영어 45단어)",
+    "card3": "${card3.name} 카드의 신비로운 장면, mystical tarot imagery, celestial beauty, enchanting (영어 45단어)",
+    "conclusion": "${conclusionCard.name} 카드의 신비로운 장면, mystical tarot imagery, final revelation, golden light (영어 45단어)"
+  },
+  "luckyElements": {
+    "color": "행운의 색",
+    "number": "행운의 숫자",
+    "day": "행운의 요일",
+    "direction": "행운의 방향"
+  }
+}`;
 
-            const data = await callClaudeApi(tarotPrompt, 2000);
+            const data = await callClaudeApi(tarotPrompt, 4000);
 
-            // 이미지 생성
-            setAnalysisPhase(5);
-            setProgress('🎨 카드가 그림으로 피어나고 있어요...');
+            // 4장 이미지 생성 - 7단계 시작
+            setAnalysisPhase(7);
+            setProgress('🎨 첫 번째 카드가 그림으로 피어나고 있어요...');
+            const card1Image = await generateSingleImage(data.images.card1, 'tarot');
+            await new Promise(r => setTimeout(r, 400));
 
-            const pastImage = await generateSingleImage(data.images.past, 'tarot');
-            await new Promise(r => setTimeout(r, 500));
+            setProgress('🃏 두 번째 카드가 모습을 드러내요...');
+            const card2Image = await generateSingleImage(data.images.card2, 'tarot');
+            await new Promise(r => setTimeout(r, 400));
 
-            setProgress('🃏 현재의 카드가 펼쳐지고 있어요...');
-            const presentImage = await generateSingleImage(data.images.present, 'tarot');
-            await new Promise(r => setTimeout(r, 500));
+            setProgress('✨ 세 번째 카드가 빛나고 있어요...');
+            const card3Image = await generateSingleImage(data.images.card3, 'tarot');
+            await new Promise(r => setTimeout(r, 400));
 
-            setProgress('✨ 미래가 드러나고 있어요...');
-            const futureImage = await generateSingleImage(data.images.future, 'tarot');
+            setProgress('🌟 결론 카드가 운명처럼 나타나요...');
+            const conclusionImage = await generateSingleImage(data.images.conclusion, 'tarot');
 
-            setProgress('🌙 당신의 타로 리딩이 완성되었어요');
+            // 8단계: 완료
+            setAnalysisPhase(8);
+            setProgress('🔮 당신만의 타로 스토리가 완성되었어요');
 
             const tarotResultData = {
                 ...data,
-                cards: selectedCards,
-                pastImage,
-                presentImage,
-                futureImage,
+                cards: [...selectedCards, conclusionCard],
+                card1Image,
+                card2Image,
+                card3Image,
+                conclusionImage,
+                // 호환성을 위한 기존 필드
+                pastImage: card1Image,
+                presentImage: card2Image,
+                futureImage: card3Image,
                 question,
                 type: 'tarot'
             };
@@ -335,8 +396,10 @@ keywords는 이 리딩의 핵심 상징 3개.`;
             // 자동 저장
             if (user && onSaveTarot) {
                 setTimeout(async () => {
-                    const savedId = await onSaveTarot(tarotResultData, false);
+                    const savedId = await onSaveTarot(tarotResultData, true);
                     if (savedId) {
+                        setSavedDreamField?.('id', savedId);
+                        setSavedDreamField?.('isPublic', true);
                         setToast('live', { type: 'save', message: '타로 리딩이 저장되었어요!' });
                         setTimeout(() => setToast('live', null), 3000);
                     }
@@ -352,7 +415,7 @@ keywords는 이 리딩의 핵심 상징 3개.`;
         } finally {
             setLoading(false);
         }
-    }, [user, generateSingleImage, onSaveTarot, setToast, setDopaminePopup]);
+    }, [user, generateSingleImage, onSaveTarot, setToast, setDopaminePopup, setSavedDreamField]);
 
     // 운세 리딩 생성
     const generateFortuneReading = useCallback(async (fortuneType, fortuneTypes) => {
@@ -375,7 +438,8 @@ keywords는 이 리딩의 핵심 상징 3개.`;
         );
 
         try {
-            setAnalysisPhase(4);
+            // 분석 애니메이션 후 단계를 6으로 올림 (5개 메시지 완료 후 다음 단계)
+            setAnalysisPhase(6);
             setProgress('운세를 해석하는 중...');
 
             const fortunePrompt = `너는 30년 경력의 운세 전문가다.
@@ -439,8 +503,10 @@ keywords는 오늘 운세의 핵심 상징 3개.`;
             // 자동 저장
             if (user && onSaveFortune) {
                 setTimeout(async () => {
-                    const savedId = await onSaveFortune(fortuneResultData, false);
+                    const savedId = await onSaveFortune(fortuneResultData, true);
                     if (savedId) {
+                        setSavedDreamField?.('id', savedId);
+                        setSavedDreamField?.('isPublic', true);
                         setToast('live', { type: 'save', message: '운세가 저장되었어요!' });
                         setTimeout(() => setToast('live', null), 3000);
                     }
@@ -456,7 +522,7 @@ keywords는 오늘 운세의 핵심 상징 3개.`;
         } finally {
             setLoading(false);
         }
-    }, [user, generateSingleImage, onSaveFortune, setToast, setDopaminePopup]);
+    }, [user, generateSingleImage, onSaveFortune, setToast, setDopaminePopup, setSavedDreamField]);
 
     return {
         // 상태

@@ -1,0 +1,906 @@
+/* ========== 로얄 카드 결과 레이아웃 ========== */
+
+.royal-result {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+/* 메인 비주얼 */
+.royal-visual {
+    position: relative;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* 배경 블러 */
+.royal-backdrop {
+    position: absolute;
+    inset: -30px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px) brightness(0.3) saturate(1.2);
+    transform: scale(1.3);
+}
+
+/* 메인 카드 */
+.royal-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 2px solid rgba(200, 150, 255, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+        0 0 60px rgba(155, 89, 182, 0.2),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+}
+
+.royal-card.golden {
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow:
+        0 0 80px rgba(255, 215, 0, 0.4),
+        0 0 120px rgba(255, 140, 0, 0.2),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+    animation: goldenPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes goldenPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 80px rgba(255, 215, 0, 0.4),
+            0 0 120px rgba(255, 140, 0, 0.2),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow:
+            0 0 100px rgba(255, 215, 0, 0.6),
+            0 0 150px rgba(255, 140, 0, 0.3),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.royal-card.golden::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 4px,
+        rgba(255, 215, 0, 0.02) 4px,
+        rgba(255, 215, 0, 0.02) 8px
+    );
+    pointer-events: none;
+    z-index: 5;
+    border-radius: inherit;
+}
+
+/* 카드 프레임 장식 */
+.card-frame {
+    position: absolute;
+    inset: 8px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.frame-corner {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(200, 150, 255, 0.4);
+}
+
+.golden .frame-corner {
+    border-color: rgba(255, 215, 0, 0.6);
+    animation: cornerGlow 2s ease-in-out infinite;
+}
+
+@keyframes cornerGlow {
+    0%, 100% { border-color: rgba(255, 215, 0, 0.6); }
+    50% { border-color: rgba(255, 215, 0, 0.9); }
+}
+
+.frame-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+.frame-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+.frame-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+.frame-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+/* 이미지 */
+.royal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.royal-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #0a0a15 100%);
+    font-size: 5rem;
+}
+
+/* 그라데이션 */
+.royal-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.6) 30%,
+        rgba(0, 0, 0, 0.2) 60%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* 진행 바 */
+.royal-progress {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    z-index: 20;
+}
+
+.progress-segment {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.progress-segment.done {
+    background: linear-gradient(90deg, #9b59b6, #c896ff);
+}
+
+.progress-segment.active {
+    background: linear-gradient(90deg, #ff3366, #c896ff);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+/* 오버레이 */
+.royal-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* 카드 타이틀 영역 */
+.card-title-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.card-title-area.golden .card-roman,
+.card-title-area.golden .card-name-main {
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    animation: goldenTextGlow 2s ease-in-out infinite;
+}
+
+@keyframes goldenTextGlow {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 140, 0, 0.4);
+    }
+}
+
+.card-title-area.golden .card-roman {
+    font-size: 2.2rem;
+}
+
+.card-title-area.golden .card-emoji {
+    animation: emojiSpin 3s ease-in-out infinite;
+}
+
+@keyframes emojiSpin {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(5deg); }
+    50% { transform: scale(1.2) rotate(0deg); }
+    75% { transform: scale(1.1) rotate(-5deg); }
+}
+
+.card-roman {
+    font-family: 'Cinzel', 'Times New Roman', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #c896ff;
+    text-shadow: 0 0 15px rgba(200, 150, 255, 0.5);
+    letter-spacing: 0.1em;
+}
+
+.card-name-stack {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-name-main {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.05em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.card-name-sub {
+    font-size: 0.85rem;
+    color: rgba(200, 150, 255, 0.7);
+    font-style: italic;
+    letter-spacing: 0.1em;
+}
+
+.card-emoji {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 15px rgba(155, 89, 182, 0.5));
+}
+
+/* 결과 제목 */
+.result-title-area {
+    margin-top: 0.5rem;
+}
+
+.result-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(200, 150, 255, 0.5);
+    margin-bottom: 0.25rem;
+}
+
+.result-verdict {
+    font-size: 1rem;
+    color: var(--accent);
+    font-weight: 500;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* 리딩 텍스트 */
+.reading-area {
+    padding: 0.6rem 0.8rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    border-left: 2px solid rgba(200, 150, 255, 0.4);
+}
+
+.reading-area p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+/* 네비게이션 */
+.royal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(200, 150, 255, 0.3);
+    border-radius: 50%;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.royal-nav:hover {
+    background: rgba(155, 89, 182, 0.4);
+    border-color: #c896ff;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+}
+
+.royal-nav.prev { left: 12px; }
+.royal-nav.next { right: 12px; }
+
+/* 하단 컨텐츠 */
+.royal-content {
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* 종합 박스 */
+.synthesis-box {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(255, 51, 102, 0.05));
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 12px;
+}
+
+.synthesis-text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0 0 0.75rem 0;
+}
+
+.synthesis-advice {
+    font-size: 0.9rem;
+    color: var(--gold);
+    margin: 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* 키워드 */
+.keyword-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.keyword {
+    padding: 0.35rem 0.7rem;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.25);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #c896ff;
+}
+
+/* CTA 버튼 */
+.royal-cta {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--accent), #c44dff);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(255, 51, 102, 0.3);
+}
+
+.royal-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255, 51, 102, 0.45);
+}
+
+/* 저장 영역 */
+.save-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.saved-text {
+    color: #4ade80;
+}
+
+.visibility-btn {
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.link-btn {
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.saving-text {
+    color: var(--light-gray);
+}
+
+.login-btn {
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+/* 액션 버튼 */
+.action-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.action-btn {
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(200, 150, 255, 0.4);
+}
+
+/* 진행 토스트 */
+.progress-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    font-size: 0.85rem;
+    color: #fff;
+    z-index: 100;
+}
+
+.progress-toast .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* ========== 꿈 테마 (dream-theme) ========== */
+.royal-result.dream-theme .royal-card {
+    border-color: rgba(155, 89, 182, 0.5);
+    box-shadow:
+        0 0 60px rgba(155, 89, 182, 0.3),
+        0 0 100px rgba(108, 92, 231, 0.15),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+    animation: dreamResultPulse 3s ease-in-out infinite;
+}
+
+@keyframes dreamResultPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 60px rgba(155, 89, 182, 0.3),
+            0 0 100px rgba(108, 92, 231, 0.15),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+        border-color: rgba(155, 89, 182, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 80px rgba(155, 89, 182, 0.5),
+            0 0 130px rgba(108, 92, 231, 0.25),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+        border-color: rgba(200, 150, 255, 0.7);
+    }
+}
+
+.royal-result.dream-theme .royal-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 4px,
+        rgba(155, 89, 182, 0.02) 4px,
+        rgba(155, 89, 182, 0.02) 8px
+    );
+    pointer-events: none;
+    z-index: 5;
+    border-radius: inherit;
+}
+
+.royal-result.dream-theme .frame-corner {
+    border-color: rgba(200, 150, 255, 0.5);
+    animation: dreamCornerGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes dreamCornerGlow {
+    0%, 100% { border-color: rgba(200, 150, 255, 0.5); }
+    50% { border-color: rgba(200, 150, 255, 0.9); }
+}
+
+.royal-result.dream-theme .progress-segment.done {
+    background: linear-gradient(90deg, #9b59b6, #c896ff);
+}
+
+.royal-result.dream-theme .progress-segment.active {
+    background: linear-gradient(90deg, #ff3366, #c896ff);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.royal-result.dream-theme .card-roman {
+    color: #c896ff;
+    text-shadow: 0 0 15px rgba(200, 150, 255, 0.5);
+}
+
+.royal-result.dream-theme .royal-cta {
+    background: linear-gradient(135deg, #9b59b6, #ff3366);
+    box-shadow: 0 4px 20px rgba(155, 89, 182, 0.4);
+}
+
+.royal-result.dream-theme .royal-cta:hover {
+    box-shadow: 0 8px 30px rgba(155, 89, 182, 0.6);
+}
+
+/* ========== 타로 테마 (tarot-theme) ========== */
+.royal-result.tarot-theme .royal-card {
+    border-color: rgba(155, 89, 182, 0.5);
+    box-shadow:
+        0 0 60px rgba(155, 89, 182, 0.3),
+        0 0 100px rgba(142, 68, 173, 0.15),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+    animation: tarotResultPulse 3s ease-in-out infinite;
+}
+
+@keyframes tarotResultPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 60px rgba(155, 89, 182, 0.3),
+            0 0 100px rgba(142, 68, 173, 0.15),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+        border-color: rgba(155, 89, 182, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 80px rgba(155, 89, 182, 0.5),
+            0 0 130px rgba(255, 215, 0, 0.2),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+        border-color: rgba(200, 150, 255, 0.7);
+    }
+}
+
+.royal-result.tarot-theme .royal-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 4px,
+        rgba(155, 89, 182, 0.02) 4px,
+        rgba(155, 89, 182, 0.02) 8px
+    );
+    pointer-events: none;
+    z-index: 5;
+    border-radius: inherit;
+}
+
+.royal-result.tarot-theme .frame-corner {
+    border-color: rgba(200, 150, 255, 0.5);
+    animation: tarotCornerGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes tarotCornerGlow {
+    0%, 100% { border-color: rgba(200, 150, 255, 0.5); }
+    50% { border-color: rgba(212, 165, 255, 0.9); }
+}
+
+.royal-result.tarot-theme .progress-segment.done {
+    background: linear-gradient(90deg, #9b59b6, #d4a5ff);
+}
+
+.royal-result.tarot-theme .progress-segment.active {
+    background: linear-gradient(90deg, #9b59b6, #ffd700);
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+}
+
+.royal-result.tarot-theme .card-roman {
+    color: #d4a5ff;
+    text-shadow: 0 0 15px rgba(212, 165, 255, 0.5);
+}
+
+.royal-result.tarot-theme .royal-cta {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    box-shadow: 0 4px 20px rgba(155, 89, 182, 0.4);
+}
+
+.royal-result.tarot-theme .royal-cta:hover {
+    box-shadow: 0 8px 30px rgba(155, 89, 182, 0.6);
+}
+
+/* ========== 운세 테마 (fortune-theme) ========== */
+.royal-result.fortune-theme .royal-card {
+    border-color: rgba(26, 188, 156, 0.5);
+    box-shadow:
+        0 0 60px rgba(26, 188, 156, 0.3),
+        0 0 100px rgba(0, 206, 201, 0.15),
+        inset 0 0 100px rgba(0, 0, 0, 0.3);
+    animation: fortuneResultPulse 3s ease-in-out infinite;
+}
+
+@keyframes fortuneResultPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 60px rgba(26, 188, 156, 0.3),
+            0 0 100px rgba(0, 206, 201, 0.15),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+        border-color: rgba(26, 188, 156, 0.5);
+    }
+    50% {
+        box-shadow:
+            0 0 80px rgba(26, 188, 156, 0.5),
+            0 0 130px rgba(85, 239, 196, 0.25),
+            inset 0 0 100px rgba(0, 0, 0, 0.3);
+        border-color: rgba(85, 239, 196, 0.7);
+    }
+}
+
+.royal-result.fortune-theme .royal-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 4px,
+        rgba(26, 188, 156, 0.02) 4px,
+        rgba(26, 188, 156, 0.02) 8px
+    );
+    pointer-events: none;
+    z-index: 5;
+    border-radius: inherit;
+}
+
+.royal-result.fortune-theme .frame-corner {
+    border-color: rgba(26, 188, 156, 0.5);
+    animation: fortuneCornerGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes fortuneCornerGlow {
+    0%, 100% { border-color: rgba(26, 188, 156, 0.5); }
+    50% { border-color: rgba(85, 239, 196, 0.9); }
+}
+
+.royal-result.fortune-theme .progress-segment.done {
+    background: linear-gradient(90deg, #1abc9c, #55efc4);
+}
+
+.royal-result.fortune-theme .progress-segment.active {
+    background: linear-gradient(90deg, #1abc9c, #00cec9);
+    box-shadow: 0 0 10px rgba(26, 188, 156, 0.5);
+}
+
+.royal-result.fortune-theme .card-roman {
+    color: #55efc4;
+    text-shadow: 0 0 15px rgba(85, 239, 196, 0.5);
+}
+
+.royal-result.fortune-theme .card-name-sub {
+    color: rgba(85, 239, 196, 0.7);
+}
+
+.royal-result.fortune-theme .royal-nav:hover {
+    background: rgba(26, 188, 156, 0.4);
+    border-color: #55efc4;
+    box-shadow: 0 0 20px rgba(26, 188, 156, 0.5);
+}
+
+.royal-result.fortune-theme .synthesis-box {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(0, 206, 201, 0.05));
+    border-color: rgba(26, 188, 156, 0.2);
+}
+
+.royal-result.fortune-theme .keyword {
+    background: rgba(26, 188, 156, 0.1);
+    border-color: rgba(26, 188, 156, 0.25);
+    color: #55efc4;
+}
+
+.royal-result.fortune-theme .royal-cta {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+    box-shadow: 0 4px 20px rgba(26, 188, 156, 0.4);
+}
+
+.royal-result.fortune-theme .royal-cta:hover {
+    box-shadow: 0 8px 30px rgba(26, 188, 156, 0.6);
+}
+
+.royal-result.fortune-theme .reading-area {
+    border-left-color: rgba(26, 188, 156, 0.5);
+}
+
+.royal-result.fortune-theme .result-verdict {
+    color: #55efc4;
+}
+
+/* ========== 공통 상세 해석 스타일 (꿈 스타일 통일) ========== */
+
+/* 해석 섹션 제목 - 꿈 스타일 */
+.royal-content .section-title,
+.synthesis-box h3,
+.synthesis-box .section-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 1.5rem 0 0.75rem 0;
+    padding: 0.6rem 1rem;
+    padding-left: 0.75rem;
+    background: linear-gradient(90deg, rgba(155, 89, 182, 0.2), transparent);
+    border-left: 3px solid #c896ff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    position: relative;
+}
+
+.royal-result.dream-theme .section-title,
+.royal-result.dream-theme .synthesis-box h3 {
+    background: linear-gradient(90deg, rgba(155, 89, 182, 0.2), transparent);
+    border-left-color: #c896ff;
+}
+
+.royal-result.tarot-theme .section-title,
+.royal-result.tarot-theme .synthesis-box h3 {
+    background: linear-gradient(90deg, rgba(155, 89, 182, 0.2), transparent);
+    border-left-color: #d4a5ff;
+}
+
+.royal-result.fortune-theme .section-title,
+.royal-result.fortune-theme .synthesis-box h3 {
+    background: linear-gradient(90deg, rgba(26, 188, 156, 0.2), transparent);
+    border-left-color: #55efc4;
+}
+
+/* 해석 본문 텍스트 */
+.synthesis-text,
+.reading-area p,
+.royal-content .interpretation-text {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.9;
+    margin: 0;
+    padding: 0 0.5rem;
+}
+
+/* 조언/액션 박스 */
+.synthesis-advice,
+.royal-content .advice-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 180, 0, 0.05));
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    font-size: 0.9rem;
+    color: var(--gold);
+    line-height: 1.6;
+}
+
+.royal-result.fortune-theme .synthesis-advice {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(0, 206, 201, 0.08));
+    border-left-color: #55efc4;
+    color: #55efc4;
+}
+
+/* 키워드 태그 - 통일된 스타일 */
+.keyword-row .keyword,
+.royal-content .tag {
+    padding: 0.4rem 0.8rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(138, 43, 226, 0.1));
+    border: 1px solid rgba(155, 89, 182, 0.35);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #c896ff;
+    transition: all 0.2s ease;
+}
+
+.keyword-row .keyword:hover,
+.royal-content .tag:hover {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.25), rgba(138, 43, 226, 0.15));
+    transform: translateY(-1px);
+}
+
+.royal-result.fortune-theme .keyword-row .keyword {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(0, 206, 201, 0.1));
+    border-color: rgba(26, 188, 156, 0.35);
+    color: #55efc4;
+}
+
+/* 구분선 */
+.royal-content .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(155, 89, 182, 0.3), transparent);
+    margin: 1.5rem 0;
+}
+
+.royal-result.fortune-theme .royal-content .divider {
+    background: linear-gradient(90deg, transparent, rgba(26, 188, 156, 0.3), transparent);
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+    .royal-card {
+        border-radius: 12px;
+    }
+
+    .card-frame {
+        inset: 6px;
+    }
+
+    .frame-corner {
+        width: 20px;
+        height: 20px;
+    }
+
+    .royal-overlay {
+        padding: 1rem;
+    }
+
+    .card-roman {
+        font-size: 1.5rem;
+    }
+
+    .card-name-main {
+        font-size: 1.3rem;
+    }
+
+    .card-emoji {
+        font-size: 2rem;
+    }
+
+    .result-title {
+        font-size: 1.4rem;
+    }
+
+    .reading-area {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .reading-area p {
+        font-size: 0.85rem;
+    }
+
+    .royal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+
+    .royal-nav.prev { left: 8px; }
+    .royal-nav.next { right: 8px; }
+}

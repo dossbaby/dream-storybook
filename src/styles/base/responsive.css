@@ -82,9 +82,28 @@
     }
 }
 
-/* 터치 디바이스에서 네비 숨김 */
+/* 터치 디바이스에서 네비 - 축소하여 표시 */
 @media (hover: none) {
     .card-nav {
-        display: none;
+        display: flex;
+        opacity: 0.5;
+    }
+
+    .card-nav .nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+    }
+
+    .card-nav .nav-btn:active {
+        opacity: 1;
+        transform: scale(0.95);
+        background: rgba(155, 89, 182, 0.6);
+    }
+
+    .card-nav .nav-btn:disabled {
+        opacity: 0.2;
     }
 }

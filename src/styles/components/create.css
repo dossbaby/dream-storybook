@@ -7,6 +7,23 @@
     gap: 1rem;
 }
 
+/* 타로 모드 - 넓게 설정 */
+.create-card.tarot-theme {
+    max-width: 900px; /* 타로 모드 전체 넓게 */
+    overflow: visible; /* 카드가 잘리지 않게 */
+}
+
+/* 타로 질문 입력창은 중앙 정렬하고 좁게 */
+.create-card.tarot-theme .tarot-question-header,
+.create-card.tarot-theme .dream-input,
+.create-card.tarot-theme .submit-btn,
+.create-card.tarot-theme .error {
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
 .create-title {
     font-size: 1.25rem;
     font-weight: 300;
@@ -43,6 +60,51 @@
 
 .dream-input::placeholder {
     color: #444;
+}
+
+/* 로딩 중 i-beam 커서 제거 */
+.dream-input:disabled {
+    cursor: default;
+    user-select: none;
+    caret-color: transparent;
+}
+
+/* 꿈 입력 래퍼 */
+.dream-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.dream-input-wrapper .dream-input {
+    padding-bottom: 2.5rem;
+}
+
+.input-footer {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.char-count {
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: color 0.2s;
+}
+
+.char-count.warning {
+    color: rgba(255, 150, 100, 0.8);
+}
+
+.char-count.good {
+    color: rgba(100, 255, 150, 0.8);
+}
+
+.char-hint {
+    font-size: 0.7rem;
+    opacity: 0.8;
 }
 
 /* 키워드 힌트 */
@@ -165,11 +227,42 @@
 .submit-btn:hover:not(:disabled) {
     background: var(--accent);
     color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
 }
 
 .submit-btn:disabled {
-    opacity: 0.3;
+    opacity: 0.4;
     cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--muted);
+    transform: none;
+    box-shadow: none;
+}
+
+/* 로딩 중 버튼 */
+.submit-btn.loading {
+    position: relative;
+    pointer-events: none;
+    color: transparent;
+}
+
+.submit-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: btnSpin 0.8s linear infinite;
+}
+
+@keyframes btnSpin {
+    to { transform: rotate(360deg); }
 }
 
 /* ========== 꿈 날짜 선택 ========== */
@@ -224,6 +317,7 @@
     align-items: center;
     gap: 1rem;
     margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
     padding: 1.25rem;
     background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(155, 89, 182, 0.1));
     border: 1px solid rgba(26, 188, 156, 0.3);

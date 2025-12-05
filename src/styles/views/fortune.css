@@ -256,3 +256,120 @@
 .fortune-restart {
     background: linear-gradient(135deg, var(--teal), #4169e1);
 }
+
+/* ================================
+   운세 입력 뷰
+   ================================ */
+
+.fortune-theme {
+    --accent-color: #1abc9c;
+}
+
+.fortune-title {
+    background: linear-gradient(135deg, #1abc9c, #55efc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 운세 타입 선택 버튼 */
+.fortune-type-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+}
+
+.fortune-type-btn {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(10, 0, 20, 0.95), rgba(20, 10, 40, 0.9));
+    border: 2px solid rgba(26, 188, 156, 0.3);
+    border-radius: 0;
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+}
+
+.fortune-type-btn:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(0, 206, 201, 0.15));
+    border-color: rgba(26, 188, 156, 0.5);
+    transform: translateY(-2px);
+}
+
+.fortune-type-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+    border-color: #55efc4;
+    box-shadow:
+        0 0 20px rgba(26, 188, 156, 0.5),
+        inset 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+/* 생년월일 입력 */
+.fortune-birthdate {
+    margin: 1.5rem 0;
+    text-align: center;
+}
+
+.fortune-birthdate label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.birthdate-input {
+    padding: 0.75rem 1.25rem;
+    background: rgba(26, 188, 156, 0.1);
+    border: 2px solid rgba(26, 188, 156, 0.3);
+    border-radius: 0;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    color: var(--light);
+    font-size: 1rem;
+    text-align: center;
+    transition: all 0.25s;
+}
+
+.birthdate-input:focus {
+    outline: none;
+    border-color: #1abc9c;
+    box-shadow: 0 0 15px rgba(26, 188, 156, 0.3);
+}
+
+.birthdate-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* 운세 제출 버튼 */
+.fortune-submit {
+    background: linear-gradient(135deg, #1abc9c, #00cec9) !important;
+    border-radius: 0 !important;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.fortune-submit:hover:not(:disabled) {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 0 30px rgba(26, 188, 156, 0.5) !important;
+}
+
+.fortune-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* 운세 분석 원 */
+.fortune-circle {
+    background: radial-gradient(circle at center, rgba(26, 188, 156, 0.3), transparent 70%) !important;
+}
+
+.fortune-circle .analysis-ring.active {
+    border-color: var(--phase-color, #1abc9c);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--phase-color, #1abc9c) 50%, transparent);
+}
