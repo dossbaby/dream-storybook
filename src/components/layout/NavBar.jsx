@@ -53,11 +53,10 @@ const NavBar = ({
                         key={m.id}
                         className={`mode-tab ${mode === m.id ? 'active' : ''}`}
                         onClick={() => handleModeSelect(m.id)}
-                        style={{ '--mode-color': m.color }}
+                        data-mode={m.id}
                     >
                         <span className="mode-emoji">{m.emoji}</span>
                         <span className="mode-label">{m.label}</span>
-                        {mode === m.id && <span className="mode-indicator"></span>}
                     </button>
                 ))}
             </div>
