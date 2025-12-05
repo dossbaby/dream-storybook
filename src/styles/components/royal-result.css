@@ -1,4 +1,4 @@
-/* ========== 로얄 카드 결과 레이아웃 ========== */
+/* ========== 로얄 카드 결과 레이아웃 (페르소나 4/5 스타일) ========== */
 
 .royal-result {
     width: 100%;
@@ -10,12 +10,13 @@
     padding-bottom: 2rem;
 }
 
-/* 메인 비주얼 */
+/* 메인 비주얼 - 페르소나 스타일 각진 모서리 */
 .royal-visual {
     position: relative;
     width: 100%;
-    border-radius: 20px;
-    overflow: hidden;
+    border-radius: 0;
+    overflow: visible;
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
 }
 
 /* 배경 블러 */
@@ -28,57 +29,73 @@
     transform: scale(1.3);
 }
 
-/* 메인 카드 */
+/* 메인 카드 - 페르소나 스타일 */
 .royal-card {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
-    border: 2px solid rgba(200, 150, 255, 0.3);
-    border-radius: 16px;
+    border: 2px solid transparent;
+    border-radius: 0;
     overflow: hidden;
+    background: linear-gradient(var(--dark, #0a0a15), var(--dark, #0a0a15)) padding-box,
+                linear-gradient(135deg, rgba(255, 0, 85, 0.5), rgba(155, 89, 182, 0.5), rgba(255, 215, 0, 0.3)) border-box;
+    clip-path: polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px);
     box-shadow:
-        0 0 60px rgba(155, 89, 182, 0.2),
-        inset 0 0 100px rgba(0, 0, 0, 0.3);
+        0 0 60px rgba(255, 0, 85, 0.15),
+        0 0 100px rgba(155, 89, 182, 0.1),
+        inset 0 0 80px rgba(0, 0, 0, 0.4);
 }
 
-.royal-card.golden {
-    border-color: rgba(255, 215, 0, 0.6);
-    box-shadow:
-        0 0 80px rgba(255, 215, 0, 0.4),
-        0 0 120px rgba(255, 140, 0, 0.2),
-        inset 0 0 100px rgba(0, 0, 0, 0.3);
-    animation: goldenPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes goldenPulse {
-    0%, 100% {
-        box-shadow:
-            0 0 80px rgba(255, 215, 0, 0.4),
-            0 0 120px rgba(255, 140, 0, 0.2),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-    }
-    50% {
-        box-shadow:
-            0 0 100px rgba(255, 215, 0, 0.6),
-            0 0 150px rgba(255, 140, 0, 0.3),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-    }
-}
-
-.royal-card.golden::before {
+/* 페르소나 스타일 대각선 패턴 */
+.royal-card::after {
     content: '';
     position: absolute;
     inset: 0;
     background: repeating-linear-gradient(
         -45deg,
         transparent,
-        transparent 4px,
-        rgba(255, 215, 0, 0.02) 4px,
-        rgba(255, 215, 0, 0.02) 8px
+        transparent 3px,
+        rgba(255, 0, 85, 0.015) 3px,
+        rgba(255, 0, 85, 0.015) 6px
     );
     pointer-events: none;
-    z-index: 5;
-    border-radius: inherit;
+    z-index: 3;
+}
+
+/* 결론 카드 - 골든 페르소나 스타일 */
+.royal-card.golden {
+    background: linear-gradient(var(--dark, #0a0a15), var(--dark, #0a0a15)) padding-box,
+                linear-gradient(135deg, rgba(255, 215, 0, 0.7), rgba(255, 140, 0, 0.5), rgba(255, 215, 0, 0.7)) border-box;
+    box-shadow:
+        0 0 80px rgba(255, 215, 0, 0.3),
+        0 0 120px rgba(255, 140, 0, 0.15),
+        inset 0 0 80px rgba(0, 0, 0, 0.3);
+    animation: goldenPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes goldenPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 80px rgba(255, 215, 0, 0.3),
+            0 0 120px rgba(255, 140, 0, 0.15),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow:
+            0 0 100px rgba(255, 215, 0, 0.5),
+            0 0 150px rgba(255, 140, 0, 0.25),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.royal-card.golden::after {
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 3px,
+        rgba(255, 215, 0, 0.02) 3px,
+        rgba(255, 215, 0, 0.02) 6px
+    );
 }
 
 /* 카드 프레임 장식 */
@@ -490,47 +507,40 @@
     50% { opacity: 0.5; transform: scale(0.8); }
 }
 
-/* ========== 꿈 테마 (dream-theme) ========== */
+/* ========== 꿈 테마 (dream-theme) - 페르소나 스타일 ========== */
 .royal-result.dream-theme .royal-card {
-    border-color: rgba(155, 89, 182, 0.5);
+    background: linear-gradient(var(--dark, #0a0a15), var(--dark, #0a0a15)) padding-box,
+                linear-gradient(135deg, rgba(155, 89, 182, 0.6), rgba(108, 92, 231, 0.5), rgba(255, 51, 102, 0.4)) border-box;
     box-shadow:
-        0 0 60px rgba(155, 89, 182, 0.3),
-        0 0 100px rgba(108, 92, 231, 0.15),
-        inset 0 0 100px rgba(0, 0, 0, 0.3);
+        0 0 60px rgba(155, 89, 182, 0.25),
+        0 0 100px rgba(108, 92, 231, 0.1),
+        inset 0 0 80px rgba(0, 0, 0, 0.3);
     animation: dreamResultPulse 3s ease-in-out infinite;
 }
 
 @keyframes dreamResultPulse {
     0%, 100% {
         box-shadow:
-            0 0 60px rgba(155, 89, 182, 0.3),
-            0 0 100px rgba(108, 92, 231, 0.15),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-        border-color: rgba(155, 89, 182, 0.5);
+            0 0 60px rgba(155, 89, 182, 0.25),
+            0 0 100px rgba(108, 92, 231, 0.1),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
     }
     50% {
         box-shadow:
-            0 0 80px rgba(155, 89, 182, 0.5),
-            0 0 130px rgba(108, 92, 231, 0.25),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-        border-color: rgba(200, 150, 255, 0.7);
+            0 0 80px rgba(155, 89, 182, 0.4),
+            0 0 130px rgba(108, 92, 231, 0.2),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
     }
 }
 
-.royal-result.dream-theme .royal-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+.royal-result.dream-theme .royal-card::after {
     background: repeating-linear-gradient(
         -45deg,
         transparent,
-        transparent 4px,
-        rgba(155, 89, 182, 0.02) 4px,
-        rgba(155, 89, 182, 0.02) 8px
+        transparent 3px,
+        rgba(155, 89, 182, 0.02) 3px,
+        rgba(155, 89, 182, 0.02) 6px
     );
-    pointer-events: none;
-    z-index: 5;
-    border-radius: inherit;
 }
 
 .royal-result.dream-theme .frame-corner {
@@ -566,47 +576,40 @@
     box-shadow: 0 8px 30px rgba(155, 89, 182, 0.6);
 }
 
-/* ========== 타로 테마 (tarot-theme) ========== */
+/* ========== 타로 테마 (tarot-theme) - 페르소나 스타일 ========== */
 .royal-result.tarot-theme .royal-card {
-    border-color: rgba(155, 89, 182, 0.5);
+    background: linear-gradient(var(--dark, #0a0a15), var(--dark, #0a0a15)) padding-box,
+                linear-gradient(135deg, rgba(155, 89, 182, 0.6), rgba(255, 215, 0, 0.4), rgba(142, 68, 173, 0.5)) border-box;
     box-shadow:
-        0 0 60px rgba(155, 89, 182, 0.3),
-        0 0 100px rgba(142, 68, 173, 0.15),
-        inset 0 0 100px rgba(0, 0, 0, 0.3);
+        0 0 60px rgba(155, 89, 182, 0.25),
+        0 0 100px rgba(255, 215, 0, 0.1),
+        inset 0 0 80px rgba(0, 0, 0, 0.3);
     animation: tarotResultPulse 3s ease-in-out infinite;
 }
 
 @keyframes tarotResultPulse {
     0%, 100% {
         box-shadow:
-            0 0 60px rgba(155, 89, 182, 0.3),
-            0 0 100px rgba(142, 68, 173, 0.15),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-        border-color: rgba(155, 89, 182, 0.5);
+            0 0 60px rgba(155, 89, 182, 0.25),
+            0 0 100px rgba(255, 215, 0, 0.1),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
     }
     50% {
         box-shadow:
-            0 0 80px rgba(155, 89, 182, 0.5),
+            0 0 80px rgba(155, 89, 182, 0.4),
             0 0 130px rgba(255, 215, 0, 0.2),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-        border-color: rgba(200, 150, 255, 0.7);
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
     }
 }
 
-.royal-result.tarot-theme .royal-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+.royal-result.tarot-theme .royal-card::after {
     background: repeating-linear-gradient(
         -45deg,
         transparent,
-        transparent 4px,
-        rgba(155, 89, 182, 0.02) 4px,
-        rgba(155, 89, 182, 0.02) 8px
+        transparent 3px,
+        rgba(155, 89, 182, 0.02) 3px,
+        rgba(155, 89, 182, 0.02) 6px
     );
-    pointer-events: none;
-    z-index: 5;
-    border-radius: inherit;
 }
 
 .royal-result.tarot-theme .frame-corner {
@@ -642,47 +645,40 @@
     box-shadow: 0 8px 30px rgba(155, 89, 182, 0.6);
 }
 
-/* ========== 운세 테마 (fortune-theme) ========== */
+/* ========== 운세 테마 (fortune-theme) - 페르소나 스타일 ========== */
 .royal-result.fortune-theme .royal-card {
-    border-color: rgba(26, 188, 156, 0.5);
+    background: linear-gradient(var(--dark, #0a0a15), var(--dark, #0a0a15)) padding-box,
+                linear-gradient(135deg, rgba(26, 188, 156, 0.6), rgba(0, 206, 201, 0.5), rgba(85, 239, 196, 0.4)) border-box;
     box-shadow:
-        0 0 60px rgba(26, 188, 156, 0.3),
-        0 0 100px rgba(0, 206, 201, 0.15),
-        inset 0 0 100px rgba(0, 0, 0, 0.3);
+        0 0 60px rgba(26, 188, 156, 0.25),
+        0 0 100px rgba(0, 206, 201, 0.1),
+        inset 0 0 80px rgba(0, 0, 0, 0.3);
     animation: fortuneResultPulse 3s ease-in-out infinite;
 }
 
 @keyframes fortuneResultPulse {
     0%, 100% {
         box-shadow:
-            0 0 60px rgba(26, 188, 156, 0.3),
-            0 0 100px rgba(0, 206, 201, 0.15),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-        border-color: rgba(26, 188, 156, 0.5);
+            0 0 60px rgba(26, 188, 156, 0.25),
+            0 0 100px rgba(0, 206, 201, 0.1),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
     }
     50% {
         box-shadow:
-            0 0 80px rgba(26, 188, 156, 0.5),
-            0 0 130px rgba(85, 239, 196, 0.25),
-            inset 0 0 100px rgba(0, 0, 0, 0.3);
-        border-color: rgba(85, 239, 196, 0.7);
+            0 0 80px rgba(26, 188, 156, 0.4),
+            0 0 130px rgba(85, 239, 196, 0.2),
+            inset 0 0 80px rgba(0, 0, 0, 0.3);
     }
 }
 
-.royal-result.fortune-theme .royal-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+.royal-result.fortune-theme .royal-card::after {
     background: repeating-linear-gradient(
         -45deg,
         transparent,
-        transparent 4px,
-        rgba(26, 188, 156, 0.02) 4px,
-        rgba(26, 188, 156, 0.02) 8px
+        transparent 3px,
+        rgba(26, 188, 156, 0.02) 3px,
+        rgba(26, 188, 156, 0.02) 6px
     );
-    pointer-events: none;
-    z-index: 5;
-    border-radius: inherit;
 }
 
 .royal-result.fortune-theme .frame-corner {
@@ -854,8 +850,13 @@
 
 /* 반응형 */
 @media (max-width: 640px) {
+    .royal-visual {
+        clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+    }
+
     .royal-card {
-        border-radius: 12px;
+        border-radius: 0;
+        clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
     }
 
     .card-frame {
