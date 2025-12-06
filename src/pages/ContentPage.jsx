@@ -221,7 +221,7 @@ const ContentPage = ({ type }) => {
                     <Link to="/">홈</Link>
                     <Link to="/dreams">꿈해몽</Link>
                     <Link to="/tarots">타로</Link>
-                    <Link to="/fortunes">운세</Link>
+                    <Link to="/sajus">사주</Link>
                 </nav>
             </footer>
         </div>
@@ -269,23 +269,23 @@ const renderImageSection = (content, type) => {
                 </section>
             );
 
-        case 'fortune':
+        case 'saju':
             return (
-                <section className="time-section">
-                    <h2>시간대별 운세</h2>
-                    <div className="time-grid">
-                        {['morning', 'afternoon', 'evening'].map((time, index) => (
-                            <div key={time} className={`time-item ${time}`}>
-                                {content[`${time}Image`] && (
+                <section className="sections-grid">
+                    <h2>사주 분석</h2>
+                    <div className="sections-container">
+                        {['section1', 'section2', 'section3'].map((section, index) => (
+                            <div key={section} className={`section-item ${section}`}>
+                                {content[`${section}Image`] && (
                                     <img
-                                        src={content[`${time}Image`]}
-                                        alt={['오전', '오후', '저녁'][index]}
-                                        className="time-image"
+                                        src={content[`${section}Image`]}
+                                        alt={content.sections?.[section]?.category || `섹션 ${index + 1}`}
+                                        className="section-image"
                                         loading="lazy"
                                     />
                                 )}
-                                <h3>{['오전', '오후', '저녁'][index]}</h3>
-                                <p>{content.reading?.[time] || content.fortuneMeaning?.[time]}</p>
+                                <h3>{content.sections?.[section]?.icon} {content.sections?.[section]?.category}</h3>
+                                <p>{content.sections?.[section]?.analysis}</p>
                             </div>
                         ))}
                     </div>
@@ -379,36 +379,40 @@ const renderMainContent = (content, type) => {
                 </>
             );
 
-        case 'fortune':
+        case 'saju':
             return (
                 <>
-                    {/* 행운 요소 */}
-                    {content.luckyElements && (
-                        <section className="lucky-section">
-                            <h2>오늘의 행운</h2>
-                            <div className="lucky-grid">
-                                {content.luckyElements.color && (
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">🎨</span>
-                                        <span className="lucky-label">행운의 색</span>
-                                        <span className="lucky-value">{content.luckyElements.color}</span>
-                                    </div>
-                                )}
-                                {content.luckyElements.number && (
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">🔢</span>
-                                        <span className="lucky-label">행운의 숫자</span>
-                                        <span className="lucky-value">{content.luckyElements.number}</span>
-                                    </div>
-                                )}
-                                {content.luckyElements.item && (
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">🍀</span>
-                                        <span className="lucky-label">행운의 아이템</span>
-                                        <span className="lucky-value">{content.luckyElements.item}</span>
+                    {/* 사주 정보 */}
+                    {content.sajuInfo && (
+                        <section className="saju-info-section">
+                            <h2>사주팔자</h2>
+                            <div className="saju-pillars">
+                                <div className="pillar">
+                                    <span className="pillar-label">년주</span>
+                                    <span className="pillar-value">{content.sajuInfo.yearPillar}</span>
+                                </div>
+                                <div className="pillar">
+                                    <span className="pillar-label">월주</span>
+                                    <span className="pillar-value">{content.sajuInfo.monthPillar}</span>
+                                </div>
+                                <div className="pillar">
+                                    <span className="pillar-label">일주</span>
+                                    <span className="pillar-value">{content.sajuInfo.dayPillar}</span>
+                                </div>
+                                {content.sajuInfo.hourPillar && (
+                                    <div className="pillar">
+                                        <span className="pillar-label">시주</span>
+                                        <span className="pillar-value">{content.sajuInfo.hourPillar}</span>
                                     </div>
                                 )}
                             </div>
+                        </section>
+                    )}
+                    {/* 종합 분석 */}
+                    {content.synthesisAnalysis && (
+                        <section className="synthesis-section">
+                            <h2>종합 분석</h2>
+                            <p>{content.synthesisAnalysis}</p>
                         </section>
                     )}
                 </>

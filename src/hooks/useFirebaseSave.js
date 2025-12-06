@@ -95,41 +95,42 @@ export const useFirebaseSave = (user, userNickname, callbacks = {}) => {
         }
     };
 
-    // 운세 저장
-    const saveFortune = async (fortuneData, isPublic) => {
-        if (!user || !fortuneData) return null;
+    // 사주 저장
+    const saveSaju = async (sajuData, isPublic) => {
+        if (!user || !sajuData) return null;
         try {
-            const [morningImageBase64, afternoonImageBase64, eveningImageBase64] = await Promise.all([
-                compressImage(fortuneData.morningImage, 800, 0.85),
-                compressImage(fortuneData.afternoonImage, 700, 0.8),
-                compressImage(fortuneData.eveningImage, 700, 0.8)
+            const [section1ImageBase64, section2ImageBase64, section3ImageBase64] = await Promise.all([
+                compressImage(sajuData.section1Image, 800, 0.85),
+                compressImage(sajuData.section2Image, 700, 0.8),
+                compressImage(sajuData.section3Image, 700, 0.8)
             ]);
 
             const displayName = userNickname || user.displayName || '익명';
 
-            const docRef = await addDoc(collection(db, 'fortunes'), {
+            const docRef = await addDoc(collection(db, 'sajus'), {
                 userId: user.uid, userName: displayName, userPhoto: user.photoURL,
-                fortuneType: fortuneData.fortuneType, typeName: fortuneData.typeName,
-                title: fortuneData.title, verdict: fortuneData.verdict,
-                rarity: fortuneData.rarity, score: fortuneData.score, keywords: fortuneData.keywords,
-                reading: fortuneData.reading, fortuneMeaning: fortuneData.fortuneMeaning,
-                shareText: fortuneData.shareText, luckyElements: fortuneData.luckyElements,
-                morningImage: morningImageBase64,
-                afternoonImage: afternoonImageBase64,
-                eveningImage: eveningImageBase64,
+                title: sajuData.title, verdict: sajuData.verdict,
+                rarity: sajuData.rarity, keywords: sajuData.keywords,
+                sajuInfo: sajuData.sajuInfo, sections: sajuData.sections,
+                synthesisAnalysis: sajuData.synthesisAnalysis,
+                shareText: sajuData.shareText, jenny: sajuData.jenny,
+                doList: sajuData.doList, dontList: sajuData.dontList,
+                section1Image: section1ImageBase64,
+                section2Image: section2ImageBase64,
+                section3Image: section3ImageBase64,
                 isPublic, likes: [], likeCount: 0, commentCount: 0,
                 createdAt: Timestamp.now(),
-                type: 'fortune'
+                type: 'saju'
             });
 
             // 저장 성공 콜백 호출
             if (onFortuneSaved) onFortuneSaved(docRef.id);
             return docRef.id;
         } catch (err) {
-            console.error('운세 저장 실패:', err);
+            console.error('사주 저장 실패:', err);
             return null;
         }
     };
 
-    return { saveDream, saveTarot, saveFortune };
+    return { saveDream, saveTarot, saveSaju };
 };

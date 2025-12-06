@@ -536,17 +536,6 @@ const TarotResultView = ({
                 </div>
                 )}
 
-                {/* 하단 버튼들 - 모든 카드 오픈 후에만 표시 */}
-                {allCardsFlipped && (
-                    <div className="modal-actions fade-in-up">
-                        <button className="action-btn secondary" onClick={onBack}>
-                            ← 뒤로가기
-                        </button>
-                        <button className="action-btn primary" onClick={onRestart}>
-                            🃏 다른 질문하기
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );

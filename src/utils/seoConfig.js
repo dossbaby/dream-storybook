@@ -31,18 +31,18 @@ export const CONTENT_TYPES = {
         defaultImage: '/images/tarot-default.jpg',
         seoKeywords: ['타로카드', '타로점', '타로운세', '타로리딩'],
     },
-    fortune: {
-        id: 'fortune',
-        name: '운세',
-        nameEn: 'Fortune',
-        collection: 'fortunes',
-        urlPath: 'fortune',
+    saju: {
+        id: 'saju',
+        name: '사주',
+        nameEn: 'Saju',
+        collection: 'sajus',
+        urlPath: 'saju',
         icon: '✨',
         color: '#1abc9c',
         gradientFrom: 'rgba(26, 188, 156, 0.3)',
         gradientTo: 'rgba(46, 204, 113, 0.3)',
-        defaultImage: '/images/fortune-default.jpg',
-        seoKeywords: ['오늘의운세', '운세보기', '무료운세', '데일리운세'],
+        defaultImage: '/images/saju-default.jpg',
+        seoKeywords: ['사주팔자', '사주풀이', '만세력', '오늘의사주', '무료사주'],
     }
 };
 
@@ -66,13 +66,13 @@ export const TAROT_CATEGORIES = {
     decision: { name: '결정 타로', icon: '⚖️', keywords: ['선택', '고민', '결정', 'YES/NO'] },
 };
 
-// 운세 카테고리
-export const FORTUNE_CATEGORIES = {
-    daily: { name: '오늘의 운세', icon: '📅', keywords: ['오늘', '데일리', '하루'] },
-    weekly: { name: '주간 운세', icon: '📆', keywords: ['이번주', '주간', '위클리'] },
-    monthly: { name: '월간 운세', icon: '🗓️', keywords: ['이번달', '월간', '먼슬리'] },
-    zodiac: { name: '별자리 운세', icon: '⭐', keywords: ['별자리', '양자리', '황소자리', '쌍둥이자리'] },
-    blood: { name: '혈액형 운세', icon: '🩸', keywords: ['A형', 'B형', 'O형', 'AB형'] },
+// 사주 카테고리
+export const SAJU_CATEGORIES = {
+    love: { name: '연애운', icon: '💕', keywords: ['연애', '사랑', '인연', '결혼'] },
+    money: { name: '재물운', icon: '💰', keywords: ['재물', '돈', '투자', '사업'] },
+    career: { name: '직장운', icon: '💼', keywords: ['취업', '승진', '이직', '직장'] },
+    health: { name: '건강운', icon: '💪', keywords: ['건강', '운동', '컨디션'] },
+    general: { name: '종합운', icon: '🔮', keywords: ['종합', '전체', '올해'] },
 };
 
 // 콘텐츠에서 태그 추출
@@ -88,8 +88,8 @@ export const extractTags = (content, type) => {
         case 'tarot':
             categories = TAROT_CATEGORIES;
             break;
-        case 'fortune':
-            categories = FORTUNE_CATEGORIES;
+        case 'saju':
+            categories = SAJU_CATEGORIES;
             break;
         default:
             return [];

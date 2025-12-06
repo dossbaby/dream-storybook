@@ -149,19 +149,19 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         }
     }, []);
 
-    // 운세 피드 로드
-    const loadFortunes = useCallback(async () => {
+    // 사주 피드 로드
+    const loadSajus = useCallback(async () => {
         try {
             // 복합 인덱스 없이 동작하도록 클라이언트에서 필터링
-            const q = query(collection(db, 'fortunes'), orderBy('createdAt', 'desc'), limit(100));
+            const q = query(collection(db, 'sajus'), orderBy('createdAt', 'desc'), limit(100));
             const snapshot = await getDocs(q);
-            const fortunes = snapshot.docs
+            const sajus = snapshot.docs
                 .map(d => ({ id: d.id, ...d.data() }))
                 .filter(f => f.isPublic === true);
-            console.log('[useFeed] Loaded', fortunes.length, 'public fortunes');
-            setFortuneReadings(fortunes);
+            console.log('[useFeed] Loaded', sajus.length, 'public sajus');
+            setFortuneReadings(sajus);
         } catch (e) {
-            console.error('Failed to load fortunes:', e);
+            console.error('Failed to load sajus:', e);
             setFortuneReadings([]);
         }
     }, []);
@@ -218,9 +218,9 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
             initialLoadDone.current = true;
             loadDreams();
             loadTarots();
-            loadFortunes();
+            loadSajus();
         }
-    }, [loadDreams, loadTarots, loadFortunes]);
+    }, [loadDreams, loadTarots, loadSajus]);
 
     // 모드별 피드 리프레시 (모드 변경 시)
     const prevMode = useRef(mode);
@@ -229,14 +229,14 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
             prevMode.current = mode;
             if (mode === 'dream') loadDreams();
             else if (mode === 'tarot') loadTarots();
-            else if (mode === 'fortune') loadFortunes();
+            else if (mode === 'saju') loadSajus();
         }
-    }, [mode, loadDreams, loadTarots, loadFortunes]);
+    }, [mode, loadDreams, loadTarots, loadSajus]);
 
     // ref 업데이트
     loadDreamsRef.current = loadDreams;
     loadTarotsRef.current = loadTarots;
-    loadFortunesRef.current = loadFortunes;
+    loadFortunesRef.current = loadSajus;
 
     return {
         // 피드 데이터
@@ -253,7 +253,7 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         // 로드 함수
         loadDreams,
         loadTarots,
-        loadFortunes,
+        loadSajus,
         // ref (콜백용)
         loadDreamsRef,
         loadTarotsRef,

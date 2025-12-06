@@ -4134,7 +4134,7 @@
 }
 
 .vn-typing-text {
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     font-size: 1.4rem;
     color: #ffd080;
     line-height: 2;
@@ -4181,7 +4181,7 @@
     transform: translateX(-50%);
     font-size: 0.9rem;
     color: rgba(255, 200, 150, 0.6);
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     letter-spacing: 0.1em;
     animation: hintPulse 2s ease-in-out infinite;
 }
@@ -4396,7 +4396,7 @@
 
 .tarot-result-content .reading-quote p {
     margin: 0;
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.9);
     line-height: 1.8;
@@ -4944,7 +4944,7 @@
 
 .tarot-result-modal .reading-quote p {
     margin: 0;
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.9);
     line-height: 1.8;
@@ -5527,7 +5527,7 @@
 .insight-text,
 .synthesis-text p,
 .chapter-text p {
-    font-family: 'Nanum Myeongjo', 'Batang', serif;
+    font-family: 'RIDIBatang', serif;
     font-weight: 400;
 }
 
@@ -6398,7 +6398,7 @@
 
 .question-answer-flow .reading-quote p {
     margin: 0;
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     font-size: 1.05rem;
     color: rgba(255, 255, 255, 0.75);
     line-height: 1.8;
@@ -6457,7 +6457,7 @@
 }
 
 .intro-hook-text {
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     font-size: 1.1rem;
     font-weight: 500;
     color: #ffd080;
@@ -6467,7 +6467,7 @@
 }
 
 .intro-foreshadow-text {
-    font-family: 'Nanum Myeongjo', serif;
+    font-family: 'RIDIBatang', serif;
     font-size: 1.1rem;
     color: rgba(200, 180, 255, 0.75);
     margin: 0;

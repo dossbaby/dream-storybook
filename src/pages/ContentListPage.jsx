@@ -7,12 +7,12 @@ import {
     CONTENT_TYPES,
     DREAM_CATEGORIES,
     TAROT_CATEGORIES,
-    FORTUNE_CATEGORIES
+    SAJU_CATEGORIES
 } from '../utils/seoConfig';
 
 /**
  * 콘텐츠 목록 페이지 (SEO 인덱스)
- * /dreams, /tarots, /fortunes
+ * /dreams, /tarots, /sajus
  * /dreams/category/animal 등 카테고리별 필터링
  */
 const ContentListPage = ({ type }) => {
@@ -252,7 +252,7 @@ const ContentListPage = ({ type }) => {
                     <Link to="/">홈</Link>
                     <Link to="/dreams">꿈해몽</Link>
                     <Link to="/tarots">타로</Link>
-                    <Link to="/fortunes">운세</Link>
+                    <Link to="/sajus">사주</Link>
                 </nav>
             </footer>
         </div>
@@ -264,7 +264,7 @@ const getCategoriesForType = (type) => {
     switch (type) {
         case 'dream': return DREAM_CATEGORIES;
         case 'tarot': return TAROT_CATEGORIES;
-        case 'fortune': return FORTUNE_CATEGORIES;
+        case 'saju': return SAJU_CATEGORIES;
         default: return {};
     }
 };
@@ -273,7 +273,7 @@ const getItemImage = (item, type) => {
     switch (type) {
         case 'dream': return item.dreamImage;
         case 'tarot': return item.pastImage || item.cards?.[0]?.image;
-        case 'fortune': return item.morningImage;
+        case 'saju': return item.section1Image || item.heroImage;
         default: return null;
     }
 };

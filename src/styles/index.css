@@ -1,7 +1,14 @@
 /* ========== Dream Storybook Styles ========== */
 
-/* Google Fonts - 명조체 (Nanum Myeongjo) for mystical reading text */
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+/* 리디바탕 폰트 - 신비로운 리딩 텍스트용 */
+@font-face {
+    font-family: 'RIDIBatang';
+    src: url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 
 /* Base */
 @import './base/variables.css';
