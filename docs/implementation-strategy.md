@@ -18,7 +18,8 @@
 | 작업 | 상태 | 비고 |
 |------|------|------|
 | VisibilitySelector 컴포넌트 생성 | ✅ 완료 | 3단계: private/unlisted/public |
-| 저장 로직에 visibility 연동 | ⏳ 대기 | |
+| 저장 로직에 visibility 연동 | ✅ 완료 | useFirebaseSave.js 수정, 레거시 호환 |
+| 푸터 연도 동적 처리 | ✅ 완료 | 2025 하드코딩 → new Date().getFullYear() |
 | 마이페이지 공개 설정 통합 | ⏳ 대기 | |
 
 ### Phase 3: 태그 시스템 ⏳ 대기
@@ -474,7 +475,7 @@ const shouldCreateTagPage = (tag) => {
   <!-- 인기 태그만 포함 (count >= 10) -->
   <url>
     <loc>https://dreamstorybook.com/tag/뱀</loc>
-    <lastmod>2024-12-06</lastmod>
+    <lastmod>{현재날짜}</lastmod>  <!-- 동적 생성 -->
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -486,7 +487,7 @@ const shouldCreateTagPage = (tag) => {
   <!-- 공개 콘텐츠만 포함 -->
   <url>
     <loc>https://dreamstorybook.com/dream/abc123</loc>
-    <lastmod>2024-12-05</lastmod>
+    <lastmod>{콘텐츠수정일}</lastmod>  <!-- 동적 생성 -->
     <priority>0.6</priority>
   </url>
   <!-- ... -->
