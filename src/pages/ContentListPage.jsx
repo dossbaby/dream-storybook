@@ -247,7 +247,7 @@ const ContentListPage = ({ type }) => {
 
             {/* 푸터 */}
             <footer className="seo-footer">
-                <p>&copy; 2024 꿈해몽 스토리북. All rights reserved.</p>
+                <p>&copy; 2025 꿈해몽 스토리북. All rights reserved.</p>
                 <nav className="footer-nav">
                     <Link to="/">홈</Link>
                     <Link to="/dreams">꿈해몽</Link>
