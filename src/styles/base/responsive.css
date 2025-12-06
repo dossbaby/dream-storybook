@@ -1,4 +1,7 @@
-/* ========== 반응형 ========== */
+/* ========== 반응형 유틸리티 ========== */
+/* 메인 레이아웃 관련 반응형은 main-layout.css로 이동 */
+
+/* Wide desktop */
 @media (max-width: 1200px) {
     .left-sidebar {
         width: 240px;
@@ -8,90 +11,39 @@
     }
 }
 
-@media (max-width: 1024px) {
-    .main-layout {
-        flex-direction: column;
-    }
-
-    .left-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        top: 0;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 1rem;
-        gap: 0.75rem;
-        border-right: none;
-        border-bottom: 1px solid #1a1a1a;
-    }
-
-    .left-sidebar > * {
-        flex-shrink: 0;
-        min-width: 200px;
-    }
-
-    .center-main {
-        padding: 1.5rem 1rem;
-        min-height: auto;
-    }
-
-    .right-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        top: 0;
-        border-left: none;
-        border-top: 1px solid #1a1a1a;
-        max-height: 400px;
-    }
-}
-
+/* 네비게이션 모바일 */
 @media (max-width: 640px) {
     .nav-bar {
-        padding: 0 1rem;
+        padding: 0 var(--spacing-md);
     }
 
     .nav-brand-text {
         display: none;
     }
+}
 
-    .left-sidebar {
-        display: none;
-    }
-
-    .center-main {
-        padding: 1rem;
-    }
-
+/* 카드 컴포넌트 모바일 */
+@media (max-width: 640px) {
     .card-container {
         max-width: 100%;
     }
 
     .card-wrapper {
-        border-radius: 16px;
-    }
-
-    .right-sidebar {
-        padding: 1rem;
-    }
-
-    .back-btn {
-        left: 1rem;
-        top: 66px;
+        border-radius: var(--radius-lg);
     }
 }
 
-/* 터치 디바이스에서 네비 - 축소하여 표시 */
+/* ========== 터치 디바이스 최적화 ========== */
 @media (hover: none) {
+    /* 터치 장치에서 hover 효과 제거 */
     .card-nav {
         display: flex;
         opacity: 0.5;
     }
 
     .card-nav .nav-btn {
-        width: 36px;
-        height: 36px;
+        width: var(--touch-target-min);
+        height: var(--touch-target-min);
         font-size: 1rem;
         background: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(10px);
@@ -105,5 +57,54 @@
 
     .card-nav .nav-btn:disabled {
         opacity: 0.2;
+    }
+
+    /* 모든 버튼에서 hover 스타일 제거 */
+    button:hover,
+    a:hover,
+    .clickable:hover {
+        transform: none;
+    }
+}
+
+/* ========== 터치 타겟 최소 크기 보장 ========== */
+@media (pointer: coarse) {
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"],
+    .clickable {
+        min-height: var(--touch-target-min);
+        min-width: var(--touch-target-min);
+    }
+
+    /* 작은 아이콘 버튼들 터치 영역 확대 */
+    .icon-btn,
+    .close-btn,
+    .action-btn {
+        position: relative;
+    }
+
+    .icon-btn::before,
+    .close-btn::before,
+    .action-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: var(--touch-target-min);
+        height: var(--touch-target-min);
+    }
+}
+
+/* ========== 가로 모드 대응 ========== */
+@media (orientation: landscape) and (max-height: 500px) {
+    .center-main {
+        padding: var(--spacing-sm);
+    }
+
+    .bottom-nav {
+        height: 52px;
     }
 }

@@ -9,6 +9,7 @@
 @import './layouts/main-layout.css';
 @import './layouts/navbar.css';
 @import './layouts/sidebar.css';
+@import '../components/layout/BottomNav.css';
 
 /* Components */
 @import './components/toast.css';

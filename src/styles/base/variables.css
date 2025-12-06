@@ -1,5 +1,6 @@
 /* ========== CSS Variables ========== */
 :root {
+    /* Colors */
     --black: #0a0a0a;
     --dark: #111;
     --gray: #1a1a1a;
@@ -9,4 +10,81 @@
     --gold: #ffd700;
     --purple: #9b59b6;
     --teal: #1abc9c;
+
+    /* Spacing - Desktop */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    /* Typography */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+
+    /* Touch targets - 44px minimum for accessibility */
+    --touch-target-min: 44px;
+    --touch-target-comfortable: 48px;
+
+    /* Border radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Breakpoints (for reference in JS) */
+    --breakpoint-mobile: 640px;
+    --breakpoint-tablet: 768px;
+    --breakpoint-desktop: 1024px;
+    --breakpoint-wide: 1200px;
+
+    /* Layout */
+    --nav-height: 56px;
+    --bottom-nav-height: 64px;
+    --sidebar-width: 280px;
+    --content-max-width: 600px;
+
+    /* Safe areas for notched devices */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+
+    /* Z-index layers */
+    --z-base: 1;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-overlay: 300;
+    --z-modal: 400;
+    --z-toast: 500;
+    --z-tooltip: 600;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 350ms ease;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(155, 89, 182, 0.3);
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 640px) {
+    :root {
+        --nav-height: 52px;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+        --spacing-2xl: 2rem;
+        --font-size-3xl: 1.75rem;
+    }
 }

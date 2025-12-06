@@ -1,0 +1,104 @@
+/* ========== Bottom Navigation (Mobile Only) ========== */
+.bottom-nav {
+    display: none; /* 기본적으로 숨김 (데스크탑) */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottom-nav-height);
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: var(--safe-area-bottom);
+    z-index: var(--z-sticky);
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* 모바일에서만 표시 */
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+    }
+
+    /* 바텀 네비가 있을 때 메인 콘텐츠 하단 여백 */
+    .main-layout {
+        padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+    }
+}
+
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: var(--light-gray);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    padding: 8px 0;
+}
+
+.bottom-nav-item:active {
+    transform: scale(0.95);
+}
+
+.bottom-nav-item.active {
+    color: var(--purple);
+}
+
+.bottom-nav-item.active .bottom-nav-icon {
+    transform: scale(1.1);
+}
+
+.bottom-nav-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: var(--transition-fast);
+}
+
+.bottom-nav-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+/* Haptic feedback visual indicator */
+.bottom-nav-item:active .bottom-nav-icon {
+    transform: scale(0.9);
+}
+
+/* Active indicator dot */
+.bottom-nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    background: var(--purple);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--purple);
+}
+
+/* 가로 모드 대응 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .bottom-nav {
+        height: 52px;
+    }
+
+    .bottom-nav-icon {
+        font-size: 1.25rem;
+    }
+
+    .bottom-nav-label {
+        font-size: 0.6rem;
+    }
+}

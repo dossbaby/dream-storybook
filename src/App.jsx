@@ -45,6 +45,7 @@ import DreamDetailView from './components/detail/DreamDetailView';
 import MyPage from './components/my/MyPage';
 import FeedView from './components/feed/FeedView';
 import FloatingActionButton from './components/common/FloatingActionButton';
+import BottomNav from './components/layout/BottomNav';
 
 function App() {
     // 로딩 상태 (그룹화)
@@ -625,7 +626,7 @@ function App() {
                 />
             </div>
 
-            {/* Floating Action Button */}
+            {/* Floating Action Button - 데스크탑에서만 표시 */}
             <FloatingActionButton
                 mode={mode}
                 onModeChange={(newMode) => {
@@ -647,6 +648,20 @@ function App() {
                     } else if (mode === 'fortune') {
                         resetFortune();
                     }
+                }}
+            />
+
+            {/* Bottom Navigation - 모바일에서만 표시 */}
+            <BottomNav
+                currentMode={mode}
+                onModeChange={(newMode) => {
+                    setMode(newMode);
+                    setView('create');
+                    // 모든 결과 초기화
+                    resetTarot();
+                    setResult(null);
+                    resetFortune();
+                    setSavedDream({ id: null, isPublic: false });
                 }}
             />
         </div>

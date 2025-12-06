@@ -1156,8 +1156,9 @@
 }
 
 @media (max-width: 768px) {
+    /* 모바일에서는 FAB 숨김 - BottomNav 사용 */
     .fab-container {
-        right: 1.5rem;
+        display: none;
     }
 }
 

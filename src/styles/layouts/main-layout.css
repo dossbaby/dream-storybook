@@ -2,21 +2,21 @@
 .main-layout {
     display: flex;
     min-height: 100vh;
-    padding-top: 56px;
+    padding-top: var(--nav-height);
 }
 
 /* 왼쪽 사이드바 - 실시간 정보 */
 .left-sidebar {
-    width: 280px;
+    width: var(--sidebar-width);
     flex-shrink: 0;
-    padding: 1.5rem 1rem;
-    border-right: 1px solid #1a1a1a;
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-right: 1px solid var(--gray);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--spacing-md);
     position: sticky;
-    top: 56px;
-    height: calc(100vh - 56px);
+    top: var(--nav-height);
+    height: calc(100vh - var(--nav-height));
     overflow-y: auto;
 }
 
@@ -26,22 +26,136 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    justify-content: flex-start;
+    padding: var(--spacing-xl);
     padding-bottom: 6rem;
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - var(--nav-height));
 }
 
 /* 오른쪽 사이드바 - 피드 */
 .right-sidebar {
     width: 320px;
     flex-shrink: 0;
-    padding: 1rem;
-    border-left: 1px solid #1a1a1a;
+    padding: var(--spacing-md);
+    border-left: 1px solid var(--gray);
     position: sticky;
-    top: 56px;
-    height: calc(100vh - 56px);
+    top: var(--nav-height);
+    height: calc(100vh - var(--nav-height));
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+}
+
+/* ========== 태블릿 반응형 (768px ~ 1024px) ========== */
+@media (max-width: 1024px) {
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .left-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+        border-right: none;
+        border-bottom: 1px solid var(--gray);
+    }
+
+    .left-sidebar > * {
+        flex-shrink: 0;
+        min-width: 200px;
+    }
+
+    .center-main {
+        padding: var(--spacing-lg) var(--spacing-md);
+        min-height: auto;
+    }
+
+    .right-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-left: none;
+        border-top: 1px solid var(--gray);
+        max-height: 400px;
+    }
+}
+
+/* ========== 모바일 반응형 (768px 이하) ========== */
+@media (max-width: 768px) {
+    .main-layout {
+        padding-top: var(--nav-height);
+        padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+    }
+
+    /* 왼쪽 사이드바 숨김 - 모바일에서는 바텀시트로 대체 */
+    .left-sidebar {
+        display: none;
+    }
+
+    .center-main {
+        padding: var(--spacing-md);
+        padding-bottom: var(--spacing-lg);
+        min-height: auto;
+        justify-content: flex-start;
+    }
+
+    /* 오른쪽 사이드바 숨김 - 피드는 메인에 통합 */
+    .right-sidebar {
+        display: none;
+    }
+}
+
+/* ========== 모바일 세로 (640px 이하) ========== */
+@media (max-width: 640px) {
+    .center-main {
+        padding: var(--spacing-sm);
+        padding-top: var(--spacing-md);
+    }
+}
+
+/* ========== 글로벌 뒤로가기 버튼 ========== */
+.global-back-btn {
+    position: fixed;
+    top: calc(var(--nav-height) + var(--spacing-md));
+    left: var(--spacing-md);
+    width: var(--touch-target-min);
+    height: var(--touch-target-min);
+    background: rgba(26, 26, 26, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    color: var(--white);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-sticky);
+    transition: var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.global-back-btn:hover {
+    background: rgba(155, 89, 182, 0.3);
+    transform: scale(1.05);
+}
+
+.global-back-btn:active {
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    .global-back-btn {
+        top: calc(var(--nav-height) + var(--spacing-sm));
+        left: var(--spacing-sm);
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
 }

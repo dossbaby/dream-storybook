@@ -9,17 +9,73 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 500;
-    padding: 1rem;
+    z-index: var(--z-modal, 500);
+    padding: var(--spacing-md);
 }
 
 .modal-content {
     background: var(--dark);
     border: 1px solid #333;
-    border-radius: 20px;
-    padding: 2rem;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
     max-width: 400px;
     width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* ========== 모바일 풀스크린 시트 ========== */
+@media (max-width: 640px) {
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal-content {
+        max-width: 100%;
+        width: 100%;
+        max-height: 90vh;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        padding: var(--spacing-lg);
+        padding-bottom: calc(var(--spacing-lg) + var(--safe-area-bottom));
+        animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 풀스크린 모달 (일부 모달은 완전 풀스크린) */
+    .modal-content.fullscreen {
+        max-height: 100vh;
+        height: 100vh;
+        border-radius: 0;
+        padding-top: calc(var(--spacing-lg) + var(--safe-area-top));
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* 드래그 핸들 (바텀시트 인디케이터) */
+    .modal-content::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 36px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+    }
+
+    .modal-content.fullscreen::before {
+        display: none;
+    }
 }
 
 .modal-content h3 {
