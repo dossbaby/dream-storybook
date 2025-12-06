@@ -22,7 +22,9 @@ import { useAuth } from './hooks/useAuth';
 import { useDreamManagement } from './hooks/useDreamManagement';
 import { useReadingActions } from './hooks/useReadingActions';
 import { useViewActions } from './hooks/useViewActions';
+import { useUsageLimit } from './hooks/useUsageLimit';
 import NicknameModal from './components/modals/NicknameModal';
+import PremiumModal from './components/modals/PremiumModal';
 import ProfileSettingsModal from './components/modals/ProfileSettingsModal';
 import ShareModal from './components/modals/ShareModal';
 import ReportModal from './components/modals/ReportModal';
@@ -72,7 +74,7 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, shareTarget: null });
+    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, shareTarget: null, premiumTrigger: 'general' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
     const selectedDreamDate = '';
@@ -100,6 +102,15 @@ function App() {
     const [fortune, setFortune] = useState({ type: 'today', result: null, birthdate: '' });
     const setFortuneField = (key, value) => setFortune(prev => ({ ...prev, [key]: value }));
     const resetFortune = () => setFortune(prev => ({ ...prev, result: null }));
+
+    // 맞춤 질문 상태
+    const [customQuestions, setCustomQuestions] = useState({
+        dream: { preset: null, custom: '' },
+        fortune: { preset: null, custom: '' }
+    });
+    const setDreamQuestion = (preset, custom) => setCustomQuestions(prev => ({ ...prev, dream: { preset, custom } }));
+    const setFortuneQuestion = (preset, custom) => setCustomQuestions(prev => ({ ...prev, fortune: { preset, custom } }));
+    const handleOpenPremiumModal = (trigger = 'general') => setModals(prev => ({ ...prev, premium: true, premiumTrigger: trigger }));
     const cardRef = useRef(null);
 
     // 커스텀 훅들
@@ -109,9 +120,13 @@ function App() {
         typeCounts, todayStats, onlineCount, loading: feedLoading, loadDreams, loadDreamsRef, loadTarotsRef, loadFortunesRef, loadMyDreamsRef
     } = useFeed(null, [], activeTab, filters, mode);
     const {
-        user, userNickname, setUserNickname, userProfile, setUserProfile, myDreams, setMyDreams, myTarots, myFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
+        user, userNickname, setUserNickname, userProfile, setUserProfile,
+        tier, isPremium, isUltra, subscription,
+        myDreams, setMyDreams, myTarots, setMyTarots, myFortunes, setMyFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
     } = useAuth({ setLoadingState, checkAndAwardBadges, loadMyDreamsRef });
     const { userPoints, freeUsesLeft, addPoints } = usePoints(user);
+    const { usage, canUse, incrementUsage, getRemainingUses, getResetTimeFormatted, getUsageSummary, grantShareBonus, hasReceivedShareBonus } = useUsageLimit(user, isPremium);
+    const openPremiumModal = (trigger = 'general') => setModals(prev => ({ ...prev, premium: true, premiumTrigger: trigger }));
     const {
         comments, newComment, setNewComment, commentEdit, setCommentEditField, startEditComment,
         saveEditComment, cancelEditComment, deleteComment, interpretations, newInterpretation,
@@ -123,8 +138,8 @@ function App() {
         onTarotSaved: () => { loadTarotsRef.current?.(); user && loadMyTarots(user.uid); },
         onFortuneSaved: () => { loadFortunesRef.current?.(); user && loadMyFortunes(user.uid); }
     });
-    const { loading: readingLoading, error, progress, analysisPhase, generateDreamReading, generateTarotReading: generateTarotReadingHook, generateFortuneReading: generateFortuneReadingHook } = useReading({
-        user, userProfile, dreamTypes, onSaveDream: saveFirebaseDream, onSaveTarot: saveFirebaseTarot,
+    const { loading: readingLoading, error, progress, analysisPhase, modelConfig, generateDreamReading, generateTarotReading: generateTarotReadingHook, generateFortuneReading: generateFortuneReadingHook } = useReading({
+        user, userProfile, tier, dreamTypes, onSaveDream: saveFirebaseDream, onSaveTarot: saveFirebaseTarot,
         onSaveFortune: saveFirebaseFortune, onNewDreamType: handleNewDreamType, setToast, setDopaminePopup, setSavedDreamField
     });
     const { aiReport, setAiReport, generateAiReport } = useAiReport(myDreams, dreamTypes, openModal, closeModal);
@@ -141,8 +156,8 @@ function App() {
     const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
         user, setUserNickname, setUserProfile, shareTarget: modals.shareTarget, setShareTarget, dreamTypes, openModal, closeModal
     });
-    const { toggleSavedDreamVisibility, deleteDream, toggleDreamVisibility } = useDreamManagement({
-        user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setView, setToast, loadDreams, loadMyDreams
+    const { toggleSavedDreamVisibility, deleteDream, toggleDreamVisibility, updateVisibility } = useDreamManagement({
+        user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setMyTarots, setMyFortunes, setView, setToast, loadDreams, loadMyDreams
     });
     const { generateReading, generateFortuneReading } = useReadingActions({
         user, dreamDescription, selectedDreamDate, setCurrentCard, setResult, setView, setSavedDreamField,
@@ -177,7 +192,7 @@ function App() {
     if (loading.auth) return <div className="app loading-screen"><div className="loading-text">夢</div></div>;
 
     const renderCard = (card, i) => (
-        <StoryCard key={i} card={card} index={i} dreamTypeInfo={dreamTypeInfo} onDetailedReading={() => generateDetailedReading(result || selectedDream)} />
+        <StoryCard key={i} card={card} index={i} dreamTypeInfo={dreamTypeInfo} onDetailedReading={() => generateDetailedReading(result || selectedDream)} isPremium={isPremium} onOpenPremium={openPremiumModal} />
     );
 
     return (
@@ -188,6 +203,9 @@ function App() {
                 user={user}
                 userPoints={userPoints}
                 onlineCount={onlineCount}
+                isPremium={isPremium}
+                usageSummary={getUsageSummary()}
+                onOpenPremium={() => openPremiumModal('general')}
                 onModeChange={(newMode) => {
                     setMode(newMode);
                     // 모드 변경 시 이전 결과 초기화
@@ -314,6 +332,12 @@ function App() {
                             onGenerate={generateReading}
                             onAddKeywordHint={addKeywordHint}
                             onFilterBySymbol={filterBySymbol}
+                            tier={tier}
+                            selectedQuestion={customQuestions.dream.preset}
+                            customQuestion={customQuestions.dream.custom}
+                            onSelectPreset={(preset) => setDreamQuestion(preset, '')}
+                            onCustomQuestionChange={(text) => setDreamQuestion(null, text)}
+                            onOpenPremium={() => handleOpenPremiumModal('custom_question')}
                         />
                     )}
 
@@ -349,6 +373,12 @@ function App() {
                             error={error}
                             onBack={() => setView('feed')}
                             onGenerate={generateFortuneReading}
+                            tier={tier}
+                            selectedQuestion={customQuestions.fortune.preset}
+                            customQuestion={customQuestions.fortune.custom}
+                            onSelectPreset={(preset) => setFortuneQuestion(preset, '')}
+                            onCustomQuestionChange={(text) => setFortuneQuestion(null, text)}
+                            onOpenPremium={() => handleOpenPremiumModal('custom_question')}
                         />
                     )}
 
@@ -381,6 +411,8 @@ function App() {
                             onShare={openShareModal}
                             onLogin={handleGoogleLogin}
                             renderCard={renderCard}
+                            isPremium={isPremium}
+                            onOpenPremium={openPremiumModal}
                         />
                     )}
 
@@ -423,6 +455,8 @@ function App() {
                             onDeleteComment={deleteComment}
                             renderCard={renderCard}
                             formatTime={formatTime}
+                            isPremium={isPremium}
+                            onOpenPremium={openPremiumModal}
                         />
                     )}
 
@@ -436,6 +470,8 @@ function App() {
                             onAddWhisper={(text) => console.log('타로 속삭임:', text)}
                             viewerCount={Math.floor(Math.random() * 5) + 1}
                             similarCount={Math.floor(Math.random() * 10) + 2}
+                            isPremium={isPremium}
+                            onOpenPremium={openPremiumModal}
                         />
                     )}
 
@@ -450,6 +486,8 @@ function App() {
                             onAddWhisper={(text) => console.log('운세 속삭임:', text)}
                             viewerCount={Math.floor(Math.random() * 5) + 1}
                             similarCount={Math.floor(Math.random() * 10) + 2}
+                            isPremium={isPremium}
+                            onOpenPremium={openPremiumModal}
                         />
                     )}
 
@@ -492,8 +530,12 @@ function App() {
                             onOpenTarotDetail={(tarot) => { setTarot(prev => ({ ...prev, result: { ...tarot, showFullReading: true } })); setView('tarot-result'); }}
                             onOpenFortuneDetail={(fortune) => { setFortune(prev => ({ ...prev, result: { ...fortune, showFullReading: true } })); setView('fortune-result'); }}
                             onToggleDreamVisibility={toggleDreamVisibility}
+                            onUpdateVisibility={updateVisibility}
                             onDeleteDream={deleteDream}
                             formatTime={formatTime}
+                            isPremium={isPremium}
+                            tier={tier}
+                            onOpenPremium={handleOpenPremiumModal}
                         />
                     )}
 
@@ -512,6 +554,17 @@ function App() {
                         shareTarget={modals.shareTarget}
                         dreamTypes={dreamTypes}
                         onCopyText={copyShareText}
+                        showToast={setToast}
+                        isPremium={isPremium}
+                        hasReceivedShareBonus={hasReceivedShareBonus}
+                        onShareComplete={async (type) => {
+                            // 공유 타입에 따라 보너스 부여
+                            const contentType = modals.shareTarget?.type || 'dream';
+                            const bonusGranted = await grantShareBonus(contentType);
+                            if (bonusGranted) {
+                                setToast({ message: '🎁 공유 보너스! 무료 리딩 +1 획득', type: 'success' });
+                            }
+                        }}
                     />
 
                     {/* 닉네임 모달 */}
@@ -538,6 +591,19 @@ function App() {
                         loading={loading.detailedReading}
                         content={detailedReading.content}
                         dreamTypes={dreamTypes}
+                    />
+
+                    {/* 프리미엄 모달 */}
+                    <PremiumModal
+                        isOpen={modals.premium}
+                        onClose={() => closeModal('premium')}
+                        onSubscribe={({ tier, cycle }) => {
+                            closeModal('premium');
+                            // TODO: 결제 페이지로 이동 또는 결제 플로우 시작
+                            console.log('구독 시작:', tier, cycle);
+                        }}
+                        currentTier={tier}
+                        trigger={modals.premiumTrigger}
                     />
                 </main>
 

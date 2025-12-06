@@ -1,4 +1,4 @@
-const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading }) => {
+const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading, isPremium = false, onOpenPremium }) => {
     return (
         <div className={`story-card ${card.type} glow-card`}>
             {/* 꿈 - 첫 번째 카드 */}
@@ -69,10 +69,17 @@ const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading }) => {
                         <p className="meaning-summary">{card.dreamMeaning?.summary}</p>
                         <p className="meaning-detail">{card.dreamMeaning?.detail}</p>
                         <button
-                            className="inline-detailed-btn"
-                            onClick={(e) => { e.stopPropagation(); onDetailedReading?.(); }}
+                            className={`inline-detailed-btn ${!isPremium ? 'locked' : ''}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (isPremium) {
+                                    onDetailedReading?.();
+                                } else {
+                                    onOpenPremium?.('detailed_analysis');
+                                }
+                            }}
                         >
-                            ✨ 운명의 비밀 열어보기
+                            {isPremium ? '✨ 운명의 비밀 열어보기' : '🔒 프리미엄으로 확인'}
                         </button>
                     </div>
                 </>

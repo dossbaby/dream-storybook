@@ -1,4 +1,19 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { HISTORY_LIMITS } from '../../utils/aiConfig';
+import PatternAnalysis from '../common/PatternAnalysis';
+
+// visibility 옵션 정의
+const VISIBILITY_OPTIONS = [
+    { value: 'private', icon: '🔒', label: '나만 보기', short: '비공개' },
+    { value: 'unlisted', icon: '🔗', label: '링크 공유', short: '링크만' },
+    { value: 'public', icon: '🌐', label: '전체 공개', short: '공개' }
+];
+
+// visibility 값 정규화 (레거시 isPublic 호환)
+const normalizeVisibility = (item) => {
+    if (item.visibility) return item.visibility;
+    return item.isPublic ? 'public' : 'private';
+};
 
 const MBTI_TYPES = [
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
@@ -6,6 +21,62 @@ const MBTI_TYPES = [
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
     'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ];
+
+// 공개 설정 드롭다운 컴포넌트
+const VisibilityDropdown = ({ item, type, onUpdate }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const currentVisibility = normalizeVisibility(item);
+    const currentOption = VISIBILITY_OPTIONS.find(o => o.value === currentVisibility) || VISIBILITY_OPTIONS[0];
+
+    // 외부 클릭 시 드롭다운 닫기
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                setIsOpen(false);
+            }
+        };
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [isOpen]);
+
+    const handleSelect = async (newVisibility) => {
+        if (newVisibility !== currentVisibility) {
+            await onUpdate(type, item.id, newVisibility);
+        }
+        setIsOpen(false);
+    };
+
+    return (
+        <div className="visibility-dropdown" ref={dropdownRef}>
+            <button
+                className={`visibility-btn ${currentVisibility}`}
+                onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
+            >
+                <span className="visibility-icon">{currentOption.icon}</span>
+                <span className="visibility-text">{currentOption.short}</span>
+                <span className="visibility-arrow">{isOpen ? '▲' : '▼'}</span>
+            </button>
+            {isOpen && (
+                <div className="visibility-menu">
+                    {VISIBILITY_OPTIONS.map(option => (
+                        <button
+                            key={option.value}
+                            className={`visibility-menu-item ${option.value === currentVisibility ? 'active' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); handleSelect(option.value); }}
+                        >
+                            <span className="menu-icon">{option.icon}</span>
+                            <span className="menu-label">{option.label}</span>
+                            {option.value === currentVisibility && <span className="menu-check">✓</span>}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const MyPage = ({
     user,
@@ -33,9 +104,16 @@ const MyPage = ({
     onOpenTarotDetail,
     onOpenFortuneDetail,
     onToggleDreamVisibility,
+    onUpdateVisibility,
     onDeleteDream,
-    formatTime
+    formatTime,
+    // 프리미엄 관련
+    isPremium = false,
+    tier = 'free',
+    onOpenPremium
 }) => {
+    // 히스토리 제한 계산
+    const historyLimit = HISTORY_LIMITS[tier] || HISTORY_LIMITS.free;
     // 현재 선택된 카테고리 (dream, tarot, fortune)
     const [category, setCategory] = useState('dream');
 
@@ -255,12 +333,15 @@ const MyPage = ({
                     </div>
                 )}
 
-                {/* AI 리포트 버튼 */}
-                {myDreams.length >= 3 && (
-                    <button className="ai-report-btn" onClick={onGenerateAiReport}>
-                        🔮 AI 꿈 패턴 분석 리포트
-                    </button>
-                )}
+                {/* 패턴 분석 (카테고리별) */}
+                <PatternAnalysis
+                    type={category}
+                    data={category === 'dream' ? myDreams : category === 'tarot' ? myTarots : myFortunes}
+                    dreamTypes={dreamTypes}
+                    isPremium={isPremium}
+                    onOpenPremium={onOpenPremium}
+                    onGenerateAiInsight={onGenerateAiReport}
+                />
 
                 {/* 카테고리 탭 */}
                 <div className="my-category-tabs">
@@ -347,36 +428,55 @@ const MyPage = ({
                                 {myDreams.length === 0 ? (
                                     <p className="no-comments">아직 저장된 꿈이 없어요</p>
                                 ) : (
-                                    <div className="my-dreams-list">
-                                        {myDreams.map(dream => (
-                                            <div key={dream.id} className="my-dream-item">
-                                                <div className="my-dream-thumb" onClick={() => onOpenDreamDetail(dream)}>
-                                                    {dream.dreamImage ? (
-                                                        <img src={dream.dreamImage} alt="" />
-                                                    ) : (
-                                                        <span>{dreamTypes[dream.dreamType]?.emoji || '🌙'}</span>
-                                                    )}
-                                                </div>
-                                                <div className="my-dream-info" onClick={() => onOpenDreamDetail(dream)}>
-                                                    <span className="my-dream-title">{dream.title}</span>
-                                                    <span className="my-dream-date">{dream.dreamDateDisplay || formatTime(dream.createdAt)}</span>
-                                                    <span className="my-dream-type">{dreamTypes[dream.dreamType]?.emoji} {dreamTypes[dream.dreamType]?.name}</span>
-                                                </div>
-                                                <div className="my-dream-actions">
+                                    <>
+                                        <div className="my-dreams-list">
+                                            {myDreams.map((dream, index) => {
+                                                const isLocked = !isPremium && index >= historyLimit;
+                                                return (
                                                     <div
-                                                        className="visibility-toggle"
-                                                        onClick={(e) => { e.stopPropagation(); onToggleDreamVisibility(dream.id, dream.isPublic); }}
+                                                        key={dream.id}
+                                                        className={`my-dream-item ${isLocked ? 'locked' : ''}`}
+                                                        onClick={() => isLocked ? onOpenPremium?.('history') : null}
                                                     >
-                                                        <div className={`toggle-switch ${dream.isPublic ? 'active' : ''}`}></div>
-                                                        <span className={`visibility-label ${dream.isPublic ? 'public' : ''}`}>
-                                                            {dream.isPublic ? '공개' : '비공개'}
-                                                        </span>
+                                                        <div className="my-dream-thumb" onClick={() => !isLocked && onOpenDreamDetail(dream)}>
+                                                            {dream.dreamImage ? (
+                                                                <img src={dream.dreamImage} alt="" />
+                                                            ) : (
+                                                                <span>{dreamTypes[dream.dreamType]?.emoji || '🌙'}</span>
+                                                            )}
+                                                            {isLocked && <div className="thumb-lock">🔒</div>}
+                                                        </div>
+                                                        <div className="my-dream-info" onClick={() => !isLocked && onOpenDreamDetail(dream)}>
+                                                            <span className="my-dream-title">{isLocked ? '프리미엄으로 확인' : dream.title}</span>
+                                                            <span className="my-dream-date">{dream.dreamDateDisplay || formatTime(dream.createdAt)}</span>
+                                                            <span className="my-dream-type">{dreamTypes[dream.dreamType]?.emoji} {dreamTypes[dream.dreamType]?.name}</span>
+                                                        </div>
+                                                        <div className="my-dream-actions">
+                                                            {isLocked ? (
+                                                                <button className="unlock-btn" onClick={() => onOpenPremium?.('history')}>🔓 해제</button>
+                                                            ) : (
+                                                                <>
+                                                                    <VisibilityDropdown
+                                                                        item={dream}
+                                                                        type="dream"
+                                                                        onUpdate={onUpdateVisibility}
+                                                                    />
+                                                                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); onDeleteDream(dream.id, dream); }}>삭제</button>
+                                                                </>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); onDeleteDream(dream.id, dream); }}>삭제</button>
-                                                </div>
+                                                );
+                                            })}
+                                        </div>
+                                        {/* 무료 사용자 히스토리 더보기 유도 */}
+                                        {!isPremium && myDreams.length > historyLimit && (
+                                            <div className="history-upgrade-hint" onClick={() => onOpenPremium?.('history')}>
+                                                <span className="hint-icon">👑</span>
+                                                <span className="hint-text">프리미엄으로 {myDreams.length - historyLimit}개 기록 더 보기</span>
                                             </div>
-                                        ))}
-                                    </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         )}
@@ -390,33 +490,56 @@ const MyPage = ({
                         {myTarots.length === 0 ? (
                             <p className="no-comments">아직 저장된 타로 리딩이 없어요</p>
                         ) : (
-                            <div className="my-dreams-list">
-                                {myTarots.map(tarot => (
-                                    <div key={tarot.id} className="my-dream-item tarot-item">
-                                        <div className="my-dream-thumb" onClick={() => onOpenTarotDetail?.(tarot)}>
-                                            {tarot.pastImage || tarot.card1Image ? (
-                                                <img src={tarot.pastImage || tarot.card1Image} alt="" />
-                                            ) : (
-                                                <span>🃏</span>
-                                            )}
-                                        </div>
-                                        <div className="my-dream-info" onClick={() => onOpenTarotDetail?.(tarot)}>
-                                            <span className="my-dream-title">{tarot.title}</span>
-                                            <span className="my-dream-date">{formatTime(tarot.createdAt)}</span>
-                                            <span className="my-dream-type">
-                                                {tarot.cards?.slice(0, 3).map((c, i) => (
-                                                    <span key={i} style={{ marginRight: '0.25rem' }}>{c.emoji}</span>
-                                                ))}
-                                            </span>
-                                        </div>
-                                        <div className="my-dream-actions">
-                                            <span className={`visibility-label ${tarot.isPublic ? 'public' : ''}`}>
-                                                {tarot.isPublic ? '🌐 공개' : '🔒 비공개'}
-                                            </span>
-                                        </div>
+                            <>
+                                <div className="my-dreams-list">
+                                    {myTarots.map((tarot, index) => {
+                                        const isLocked = !isPremium && index >= historyLimit;
+                                        return (
+                                            <div
+                                                key={tarot.id}
+                                                className={`my-dream-item tarot-item ${isLocked ? 'locked' : ''}`}
+                                                onClick={() => isLocked ? onOpenPremium?.('history') : null}
+                                            >
+                                                <div className="my-dream-thumb" onClick={() => !isLocked && onOpenTarotDetail?.(tarot)}>
+                                                    {tarot.pastImage || tarot.card1Image ? (
+                                                        <img src={tarot.pastImage || tarot.card1Image} alt="" />
+                                                    ) : (
+                                                        <span>🃏</span>
+                                                    )}
+                                                    {isLocked && <div className="thumb-lock">🔒</div>}
+                                                </div>
+                                                <div className="my-dream-info" onClick={() => !isLocked && onOpenTarotDetail?.(tarot)}>
+                                                    <span className="my-dream-title">{isLocked ? '프리미엄으로 확인' : tarot.title}</span>
+                                                    <span className="my-dream-date">{formatTime(tarot.createdAt)}</span>
+                                                    <span className="my-dream-type">
+                                                        {tarot.cards?.slice(0, 3).map((c, i) => (
+                                                            <span key={i} style={{ marginRight: '0.25rem' }}>{c.emoji}</span>
+                                                        ))}
+                                                    </span>
+                                                </div>
+                                                <div className="my-dream-actions">
+                                                    {isLocked ? (
+                                                        <button className="unlock-btn" onClick={() => onOpenPremium?.('history')}>🔓 해제</button>
+                                                    ) : (
+                                                        <VisibilityDropdown
+                                                            item={tarot}
+                                                            type="tarot"
+                                                            onUpdate={onUpdateVisibility}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                {/* 무료 사용자 히스토리 더보기 유도 */}
+                                {!isPremium && myTarots.length > historyLimit && (
+                                    <div className="history-upgrade-hint" onClick={() => onOpenPremium?.('history')}>
+                                        <span className="hint-icon">👑</span>
+                                        <span className="hint-text">프리미엄으로 {myTarots.length - historyLimit}개 기록 더 보기</span>
                                     </div>
-                                ))}
-                            </div>
+                                )}
+                            </>
                         )}
                     </div>
                 )}
@@ -428,31 +551,54 @@ const MyPage = ({
                         {myFortunes.length === 0 ? (
                             <p className="no-comments">아직 저장된 사주가 없어요</p>
                         ) : (
-                            <div className="my-dreams-list">
-                                {myFortunes.map(fortune => (
-                                    <div key={fortune.id} className="my-dream-item fortune-item">
-                                        <div className="my-dream-thumb" onClick={() => onOpenFortuneDetail?.(fortune)}>
-                                            {fortune.morningImage ? (
-                                                <img src={fortune.morningImage} alt="" />
-                                            ) : (
-                                                <span>🔮</span>
-                                            )}
-                                        </div>
-                                        <div className="my-dream-info" onClick={() => onOpenFortuneDetail?.(fortune)}>
-                                            <span className="my-dream-title">{fortune.title}</span>
-                                            <span className="my-dream-date">{formatTime(fortune.createdAt)}</span>
-                                            <span className="my-dream-type">
-                                                점수: {fortune.score}점
-                                            </span>
-                                        </div>
-                                        <div className="my-dream-actions">
-                                            <span className={`visibility-label ${fortune.isPublic ? 'public' : ''}`}>
-                                                {fortune.isPublic ? '🌐 공개' : '🔒 비공개'}
-                                            </span>
-                                        </div>
+                            <>
+                                <div className="my-dreams-list">
+                                    {myFortunes.map((fortune, index) => {
+                                        const isLocked = !isPremium && index >= historyLimit;
+                                        return (
+                                            <div
+                                                key={fortune.id}
+                                                className={`my-dream-item fortune-item ${isLocked ? 'locked' : ''}`}
+                                                onClick={() => isLocked ? onOpenPremium?.('history') : null}
+                                            >
+                                                <div className="my-dream-thumb" onClick={() => !isLocked && onOpenFortuneDetail?.(fortune)}>
+                                                    {fortune.morningImage ? (
+                                                        <img src={fortune.morningImage} alt="" />
+                                                    ) : (
+                                                        <span>🔮</span>
+                                                    )}
+                                                    {isLocked && <div className="thumb-lock">🔒</div>}
+                                                </div>
+                                                <div className="my-dream-info" onClick={() => !isLocked && onOpenFortuneDetail?.(fortune)}>
+                                                    <span className="my-dream-title">{isLocked ? '프리미엄으로 확인' : fortune.title}</span>
+                                                    <span className="my-dream-date">{formatTime(fortune.createdAt)}</span>
+                                                    <span className="my-dream-type">
+                                                        점수: {fortune.score}점
+                                                    </span>
+                                                </div>
+                                                <div className="my-dream-actions">
+                                                    {isLocked ? (
+                                                        <button className="unlock-btn" onClick={() => onOpenPremium?.('history')}>🔓 해제</button>
+                                                    ) : (
+                                                        <VisibilityDropdown
+                                                            item={fortune}
+                                                            type="fortune"
+                                                            onUpdate={onUpdateVisibility}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                {/* 무료 사용자 히스토리 더보기 유도 */}
+                                {!isPremium && myFortunes.length > historyLimit && (
+                                    <div className="history-upgrade-hint" onClick={() => onOpenPremium?.('history')}>
+                                        <span className="hint-icon">👑</span>
+                                        <span className="hint-text">프리미엄으로 {myFortunes.length - historyLimit}개 기록 더 보기</span>
                                     </div>
-                                ))}
-                            </div>
+                                )}
+                            </>
                         )}
                     </div>
                 )}

@@ -118,7 +118,7 @@ const ContentPage = ({ type }) => {
             {/* 헤더 */}
             <header className="seo-header">
                 <Link to="/" className="logo-link">
-                    {typeConfig.icon} 꿈해몽 스토리북
+                    🔮 점AI
                 </Link>
             </header>
 
@@ -216,7 +216,7 @@ const ContentPage = ({ type }) => {
 
             {/* 푸터 */}
             <footer className="seo-footer">
-                <p>&copy; {new Date().getFullYear()} 꿈해몽 스토리북. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} 점AI. All rights reserved.</p>
                 <nav className="footer-nav">
                     <Link to="/">홈</Link>
                     <Link to="/dreams">꿈해몽</Link>

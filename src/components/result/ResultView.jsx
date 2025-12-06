@@ -26,7 +26,9 @@ const ResultView = forwardRef(({
     onGenerateDetailedReading,
     onShare,
     onLogin,
-    renderCard
+    renderCard,
+    isPremium = false,
+    onOpenPremium
 }, ref) => {
     const currentResult = result || tarotResult || fortuneResult;
 
@@ -240,8 +242,20 @@ const ResultView = forwardRef(({
                     )}
 
                     {/* CTA */}
-                    <button className="royal-cta" onClick={() => onGenerateDetailedReading(currentResult, mode)}>
-                        ✨ {mode === 'tarot' ? '타로의 비밀 열어보기' : mode === 'fortune' ? '운명의 상세 풀이' : '운명의 비밀 열어보기'}
+                    <button
+                        className={`royal-cta ${!isPremium ? 'locked' : ''}`}
+                        onClick={() => {
+                            if (isPremium) {
+                                onGenerateDetailedReading(currentResult, mode);
+                            } else {
+                                onOpenPremium?.('detailed_analysis');
+                            }
+                        }}
+                    >
+                        {isPremium
+                            ? `✨ ${mode === 'tarot' ? '타로의 비밀 열어보기' : mode === 'fortune' ? '운명의 상세 풀이' : '운명의 비밀 열어보기'}`
+                            : `🔒 프리미엄으로 ${mode === 'tarot' ? '타로의 비밀' : mode === 'fortune' ? '운명의 상세 풀이' : '운명의 비밀'} 보기`
+                        }
                     </button>
 
                     {/* 저장 */}

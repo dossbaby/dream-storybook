@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import { runAnalysisAnimation, getApiKeys, getDreamMessages, getTarotMessages, getFortuneMessages } from '../utils/analysisHelpers';
 import { useImageGeneration } from './useImageGeneration';
+import { getModelConfig, AI_MODELS } from '../utils/aiConfig';
 
 // 별자리 계산 함수
 const getZodiacSign = (birthDate) => {
@@ -124,10 +125,21 @@ const buildProfileBlock = (userProfile, readingType) => {
 /**
  * 통합 리딩 생성 훅
  * 꿈 해몽, 타로, 사주 생성을 단일 훅으로 통합
+ *
+ * AI Tier System:
+ * - 텍스트: 모든 티어 Sonnet 4.5 + MrBeast 도파민 프롬프트
+ * - 이미지: Free = Gemini Flash, Premium = Gemini 3 Pro Preview
+ *
+ * 프리미엄 차별화:
+ * - Hidden Insight 블러 해제
+ * - 심층 분석 잠금 해제
+ * - 고품질 이미지
+ * - 무제한 사용
  */
 export const useReading = ({
     user,
     userProfile = {},
+    tier = 'free',  // 'free' | 'premium' | 'ultra'
     dreamTypes,
     onSaveDream,
     onSaveTarot,
@@ -144,8 +156,17 @@ export const useReading = ({
 
     const { generateSingleImage } = useImageGeneration();
 
-    // Claude API 호출 공통 함수
-    const callClaudeApi = async (prompt, maxTokens = 1500) => {
+    // 현재 티어 설정 가져오기
+    const modelConfig = getModelConfig(tier);
+    const isPremium = tier === 'premium' || tier === 'ultra';
+
+    /**
+     * Claude API 호출 공통 함수
+     * @param {string} prompt - 프롬프트
+     * @param {number} maxTokens - 최대 토큰 수
+     * @param {boolean} useKeywordModel - 키워드 생성 모델 사용 여부 (항상 Sonnet)
+     */
+    const callClaudeApi = async (prompt, maxTokens = 1500, useKeywordModel = false) => {
         const apiKeys = getApiKeys();
         if (!apiKeys) throw new Error('API 키 설정 필요');
 
@@ -154,8 +175,13 @@ export const useReading = ({
             dangerouslyAllowBrowser: true
         });
 
+        // 모델 선택: 모든 티어 Sonnet 사용 (품질 보장)
+        const model = useKeywordModel ? AI_MODELS.keywords : modelConfig.textModel;
+
+        console.log(`🤖 AI Model: ${model} (${isPremium ? 'Premium' : 'Free'} tier, keywordMode: ${useKeywordModel})`);
+
         const result = await anthropic.messages.create({
-            model: "claude-sonnet-4-20250514",
+            model,
             max_tokens: maxTokens,
             messages: [{ role: "user", content: prompt }]
         });
@@ -167,8 +193,14 @@ export const useReading = ({
         return JSON.parse(cleanText);
     };
 
-    // 심층 분석 생성 (꿈 전용)
+    // 심층 분석 생성 (꿈 전용) - 프리미엄 전용 기능
     const generateDetailedAnalysis = async (data, originalDream) => {
+        // 무료 티어는 심층 분석 생성 안 함
+        if (!isPremium) {
+            console.log('📝 Free tier: Skipping detailed analysis');
+            return null;
+        }
+
         try {
             const apiKeys = getApiKeys();
             const client = new Anthropic({
@@ -176,8 +208,10 @@ export const useReading = ({
                 dangerouslyAllowBrowser: true
             });
 
+            console.log(`🤖 Detailed Analysis Model: ${modelConfig.textModel}`);
+
             const response = await client.messages.create({
-                model: 'claude-sonnet-4-20250514',
+                model: modelConfig.textModel,  // 티어에 따른 모델 사용
                 max_tokens: 4000,
                 messages: [{
                     role: 'user',
@@ -993,6 +1027,9 @@ JSON만 반환:
         error,
         progress,
         analysisPhase,
+        // 티어 정보
+        isPremium,
+        modelConfig,
         // 함수
         generateDreamReading,
         generateTarotReading,

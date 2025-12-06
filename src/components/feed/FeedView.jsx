@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Reactions from '../common/Reactions';
 import InlineComments from '../common/InlineComments';
+import { getTagUrl } from '../../utils/tagUtils';
 
 const FeedView = ({
     mode,
@@ -20,6 +22,7 @@ const FeedView = ({
     user,
     onLoginRequired
 }) => {
+    const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState(null);
 
     // 외부 symbolFilter가 변경되면 activeFilter도 업데이트
@@ -67,7 +70,7 @@ const FeedView = ({
         onClearSymbolFilter?.();
     };
 
-    // 태그 클릭 핸들러
+    // 태그 클릭 핸들러 - 로컬 필터링
     const handleTagClick = (keyword) => {
         if (currentFilter === keyword) {
             clearFilter();
@@ -76,6 +79,12 @@ const FeedView = ({
             onClearSymbolFilter?.(); // 외부 필터 해제
         }
         onKeywordFilter?.(keyword);
+    };
+
+    // 태그 페이지로 이동 (pSEO)
+    const navigateToTagPage = (keyword, e) => {
+        e?.stopPropagation();
+        navigate(getTagUrl(keyword));
     };
 
     // 공통 태그 바
@@ -147,7 +156,7 @@ const FeedView = ({
                     <button
                         key={item.word}
                         className={`trending-chip ${currentFilter === item.word ? 'active' : ''}`}
-                        onClick={() => handleTagClick(item.word)}
+                        onClick={() => navigateToTagPage(item.word)}
                     >
                         {i < 3 && <span className="fire">🔥</span>}
                         #{item.word}
@@ -285,10 +294,7 @@ const FeedView = ({
                                                 <span
                                                     key={i}
                                                     className="feed-card-tag"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleTagClick(k.word);
-                                                    }}
+                                                    onClick={(e) => navigateToTagPage(k.word, e)}
                                                 >
                                                     #{k.word}
                                                 </span>
@@ -380,10 +386,7 @@ const FeedView = ({
                                         {tarot.topic && (
                                             <span
                                                 className="feed-card-tag topic-tag"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleTagClick(tarot.topic);
-                                                }}
+                                                onClick={(e) => navigateToTagPage(tarot.topic, e)}
                                             >
                                                 #{tarot.topic}
                                             </span>
@@ -393,10 +396,7 @@ const FeedView = ({
                                             <span
                                                 key={i}
                                                 className="feed-card-tag"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleTagClick(k.word);
-                                                }}
+                                                onClick={(e) => navigateToTagPage(k.word, e)}
                                             >
                                                 #{k.word}
                                             </span>
@@ -478,10 +478,7 @@ const FeedView = ({
                                                 <span
                                                     key={i}
                                                     className="feed-card-tag"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleTagClick(k.word);
-                                                    }}
+                                                    onClick={(e) => navigateToTagPage(k.word, e)}
                                                 >
                                                     #{k.word}
                                                 </span>

@@ -1,3 +1,6 @@
+import CustomQuestionSelector from '../common/CustomQuestionSelector';
+import PremiumFortuneOptions from './PremiumFortuneOptions';
+
 // 사주 단계별 이모지와 색상
 const FORTUNE_PHASE_CONFIG = [
     { emoji: '☯️', color: '#1abc9c' },  // 1: 시작
@@ -20,8 +23,19 @@ const FortuneInput = ({
     progress,
     error,
     onBack,
-    onGenerate
+    onGenerate,
+    // 맞춤 질문 관련 props
+    tier = 'free',
+    selectedQuestion,
+    customQuestion,
+    onSelectPreset,
+    onCustomQuestionChange,
+    onOpenPremium,
+    // 프리미엄 사주 기능
+    onGenerateCompatibility,
+    onGenerateYearlyFortune
 }) => {
+    const isPremium = tier === 'premium' || tier === 'ultra';
     const currentPhase = FORTUNE_PHASE_CONFIG[Math.min(analysisPhase, FORTUNE_PHASE_CONFIG.length) - 1] || FORTUNE_PHASE_CONFIG[0];
 
     return (
@@ -30,33 +44,6 @@ const FortuneInput = ({
 
             {!loading && (
                 <>
-                    <div className="fortune-type-selector">
-                        <button
-                            className={`fortune-type-btn ${fortuneType === 'today' ? 'active' : ''}`}
-                            onClick={() => setFortuneType('today')}
-                        >
-                            ☯️ 오늘 사주
-                        </button>
-                        <button
-                            className={`fortune-type-btn ${fortuneType === 'love' ? 'active' : ''}`}
-                            onClick={() => setFortuneType('love')}
-                        >
-                            💕 연애운
-                        </button>
-                        <button
-                            className={`fortune-type-btn ${fortuneType === 'career' ? 'active' : ''}`}
-                            onClick={() => setFortuneType('career')}
-                        >
-                            💼 직장운
-                        </button>
-                        <button
-                            className={`fortune-type-btn ${fortuneType === 'money' ? 'active' : ''}`}
-                            onClick={() => setFortuneType('money')}
-                        >
-                            💰 재물운
-                        </button>
-                    </div>
-
                     <div className="fortune-birthdate">
                         <label>생년월일 (필수)</label>
                         <input
@@ -66,6 +53,36 @@ const FortuneInput = ({
                             className="birthdate-input"
                         />
                     </div>
+
+                    {/* 맞춤 질문 선택 - 생년월일 입력 후 표시 */}
+                    {fortuneBirthdate && (
+                        <CustomQuestionSelector
+                            type="fortune"
+                            tier={tier}
+                            selectedQuestion={selectedQuestion}
+                            customQuestion={customQuestion}
+                            onSelectPreset={(preset) => {
+                                onSelectPreset(preset);
+                                if (preset) setFortuneType(preset.id);
+                            }}
+                            onCustomChange={onCustomQuestionChange}
+                            onOpenPremium={onOpenPremium}
+                            disabled={loading}
+                        />
+                    )}
+
+                    {/* 프리미엄 사주 기능 (궁합, 연간운세) */}
+                    {fortuneBirthdate && (
+                        <PremiumFortuneOptions
+                            isPremium={isPremium}
+                            tier={tier}
+                            birthdate={fortuneBirthdate}
+                            onOpenPremium={onOpenPremium}
+                            onGenerateCompatibility={onGenerateCompatibility}
+                            onGenerateYearlyFortune={onGenerateYearlyFortune}
+                            loading={loading}
+                        />
+                    )}
 
                     {error && <div className="error">{error}</div>}
                 </>

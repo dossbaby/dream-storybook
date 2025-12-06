@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npx vite:*)",
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(node --version:*)",
+      "Bash(npm --version)",
+      "Bash(npm run build:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

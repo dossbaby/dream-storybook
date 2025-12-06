@@ -3805,6 +3805,22 @@
     border-color: rgba(200, 240, 255, 0.5);
 }
 
+/* 프리미엄 잠금 상태 */
+.unseal-btn.locked {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.15));
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    color: rgba(255, 215, 0, 0.95);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.unseal-btn.locked:hover {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(255, 180, 0, 0.25));
+    box-shadow:
+        0 0 15px rgba(255, 215, 0, 0.5),
+        0 5px 25px rgba(255, 180, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.6);
+}
+
 /* 봉인 해제된 인사이트 - 양옆 3rem + 하단 그라데이션 border */
 .unsealed-insight {
     position: relative;

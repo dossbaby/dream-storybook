@@ -12,6 +12,8 @@ export const useDreamManagement = ({
     selectedDream,
     setSelectedDream,
     setMyDreams,
+    setMyTarots,
+    setMyFortunes,
     setView,
     setToast,
     loadDreams,
@@ -57,7 +59,7 @@ export const useDreamManagement = ({
         }
     };
 
-    // 공개/비공개 토글
+    // 공개/비공개 토글 (레거시 - isPublic boolean)
     const toggleDreamVisibility = async (dreamId, currentIsPublic) => {
         if (!user) return;
         try {
@@ -75,9 +77,65 @@ export const useDreamManagement = ({
         }
     };
 
+    /**
+     * 통합 visibility 업데이트 함수
+     * @param {'dream'|'tarot'|'fortune'} type - 콘텐츠 타입
+     * @param {string} id - 콘텐츠 ID
+     * @param {'private'|'unlisted'|'public'} visibility - 새 visibility 값
+     * @param {boolean} isAnonymous - 익명 공개 여부 (public일 때만 유효)
+     */
+    const updateVisibility = async (type, id, visibility, isAnonymous = false) => {
+        if (!user) return;
+
+        // 컬렉션명 매핑
+        const collectionMap = {
+            dream: 'dreams',
+            tarot: 'tarots',
+            fortune: 'sajus'
+        };
+        const collection = collectionMap[type];
+        if (!collection) return;
+
+        // isPublic 값 계산 (레거시 호환)
+        const isPublic = visibility === 'public';
+
+        try {
+            await updateDoc(doc(db, collection, id), {
+                visibility,
+                isPublic,
+                isAnonymous: isPublic ? isAnonymous : false
+            });
+
+            // 로컬 상태 업데이트
+            const updateItem = (item) =>
+                item.id === id
+                    ? { ...item, visibility, isPublic, isAnonymous: isPublic ? isAnonymous : false }
+                    : item;
+
+            if (type === 'dream') {
+                setMyDreams(prev => prev.map(updateItem));
+                if (selectedDream?.id === id) {
+                    setSelectedDream(prev => ({ ...prev, visibility, isPublic, isAnonymous: isPublic ? isAnonymous : false }));
+                }
+                loadDreams();
+            } else if (type === 'tarot' && setMyTarots) {
+                setMyTarots(prev => prev.map(updateItem));
+            } else if (type === 'fortune' && setMyFortunes) {
+                setMyFortunes(prev => prev.map(updateItem));
+            }
+
+            return true;
+        } catch (err) {
+            console.error('visibility 업데이트 실패:', err);
+            alert('공개 설정 변경에 실패했습니다.');
+            return false;
+        }
+    };
+
     return {
         toggleSavedDreamVisibility,
         deleteDream,
-        toggleDreamVisibility
+        toggleDreamVisibility,
+        updateVisibility
     };
 };

@@ -14,7 +14,9 @@ const FortuneResultView = ({
     whispers = [],
     onAddWhisper,
     viewerCount = 0,
-    similarCount = 0
+    similarCount = 0,
+    isPremium = false,
+    onOpenPremium
 }) => {
     const [whisperText, setWhisperText] = useState('');
     // 섹션 공개 상태
@@ -394,17 +396,30 @@ const FortuneResultView = ({
                                 </div>
                             )}
 
-                            {/* Hidden Insight - 봉인된 메시지 */}
+                            {/* Hidden Insight - 봉인된 메시지 (프리미엄 전용) */}
                             <div className="sealed-insight-section">
                                 {!insightUnsealed ? (
-                                    <div className="sealed-message" onClick={() => setInsightUnsealed(true)}>
+                                    <div
+                                        className="sealed-message"
+                                        onClick={() => {
+                                            if (isPremium) {
+                                                setInsightUnsealed(true);
+                                            } else {
+                                                onOpenPremium?.('hidden_insight');
+                                            }
+                                        }}
+                                    >
                                         <div className="seal-visual">
                                             <span className="seal-icon">🔮</span>
                                             <div className="seal-glow"></div>
                                         </div>
                                         <div className="seal-text">봉인된 메시지</div>
-                                        <div className="seal-hint">오늘 하루가 끝나기 전 확인하세요</div>
-                                        <button className="unseal-btn">봉인 해제하기</button>
+                                        <div className="seal-hint">
+                                            {isPremium ? '오늘 하루가 끝나기 전 확인하세요' : '숨겨진 메시지가 있어요'}
+                                        </div>
+                                        <button className={`unseal-btn ${!isPremium ? 'locked' : ''}`}>
+                                            {isPremium ? '봉인 해제하기' : '🔒 프리미엄으로 확인'}
+                                        </button>
                                     </div>
                                 ) : (
                                     <div className="unsealed-insight">

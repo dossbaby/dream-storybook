@@ -1,4 +1,4 @@
-# 꿈해몽 스토리북 - robots.txt
+# 점AI - robots.txt
 User-agent: *
 Allow: /
 
@@ -11,4 +11,4 @@ Allow: /tarots
 Allow: /fortunes
 
 # 사이트맵
-Sitemap: https://dream-storybook.vercel.app/sitemap.xml
+Sitemap: https://jeom.ai/sitemap.xml

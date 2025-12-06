@@ -89,13 +89,13 @@ const ContentListPage = ({ type }) => {
     const getPageMeta = () => {
         if (currentCategory) {
             return {
-                title: `${currentCategory.name} - ${typeConfig.name} 모음 | 꿈해몽 스토리북`,
+                title: `${currentCategory.name} - ${typeConfig.name} 모음 | 점AI`,
                 description: `${currentCategory.name} 관련 ${typeConfig.name} 모음입니다. ${currentCategory.keywords.slice(0, 5).join(', ')} 등 다양한 ${typeConfig.name}을 확인해보세요.`,
                 keywords: `${currentCategory.name}, ${typeConfig.seoKeywords.join(', ')}, ${currentCategory.keywords.join(', ')}`
             };
         }
         return {
-            title: `${typeConfig.name} 모음 | 꿈해몽 스토리북`,
+            title: `${typeConfig.name} 모음 | 점AI`,
             description: `다양한 ${typeConfig.name} 결과를 확인해보세요. 무료 ${typeConfig.name} 풀이와 해석을 제공합니다.`,
             keywords: typeConfig.seoKeywords.join(', ')
         };
@@ -115,7 +115,7 @@ const ContentListPage = ({ type }) => {
             {/* 헤더 */}
             <header className="seo-header">
                 <Link to="/" className="logo-link">
-                    {typeConfig.icon} 꿈해몽 스토리북
+                    🔮 점AI
                 </Link>
             </header>
 
@@ -247,7 +247,7 @@ const ContentListPage = ({ type }) => {
 
             {/* 푸터 */}
             <footer className="seo-footer">
-                <p>&copy; {new Date().getFullYear()} 꿈해몽 스토리북. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} 점AI. All rights reserved.</p>
                 <nav className="footer-nav">
                     <Link to="/">홈</Link>
                     <Link to="/dreams">꿈해몽</Link>

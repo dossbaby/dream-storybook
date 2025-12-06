@@ -1,3 +1,5 @@
+import CustomQuestionSelector from '../common/CustomQuestionSelector';
+
 // 단계별 이모지와 색상
 const PHASE_CONFIG = [
     { emoji: '🌙', color: '#9b59b6' },  // 1: 접신 중
@@ -25,7 +27,14 @@ const DreamInput = ({
     onBack,
     onGenerate,
     onAddKeywordHint,
-    onFilterBySymbol
+    onFilterBySymbol,
+    // 맞춤 질문 관련 props
+    tier = 'free',
+    selectedQuestion,
+    customQuestion,
+    onSelectPreset,
+    onCustomQuestionChange,
+    onOpenPremium
 }) => {
     const currentPhase = PHASE_CONFIG[Math.min(analysisPhase, PHASE_CONFIG.length) - 1] || PHASE_CONFIG[0];
 
@@ -83,6 +92,20 @@ const DreamInput = ({
                             </div>
                         </div>
                     )}
+                    {/* 맞춤 질문 선택 */}
+                    {dreamDescription.trim().length >= 10 && (
+                        <CustomQuestionSelector
+                            type="dream"
+                            tier={tier}
+                            selectedQuestion={selectedQuestion}
+                            customQuestion={customQuestion}
+                            onSelectPreset={onSelectPreset}
+                            onCustomChange={onCustomQuestionChange}
+                            onOpenPremium={onOpenPremium}
+                            disabled={loading}
+                        />
+                    )}
+
                     {error && <div className="error">{error}</div>}
                 </>
             )}

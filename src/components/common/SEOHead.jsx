@@ -11,11 +11,11 @@ const SEOHead = ({
     image,
     url,
     type = 'article',
-    author = '꿈해몽 스토리북',
+    author = '점AI',
     publishedTime,
     modifiedTime
 }) => {
-    const siteUrl = 'https://dream-storybook.com'; // 실제 도메인으로 변경 필요
+    const siteUrl = 'https://jeom.ai';
     const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
     const defaultImage = `${siteUrl}/og-image.png`;
     const ogImage = image || defaultImage;
@@ -23,7 +23,7 @@ const SEOHead = ({
     return (
         <Helmet>
             {/* 기본 메타태그 */}
-            <title>{title} | 꿈해몽 스토리북</title>
+            <title>{title} | 점AI</title>
             <meta name="description" content={description} />
             {keywords && <meta name="keywords" content={keywords.join(', ')} />}
             <link rel="canonical" href={fullUrl} />
@@ -34,7 +34,7 @@ const SEOHead = ({
             <meta property="og:description" content={description} />
             <meta property="og:url" content={fullUrl} />
             <meta property="og:image" content={ogImage} />
-            <meta property="og:site_name" content="꿈해몽 스토리북" />
+            <meta property="og:site_name" content="점AI" />
             <meta property="og:locale" content="ko_KR" />
 
             {/* Twitter Card */}
@@ -70,7 +70,7 @@ const SEOHead = ({
                     },
                     "publisher": {
                         "@type": "Organization",
-                        "name": "꿈해몽 스토리북",
+                        "name": "점AI",
                         "logo": {
                             "@type": "ImageObject",
                             "url": `${siteUrl}/logo.png`

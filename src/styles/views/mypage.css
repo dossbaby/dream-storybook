@@ -903,3 +903,116 @@
     gap: 0.75rem;
     align-items: center;
 }
+
+/* ========== Visibility 드롭다운 ========== */
+.visibility-dropdown {
+    position: relative;
+}
+
+.visibility-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.visibility-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.visibility-btn.private {
+    border-color: rgba(102, 102, 102, 0.4);
+}
+
+.visibility-btn.unlisted {
+    border-color: rgba(52, 152, 219, 0.4);
+}
+
+.visibility-btn.public {
+    border-color: rgba(26, 188, 156, 0.4);
+}
+
+.visibility-btn .visibility-icon {
+    font-size: 0.8rem;
+}
+
+.visibility-btn .visibility-text {
+    font-weight: 500;
+}
+
+.visibility-btn .visibility-arrow {
+    font-size: 0.5rem;
+    margin-left: 0.1rem;
+    opacity: 0.6;
+}
+
+.visibility-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background: rgba(20, 15, 35, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 100;
+    min-width: 140px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.visibility-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.visibility-menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.visibility-menu-item.active {
+    background: rgba(255, 0, 85, 0.15);
+    color: #ff0055;
+}
+
+.visibility-menu-item .menu-icon {
+    font-size: 0.9rem;
+}
+
+.visibility-menu-item .menu-label {
+    flex: 1;
+}
+
+.visibility-menu-item .menu-check {
+    font-size: 0.7rem;
+    color: #ff0055;
+}

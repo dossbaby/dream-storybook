@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Anthropic from '@anthropic-ai/sdk';
+import { AI_MODELS } from '../utils/aiConfig';
 
 /**
  * AI 꿈 패턴 리포트 생성 훅
@@ -43,7 +44,7 @@ ${JSON.stringify(dreamSummaries, null, 2)}
 }`;
 
             const result = await anthropic.messages.create({
-                model: "claude-sonnet-4-20250514",
+                model: AI_MODELS.text,  // Sonnet 4.5
                 max_tokens: 800,
                 messages: [{ role: "user", content: reportPrompt }]
             });

@@ -1,9 +1,31 @@
 import { useState, memo } from 'react';
 
-const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText, showToast }) => {
+const ShareModal = memo(({
+    isOpen,
+    onClose,
+    shareTarget,
+    dreamTypes,
+    onCopyText,
+    showToast,
+    isPremium = false,
+    hasReceivedShareBonus,
+    onShareComplete
+}) => {
     const [isCopying, setIsCopying] = useState(false);
+    const [bonusShown, setBonusShown] = useState(false);
 
     if (!isOpen || !shareTarget) return null;
+
+    // 보너스 가능 여부 확인
+    const canReceiveBonus = !isPremium && hasReceivedShareBonus && !hasReceivedShareBonus();
+
+    // 공유 완료 처리
+    const handleShareSuccess = async (shareType) => {
+        if (canReceiveBonus && !bonusShown) {
+            await onShareComplete?.(shareType);
+            setBonusShown(true);
+        }
+    };
 
     // 공유할 URL 생성
     const getShareUrl = () => {
@@ -19,7 +41,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
         const title = shareTarget.title || '꿈 해몽';
         const verdict = shareTarget.verdict || '';
 
-        return `${emoji} ${title}\n\n"${verdict}"\n\n꿈 스토리북에서 확인하기`;
+        return `${emoji} ${title}\n\n"${verdict}"\n\n점AI에서 확인하기`;
     };
 
     // 텍스트 복사
@@ -30,6 +52,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
             await navigator.clipboard.writeText(text);
             showToast?.('텍스트가 복사되었어요! 📋', 'success');
             onCopyText?.();
+            handleShareSuccess('copy');
         } catch (err) {
             // 폴백: execCommand 사용
             const textArea = document.createElement('textarea');
@@ -39,6 +62,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
             document.execCommand('copy');
             document.body.removeChild(textArea);
             showToast?.('텍스트가 복사되었어요! 📋', 'success');
+            handleShareSuccess('copy');
         } finally {
             setIsCopying(false);
         }
@@ -50,6 +74,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
             const url = getShareUrl();
             await navigator.clipboard.writeText(url);
             showToast?.('링크가 복사되었어요! 🔗', 'success');
+            handleShareSuccess('link');
         } catch (err) {
             const textArea = document.createElement('textarea');
             textArea.value = getShareUrl();
@@ -58,6 +83,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
             document.execCommand('copy');
             document.body.removeChild(textArea);
             showToast?.('링크가 복사되었어요! 🔗', 'success');
+            handleShareSuccess('link');
         }
     };
 
@@ -66,11 +92,12 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: shareTarget.title || '꿈 스토리북',
+                    title: shareTarget.title || '점AI',
                     text: getShareText(),
                     url: getShareUrl()
                 });
                 showToast?.('공유 완료! ✨', 'success');
+                handleShareSuccess('native');
             } catch (err) {
                 if (err.name !== 'AbortError') {
                     showToast?.('공유에 실패했어요 😢', 'error');
@@ -103,6 +130,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
                     }
                 ]
             });
+            handleShareSuccess('kakao');
         } else {
             // 카카오 SDK가 없으면 링크 복사로 대체
             handleCopyLink();
@@ -119,6 +147,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
             '_blank',
             'width=600,height=400'
         );
+        handleShareSuccess('twitter');
     };
 
     // 페이스북 공유
@@ -129,6 +158,7 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
             '_blank',
             'width=600,height=400'
         );
+        handleShareSuccess('facebook');
     };
 
     const canNativeShare = typeof navigator !== 'undefined' && navigator.share;
@@ -220,6 +250,19 @@ const ShareModal = memo(({ isOpen, onClose, shareTarget, dreamTypes, onCopyText,
                     </button>
                 </div>
 
+                {/* 공유 보너스 안내 */}
+                {canReceiveBonus && !bonusShown && (
+                    <div className="share-bonus-hint">
+                        <span className="bonus-icon">🎁</span>
+                        <span className="bonus-text">공유하면 무료 리딩 +1!</span>
+                    </div>
+                )}
+                {bonusShown && (
+                    <div className="share-bonus-granted">
+                        <span className="bonus-icon">✨</span>
+                        <span className="bonus-text">보너스 리딩 획득!</span>
+                    </div>
+                )}
                 <p className="share-tip">친구에게 나의 꿈 해몽을 공유해보세요!</p>
             </div>
         </div>

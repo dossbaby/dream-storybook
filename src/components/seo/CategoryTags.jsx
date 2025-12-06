@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { DREAM_CATEGORIES, TAROT_CATEGORIES, FORTUNE_CATEGORIES } from '../../utils/seoConfig';
+import { DREAM_CATEGORIES, TAROT_CATEGORIES, SAJU_CATEGORIES } from '../../utils/seoConfig';
 
 /**
  * 카테고리 태그 컴포넌트
@@ -42,7 +42,8 @@ const getCategoriesForType = (type) => {
         case 'tarot':
             return TAROT_CATEGORIES;
         case 'fortune':
-            return FORTUNE_CATEGORIES;
+        case 'saju':
+            return SAJU_CATEGORIES;
         default:
             return {};
     }

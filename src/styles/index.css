@@ -1,15 +1,5 @@
 /* ========== Dream Storybook Styles ========== */
 
-/* 리디바탕 폰트 - 신비로운 리딩 텍스트용 */
-@font-face {
-    font-family: 'RIDIBatang';
-    src: url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff2') format('woff2'),
-         url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 /* Base */
 @import './base/variables.css';
 @import './base/reset.css';
@@ -31,6 +21,7 @@
 @import './components/shorts.css';
 @import './components/whispers.css';
 @import './components/reading-modal.css';
+@import './components/premium.css';
 @import './components/slide-result.css';
 @import './components/cinematic-result.css';
 @import './components/royal-result.css';
@@ -47,3 +38,13 @@
 /* Themes */
 @import './themes.css';
 @import './cards.css';
+
+/* 리디바탕 폰트 - 신비로운 리딩 텍스트용 */
+@font-face {
+    font-family: 'RIDIBatang';
+    src: url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff2') format('woff2'),
+         url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

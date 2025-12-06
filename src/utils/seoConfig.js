@@ -121,7 +121,7 @@ export const generateSEOMeta = (content, type) => {
     ];
 
     return {
-        title: `${title} | 꿈해몽 스토리북`,
+        title: `${title} | 점AI`,
         description: description.slice(0, 160),
         keywords: keywords.join(', '),
         ogType: 'article',
@@ -135,11 +135,11 @@ export const generateSEOMeta = (content, type) => {
             image: content.dreamImage || typeConfig.defaultImage,
             author: {
                 '@type': 'Person',
-                name: content.userName || '꿈해몽 스토리북'
+                name: content.userName || '점AI'
             },
             publisher: {
                 '@type': 'Organization',
-                name: '꿈해몽 스토리북',
+                name: '점AI',
                 logo: {
                     '@type': 'ImageObject',
                     url: '/logo.png'

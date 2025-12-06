@@ -34,7 +34,9 @@ const DreamDetailView = ({
     onCancelEditComment,
     onDeleteComment,
     renderCard,
-    formatTime
+    formatTime,
+    isPremium = false,
+    onOpenPremium
 }) => {
     return (
         <>
@@ -86,8 +88,17 @@ const DreamDetailView = ({
                         <button className="action-btn">💫 <span>{(interpretations.length + comments.length) || 0}</span></button>
                         <button className="action-btn share" onClick={() => onShare(selectedDream)}>📤 <span>공유</span></button>
                     </div>
-                    <button className="action-btn detailed full-width" onClick={() => onGenerateDetailedReading(selectedDream)}>
-                        📖 상세 풀이 보기
+                    <button
+                        className={`action-btn detailed full-width ${!isPremium ? 'locked' : ''}`}
+                        onClick={() => {
+                            if (isPremium) {
+                                onGenerateDetailedReading(selectedDream);
+                            } else {
+                                onOpenPremium?.('detailed_analysis');
+                            }
+                        }}
+                    >
+                        {isPremium ? '📖 상세 풀이 보기' : '🔒 프리미엄으로 상세 풀이 보기'}
                     </button>
                 </div>
                 <div className="live-info-cards">

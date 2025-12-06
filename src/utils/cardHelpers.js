@@ -103,5 +103,5 @@ export const generateShareText = (target, dreamTypes = {}) => {
     }
 
     // 꿈 (기본)
-    return `🌙 ${target.title}\n"${target.verdict}"\n\n${dreamTypes[target.dreamType]?.emoji || ''} ${dreamTypes[target.dreamType]?.name || ''} 유형\n\n#꿈해몽 #꿈스토리북`;
+    return `🌙 ${target.title}\n"${target.verdict}"\n\n${dreamTypes[target.dreamType]?.emoji || ''} ${dreamTypes[target.dreamType]?.name || ''} 유형\n\n#꿈해몽 #점AI`;
 };

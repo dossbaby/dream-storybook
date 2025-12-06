@@ -1,7 +1,9 @@
 {
-  "name": "dream-storybook",
+  "name": "jeom-ai",
   "private": true,
   "version": "1.0.0",
+  "description": "점AI - AI 기반 타로, 꿈해몽, 사주 서비스",
+  "homepage": "https://jeom.ai",
   "type": "module",
   "scripts": {
     "dev": "vite",

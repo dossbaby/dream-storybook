@@ -882,3 +882,729 @@ section p {
         -webkit-line-clamp: 1;
     }
 }
+
+/* ========== 태그 페이지 ========== */
+.tag-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+    color: var(--white);
+    padding-bottom: 2rem;
+}
+
+.tag-page.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.tag-page .loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tag-page .spinner-icon {
+    font-size: 3rem;
+    animation: spin 2s ease-in-out infinite;
+}
+
+.tag-page .spinner-text {
+    font-size: 0.9rem;
+    color: var(--light-gray);
+}
+
+/* 태그 페이지 헤더 */
+.tag-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.tag-header .back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tag-header .back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tag-title-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.tag-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tag-count {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+}
+
+/* 타입 필터 탭 */
+.type-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.type-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.type-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    color: var(--light-gray);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.type-tab:hover {
+    background: rgba(155, 89, 182, 0.2);
+    border-color: rgba(155, 89, 182, 0.3);
+}
+
+.type-tab.active {
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border-color: transparent;
+    color: var(--white);
+    font-weight: 600;
+}
+
+.tab-count {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+}
+
+.type-tab.active .tab-count {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 관련 태그 */
+.related-tags {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.related-title {
+    font-size: 0.8rem;
+    color: var(--light-gray);
+    margin: 0 0 0.75rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.related-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.related-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    background: rgba(155, 89, 182, 0.15);
+    border: 1px solid rgba(155, 89, 182, 0.25);
+    border-radius: 20px;
+    color: var(--white);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.related-chip:hover {
+    background: rgba(155, 89, 182, 0.3);
+    transform: translateY(-2px);
+}
+
+.chip-count {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.1rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    color: var(--light-gray);
+}
+
+/* 태그 콘텐츠 그리드 */
+.tag-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    padding: 1.5rem;
+}
+
+.tag-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tag-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(155, 89, 182, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.tag-card.dream {
+    border-left: 3px solid #a29bfe;
+}
+
+.tag-card.tarot {
+    border-left: 3px solid var(--gold);
+}
+
+.tag-card.saju {
+    border-left: 3px solid var(--accent);
+}
+
+.tag-card-thumb {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
+
+.tag-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.tag-card:hover .tag-card-thumb img {
+    transform: scale(1.05);
+}
+
+.tag-card-emoji {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(138, 43, 226, 0.2));
+    font-size: 3rem;
+}
+
+.type-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.3rem 0.7rem;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    font-size: 0.75rem;
+    color: var(--white);
+}
+
+.tag-card-info {
+    padding: 1rem;
+}
+
+.tag-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tag-card-verdict {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tag-card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.75rem;
+}
+
+.tag-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.mini-tag {
+    padding: 0.2rem 0.5rem;
+    background: rgba(155, 89, 182, 0.15);
+    border-radius: 10px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mini-tag:hover {
+    background: rgba(155, 89, 182, 0.3);
+    color: var(--white);
+}
+
+.mini-tag.highlight {
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    color: var(--white);
+    font-weight: 600;
+}
+
+.tag-card-stats {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* 태그 페이지 빈 상태 */
+.tag-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.tag-empty .empty-icon {
+    font-size: 4rem;
+    opacity: 0.5;
+}
+
+.tag-empty h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--white);
+}
+
+.tag-empty p {
+    font-size: 0.9rem;
+    margin: 0;
+    color: var(--light-gray);
+}
+
+.back-home-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border: none;
+    border-radius: 25px;
+    color: var(--white);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-home-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(155, 89, 182, 0.4);
+}
+
+/* 태그 페이지 반응형 */
+@media (max-width: 768px) {
+    .tag-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .tag-title {
+        font-size: 1.25rem;
+    }
+
+    .type-tabs {
+        padding: 0.75rem 1rem;
+    }
+
+    .type-tab {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .tag-content-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .tag-card-thumb {
+        height: 120px;
+    }
+
+    .tag-card-info {
+        padding: 0.75rem;
+    }
+
+    .tag-card-title {
+        font-size: 0.9rem;
+    }
+
+    .tag-card-verdict {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 1;
+    }
+}
+
+/* ========== 전체 태그 탐색 페이지 ========== */
+.tags-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+    color: var(--white);
+    padding-bottom: 2rem;
+}
+
+.tags-page.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* 태그 페이지 헤더 */
+.tags-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.tags-title-area {
+    flex: 1;
+}
+
+.tags-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--white);
+}
+
+.tags-subtitle {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+}
+
+.all-tags-link {
+    padding: 0.5rem 1rem;
+    background: rgba(155, 89, 182, 0.2);
+    border-radius: 20px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.all-tags-link:hover {
+    background: rgba(155, 89, 182, 0.4);
+}
+
+/* 통계 섹션 */
+.tags-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--light-gray);
+}
+
+.stat-item.dream .stat-value { color: #a29bfe; }
+.stat-item.tarot .stat-value { color: var(--gold); }
+.stat-item.saju .stat-value { color: var(--accent); }
+
+/* 인기 태그 섹션 */
+.popular-tags-section {
+    padding: 1.5rem;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: var(--white);
+}
+
+.popular-tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.popular-tag-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--white);
+    transition: all 0.3s ease;
+}
+
+.popular-tag-card:hover {
+    background: rgba(155, 89, 182, 0.2);
+    border-color: rgba(155, 89, 182, 0.3);
+    transform: translateY(-2px);
+}
+
+.popular-tag-card.rank-1 { border-left: 3px solid #FFD700; }
+.popular-tag-card.rank-2 { border-left: 3px solid #C0C0C0; }
+.popular-tag-card.rank-3 { border-left: 3px solid #CD7F32; }
+
+.popular-tag-card .rank {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 24px;
+}
+
+.popular-tag-card .tag-name {
+    flex: 1;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.popular-tag-card .tag-count {
+    font-size: 0.75rem;
+    color: var(--light-gray);
+}
+
+.popular-tag-card .tag-types {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.type-dot {
+    font-size: 0.7rem;
+}
+
+/* 정렬 옵션 */
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sort-label {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+}
+
+.sort-btn {
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    color: var(--light-gray);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sort-btn:hover {
+    background: rgba(155, 89, 182, 0.2);
+}
+
+.sort-btn.active {
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border-color: transparent;
+    color: var(--white);
+}
+
+/* 전체 태그 섹션 */
+.all-tags-section {
+    padding: 1.5rem;
+}
+
+.all-tags-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.9rem;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--white);
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.tag-chip:hover {
+    background: rgba(155, 89, 182, 0.3);
+    transform: translateY(-2px);
+}
+
+.chip-name {
+    font-weight: 500;
+}
+
+.chip-count {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.1rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    color: var(--light-gray);
+}
+
+.chip-types {
+    display: flex;
+    gap: 0.15rem;
+}
+
+.chip-type {
+    font-size: 0.65rem;
+}
+
+/* 태그 CTA */
+.tags-cta {
+    text-align: center;
+    margin: 2rem 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(255, 51, 102, 0.1));
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 20px;
+}
+
+.tags-cta h3 {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
+    color: var(--white);
+}
+
+.tags-cta p {
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem 0;
+    color: var(--light-gray);
+}
+
+.tags-cta .cta-btn {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border: none;
+    border-radius: 25px;
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tags-cta .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(155, 89, 182, 0.4);
+}
+
+/* 태그 페이지 반응형 */
+@media (max-width: 768px) {
+    .tags-stats {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .stat-item {
+        min-width: 60px;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    .popular-tags-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sort-options {
+        flex-wrap: wrap;
+    }
+}

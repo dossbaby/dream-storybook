@@ -5,6 +5,8 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from './App.jsx'
 import ContentPage from './pages/ContentPage.jsx'
 import ContentListPage from './pages/ContentListPage.jsx'
+import TagPage from './pages/TagPage.jsx'
+import TagsPage from './pages/TagsPage.jsx'
 import './styles/index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -16,6 +18,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/dream/:id" element={<ContentPage type="dream" />} />
           <Route path="/tarot/:id" element={<ContentPage type="tarot" />} />
           <Route path="/saju/:id" element={<ContentPage type="saju" />} />
+
+          {/* 태그 페이지 */}
+          <Route path="/tags" element={<TagsPage />} />
+          <Route path="/tag/:tagSlug" element={<TagPage />} />
 
           {/* SEO 목록 페이지 */}
           <Route path="/dreams" element={<ContentListPage type="dream" />} />

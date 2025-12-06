@@ -1,13 +1,17 @@
 import { useState } from 'react';
+import PremiumBadge from '../common/PremiumBadge';
 
 const NavBar = ({
     mode,
     user,
     userPoints,
     onlineCount,
+    isPremium,
+    usageSummary,
     onModeChange,
     onViewChange,
     onOpenPoints,
+    onOpenPremium,
     onLogin,
     onResetResults
 }) => {
@@ -36,8 +40,8 @@ const NavBar = ({
         <nav className="nav-bar community-nav">
             {/* 로고 & 브랜드 */}
             <div className="nav-brand" onClick={handleBrandClick}>
-                <span className="brand-logo">✨</span>
-                <span className="brand-name">드림북</span>
+                <span className="brand-logo">🔮</span>
+                <span className="brand-name">점AI</span>
                 {onlineCount > 0 && (
                     <div className="online-badge">
                         <span className="online-dot"></span>
@@ -63,6 +67,13 @@ const NavBar = ({
 
             {/* 액션 버튼들 */}
             <div className="nav-actions">
+                {/* 프리미엄 배지 */}
+                <PremiumBadge
+                    isPremium={isPremium}
+                    size="small"
+                    onClick={onOpenPremium}
+                />
+
                 {user && (
                     <button className="nav-points-btn" onClick={onOpenPoints}>
                         <span className="points-gem">💎</span>
