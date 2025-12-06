@@ -78,3 +78,281 @@
 .modal-actions .save-btn:hover {
     background: #ff4477;
 }
+
+/* ========================================
+   공유 모달 - 향상된 스타일
+   ======================================== */
+.share-modal.enhanced {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16162a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 0;
+    max-width: 380px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: shareModalEnter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes shareModalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.share-modal.enhanced .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.share-modal.enhanced .modal-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* 헤더 */
+.share-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1.5rem 0.75rem;
+}
+
+.share-header .share-icon {
+    font-size: 1.5rem;
+    animation: iconFloat 2s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.share-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+/* 프리뷰 카드 */
+.share-modal.enhanced .share-preview {
+    padding: 1rem 1.5rem;
+}
+
+.share-modal.enhanced .share-card-preview {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #2d2d4a 0%, #1a1a2e 100%);
+}
+
+.share-card-bg {
+    position: absolute;
+    inset: 0;
+}
+
+.share-card-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+}
+
+.share-card-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+}
+
+.share-card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.25rem;
+    color: #fff;
+}
+
+.share-card-type {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.share-card-content h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+    line-height: 1.3;
+}
+
+.share-card-content p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* 공유 버튼 그리드 */
+.share-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem 1rem;
+}
+
+.share-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.85rem 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.share-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05));
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.share-btn:hover::before {
+    opacity: 1;
+}
+
+.share-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.share-btn .btn-icon {
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.share-btn:hover .btn-icon {
+    transform: scale(1.1);
+}
+
+.share-btn .btn-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 0.02em;
+}
+
+/* 개별 버튼 스타일 */
+.share-btn.native {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
+    border-color: rgba(52, 152, 219, 0.3);
+}
+
+.share-btn.native:hover {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.35), rgba(52, 152, 219, 0.2));
+    border-color: rgba(52, 152, 219, 0.5);
+}
+
+.share-btn.kakao {
+    background: linear-gradient(135deg, rgba(254, 229, 0, 0.15), rgba(254, 229, 0, 0.08));
+    border-color: rgba(254, 229, 0, 0.25);
+}
+
+.share-btn.kakao:hover {
+    background: linear-gradient(135deg, rgba(254, 229, 0, 0.3), rgba(254, 229, 0, 0.15));
+    border-color: rgba(254, 229, 0, 0.4);
+}
+
+.share-btn.twitter {
+    background: linear-gradient(135deg, rgba(29, 161, 242, 0.2), rgba(29, 161, 242, 0.1));
+    border-color: rgba(29, 161, 242, 0.3);
+}
+
+.share-btn.twitter:hover {
+    background: linear-gradient(135deg, rgba(29, 161, 242, 0.35), rgba(29, 161, 242, 0.2));
+    border-color: rgba(29, 161, 242, 0.5);
+}
+
+.share-btn.facebook {
+    background: linear-gradient(135deg, rgba(66, 103, 178, 0.2), rgba(66, 103, 178, 0.1));
+    border-color: rgba(66, 103, 178, 0.3);
+}
+
+.share-btn.facebook:hover {
+    background: linear-gradient(135deg, rgba(66, 103, 178, 0.35), rgba(66, 103, 178, 0.2));
+    border-color: rgba(66, 103, 178, 0.5);
+}
+
+.share-btn.link {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.08));
+    border-color: rgba(46, 204, 113, 0.25);
+}
+
+.share-btn.link:hover {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(46, 204, 113, 0.15));
+    border-color: rgba(46, 204, 113, 0.4);
+}
+
+.share-btn.copy {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.08));
+    border-color: rgba(155, 89, 182, 0.25);
+}
+
+.share-btn.copy:hover {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(155, 89, 182, 0.15));
+    border-color: rgba(155, 89, 182, 0.4);
+}
+
+.share-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* 하단 팁 */
+.share-tip {
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 0 1.5rem 1.5rem;
+    margin: 0;
+}

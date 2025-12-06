@@ -1,5 +1,8 @@
 /* ========== Dream Storybook Styles ========== */
 
+/* Google Fonts - 명조체 (Nanum Myeongjo) for mystical reading text */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+
 /* Base */
 @import './base/variables.css';
 @import './base/reset.css';

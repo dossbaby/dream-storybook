@@ -9,6 +9,7 @@ import { generateShareText } from '../utils/cardHelpers';
 export const useUserActions = ({
     user,
     setUserNickname,
+    setUserProfile,
     shareTarget,
     setShareTarget,
     dreamTypes,
@@ -61,11 +62,31 @@ export const useUserActions = ({
         }
     };
 
+    // 프로필 저장 (닉네임 + 프로필 정보)
+    const saveProfile = async ({ nickname, profile }) => {
+        if (!user) return;
+        try {
+            await setDoc(doc(db, 'users', user.uid), {
+                nickname: nickname || '',
+                profile: profile || {},
+                email: user.email,
+                updatedAt: Timestamp.now()
+            }, { merge: true });
+            if (nickname) setUserNickname(nickname);
+            if (profile) setUserProfile(profile);
+            closeModal('profile');
+        } catch (err) {
+            console.error(err);
+            alert('저장 실패');
+        }
+    };
+
     return {
         handleGoogleLogin,
         handleLogout,
         openShareModal,
         copyShareText,
-        saveNickname
+        saveNickname,
+        saveProfile
     };
 };

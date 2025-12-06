@@ -79,89 +79,86 @@
     font-weight: 600;
 }
 
-/* 모드 탭 - 깔끔한 스타일 */
+/* 모드 탭 - 토글 스타일 */
 .nav-mode-tabs {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 2px !important;
+    padding: 3px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-radius: 10px !important;
+    height: auto !important;
 }
 
 .mode-tab {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    background: transparent;
-    border: none;
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 8px 14px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
+    flex: none !important;
 }
 
 .mode-tab:hover {
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* 꿈 탭 활성화 - 보라/핑크 */
+/* 꿈 탭 활성화 */
 .mode-tab.active[data-mode="dream"] {
-    color: #fff;
-    background: linear-gradient(135deg, #9b59b6, #e056fd);
-    box-shadow: 0 0 20px rgba(155, 89, 182, 0.4);
+    color: #fff !important;
+    background: linear-gradient(135deg, #9b59b6, #e056fd) !important;
+    box-shadow: 0 2px 8px rgba(155, 89, 182, 0.4) !important;
 }
 
-/* 타로 탭 활성화 - 보라/골드 */
+/* 타로 탭 활성화 */
 .mode-tab.active[data-mode="tarot"] {
-    color: #fff;
-    background: linear-gradient(135deg, #8e44ad, #9b59b6);
-    box-shadow: 0 0 20px rgba(142, 68, 173, 0.4);
+    color: #fff !important;
+    background: linear-gradient(135deg, #8e44ad, #9b59b6) !important;
+    box-shadow: 0 2px 8px rgba(142, 68, 173, 0.4) !important;
 }
 
-/* 운세 탭 활성화 - 민트/청록 */
+/* 운세 탭 활성화 */
 .mode-tab.active[data-mode="fortune"] {
-    color: #fff;
-    background: linear-gradient(135deg, #1abc9c, #00cec9);
-    box-shadow: 0 0 20px rgba(26, 188, 156, 0.4);
+    color: #fff !important;
+    background: linear-gradient(135deg, #1abc9c, #00cec9) !important;
+    box-shadow: 0 2px 8px rgba(26, 188, 156, 0.4) !important;
 }
 
 /* 기본 활성화 (fallback) */
 .mode-tab.active {
-    color: #fff;
-    background: linear-gradient(135deg, #9b59b6, #e056fd);
-    box-shadow: 0 0 15px rgba(155, 89, 182, 0.35);
+    color: #fff !important;
+    background: linear-gradient(135deg, #9b59b6, #e056fd) !important;
+    box-shadow: 0 2px 8px rgba(155, 89, 182, 0.4) !important;
 }
 
 .mode-emoji {
-    font-size: 1rem;
-    transition: transform 0.2s ease;
-}
-
-.mode-tab:hover .mode-emoji {
-    transform: scale(1.1);
-}
-
-.mode-tab.active .mode-emoji {
-    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+    font-size: 0.95rem !important;
+    line-height: 1 !important;
+    display: inline !important;
 }
 
 .mode-label {
-    font-weight: 600;
-    font-size: 0.75rem;
-    letter-spacing: 0.02em;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    line-height: 1 !important;
+    display: inline !important;
 }
 
 .mode-indicator {
-    display: none;
+    display: none !important;
 }
 
 /* 액션 버튼들 */

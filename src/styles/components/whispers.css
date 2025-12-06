@@ -227,3 +227,791 @@
     background: var(--purple);
     color: white;
 }
+
+/* ========== 소셜 인터랙션 섹션 (타로/운세/꿈 공통) ========== */
+.social-engagement-section {
+    margin-top: 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* 실시간 조회 표시 */
+.viewer-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.25);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.viewer-icon {
+    font-size: 1rem;
+}
+
+.viewer-text {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* 비슷한 유형 표시 */
+.similar-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.25);
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.similar-icon {
+    font-size: 1rem;
+}
+
+.similar-text {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* 원래 질문/내용 박스 */
+.original-question-box {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+.original-question-box .question-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.original-question-box .question-content {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+/* 속삭임 섹션 */
+.whisper-section {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.08), rgba(255, 51, 102, 0.05));
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 16px;
+    padding: 1.25rem;
+}
+
+.whisper-section .whisper-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(155, 89, 182, 0.15);
+}
+
+.whisper-section .whisper-icon {
+    font-size: 1.2rem;
+}
+
+.whisper-section .whisper-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.whisper-section .whisper-count {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: auto;
+}
+
+/* 속삭임 입력 영역 */
+.whisper-input-area {
+    margin-bottom: 1.25rem;
+}
+
+.whisper-prompt {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.75rem;
+}
+
+.whisper-input-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.whisper-input-row .whisper-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.whisper-input-row .whisper-input:focus {
+    outline: none;
+    border-color: #9b59b6;
+}
+
+.whisper-input-row .whisper-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.whisper-submit-btn {
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #9b59b6, #e056fd);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.whisper-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+/* 속삭임 목록 */
+.whisper-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.whisper-section .whisper-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.9rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.whisper-section .whisper-item:hover {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.whisper-section .whisper-emoji {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.whisper-section .whisper-content {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.whisper-section .whisper-time {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+}
+
+.whisper-empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    padding: 1.5rem 1rem;
+    font-style: italic;
+}
+
+/* 운세 테마 */
+.fortune-result-container .social-engagement-section .similar-indicator {
+    background: rgba(26, 188, 156, 0.1);
+    border-color: rgba(26, 188, 156, 0.25);
+}
+
+.fortune-result-container .whisper-section {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.08), rgba(0, 206, 201, 0.05));
+    border-color: rgba(26, 188, 156, 0.2);
+}
+
+.fortune-result-container .whisper-section .whisper-header {
+    border-bottom-color: rgba(26, 188, 156, 0.15);
+}
+
+.fortune-result-container .whisper-submit-btn {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+}
+
+.fortune-result-container .whisper-input-row .whisper-input:focus {
+    border-color: #1abc9c;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+    .whisper-input-row {
+        flex-direction: column;
+    }
+
+    .whisper-submit-btn {
+        width: 100%;
+    }
+}
+
+/* ========== Jenny 전략: 점진적 공개 Mechanism ========== */
+.reading-progress-bar {
+    position: relative;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.reading-progress-bar .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #9b59b6, #e056fd, #ff6b9d);
+    border-radius: 3px;
+    transition: width 0.5s ease-out;
+}
+
+.reading-progress-bar .progress-label {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.fortune-progress .progress-fill {
+    background: linear-gradient(90deg, #1abc9c, #00cec9, #48dbfb);
+}
+
+/* 점진적 공개 애니메이션 */
+.story-section.hidden,
+.card-analysis-group.hidden,
+.advice-grid.hidden,
+.keywords-section.hidden,
+.fortune-timeline.hidden,
+.fortune-detailed.hidden,
+.fortune-do-dont.hidden,
+.lucky-elements.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.story-section.revealed,
+.card-analysis-group.revealed,
+.advice-grid.revealed,
+.keywords-section.revealed,
+.fortune-timeline.revealed,
+.fortune-detailed.revealed,
+.fortune-do-dont.revealed,
+.lucky-elements.revealed {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 2000px;
+    transition: all 0.6s ease-out;
+}
+
+/* ========== 숨겨진 인사이트 (Rewatchability) ========== */
+.hidden-insight-reveal {
+    position: relative;
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.1));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: insightReveal 0.8s ease-out;
+}
+
+@keyframes insightReveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.hidden-insight-reveal .insight-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+    animation: glowPulse 2s infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.hidden-insight-reveal .insight-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+}
+
+.hidden-insight-reveal .insight-icon {
+    font-size: 2rem;
+    animation: iconBounce 1s infinite;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.hidden-insight-reveal .insight-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.hidden-insight-reveal .insight-text {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.fortune-insight {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(0, 206, 201, 0.1));
+    border-color: rgba(26, 188, 156, 0.3);
+}
+
+.fortune-insight .insight-label {
+    color: #1abc9c;
+}
+
+/* ========== 보너스 트위스트 (Foreshadowing + Twist) ========== */
+.bonus-twist-section {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(142, 68, 173, 0.1));
+    border: 2px solid rgba(155, 89, 182, 0.4);
+    border-radius: 20px;
+    animation: twistReveal 1s ease-out;
+}
+
+@keyframes twistReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) rotateX(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0);
+    }
+}
+
+.bonus-twist-section .twist-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.bonus-twist-section .twist-emoji {
+    font-size: 1.8rem;
+    animation: sparkle 1.5s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    75% { transform: scale(1.1) rotate(5deg); }
+}
+
+.bonus-twist-section .twist-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e056fd;
+}
+
+.bonus-twist-section .twist-message {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+    margin: 0 0 1rem 0;
+}
+
+.bonus-twist-section .twist-extra {
+    padding-top: 1rem;
+    border-top: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.bonus-twist-section .twist-detail {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.bonus-twist-section .twist-detail strong {
+    color: #e056fd;
+}
+
+.fortune-twist {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(0, 206, 201, 0.1));
+    border-color: rgba(26, 188, 156, 0.4);
+}
+
+.fortune-twist .twist-title {
+    color: #00cec9;
+}
+
+.fortune-twist .twist-detail strong {
+    color: #1abc9c;
+}
+
+/* ========== 공유 카드 (Shareability) ========== */
+.share-card-section {
+    margin: 2rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.share-card-preview {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(155, 89, 182, 0.3);
+    transform: perspective(1000px) rotateY(-5deg);
+    transition: transform 0.3s ease;
+}
+
+.share-card-preview:hover {
+    transform: perspective(1000px) rotateY(0deg) scale(1.02);
+}
+
+.share-card-inner {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #2c1654, #1a0a30);
+    border: 3px solid rgba(155, 89, 182, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    gap: 0.75rem;
+    text-align: center;
+}
+
+.fortune-card-inner {
+    background: linear-gradient(145deg, #0d3d30, #0a2920);
+    border-color: rgba(26, 188, 156, 0.5);
+}
+
+.share-card-emoji {
+    font-size: 3rem;
+}
+
+.share-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.share-card-score {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1abc9c;
+    margin: 0;
+}
+
+.share-card-verdict {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.share-card-cards {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.share-card-mini {
+    font-size: 1.5rem;
+}
+
+.share-card-btn {
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, #9b59b6, #e056fd);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+.share-card-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(155, 89, 182, 0.5);
+}
+
+.fortune-share-btn {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+    box-shadow: 0 4px 15px rgba(26, 188, 156, 0.4);
+}
+
+.fortune-share-btn:hover {
+    box-shadow: 0 8px 25px rgba(26, 188, 156, 0.5);
+}
+
+.share-hint {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    margin: 0;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+    .share-card-preview {
+        max-width: 220px;
+    }
+
+    .share-card-inner {
+        padding: 1rem;
+    }
+
+    .share-card-emoji {
+        font-size: 2.5rem;
+    }
+
+    .share-card-title {
+        font-size: 1rem;
+    }
+}
+
+/* ========== Jenny 전략: Hook Banner ========== */
+.jenny-hook-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.15));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 30px;
+    margin-bottom: 1rem;
+    animation: hookPulse 2s infinite;
+}
+
+@keyframes hookPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+}
+
+.jenny-hook-banner .hook-sparkle {
+    font-size: 1rem;
+    animation: sparkleRotate 1.5s infinite;
+}
+
+@keyframes sparkleRotate {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(15deg) scale(1.2); }
+}
+
+.jenny-hook-banner .hook-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffd700;
+    text-align: center;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.fortune-hook {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(0, 206, 201, 0.15));
+    border-color: rgba(26, 188, 156, 0.4);
+}
+
+.fortune-hook .hook-text {
+    color: #1abc9c;
+    text-shadow: 0 0 10px rgba(26, 188, 156, 0.5);
+}
+
+/* ========== Jenny 전략: Foreshadow ========== */
+.jenny-foreshadow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px dashed rgba(155, 89, 182, 0.4);
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.jenny-foreshadow .foreshadow-icon {
+    font-size: 1rem;
+    animation: foreshadowPulse 2s infinite;
+}
+
+@keyframes foreshadowPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.jenny-foreshadow .foreshadow-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+}
+
+.fortune-foreshadow {
+    background: rgba(26, 188, 156, 0.1);
+    border-color: rgba(26, 188, 156, 0.4);
+}
+
+/* ========== Jenny 전략: Transition ========== */
+.jenny-transition {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    margin: 0.5rem 0;
+}
+
+.jenny-transition .transition-dots {
+    font-size: 1.2rem;
+    color: rgba(155, 89, 182, 0.6);
+    letter-spacing: 0.3rem;
+    margin-bottom: 0.5rem;
+    animation: dotsWave 1.5s infinite;
+}
+
+@keyframes dotsWave {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+.jenny-transition .transition-text {
+    font-size: 0.9rem;
+    color: #e056fd;
+    font-style: italic;
+    text-align: center;
+    padding: 0.75rem 1.25rem;
+    background: rgba(155, 89, 182, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(155, 89, 182, 0.25);
+}
+
+.fortune-transition .transition-dots {
+    color: rgba(26, 188, 156, 0.6);
+}
+
+.fortune-transition .transition-text {
+    color: #00cec9;
+    background: rgba(26, 188, 156, 0.1);
+    border-color: rgba(26, 188, 156, 0.25);
+}
+
+/* ========== Jenny 전략: Share Hook ========== */
+.jenny-share-hook {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 107, 157, 0.15);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+}
+
+.jenny-share-hook .share-hook-icon {
+    font-size: 1.2rem;
+    animation: heartPop 1.2s infinite;
+}
+
+@keyframes heartPop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.jenny-share-hook .share-hook-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+}
+
+.fortune-share-hook {
+    background: rgba(26, 188, 156, 0.15);
+    border-color: rgba(26, 188, 156, 0.3);
+}
+
+/* ========== 공유 카드 희귀도 표시 ========== */
+.share-card-rarity {
+    font-size: 0.7rem;
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.15);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    margin: 0 0 0.5rem 0;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+    .jenny-hook-banner {
+        padding: 0.6rem 1rem;
+        flex-wrap: wrap;
+    }
+
+    .jenny-hook-banner .hook-text {
+        font-size: 0.8rem;
+    }
+
+    .jenny-transition .transition-text {
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+    }
+}

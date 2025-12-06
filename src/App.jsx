@@ -23,6 +23,7 @@ import { useDreamManagement } from './hooks/useDreamManagement';
 import { useReadingActions } from './hooks/useReadingActions';
 import { useViewActions } from './hooks/useViewActions';
 import NicknameModal from './components/modals/NicknameModal';
+import ProfileSettingsModal from './components/modals/ProfileSettingsModal';
 import ShareModal from './components/modals/ShareModal';
 import ReportModal from './components/modals/ReportModal';
 import PointsModal from './components/modals/PointsModal';
@@ -71,7 +72,7 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, share: false, report: false, points: false, shareTarget: null });
+    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, shareTarget: null });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
     const selectedDreamDate = '';
@@ -108,7 +109,7 @@ function App() {
         typeCounts, todayStats, onlineCount, loading: feedLoading, loadDreams, loadDreamsRef, loadTarotsRef, loadFortunesRef, loadMyDreamsRef
     } = useFeed(null, [], activeTab, filters, mode);
     const {
-        user, userNickname, setUserNickname, myDreams, setMyDreams, myTarots, myFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
+        user, userNickname, setUserNickname, userProfile, setUserProfile, myDreams, setMyDreams, myTarots, myFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
     } = useAuth({ setLoadingState, checkAndAwardBadges, loadMyDreamsRef });
     const { userPoints, freeUsesLeft, addPoints } = usePoints(user);
     const {
@@ -123,7 +124,7 @@ function App() {
         onFortuneSaved: () => { loadFortunesRef.current?.(); user && loadMyFortunes(user.uid); }
     });
     const { loading: readingLoading, error, progress, analysisPhase, generateDreamReading, generateTarotReading: generateTarotReadingHook, generateFortuneReading: generateFortuneReadingHook } = useReading({
-        user, dreamTypes, onSaveDream: saveFirebaseDream, onSaveTarot: saveFirebaseTarot,
+        user, userProfile, dreamTypes, onSaveDream: saveFirebaseDream, onSaveTarot: saveFirebaseTarot,
         onSaveFortune: saveFirebaseFortune, onNewDreamType: handleNewDreamType, setToast, setDopaminePopup, setSavedDreamField
     });
     const { aiReport, setAiReport, generateAiReport } = useAiReport(myDreams, dreamTypes, openModal, closeModal);
@@ -137,8 +138,8 @@ function App() {
         tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook
     });
     const setShareTarget = (target) => setModals(prev => ({ ...prev, shareTarget: target }));
-    const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname } = useUserActions({
-        user, setUserNickname, shareTarget: modals.shareTarget, setShareTarget, dreamTypes, openModal, closeModal
+    const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
+        user, setUserNickname, setUserProfile, shareTarget: modals.shareTarget, setShareTarget, dreamTypes, openModal, closeModal
     });
     const { toggleSavedDreamVisibility, deleteDream, toggleDreamVisibility } = useDreamManagement({
         user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setView, setToast, loadDreams, loadMyDreams
@@ -431,7 +432,10 @@ function App() {
                             tarotResult={tarot.result}
                             onBack={handleTarotResultBack}
                             onRestart={handleTarotResultRestart}
-                            onRevealSecret={() => setTarotField('result', {...tarot.result, showFullReading: true})}
+                            whispers={[]}
+                            onAddWhisper={(text) => console.log('타로 속삭임:', text)}
+                            viewerCount={Math.floor(Math.random() * 5) + 1}
+                            similarCount={Math.floor(Math.random() * 10) + 2}
                         />
                     )}
 
@@ -442,6 +446,10 @@ function App() {
                             onBack={handleFortuneResultBack}
                             onRestart={handleFortuneResultRestart}
                             onRevealSecret={() => setFortuneField('result', {...fortune.result, showFullReading: true})}
+                            whispers={[]}
+                            onAddWhisper={(text) => console.log('운세 속삭임:', text)}
+                            viewerCount={Math.floor(Math.random() * 5) + 1}
+                            similarCount={Math.floor(Math.random() * 10) + 2}
                         />
                     )}
 
@@ -461,6 +469,7 @@ function App() {
                         <MyPage
                             user={user}
                             userNickname={userNickname}
+                            userProfile={userProfile}
                             userBadges={userBadges}
                             BADGES={BADGES}
                             myStats={myStats}
@@ -471,6 +480,7 @@ function App() {
                             calendar={calendar}
                             onBack={() => setView('feed')}
                             onOpenNicknameModal={() => openModal('nickname')}
+                            onOpenProfileModal={() => openModal('profile')}
                             onLogout={handleLogout}
                             onGenerateAiReport={generateAiReport}
                             onSetCalendarView={(val) => setCalendarField('view', val)}
@@ -512,6 +522,15 @@ function App() {
                         initialValue={userNickname}
                     />
 
+                    {/* 프로필 설정 모달 */}
+                    <ProfileSettingsModal
+                        isOpen={modals.profile}
+                        onClose={() => closeModal('profile')}
+                        currentProfile={userProfile}
+                        currentNickname={userNickname}
+                        onSave={saveProfile}
+                    />
+
                     {/* 상세 풀이 모달 */}
                     <DetailedReadingModal
                         isOpen={detailedReading.show}
@@ -520,7 +539,6 @@ function App() {
                         content={detailedReading.content}
                         dreamTypes={dreamTypes}
                     />
-
                 </main>
 
                 {/* 오른쪽 사이드바 - 피드 */}
@@ -546,20 +564,24 @@ function App() {
                 mode={mode}
                 onModeChange={(newMode) => {
                     setMode(newMode);
-                    if (newMode === 'tarot') {
-                        setTarotField('phase', 'question');
-                        setResult(null);
-                        setFortuneField('result', null);
-                    } else if (newMode === 'dream') {
-                        resetTarot();
-                        setFortuneField('result', null);
-                    } else if (newMode === 'fortune') {
-                        setResult(null);
-                        resetTarot();
-                    }
+                    setView('create');
+                    // 모든 결과 초기화
+                    resetTarot();
+                    setResult(null);
+                    resetFortune();
                     setSavedDream({ id: null, isPublic: false });
                 }}
-                onCreateClick={() => setView('create')}
+                onCreateClick={() => {
+                    setView('create');
+                    // 현재 모드의 결과 초기화
+                    if (mode === 'tarot') {
+                        resetTarot();
+                    } else if (mode === 'dream') {
+                        setResult(null);
+                    } else if (mode === 'fortune') {
+                        resetFortune();
+                    }
+                }}
             />
         </div>
     );

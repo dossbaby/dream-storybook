@@ -1,5 +1,340 @@
 /* ================================
-   운세 결과 뷰
+   운세 결과 모달 뷰 (Persona 4/5 스타일)
+   ================================ */
+
+/* 오버레이 */
+.fortune-result-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 30, 30, 0.95), rgba(0, 50, 50, 0.98));
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+/* 모달 컨테이너 */
+.fortune-result-modal {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    max-height: 95vh;
+    background: linear-gradient(165deg, #001515 0%, #002525 30%, #001a1a 70%, #000 100%);
+    overflow-y: auto;
+    border: 2px solid;
+    border-image: linear-gradient(135deg, #1abc9c, #00cec9, #1abc9c) 1;
+    box-shadow:
+        0 0 60px rgba(26, 188, 156, 0.3),
+        inset 0 0 100px rgba(0, 206, 201, 0.05);
+}
+
+/* 대각선 패턴 배경 */
+.fortune-result-modal .modal-pattern-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 20px,
+            rgba(26, 188, 156, 0.03) 20px,
+            rgba(26, 188, 156, 0.03) 21px
+        ),
+        repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 20px,
+            rgba(0, 206, 201, 0.03) 20px,
+            rgba(0, 206, 201, 0.03) 21px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.fortune-result-modal > *:not(.modal-pattern-bg) {
+    position: relative;
+    z-index: 1;
+}
+
+/* 닫기 버튼 */
+.fortune-result-modal .modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(26, 188, 156, 0.2);
+    border: 2px solid rgba(26, 188, 156, 0.5);
+    border-radius: 0;
+    clip-path: polygon(15% 0, 100% 0, 100% 85%, 85% 100%, 0 100%, 0 15%);
+    color: #1abc9c;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.fortune-result-modal .modal-close-btn:hover {
+    background: rgba(26, 188, 156, 0.4);
+    transform: scale(1.1);
+}
+
+/* 히어로 섹션 */
+.fortune-result-modal .reading-hero {
+    position: relative;
+    width: 100%;
+    min-height: 350px;
+    overflow: hidden;
+}
+
+.fortune-result-modal .reading-hero-img {
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+    object-fit: cover;
+    filter: brightness(0.6) saturate(1.2);
+}
+
+.fortune-result-modal .reading-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 3rem 2rem 2rem;
+    background: linear-gradient(to top, rgba(0, 20, 20, 0.98) 0%, rgba(0, 30, 30, 0.8) 60%, transparent 100%);
+}
+
+/* 뱃지 */
+.fortune-result-modal .reading-type-badge.fortune-badge {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+}
+
+/* 점수 표시 */
+.fortune-score-display {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.fortune-score-display .score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.3), rgba(0, 206, 201, 0.2));
+    border: 3px solid #1abc9c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(26, 188, 156, 0.4);
+}
+
+.fortune-score-display .score-number {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1abc9c;
+    line-height: 1;
+}
+
+.fortune-score-display .score-unit {
+    font-size: 0.75rem;
+    color: rgba(26, 188, 156, 0.8);
+}
+
+/* Sticky 시간대 바 */
+.fortune-result-modal .sticky-card-bar.fortune-time-bar {
+    background: linear-gradient(180deg, rgba(0, 20, 20, 0.98), rgba(0, 25, 25, 0.95));
+    border-bottom: 2px solid rgba(26, 188, 156, 0.3);
+}
+
+.fortune-result-modal .time-bar-items {
+    gap: 1rem;
+}
+
+.fortune-result-modal .time-item {
+    flex: 1;
+    min-width: 80px;
+    background: rgba(26, 188, 156, 0.1);
+    border: 2px solid rgba(26, 188, 156, 0.3);
+}
+
+.fortune-result-modal .time-item.flipped {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.3), rgba(0, 206, 201, 0.2));
+    border-color: #1abc9c;
+}
+
+.fortune-result-modal .time-item.can-flip {
+    animation: fortune-pulse 2s infinite;
+    border-color: #00cec9;
+}
+
+@keyframes fortune-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(26, 188, 156, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(26, 188, 156, 0.6); }
+}
+
+/* 확언 인용 */
+.fortune-affirmation-quote {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(0, 206, 201, 0.08));
+    border-left: 4px solid #1abc9c;
+}
+
+/* 시간대 섹션 */
+.fortune-time-section {
+    border-left: 4px solid #1abc9c;
+}
+
+/* 상세 섹션 */
+.fortune-detail-section {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.08), rgba(0, 206, 201, 0.05));
+    border: 1px solid rgba(26, 188, 156, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+/* DO/DON'T 카드 */
+.fortune-advice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.do-card {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.08));
+    border-color: rgba(34, 197, 94, 0.4);
+}
+
+.dont-card {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.do-dont-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0 0;
+}
+
+.do-dont-list li {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.35rem 0;
+    padding-left: 1.25rem;
+    position: relative;
+}
+
+.do-card .do-dont-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #22c55e;
+}
+
+.dont-card .do-dont-list li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    color: #ef4444;
+}
+
+/* 궁합 카드 */
+.compatibility-card {
+    background: linear-gradient(135deg, rgba(255, 105, 180, 0.15), rgba(255, 105, 180, 0.08));
+    border-color: rgba(255, 105, 180, 0.4);
+    text-align: center;
+}
+
+/* 행운 요소 섹션 */
+.lucky-elements-section {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(0, 206, 201, 0.05));
+    border: 1px solid rgba(26, 188, 156, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.lucky-elements-section .lucky-title {
+    font-size: 1.1rem;
+    color: #1abc9c;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.lucky-elements-section .lucky-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+}
+
+.lucky-elements-section .lucky-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.lucky-elements-section .lucky-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.lucky-elements-section .lucky-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+}
+
+.lucky-elements-section .lucky-value {
+    font-size: 0.9rem;
+    color: #1abc9c;
+    font-weight: 600;
+}
+
+/* 공유 프리뷰 */
+.fortune-share-preview {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(0, 206, 201, 0.1));
+    border-color: rgba(26, 188, 156, 0.4);
+}
+
+.fortune-share-preview .share-score {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1abc9c;
+    margin: 0.25rem 0;
+}
+
+/* 버튼 */
+.fortune-result-modal .action-btn.fortune-primary {
+    background: linear-gradient(135deg, #1abc9c, #00cec9);
+}
+
+.fortune-result-modal .action-btn.fortune-primary:hover {
+    box-shadow: 0 8px 25px rgba(26, 188, 156, 0.4);
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .fortune-advice-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lucky-elements-section .lucky-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ================================
+   (기존) 운세 결과 뷰 - 레거시 지원
    ================================ */
 
 .fortune-result-container {
@@ -372,4 +707,156 @@
 .fortune-circle .analysis-ring.active {
     border-color: var(--phase-color, #1abc9c);
     box-shadow: 0 0 25px color-mix(in srgb, var(--phase-color, #1abc9c) 50%, transparent);
+}
+
+/* ================================
+   사주팔자 정보 섹션
+   ================================ */
+
+.saju-pillars-section {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.12), rgba(0, 206, 201, 0.08));
+    border: 1px solid rgba(26, 188, 156, 0.3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.saju-pillars-title {
+    font-size: 1rem;
+    color: #1abc9c;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.saju-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.saju-pillar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(26, 188, 156, 0.2);
+}
+
+.saju-pillar .pillar-label {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+
+.saju-pillar .pillar-value {
+    font-size: 1.1rem;
+    color: #1abc9c;
+    font-weight: 700;
+}
+
+.saju-element-info {
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.saju-element-info strong {
+    color: #1abc9c;
+}
+
+.saju-year-relation {
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    font-style: italic;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(26, 188, 156, 0.15);
+}
+
+/* 섹션 이미지 */
+.section-image-container {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.section-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: brightness(0.9) saturate(1.1);
+}
+
+/* 섹션 서브타이틀 */
+.section-subtitle {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Jenny Twist Box - 사주 */
+.jenny-twist-box.fortune-twist {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(0, 206, 201, 0.1));
+    border: 1px solid rgba(26, 188, 156, 0.3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+    text-align: center;
+}
+
+.jenny-twist-box .twist-emoji {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.jenny-twist-box .twist-title {
+    font-size: 1rem;
+    color: #1abc9c;
+    margin-bottom: 0.75rem;
+}
+
+.jenny-twist-box .twist-message {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Jenny Bonus Box */
+.jenny-bonus-box {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.jenny-bonus-box .bonus-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.jenny-bonus-box .bonus-text {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+    .saju-pillars-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }

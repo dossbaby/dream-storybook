@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 
-const FloatingActionButton = ({ mode, onModeChange, onCreateClick }) => {
+const FloatingActionButton = memo(({ mode, onModeChange, onCreateClick }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const actions = [
@@ -87,6 +87,8 @@ const FloatingActionButton = ({ mode, onModeChange, onCreateClick }) => {
             )}
         </div>
     );
-};
+});
+
+FloatingActionButton.displayName = 'FloatingActionButton';
 
 export default FloatingActionButton;

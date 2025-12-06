@@ -30,6 +30,11 @@ const ResultView = forwardRef(({
 }, ref) => {
     const currentResult = result || tarotResult || fortuneResult;
 
+    // Jenny 전략 필드 가져오기
+    const jenny = currentResult?.jenny || {};
+    const rarity = currentResult?.rarity || {};
+    const rarityText = rarity.description || '';
+
     const handleCopyLink = () => {
         const baseUrl = window.location.origin;
         const path = mode === 'tarot' ? 'tarot' : mode === 'fortune' ? 'fortune' : 'dream';
@@ -172,10 +177,33 @@ const ResultView = forwardRef(({
                                 </div>
                             )}
 
+                            {/* Jenny Hook - 희귀도 강조 (첫 카드) */}
+                            {currentCard === 0 && (jenny.hook || rarityText) && (
+                                <div className="jenny-hook-overlay">
+                                    <span className="hook-sparkle">✨</span>
+                                    <span className="hook-text">{jenny.hook || rarityText}</span>
+                                </div>
+                            )}
+
                             {/* 리딩 텍스트 - 간결하게 */}
                             {cardReading && (
                                 <div className="reading-area">
                                     <p>{cardReading.slice(0, 120)}{cardReading.length > 120 ? '...' : ''}</p>
+                                </div>
+                            )}
+
+                            {/* Jenny Transition - 다음 카드 유도 */}
+                            {mode === 'tarot' && currentCard < cards.length - 1 && (
+                                <div className="jenny-transition-overlay">
+                                    {currentCard === 0 && jenny.card1Transition && (
+                                        <span className="transition-text">{jenny.card1Transition}</span>
+                                    )}
+                                    {currentCard === 1 && jenny.card2Transition && (
+                                        <span className="transition-text">{jenny.card2Transition}</span>
+                                    )}
+                                    {currentCard === 2 && jenny.card3Transition && (
+                                        <span className="transition-text">{jenny.card3Transition}</span>
+                                    )}
                                 </div>
                             )}
                         </div>

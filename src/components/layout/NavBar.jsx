@@ -27,7 +27,7 @@ const NavBar = ({
     const modes = [
         { id: 'tarot', emoji: '🃏', label: '타로', desc: '운명의 카드', color: '#9b59b6' },
         { id: 'dream', emoji: '🌙', label: '꿈', desc: '꿈 해몽', color: '#6c5ce7' },
-        { id: 'fortune', emoji: '🔮', label: '운세', desc: '오늘의 기운', color: '#e84393' },
+        { id: 'fortune', emoji: '🔮', label: '사주', desc: '사주풀이', color: '#e84393' },
     ];
 
     const currentMode = modes.find(m => m.id === mode) || modes[0];

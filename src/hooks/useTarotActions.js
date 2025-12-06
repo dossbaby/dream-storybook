@@ -69,7 +69,7 @@ export const useTarotActions = ({
         const resultData = await generateTarotReadingHook(tarot.question, tarot.selectedCards);
         if (resultData) {
             setTarotField('result', resultData);
-            setView('result');
+            setView('tarot-result');  // 바로 TarotResultView로 이동 (모달 없이 full reading)
             // 저장은 useReading.js에서 자동으로 처리됨
         }
     };

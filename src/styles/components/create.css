@@ -1,7 +1,7 @@
 /* ========== 꿈 생성 영역 ========== */
 .create-card {
     width: 100%;
-    max-width: 380px;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -13,12 +13,12 @@
     overflow: visible; /* 카드가 잘리지 않게 */
 }
 
-/* 타로 질문 입력창은 중앙 정렬하고 좁게 */
+/* 타로 질문 입력창은 중앙 정렬 */
 .create-card.tarot-theme .tarot-question-header,
 .create-card.tarot-theme .dream-input,
 .create-card.tarot-theme .submit-btn,
 .create-card.tarot-theme .error {
-    max-width: 380px;
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
     width: 100%;

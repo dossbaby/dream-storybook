@@ -1,13 +1,13 @@
-// 운세 단계별 이모지와 색상
+// 사주 단계별 이모지와 색상
 const FORTUNE_PHASE_CONFIG = [
-    { emoji: '🌅', color: '#1abc9c' },  // 1: 시작
-    { emoji: '⭐', color: '#16a085' },  // 2: 별자리 정렬
-    { emoji: '🌙', color: '#00cec9' },  // 3: 달의 기운
-    { emoji: '☀️', color: '#00b894' },  // 4: 태양 에너지
-    { emoji: '🔮', color: '#55efc4' },  // 5: 운명 읽기
-    { emoji: '✨', color: '#81ecec' },  // 6: 행운 감지
-    { emoji: '💫', color: '#f39c12' },  // 7: 메시지 전달
-    { emoji: '🌟', color: '#f1c40f' },  // 8: 완료
+    { emoji: '☯️', color: '#1abc9c' },  // 1: 시작
+    { emoji: '🌳', color: '#16a085' },  // 2: 목(木)
+    { emoji: '🔥', color: '#e74c3c' },  // 3: 화(火)
+    { emoji: '🌍', color: '#f39c12' },  // 4: 토(土)
+    { emoji: '⚔️', color: '#bdc3c7' },  // 5: 금(金)
+    { emoji: '💧', color: '#3498db' },  // 6: 수(水)
+    { emoji: '🔮', color: '#9b59b6' },  // 7: 사주 분석
+    { emoji: '✨', color: '#f1c40f' },  // 8: 완료
 ];
 
 const FortuneInput = ({
@@ -26,7 +26,7 @@ const FortuneInput = ({
 
     return (
         <div className="create-card fortune-theme">
-            <h2 className="create-title fortune-title">오늘의 운세를 확인하세요</h2>
+            <h2 className="create-title fortune-title">오늘의 사주를 확인하세요</h2>
 
             {!loading && (
                 <>
@@ -35,7 +35,7 @@ const FortuneInput = ({
                             className={`fortune-type-btn ${fortuneType === 'today' ? 'active' : ''}`}
                             onClick={() => setFortuneType('today')}
                         >
-                            🌅 오늘 운세
+                            ☯️ 오늘 사주
                         </button>
                         <button
                             className={`fortune-type-btn ${fortuneType === 'love' ? 'active' : ''}`}
@@ -58,7 +58,7 @@ const FortuneInput = ({
                     </div>
 
                     <div className="fortune-birthdate">
-                        <label>생년월일 (선택)</label>
+                        <label>생년월일 (필수)</label>
                         <input
                             type="date"
                             value={fortuneBirthdate}
@@ -96,7 +96,7 @@ const FortuneInput = ({
                 disabled={loading}
                 className="submit-btn fortune-submit"
             >
-                {loading ? '운세 확인 중...' : '🔮 운세 확인하기'}
+                {loading ? '사주 분석 중...' : '🔮 사주 확인하기'}
             </button>
         </div>
     );

@@ -123,9 +123,17 @@ ${storyReading.actionAdvice || ''}
 
 이 조언을 일상에서 실천해보세요. 작은 행동 하나가 큰 변화의 시작이 될 수 있습니다.`;
 
+                // 타로 이미지들 포함
                 setDetailedReadingField('content', {
                     ...data,
-                    detailedAnalysis: tarotDetailedAnalysis
+                    detailedAnalysis: tarotDetailedAnalysis,
+                    mode: 'tarot',
+                    tarotImages: {
+                        card1: data.card1Image || data.pastImage,
+                        card2: data.card2Image || data.presentImage,
+                        card3: data.card3Image || data.futureImage,
+                        card4: data.conclusionImage
+                    }
                 });
                 setDetailedReadingField('show', true);
                 setLoadingState('detailedReading', false);

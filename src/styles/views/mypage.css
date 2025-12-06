@@ -1,18 +1,107 @@
 /* ========== 마이페이지 ========== */
 .my-page-content {
     width: 100%;
-    max-width: 380px;
+    max-width: 800px;
 }
 
 .my-profile {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
     padding: 2rem;
-    text-align: center;
-    background: var(--dark);
+    background: linear-gradient(165deg,
+        rgba(8, 5, 15, 0.98) 0%,
+        rgba(15, 10, 25, 0.97) 40%,
+        rgba(5, 3, 10, 0.99) 100%);
     border-radius: 20px;
     margin-bottom: 1.5rem;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+}
+
+/* 프로필 카드 그라디언트 보더 */
+.my-profile::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    background: linear-gradient(135deg, #ff0055, #ffd700, #ff0055);
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0.6;
+}
+
+/* 프로필 카드 글로우 효과 */
+.my-profile::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center,
+        rgba(255, 0, 85, 0.08) 0%,
+        transparent 50%);
+    pointer-events: none;
+    z-index: -2;
+}
+
+.my-profile-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    min-width: 120px;
+}
+
+.my-profile-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.my-profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.my-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.my-profile-info h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #fff;
+}
+
+.my-profile-info p {
+    font-size: 0.85rem;
+    color: var(--light-gray);
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .my-profile {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .my-profile-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
 }
 
 .my-avatar {
@@ -20,7 +109,9 @@
     height: 80px;
     border-radius: 50%;
     margin-bottom: 1rem;
-    border: 3px solid var(--accent);
+    border: 3px solid #ff0055;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+    object-fit: cover;
 }
 
 .my-profile h3 {
@@ -70,22 +161,28 @@
 
 /* ========== 마이페이지 추가 스타일 ========== */
 .nickname-btn {
-    padding: 0.5rem 1rem;
-    background: var(--purple);
+    padding: 0.5rem 1.25rem;
+    background: linear-gradient(135deg, rgba(255, 0, 85, 0.8), rgba(255, 150, 50, 0.7));
     border: none;
     border-radius: 20px;
-    color: var(--white);
+    color: #fff;
     font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
 }
 
 .nickname-btn:hover {
-    background: #8e44ad;
+    background: linear-gradient(135deg, rgba(255, 0, 85, 1), rgba(255, 150, 50, 0.9));
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 30px rgba(255, 0, 85, 0.5),
+        0 5px 20px rgba(255, 0, 85, 0.3);
 }
 
 .my-dreams-list {
@@ -200,8 +297,7 @@
 /* ========== 마이페이지 통계 ========== */
 .my-stats {
     padding: 1.25rem;
-    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(255, 51, 102, 0.05));
-    border: 1px solid rgba(155, 89, 182, 0.2);
+    background: rgba(255, 255, 255, 0.02);
     border-radius: 16px;
     margin-bottom: 1.5rem;
 }
@@ -211,7 +307,8 @@
     font-weight: 500;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .stats-grid {
@@ -225,20 +322,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0.75rem;
-    background: rgba(0, 0, 0, 0.3);
+    padding: 0.85rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
 }
 
 .stat-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--gold);
+    color: #ffd700;
 }
 
 .stat-label {
     font-size: 0.65rem;
-    color: var(--light-gray);
+    color: rgba(255, 255, 255, 0.5);
     margin-top: 0.25rem;
 }
 
@@ -247,8 +344,8 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1rem;
-    background: rgba(155, 89, 182, 0.15);
-    border-left: 3px solid var(--purple);
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid #ff0055;
     border-radius: 0 12px 12px 0;
     margin-bottom: 0.75rem;
 }
@@ -275,15 +372,15 @@
 }
 
 .stat-keywords {
-    padding: 0.75rem;
-    background: rgba(255, 215, 0, 0.08);
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
 }
 
 .stat-keywords-label {
     display: block;
     font-size: 0.65rem;
-    color: var(--gold);
+    color: rgba(255, 255, 255, 0.5);
     margin-bottom: 0.5rem;
 }
 
@@ -295,24 +392,20 @@
 
 .stat-keyword {
     padding: 0.3rem 0.6rem;
-    background: rgba(255, 215, 0, 0.15);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background: rgba(255, 215, 0, 0.1);
     border-radius: 15px;
-    font-size: 0.75rem;
-    color: var(--gold);
+    font-size: 0.7rem;
+    color: #ffd700;
 }
 
-/* ========== 카테고리 탭 (페르소나 스타일) ========== */
+/* ========== 카테고리 탭 ========== */
 .my-category-tabs {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
-    padding: 0.5rem;
-    background: linear-gradient(135deg, rgba(10, 0, 20, 0.95), rgba(20, 0, 40, 0.9));
-    border-radius: 0;
-    border: 2px solid transparent;
-    border-image: linear-gradient(135deg, rgba(255, 0, 85, 0.4), rgba(255, 215, 0, 0.3)) 1;
-    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    padding: 0.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
 }
 
 .category-tab {
@@ -324,52 +417,40 @@
     padding: 0.75rem 0.5rem;
     background: transparent;
     border: none;
-    border-radius: 0;
+    border-radius: 10px;
     color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+    transition: all 0.2s;
 }
 
 .category-tab:hover {
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 0, 85, 0.15);
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .category-tab.active {
     color: #fff;
-    background: linear-gradient(135deg, #ff0055, #ffd700);
-    box-shadow:
-        0 0 20px rgba(255, 0, 85, 0.5),
-        inset 0 0 10px rgba(255, 255, 255, 0.1);
+    background: #ff0055;
 }
 
 .category-tab .tab-emoji {
-    font-size: 1.25rem;
-    transition: transform 0.25s;
-}
-
-.category-tab:hover .tab-emoji {
-    transform: scale(1.15);
+    font-size: 1.1rem;
 }
 
 .category-tab .tab-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 .category-tab .tab-count {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     padding: 0.1rem 0.4rem;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
-    font-weight: 500;
 }
 
 .category-tab.active .tab-count {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* 타로 아이템 스타일 */
@@ -381,13 +462,13 @@
     border-left-color: #e056fd;
 }
 
-/* 운세 아이템 스타일 */
+/* 사주 아이템 스타일 */
 .my-dream-item.fortune-item {
-    border-left: 3px solid #1abc9c;
+    border-left: 3px solid #e84393;
 }
 
 .my-dream-item.fortune-item:hover {
-    border-left-color: #55efc4;
+    border-left-color: #fd79a8;
 }
 
 /* 통계 그리드 4열로 확장 */
@@ -399,4 +480,426 @@
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* ========== 프로필 설정 섹션 - VN 스타일 ========== */
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    .profile-details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.profile-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.profile-detail-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.profile-detail-label {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.profile-detail-value {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+/* 프로필 설정 유도 배너 */
+.profile-setup-hint {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(255, 215, 0, 0.1));
+    border: 1px dashed rgba(155, 89, 182, 0.4);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.profile-setup-hint:hover {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.25), rgba(255, 215, 0, 0.15));
+    border-color: rgba(155, 89, 182, 0.6);
+    transform: translateY(-2px);
+}
+
+.profile-setup-hint .hint-icon {
+    font-size: 2rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.profile-setup-hint .hint-content {
+    flex: 1;
+}
+
+.profile-setup-hint .hint-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 0.25rem;
+}
+
+.profile-setup-hint .hint-desc {
+    font-size: 0.8rem;
+    color: var(--light-gray);
+    line-height: 1.4;
+}
+
+.profile-setup-hint .hint-arrow {
+    font-size: 1.25rem;
+    color: var(--purple);
+}
+
+/* 프로필 완성도 배지 */
+.profile-completion-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+.profile-completion-badge .completion-bar {
+    width: 60px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.profile-completion-badge .completion-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff0055, #ffd700);
+    border-radius: 3px;
+    transition: width 0.5s;
+}
+
+.profile-completion-badge .completion-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+/* 프로필 설정 모달 - VN 인트로 스타일 */
+.profile-settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+/* 배경 글로우 - 프로필 페이지와 동일 */
+.profile-settings-modal::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 150%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center,
+        rgba(255, 0, 85, 0.06) 0%,
+        transparent 50%);
+    pointer-events: none;
+}
+
+.profile-settings-content {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    background:
+        linear-gradient(165deg, rgba(8, 5, 15, 1) 0%, rgba(15, 10, 25, 1) 40%, rgba(5, 3, 10, 1) 100%) padding-box,
+        linear-gradient(135deg, #ff0055, #ffd700, #ff0055) border-box;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    overflow-y: auto;
+    animation: modalSlideUp 0.3s ease-out;
+    position: relative;
+    box-shadow: 0 0 40px rgba(255, 0, 85, 0.15), 0 0 60px rgba(255, 215, 0, 0.1);
+}
+
+.profile-settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-settings-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+}
+
+.profile-settings-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.profile-settings-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.profile-settings-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-field label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-field label .field-emoji {
+    font-size: 1rem;
+}
+
+.profile-field input,
+.profile-field select {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.profile-field input:focus,
+.profile-field select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* 날짜 입력 기본 스타일링 */
+.profile-field input[type="date"],
+.profile-field input[type="time"] {
+    color-scheme: dark;
+}
+
+.profile-field input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.profile-field .field-hint {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 0.25rem;
+}
+
+/* MBTI 선택 그리드 */
+.mbti-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.mbti-option {
+    padding: 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.mbti-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.mbti-option.selected {
+    background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
+    color: #1a1000;
+    border: none;
+    font-weight: 700;
+}
+
+/* 성별 선택 */
+.gender-options {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.gender-option {
+    flex: 1;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-radius: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gender-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.gender-option.selected {
+    background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
+    color: #1a1000;
+    border: none;
+    font-weight: 700;
+}
+
+.gender-option .gender-emoji {
+    font-size: 1.5rem;
+}
+
+/* 프로필 저장 버튼 */
+.profile-settings-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    gap: 0.75rem;
+}
+
+.profile-save-btn {
+    flex: 1;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, #ff0055, #ffd700);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
+}
+
+.profile-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 0 30px rgba(255, 0, 85, 0.5),
+        0 5px 20px rgba(255, 0, 85, 0.3);
+}
+
+.profile-cancel-btn {
+    padding: 0.9rem 1.5rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.profile-cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+/* 프로필 혜택 안내 */
+.profile-benefits {
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    border-left: 3px solid #ff0055;
+}
+
+.profile-benefits-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffd700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-benefits-list li {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-benefits-list li::before {
+    content: '✦';
+    color: #ff0055;
+    font-size: 0.7rem;
+}
+
+/* 프로필 액션 버튼 (설정 + 로그아웃) */
+.my-profile-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
 }

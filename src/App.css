@@ -787,18 +787,14 @@
     transform: scale(1.1);
 }
 
-/* 센터 메인 내 상대 위치 조정 */
-.center-main {
-    position: relative;
-}
-
-/* 글로벌 뒤로가기 버튼 - 카드 바깥 왼쪽 상단 */
+/* 글로벌 뒤로가기 버튼 - 메인 콘텐츠 왼쪽 상단 (콘텐츠 내부) */
 .global-back-btn {
-    position: fixed;
+    position: sticky;
     top: 80px;
-    left: calc(50% - 250px);
+    left: 0;
     width: 44px;
     height: 44px;
+    margin-bottom: -44px;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -812,6 +808,7 @@
     justify-content: center;
     transition: all 0.2s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    align-self: flex-start;
 }
 
 .global-back-btn:hover {
@@ -820,23 +817,9 @@
     transform: scale(1.1);
 }
 
-/* 왼쪽 사이드바가 있을 때 위치 조정 */
-@media (min-width: 1200px) {
-    .global-back-btn {
-        left: calc(220px + 20px);
-    }
-}
-
-@media (max-width: 1199px) and (min-width: 769px) {
-    .global-back-btn {
-        left: 20px;
-    }
-}
-
 @media (max-width: 768px) {
     .global-back-btn {
         top: 70px;
-        left: 15px;
     }
 }
 

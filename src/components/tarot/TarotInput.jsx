@@ -89,8 +89,7 @@ const TarotInput = ({
 예시:
 • 지금 사귀는 사람과의 미래가 궁금해요
 • 이직을 해야 할지 고민이에요
-• 올해 나에게 어떤 일이 일어날까요?
-• 지금 내가 가고 있는 방향이 맞는 걸까요?`}
+• 올해 나에게 어떤 일이 일어날까요?`}
                         className="dream-input tarot-input"
                         disabled={loading}
                         rows={6}

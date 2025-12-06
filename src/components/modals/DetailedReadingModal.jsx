@@ -1,3 +1,4 @@
+// 꿈 상세 풀이 모달 (타로는 TarotResultView에서 직접 표시)
 const DetailedReadingModal = ({ isOpen, onClose, loading, content, dreamTypes }) => {
     if (!isOpen) return null;
 
@@ -9,7 +10,7 @@ const DetailedReadingModal = ({ isOpen, onClose, loading, content, dreamTypes })
                 {loading ? (
                     <div className="detailed-reading-loading">
                         <div className="reading-loader">
-                            <span className="loader-icon">🔮</span>
+                            <span className="loader-icon">🌙</span>
                             <span className="loader-text">심층 분석 생성 중...</span>
                             <div className="loader-bar">
                                 <div className="loader-progress"></div>
@@ -18,15 +19,17 @@ const DetailedReadingModal = ({ isOpen, onClose, loading, content, dreamTypes })
                     </div>
                 ) : content && (
                     <div className="detailed-reading-content">
-                        {/* 헤더 이미지 */}
+                        {/* 헤더 이미지 (heroImage 우선, 없으면 dreamImage 폴백) */}
                         <div className="reading-hero">
-                            {content.dreamImage && (
-                                <img src={content.dreamImage} alt="" className="reading-hero-img" />
+                            {(content.heroImage || content.dreamImage) && (
+                                <img src={content.heroImage || content.dreamImage} alt="" className="reading-hero-img" />
                             )}
                             <div className="reading-hero-overlay">
-                                <span className="reading-type-badge">
-                                    {dreamTypes[content.dreamType]?.emoji} {dreamTypes[content.dreamType]?.name}
-                                </span>
+                                {content.dreamType && dreamTypes && (
+                                    <span className="reading-type-badge">
+                                        {dreamTypes[content.dreamType]?.emoji} {dreamTypes[content.dreamType]?.name}
+                                    </span>
+                                )}
                                 <h1 className="reading-title">{content.title}</h1>
                                 <p className="reading-verdict">"{content.verdict}"</p>
                             </div>
@@ -35,12 +38,14 @@ const DetailedReadingModal = ({ isOpen, onClose, loading, content, dreamTypes })
                         {/* 블로그 본문 */}
                         <div className="reading-body">
                             {/* 원문 인용 */}
-                            <div className="reading-quote">
-                                <span className="quote-icon">💭</span>
-                                <p>"{content.originalDream}"</p>
-                            </div>
+                            {content.originalDream && (
+                                <div className="reading-quote">
+                                    <span className="quote-icon">💭</span>
+                                    <p>"{content.originalDream}"</p>
+                                </div>
+                            )}
 
-                            {/* 이미지 갤러리 */}
+                            {/* 꿈 이미지 갤러리 */}
                             {(content.meaningImage || content.adviceImage) && (
                                 <div className="reading-gallery">
                                     {content.meaningImage && (

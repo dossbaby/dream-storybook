@@ -31,14 +31,14 @@ export const useViewActions = ({
     // 타로 결과 열기
     const handleOpenTarotResult = (t) => {
         setTarotField('result', t);
-        setView('result');
+        setView('tarot-result');
         setCurrentCard(0);
     };
 
     // 운세 결과 열기
     const handleOpenFortuneResult = (f) => {
         setFortuneField('result', f);
-        setView('result');
+        setView('fortune-result');
         setCurrentCard(0);
     };
 

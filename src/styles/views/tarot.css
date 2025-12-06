@@ -324,18 +324,16 @@
 .card-name-en {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #ffd700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    text-shadow:
-        0 0 8px rgba(255, 215, 0, 0.6),
-        0 1px 2px rgba(0, 0, 0, 0.8);
     white-space: nowrap;
-    background: linear-gradient(180deg, #ffd700 0%, #ffaa00 100%);
+    /* 그라데이션 텍스트 + 가벼운 그림자 */
+    background: linear-gradient(90deg, #ffd700 0%, #ffb347 30%, #ff6b9d 60%, #c084fc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+    color: transparent;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 .card-name-ko {
@@ -3161,5 +3159,3952 @@
 
     .card-back-face.back .card-back-eye {
         font-size: 0.7rem;
+    }
+}
+
+/* ========================================
+   상세 풀이 카드 이미지 스타일
+   ======================================== */
+
+.card-analysis-image {
+    width: 100%;
+    max-width: 280px;
+    margin: 1rem auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(155, 89, 182, 0.3);
+    border: 2px solid rgba(155, 89, 182, 0.3);
+}
+
+.card-analysis-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.card-analysis-image:hover img {
+    transform: scale(1.02);
+}
+
+.story-section.card-analysis.conclusion .card-analysis-image {
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+}
+
+/* 결론 카드 이미지에 골드 글로우 */
+.story-section.card-analysis.conclusion .card-analysis-image::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.5), rgba(255, 140, 0, 0.3));
+    z-index: -1;
+    animation: goldGlow 2s infinite alternate;
+}
+
+@keyframes goldGlow {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+    .card-analysis-image {
+        max-width: 220px;
+    }
+}
+
+/* ========================================
+   타로 결과 v2 - 카드 뒤집기 인터랙션
+   페르소나 4/5 스타일 + Jenny Philosophy
+   ======================================== */
+
+/* 카드 뒤집기 영역 */
+.tarot-cards-flip-area {
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+
+.flip-instruction {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1.5rem;
+    animation: instructionPulse 2s ease-in-out infinite;
+}
+
+@keyframes instructionPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; color: var(--gold); }
+}
+
+.flip-cards-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* 뒤집기 카드 */
+.flip-card {
+    width: 90px;
+    height: 140px;
+    perspective: 1000px;
+    cursor: pointer;
+    position: relative;
+}
+
+.flip-card.conclusion {
+    width: 95px;
+    height: 150px;
+}
+
+.flip-card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-back,
+.flip-card-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* 카드 뒷면 */
+.flip-card-back {
+    background: linear-gradient(145deg, #2d1b4e, #1a0f2e);
+    border: 2px solid rgba(155, 89, 182, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flip-card.can-flip .flip-card-back {
+    border-color: var(--gold);
+    animation: canFlipGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes canFlipGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+}
+
+.flip-card.conclusion .flip-card-back {
+    background: linear-gradient(145deg, rgba(255, 215, 0, 0.2), #2d1b4e);
+    border-color: var(--gold);
+}
+
+.card-back-pattern {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-back-icon {
+    font-size: 2rem;
+    animation: backIconFloat 3s ease-in-out infinite;
+}
+
+@keyframes backIconFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(1.1); }
+}
+
+.tap-hint {
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    animation: tapHintBlink 1s ease-in-out infinite;
+}
+
+@keyframes tapHintBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 카드 앞면 */
+.flip-card-front {
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, #2d1b4e, #1a0f2e);
+    border: 2px solid var(--card-border, rgba(155, 89, 182, 0.5));
+}
+
+.flip-card.flipped .flip-card-front {
+    box-shadow: var(--card-glow, 0 0 20px rgba(155, 89, 182, 0.5));
+}
+
+.flip-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.flip-card .card-emoji-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    background: radial-gradient(circle, rgba(155, 89, 182, 0.2), transparent 70%);
+}
+
+/* 카드 이름 (뒤집힌 후) */
+.flip-card-name {
+    margin-top: 0.5rem;
+    text-align: center;
+    animation: cardNameFadeIn 0.5s ease-out 0.4s both;
+}
+
+@keyframes cardNameFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.flip-card-name .card-name-ko {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--white);
+    font-weight: 600;
+}
+
+.conclusion-badge {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--gold);
+    margin-top: 0.2rem;
+    letter-spacing: 0.05em;
+}
+
+/* ========================================
+   페르소나 스타일 섹션 헤더 (꿈 상세 풀이 스타일)
+   ======================================== */
+
+.tarot-story-reading {
+    padding: 0 1.5rem 2rem;
+}
+
+.card-reading-section {
+    margin-bottom: 2rem;
+    animation: sectionSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes sectionSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.card-reading-section.conclusion {
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* 페르소나 스타일 섹션 헤더 */
+.reading-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, rgba(255, 0, 85, 0.15), transparent);
+    border-left: 4px solid #ff0055;
+    position: relative;
+}
+
+.card-reading-section.conclusion .reading-section-header {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), transparent);
+    border-left-color: var(--gold);
+}
+
+.reading-section-header .section-icon {
+    font-size: 1.25rem;
+    animation: sectionIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes sectionIconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.reading-section-header .section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+}
+
+.card-name-badge {
+    margin-left: auto;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(138, 43, 226, 0.2));
+    border: 1px solid rgba(155, 89, 182, 0.5);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: #d4a5ff;
+    font-weight: 600;
+}
+
+.card-reading-section.conclusion .card-name-badge {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.2));
+    border-color: rgba(255, 215, 0, 0.5);
+    color: var(--gold);
+}
+
+/* 카드 이미지 (섹션 내) */
+.reading-card-image {
+    width: 100%;
+    max-width: 300px;
+    margin: 1rem auto;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+        0 10px 40px rgba(155, 89, 182, 0.3),
+        0 0 60px rgba(138, 43, 226, 0.1);
+    border: 2px solid rgba(155, 89, 182, 0.3);
+    transition: all 0.3s ease;
+}
+
+.reading-card-image:hover {
+    transform: scale(1.02);
+    box-shadow:
+        0 15px 50px rgba(155, 89, 182, 0.4),
+        0 0 80px rgba(138, 43, 226, 0.15);
+}
+
+.reading-card-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.card-reading-section.conclusion .reading-card-image {
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow:
+        0 10px 40px rgba(255, 215, 0, 0.3),
+        0 0 60px rgba(255, 140, 0, 0.1);
+}
+
+/* 해석 텍스트 */
+.reading-text {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.95);
+    padding: 0 0.5rem;
+}
+
+.reading-text.highlight {
+    background: linear-gradient(135deg, rgba(255, 0, 85, 0.08), rgba(138, 43, 226, 0.05));
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 0, 85, 0.2);
+}
+
+/* Jenny Transition */
+.jenny-transition {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+}
+
+.jenny-transition .transition-text {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(155, 89, 182, 0.1);
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Definitive Answer (카드4) */
+.definitive-answer {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.08));
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 16px;
+    text-align: center;
+}
+
+.definitive-answer .answer-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* ========================================
+   종합 & 조언 섹션
+   ======================================== */
+
+.synthesis-section,
+.advice-section,
+.lucky-section,
+.keywords-section,
+.sealed-insight-section,
+.share-section {
+    margin-top: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.synthesis-section.visible,
+.advice-section.visible,
+.lucky-section.visible,
+.keywords-section.visible,
+.sealed-insight-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.share-section {
+    opacity: 1;
+    transform: none;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   봉인된 Hidden Insight
+   ======================================== */
+
+.sealed-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    background: linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9));
+    border: 1px solid transparent;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    animation: riftPulse 4s ease-in-out infinite;
+}
+
+/* 차원의 틈 - 중앙 균열 효과 (파랑→보라 우주 그라데이션) */
+.sealed-message::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 0;
+    background: linear-gradient(180deg,
+        transparent,
+        rgba(100, 150, 255, 0.7),
+        rgba(160, 120, 255, 0.9),
+        rgba(255, 255, 255, 1),
+        rgba(160, 120, 255, 0.9),
+        rgba(100, 150, 255, 0.7),
+        transparent
+    );
+    transform: translate(-50%, -50%);
+    animation: riftOpen 3s ease-in-out infinite;
+    box-shadow:
+        0 0 15px rgba(100, 150, 255, 0.8),
+        0 0 30px rgba(130, 100, 220, 0.5),
+        0 0 50px rgba(50, 100, 200, 0.3);
+}
+
+/* 틈새에서 새어나오는 빛 (우주 파랑+보라) */
+.sealed-message::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        ellipse 40% 60% at 50% 50%,
+        rgba(80, 120, 220, 0.12),
+        rgba(120, 90, 200, 0.08) 40%,
+        transparent 70%
+    );
+    animation: riftGlow 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes riftPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 20px rgba(50, 80, 150, 0.4),
+            0 0 40px rgba(90, 70, 170, 0.2),
+            inset 0 0 30px rgba(80, 120, 200, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 0 35px rgba(80, 120, 200, 0.5),
+            0 0 60px rgba(120, 90, 200, 0.3),
+            inset 0 0 50px rgba(100, 150, 255, 0.15);
+    }
+}
+
+@keyframes riftOpen {
+    0%, 100% {
+        height: 20%;
+        opacity: 0.5;
+    }
+    50% {
+        height: 60%;
+        opacity: 1;
+    }
+}
+
+@keyframes riftGlow {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.15);
+    }
+}
+
+.sealed-message:hover {
+    background: linear-gradient(145deg, rgba(10, 20, 50, 0.98), rgba(25, 40, 80, 0.95));
+    box-shadow:
+        0 0 40px rgba(80, 130, 220, 0.5),
+        0 0 70px rgba(110, 90, 200, 0.3),
+        0 0 100px rgba(50, 100, 180, 0.2),
+        inset 0 0 60px rgba(100, 150, 255, 0.15);
+}
+
+.sealed-message:hover::before {
+    animation: riftOpenHover 2s ease-in-out infinite;
+    width: 3px;
+}
+
+@keyframes riftOpenHover {
+    0%, 100% {
+        height: 40%;
+        opacity: 0.7;
+    }
+    50% {
+        height: 80%;
+        opacity: 1;
+    }
+}
+
+.seal-icon {
+    font-size: 2.5rem;
+    animation: sealFloat 3s ease-in-out infinite;
+}
+
+@keyframes sealFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* 차원의 틈 - 메인 타이틀 */
+.seal-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.15em;
+    position: relative;
+    z-index: 2;
+    animation: cosmicSignal 3s ease-in-out infinite;
+    text-shadow:
+        0 0 10px rgba(100, 180, 255, 0.8),
+        0 0 20px rgba(140, 120, 255, 0.6),
+        0 0 30px rgba(80, 150, 255, 0.4);
+}
+
+/* 우주 신호 접신 펄스 효과 */
+@keyframes cosmicSignal {
+    0%, 100% {
+        opacity: 1;
+        text-shadow:
+            0 0 10px rgba(100, 180, 255, 0.8),
+            0 0 20px rgba(140, 120, 255, 0.6),
+            0 0 30px rgba(80, 150, 255, 0.4);
+        letter-spacing: 0.15em;
+    }
+    50% {
+        opacity: 1;
+        text-shadow:
+            0 0 15px rgba(150, 200, 255, 1),
+            0 0 30px rgba(120, 150, 255, 0.8),
+            0 0 50px rgba(100, 180, 255, 0.5);
+        letter-spacing: 0.18em;
+    }
+}
+
+/* 힌트 텍스트 - 긴장감 강조 */
+.sealed-message .seal-hint {
+    animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+    0%, 100% {
+        opacity: 0.85;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+}
+
+.seal-hint {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 220, 150, 0.95);
+    font-style: normal;
+    z-index: 2;
+    position: relative;
+    text-shadow: 0 0 8px rgba(255, 200, 100, 0.5);
+}
+
+.unseal-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, rgba(80, 180, 220, 0.9), rgba(120, 200, 255, 0.7), rgba(160, 220, 255, 0.6));
+    border: 1px solid rgba(150, 220, 255, 0.3);
+    border-radius: 25px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+    text-shadow: 0 0 8px rgba(200, 240, 255, 0.6);
+}
+
+.unseal-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, rgba(100, 200, 240, 0.95), rgba(140, 220, 255, 0.85), rgba(180, 235, 255, 0.75));
+    box-shadow:
+        0 0 15px rgba(100, 200, 255, 0.6),
+        0 0 30px rgba(150, 220, 255, 0.4),
+        0 5px 25px rgba(80, 180, 220, 0.5);
+    border-color: rgba(200, 240, 255, 0.5);
+}
+
+/* 봉인 해제된 인사이트 - 양옆 3rem + 하단 그라데이션 border */
+.unsealed-insight {
+    position: relative;
+    padding: 0 3rem 3rem 3rem;
+    margin-bottom: 2rem;
+    background: rgb(10, 5, 20);
+    border: none;
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(90deg, #ff0055, #ffd700) 1;
+    border-radius: 0;
+    animation: unsealReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: visible;
+}
+
+@keyframes unsealReveal {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+        filter: blur(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+}
+
+.unsealed-insight .insight-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 50%);
+    animation: insightGlowRotate 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes insightGlowRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* insight-content - synthesis-text와 동일한 구조 */
+.unsealed-insight .insight-content {
+    position: relative;
+    z-index: 1;
+    text-align: left;
+    padding: 0;
+}
+
+.unsealed-insight .insight-text {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0;
+}
+
+.unsealed-insight .insight-detail {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.9;
+    margin-top: 1rem;
+    font-style: normal;
+}
+
+/* ========================================
+   공유 섹션
+   ======================================== */
+
+.share-section {
+    text-align: center;
+}
+
+.share-card-preview {
+    max-width: 280px;
+    margin: 0 auto 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, rgba(75, 0, 130, 0.4), rgba(25, 25, 50, 0.6));
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 16px;
+}
+
+.share-card-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.share-card-emoji {
+    font-size: 2rem;
+}
+
+.share-card-rarity {
+    font-size: 0.75rem;
+    color: var(--teal);
+    margin: 0;
+}
+
+.share-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin: 0;
+}
+
+.share-card-verdict {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    margin: 0;
+}
+
+.share-card-cards {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.share-card-mini {
+    font-size: 1.25rem;
+}
+
+.share-btn {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+}
+
+/* ========================================
+   반응형
+   ======================================== */
+
+@media (max-width: 480px) {
+    .flip-card {
+        width: 75px;
+        height: 115px;
+    }
+
+    .flip-card.conclusion {
+        width: 80px;
+        height: 125px;
+    }
+
+    .flip-cards-row {
+        gap: 0.5rem;
+    }
+
+    .reading-section-header {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .reading-section-header .section-title {
+        font-size: 0.95rem;
+    }
+
+    .reading-card-image {
+        max-width: 240px;
+    }
+
+    .reading-text {
+        font-size: 0.95rem;
+    }
+
+    .sealed-message {
+        padding: 1.5rem;
+    }
+
+    .definitive-answer .answer-text {
+        font-size: 1.25rem;
+    }
+}
+
+/* ========================================
+   타로 결과 페이지 스타일 (페르소나 4/5)
+   - pSEO를 위한 풀페이지 뷰
+   ======================================== */
+
+/* 페이지 뷰 컨테이너 - 페이지 전체 스크롤 */
+.tarot-result-page {
+    min-height: 100vh;
+    background: linear-gradient(165deg, #0a0015 0%, #1a0030 30%, #0d001a 70%, #000 100%);
+    position: relative;
+}
+
+/* 메인 콘텐츠 (max-width 유지하되 모달 아님) */
+.tarot-result-content {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 60px; /* 헤더에 가리지 않게 */
+    background: linear-gradient(165deg, #0a0015 0%, #1a0030 30%, #0d001a 70%, #000 100%);
+    border-radius: 10px;
+    border: 2px solid #b464ff;
+    box-shadow:
+        -8px 0 25px rgba(180, 100, 255, 0.2),
+        8px 0 25px rgba(255, 80, 150, 0.2),
+        -12px 0 40px rgba(180, 100, 255, 0.15),
+        12px 0 40px rgba(255, 80, 150, 0.15),
+        inset 0 0 50px rgba(180, 100, 255, 0.02);
+    /* overflow: hidden 제거 - sticky 작동 필요 */
+}
+
+/* ========================================
+   Visual Novel 인트로 오버레이 (Dota2 스타일)
+   ======================================== */
+.vn-intro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.95) 0%, rgba(0, 0, 0, 0.99) 100%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* 배경 글로우 효과 */
+.vn-bg-glow {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 150, 50, 0.15) 0%, transparent 70%);
+    animation: glowFloat 8s ease-in-out infinite;
+    top: 20%;
+    left: 30%;
+    filter: blur(60px);
+}
+
+.vn-bg-glow.secondary {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(180, 100, 255, 0.12) 0%, transparent 70%);
+    animation: glowFloat 10s ease-in-out infinite reverse;
+    top: 50%;
+    left: 55%;
+    animation-delay: -3s;
+}
+
+@keyframes glowFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+    33% {
+        transform: translate(30px, -20px) scale(1.1);
+        opacity: 0.8;
+    }
+    66% {
+        transform: translate(-20px, 30px) scale(0.95);
+        opacity: 0.5;
+    }
+}
+
+/* 파티클 효과 - 가벼운 버전 (성능 최적화) */
+.vn-particles {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255, 200, 100, 0.5), transparent),
+        radial-gradient(1px 1px at 40% 70%, rgba(255, 180, 80, 0.4), transparent),
+        radial-gradient(1px 1px at 60% 20%, rgba(200, 150, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 80% 50%, rgba(255, 200, 150, 0.45), transparent),
+        radial-gradient(1.5px 1.5px at 15% 60%, rgba(255, 215, 100, 0.5), transparent),
+        radial-gradient(1.5px 1.5px at 85% 35%, rgba(180, 140, 255, 0.4), transparent);
+    background-size: 300px 300px;
+    animation: particleDrift 30s linear infinite;
+    will-change: transform;
+}
+
+@keyframes particleDrift {
+    from { transform: translateY(0); }
+    to { transform: translateY(-300px); }
+}
+
+.vn-intro-content {
+    max-width: 600px;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* 우아한 장식 */
+/* 장식 - 심플하게 */
+.vn-ornament {
+    font-size: 1.2rem;
+    color: rgba(255, 200, 100, 0.5);
+    letter-spacing: 0.3em;
+    margin: 1rem 0;
+    opacity: 0.7;
+}
+
+.vn-ornament.top {
+    margin-bottom: 1.5rem;
+}
+
+.vn-ornament.bottom {
+    margin-top: 1.5rem;
+}
+
+.vn-hook {
+    margin-bottom: 2rem;
+    animation: vnFadeIn 0.8s ease;
+}
+
+.vn-hook.complete {
+    opacity: 0.7;
+}
+
+.vn-typing-text {
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1.4rem;
+    color: #ffd080;
+    line-height: 2;
+    margin: 0;
+    text-shadow:
+        0 0 30px rgba(255, 180, 80, 0.4),
+        0 0 60px rgba(255, 150, 50, 0.2);
+}
+
+.vn-cursor {
+    display: inline-block;
+    color: #ffb050;
+    animation: vnBlink 0.8s infinite;
+    text-shadow: 0 0 10px rgba(255, 180, 80, 0.8);
+}
+
+@keyframes vnBlink {
+    0%, 45% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+.vn-foreshadow {
+    margin-top: 2.5rem;
+    animation: vnFadeIn 0.8s ease;
+}
+
+.vn-foreshadow.complete {
+    opacity: 0.7;
+}
+
+.vn-foreshadow .vn-typing-text {
+    font-size: 1.4rem;
+    color: rgba(220, 200, 255, 0.9);
+    text-shadow:
+        0 0 20px rgba(180, 150, 255, 0.3),
+        0 0 40px rgba(150, 100, 255, 0.15);
+}
+
+/* 진행 안내 */
+.vn-continue-hint {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    color: rgba(255, 200, 150, 0.6);
+    font-family: 'Nanum Myeongjo', serif;
+    letter-spacing: 0.1em;
+    animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+}
+
+/* 스킵 버튼 - 우아한 미니멀 스타일 */
+.vn-skip-btn {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    padding: 0.6rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 200, 150, 0.5);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.vn-skip-btn:hover {
+    color: rgba(255, 220, 150, 0.8);
+}
+
+/* 스킵 버튼 내 아이콘 스타일 */
+.vn-skip-btn .skip-icon {
+    margin-right: 0.4rem;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    transition: transform 0.3s ease;
+}
+
+.vn-skip-btn:hover .skip-icon {
+    transform: translateX(2px);
+}
+
+@keyframes vnFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   히어로 섹션 - 대각선 배경색 수정
+   ======================================== */
+.tarot-result-content .reading-hero {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 8px 8px 0 0;
+}
+
+/* 히어로 하단 섬세한 divider */
+.hero-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 107, 107, 0.4) 20%,
+        rgba(255, 215, 0, 0.6) 50%,
+        rgba(255, 107, 107, 0.4) 80%,
+        transparent 100%
+    );
+}
+
+.tarot-result-content .reading-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.2) contrast(1.1);
+    border-radius: 8px 8px 0 0;
+}
+
+.tarot-result-content .reading-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 3rem 2rem 2rem;
+    background: linear-gradient(
+        to top,
+        #0a0015 0%,
+        rgba(10, 0, 21, 0.98) 20%,
+        rgba(10, 0, 21, 0.85) 40%,
+        rgba(10, 0, 21, 0.5) 70%,
+        transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tarot-result-content .reading-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.8), rgba(138, 43, 226, 0.6));
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    width: fit-content;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+.tarot-result-content .reading-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow:
+        0 0 20px rgba(255, 0, 85, 0.5),
+        2px 2px 0 rgba(255, 215, 0, 0.3);
+}
+
+.tarot-result-content .reading-verdict {
+    font-size: 1.1rem;
+    color: #ffd700;
+    font-weight: 600;
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 3px solid #ff0055;
+}
+
+/* Sticky 카드 바 - 페이지 전체에 고정 */
+.tarot-result-content .sticky-card-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: linear-gradient(180deg, #0a0015 0%, rgba(10, 0, 21, 0.98) 100%);
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid rgba(255, 0, 85, 0.4);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.5s ease;
+}
+
+.tarot-result-content .sticky-card-bar.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 닫기 버튼 - 고정 위치 */
+.tarot-result-content .modal-close-btn {
+    position: fixed;
+    top: 1rem;
+    right: calc(50% - 400px + 1rem);
+    z-index: 100;
+}
+
+@media (max-width: 832px) {
+    .tarot-result-content .modal-close-btn {
+        right: 1rem;
+    }
+}
+
+/* 질문 인용 - VN 스타일 (result-intro-summary와 유사) */
+.tarot-result-content .reading-quote {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2.5rem 2rem;
+    margin: 0;
+    /* VN Intro와 동일한 어두운 배경 */
+    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%);
+    border-top: 1px solid rgba(255, 200, 100, 0.15);
+    border-bottom: 1px solid rgba(255, 200, 100, 0.15);
+    text-align: center;
+}
+
+/* VN 스타일 별 장식 - 상단 */
+.tarot-result-content .reading-quote::before {
+    content: '~ ✦ ~';
+    position: absolute;
+    top: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+}
+
+/* VN 스타일 별 장식 - 하단 */
+.tarot-result-content .reading-quote::after {
+    content: '~ ✦ ~';
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+}
+
+.tarot-result-content .reading-quote .quote-icon {
+    font-size: 1.25rem;
+    opacity: 0.7;
+}
+
+.tarot-result-content .reading-quote p {
+    margin: 0;
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    font-style: italic;
+}
+
+/* 본문 - 카드 챕터용 풀 와이드 스타일 */
+.tarot-result-content .reading-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+}
+
+/* 카드 바 아이템 */
+.tarot-result-content .card-bar-instruction {
+    text-align: center;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 1rem 0;
+}
+
+.tarot-result-content .card-bar-cards {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.tarot-result-content .card-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 85px;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tarot-result-content .card-bar-item.can-flip {
+    border-color: #ffd700;
+    animation: cardPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cardPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+}
+
+.tarot-result-content .card-bar-item.flipped {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(138, 43, 226, 0.2));
+    border-color: #9b59b6;
+}
+
+.tarot-result-content .card-bar-item.conclusion {
+    border-color: #ffd700;
+}
+
+.tarot-result-content .card-bar-item.conclusion.flipped {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.1));
+}
+
+.tarot-result-content .card-bar-icon {
+    font-size: 1.8rem;
+}
+
+.tarot-result-content .card-bar-tap {
+    font-size: 0.7rem;
+    color: #ffd700;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-top: 0.35rem;
+    animation: tapBlink 1s infinite;
+}
+
+@keyframes tapBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.tarot-result-content .card-bar-emoji {
+    font-size: 1.25rem;
+}
+
+.tarot-result-content .card-bar-name {
+    font-size: 0.6rem;
+    color: #fff;
+    text-align: center;
+    margin-top: 0.25rem;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 카드 섹션 */
+.tarot-result-content .card-section {
+    animation: sectionFadeIn 0.5s ease-out;
+}
+
+@keyframes sectionFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tarot-result-content .card-section.conclusion-section {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 180, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* 섹션 타이틀 */
+.tarot-result-content .reading-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    padding: 0.75rem 1.5rem;
+    padding-left: 1rem;
+    background: linear-gradient(90deg, rgba(255, 0, 85, 0.2), transparent);
+    border-left: 4px solid #ff0055;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* 하단 액션 버튼 */
+.tarot-result-content .modal-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.tarot-result-content .action-btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.tarot-result-content .action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tarot-result-content .action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.tarot-result-content .action-btn.primary {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+    color: #fff;
+}
+
+.tarot-result-content .action-btn.primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.4);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .tarot-result-content .reading-hero {
+        height: 300px;
+    }
+
+    .tarot-result-content .reading-title {
+        font-size: 1.5rem;
+    }
+
+    .tarot-result-content .reading-body {
+        padding: 0;
+    }
+
+    .tarot-result-content .sticky-card-bar {
+        padding: 0.75rem 1rem;
+    }
+
+    .tarot-result-content .card-bar-item {
+        width: 60px;
+        height: 80px;
+    }
+
+    .tarot-result-content .card-bar-cards {
+        gap: 0.5rem;
+    }
+
+    .tarot-result-content .reading-section-title {
+        font-size: 1.1rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .tarot-result-content .reading-quote {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .tarot-result-content .modal-actions {
+        flex-direction: column;
+    }
+
+    .vn-typing-text {
+        font-size: 1.1rem;
+    }
+
+    .vn-foreshadow .vn-typing-text {
+        font-size: 1rem;
+    }
+}
+
+/* 오버레이 (기존 모달용 - 레거시) */
+.tarot-result-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(20, 0, 40, 0.98));
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+    animation: overlayFadeIn 0.4s ease;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 모달 컨테이너 */
+.tarot-result-modal {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    max-height: 95vh;
+    background: linear-gradient(165deg, #0a0015 0%, #1a0030 30%, #0d001a 70%, #000 100%);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 2px solid;
+    border-image: linear-gradient(135deg, #ff0055, #ffd700, #ff0055) 1;
+    box-shadow:
+        0 0 60px rgba(255, 0, 85, 0.3),
+        0 0 120px rgba(255, 215, 0, 0.1),
+        inset 0 0 100px rgba(255, 0, 85, 0.05);
+    animation: modalSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 대각선 패턴 배경 */
+.modal-pattern-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 0, 85, 0.03) 2px,
+        rgba(255, 0, 85, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 닫기 버튼 */
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 0, 85, 0.5);
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close-btn:hover {
+    background: #ff0055;
+    border-color: #ff0055;
+}
+
+/* 히어로 섹션 */
+.tarot-result-modal .reading-hero {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+
+.tarot-result-modal .reading-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.2) contrast(1.1);
+    animation: heroZoom 20s ease-in-out infinite alternate;
+}
+
+@keyframes heroZoom {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+.tarot-result-modal .reading-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 3rem 2rem;
+    background: linear-gradient(
+        to top,
+        rgba(10, 0, 20, 0.98) 0%,
+        rgba(10, 0, 20, 0.85) 40%,
+        rgba(10, 0, 20, 0.4) 70%,
+        transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 1;
+}
+
+/* 뱃지 */
+.tarot-result-modal .reading-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.8), rgba(138, 43, 226, 0.6));
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    width: fit-content;
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+/* 희귀도 훅 */
+.rarity-hook {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    font-size: 0.85rem;
+    color: #ffd700;
+    width: fit-content;
+}
+
+/* 제목 */
+.tarot-result-modal .reading-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow:
+        0 0 20px rgba(255, 0, 85, 0.5),
+        2px 2px 0 rgba(255, 215, 0, 0.3);
+}
+
+/* 핵심 메시지 */
+.tarot-result-modal .reading-verdict {
+    font-size: 1.1rem;
+    color: #ffd700;
+    font-weight: 600;
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 3px solid #ff0055;
+}
+
+/* Sticky 카드 바 */
+.sticky-card-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: linear-gradient(180deg, rgba(10, 0, 20, 0.98), rgba(10, 0, 20, 0.95));
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid rgba(255, 0, 85, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.card-bar-instruction {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin: 0 0 0.75rem 0;
+}
+
+.card-bar-cards {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.card-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 90px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.card-bar-item.can-flip {
+    border-color: #ffd700;
+    animation: cardGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes cardGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+}
+
+.card-bar-item.flipped {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(138, 43, 226, 0.2));
+    border-color: #9b59b6;
+}
+
+.card-bar-item.conclusion {
+    border-color: #ffd700;
+}
+
+.card-bar-item.conclusion.flipped {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.1));
+    border-color: #ffd700;
+}
+
+.card-bar-icon {
+    font-size: 1.5rem;
+}
+
+.card-bar-tap {
+    font-size: 0.6rem;
+    color: #ffd700;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-top: 0.25rem;
+}
+
+.card-bar-emoji {
+    font-size: 1.25rem;
+}
+
+.card-bar-name {
+    font-size: 0.6rem;
+    color: #fff;
+    text-align: center;
+    margin-top: 0.25rem;
+    max-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 질문 인용 - VN 스타일 (result-intro-summary와 유사) */
+.tarot-result-modal .reading-quote {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2.5rem 2rem;
+    margin: 0;
+    /* VN Intro와 동일한 어두운 배경 */
+    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%);
+    border-top: 1px solid rgba(255, 200, 100, 0.15);
+    border-bottom: 1px solid rgba(255, 200, 100, 0.15);
+    text-align: center;
+}
+
+/* VN 스타일 별 장식 - 상단 */
+.tarot-result-modal .reading-quote::before {
+    content: '~ ✦ ~';
+    position: absolute;
+    top: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+}
+
+/* VN 스타일 별 장식 - 하단 */
+.tarot-result-modal .reading-quote::after {
+    content: '~ ✦ ~';
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+}
+
+.tarot-result-modal .reading-quote .quote-icon {
+    font-size: 1.25rem;
+    opacity: 0.7;
+}
+
+.tarot-result-modal .reading-quote p {
+    margin: 0;
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.8;
+    font-style: italic;
+}
+
+/* Jenny Foreshadow */
+.jenny-foreshadow-box {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 1rem 1.5rem;
+    margin: 1rem 2rem;
+    background: rgba(255, 215, 0, 0.08);
+    border-left: 3px solid #ffd700;
+}
+
+.jenny-foreshadow-box .foreshadow-icon {
+    font-size: 1.2rem;
+}
+
+.jenny-foreshadow-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 215, 0, 0.9);
+    line-height: 1.6;
+}
+
+/* 본문 */
+.tarot-result-modal .reading-body {
+    padding: 0 2rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* 본문이 비어있을 때 (카드 미공개 시) */
+.tarot-result-modal .reading-body:empty {
+    padding: 0;
+    display: none;
+}
+
+/* 카드 섹션 */
+.card-section {
+    animation: sectionFadeIn 0.5s ease-out;
+}
+
+@keyframes sectionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-section.conclusion-section {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 180, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* 섹션 헤더 - 페르소나 스타일 */
+.tarot-result-modal .reading-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    padding: 0.75rem 1.5rem;
+    padding-left: 1rem;
+    background: linear-gradient(90deg, rgba(255, 0, 85, 0.2), transparent);
+    border-left: 4px solid #ff0055;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.section-card-name {
+    margin-left: auto;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #ffd700;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* 섹션 이미지 */
+.section-image-wrap {
+    position: relative;
+    max-width: 280px;
+    margin: 0 auto 1.5rem;
+    border: 2px solid rgba(180, 140, 220, 0.25);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(140, 100, 180, 0.15);
+}
+
+.section-image-wrap img {
+    width: 100%;
+    display: block;
+}
+
+/* hover zoom 효과 제거됨 */
+
+.image-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    font-size: 0.85rem;
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* 해석 텍스트 */
+.section-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tarot-result-modal .reading-paragraph {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.9;
+    margin: 0;
+}
+
+/* Jenny Transition */
+.tarot-result-modal .jenny-transition {
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.08), rgba(140, 100, 180, 0.05));
+    border: 1px solid rgba(180, 140, 220, 0.15);
+    border-radius: 16px;
+    font-size: 0.95rem;
+    color: rgba(220, 190, 255, 0.9);
+    font-style: italic;
+}
+
+/* Definitive Answer */
+.tarot-result-modal .definitive-answer {
+    margin-top: 2rem;
+    padding: 1.75rem;
+    background: linear-gradient(135deg, rgba(200, 170, 240, 0.12), rgba(180, 140, 220, 0.08));
+    border: 2px solid rgba(200, 170, 240, 0.3);
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(180, 140, 220, 0.12);
+}
+
+.tarot-result-modal .definitive-answer .answer-label {
+    display: inline-block;
+    padding: 0.4rem 1.25rem;
+    background: linear-gradient(135deg, rgba(200, 170, 240, 0.9), rgba(180, 140, 220, 0.85));
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #fff;
+    margin-bottom: 0.75rem;
+    border-radius: 15px;
+}
+
+.tarot-result-modal .definitive-answer .answer-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* 종합 섹션 */
+/* synthesis-section - 결론 카드 배경과 동일 */
+.tarot-result-modal .synthesis-section,
+.tarot-result-content .synthesis-section,
+.reading-body .synthesis-section,
+.synthesis-section {
+    padding: 0 !important;
+    background: rgb(10, 5, 20) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.synthesis-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0;
+}
+
+/* 조언 그리드 */
+.tarot-result-modal .advice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.tarot-result-modal .advice-card {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(140, 100, 180, 0.06), rgba(100, 80, 140, 0.04));
+    border: 1px solid rgba(180, 140, 220, 0.15);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(100, 80, 140, 0.08);
+}
+
+.tarot-result-modal .advice-card .advice-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.tarot-result-modal .advice-card .advice-label {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(220, 190, 255, 0.9);
+    margin-bottom: 0.5rem;
+}
+
+.tarot-result-modal .advice-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+}
+
+.tarot-result-modal .advice-card.warning {
+    border-color: rgba(220, 140, 140, 0.25);
+    background: linear-gradient(135deg, rgba(220, 120, 120, 0.08), rgba(180, 100, 100, 0.05));
+}
+
+.tarot-result-modal .advice-card.warning .advice-label {
+    color: rgba(255, 180, 180, 0.9);
+}
+
+.tarot-result-modal .advice-card.timing {
+    border-color: rgba(140, 170, 220, 0.25);
+    background: linear-gradient(135deg, rgba(120, 160, 220, 0.08), rgba(100, 140, 180, 0.05));
+}
+
+.tarot-result-modal .advice-card.timing .advice-label {
+    color: rgba(180, 200, 255, 0.9);
+}
+
+/* 키워드 */
+.tarot-result-modal .reading-keywords {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(140, 100, 180, 0.04), rgba(100, 80, 140, 0.02));
+    border-radius: 16px;
+    margin-top: 1rem;
+}
+
+.tarot-result-modal .keywords-label {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba(220, 190, 255, 0.8);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+}
+
+.tarot-result-modal .keywords-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.tarot-result-modal .keyword-tag {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.15), rgba(140, 100, 180, 0.1));
+    border: 1px solid rgba(180, 140, 220, 0.25);
+    font-size: 0.85rem;
+    color: rgba(220, 190, 255, 0.9);
+    border-radius: 20px;
+}
+
+/* 봉인된 인사이트 */
+.tarot-result-modal .sealed-insight-section {
+    margin-top: 1rem;
+}
+
+.tarot-result-modal .sealed-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(138, 43, 226, 0.05));
+    border: 2px dashed rgba(155, 89, 182, 0.4);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tarot-result-modal .sealed-message:hover {
+    border-color: #9b59b6;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(138, 43, 226, 0.1));
+}
+
+.seal-visual {
+    position: relative;
+}
+
+.seal-visual .seal-icon {
+    font-size: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.seal-visual .seal-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(155, 89, 182, 0.4), transparent);
+    animation: sealPulse 2s ease-in-out infinite;
+}
+
+@keyframes sealPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.8; }
+}
+
+.tarot-result-modal .seal-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.tarot-result-modal .seal-hint {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.tarot-result-modal .unseal-btn {
+    padding: 0.85rem 2rem;
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.9), rgba(140, 100, 180, 0.85));
+    border: none;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(140, 100, 180, 0.25);
+}
+
+.tarot-result-modal .unseal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(140, 100, 180, 0.35);
+}
+
+/* 봉인 해제됨 */
+.tarot-result-modal .unsealed-insight {
+    padding: 1.75rem;
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.12), rgba(140, 100, 180, 0.08));
+    border: 2px solid rgba(180, 140, 220, 0.35);
+    border-radius: 20px;
+    animation: unsealReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 35px rgba(140, 100, 180, 0.15);
+}
+
+@keyframes unsealReveal {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* insight-header - reading-section-title과 동일한 스타일 */
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    padding: 0.75rem 1.5rem;
+    padding-left: 1rem;
+    background: linear-gradient(90deg, rgba(100, 180, 255, 0.2), rgba(140, 120, 255, 0.1), transparent);
+    border-left: 4px solid rgba(120, 200, 255, 0.8);
+    text-shadow: 0 0 12px rgba(100, 180, 255, 0.4);
+}
+
+/* insight-text - synthesis-text와 동일한 텍스트 크기 */
+.tarot-result-modal .insight-text {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.9;
+    margin: 0;
+}
+
+.tarot-result-modal .insight-detail {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+}
+
+/* 공유 섹션 */
+.tarot-result-modal .share-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.share-preview {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(255, 215, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    max-width: 300px;
+}
+
+.share-emoji {
+    font-size: 2rem;
+}
+
+.share-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0.5rem 0;
+}
+
+.share-verdict {
+    font-size: 0.85rem;
+    color: #ffd700;
+    margin: 0;
+    font-style: italic;
+}
+
+.share-cards {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 1.25rem;
+}
+
+.tarot-result-modal .share-btn {
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.9), rgba(140, 100, 180, 0.85));
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 25px rgba(140, 100, 180, 0.3);
+}
+
+.tarot-result-modal .share-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(140, 100, 180, 0.4);
+}
+
+/* 하단 액션 버튼 */
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.modal-actions .action-btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.modal-actions .action-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-actions .action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.modal-actions .action-btn.primary {
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.9), rgba(140, 100, 180, 0.85));
+    color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(140, 100, 180, 0.25);
+}
+
+.modal-actions .action-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(140, 100, 180, 0.35);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .tarot-result-modal {
+        max-height: 100vh;
+        border: none;
+        border-radius: 0;
+    }
+
+    .tarot-result-modal .reading-hero {
+        height: 250px;
+    }
+
+    .tarot-result-modal .reading-title {
+        font-size: 1.5rem;
+    }
+
+    .tarot-result-modal .reading-body {
+        padding: 1.5rem;
+    }
+
+    .sticky-card-bar {
+        padding: 0.75rem 1rem;
+    }
+
+    .card-bar-item {
+        width: 60px;
+        height: 80px;
+    }
+
+    .card-bar-cards {
+        gap: 0.5rem;
+    }
+
+    .tarot-result-modal .reading-section-title {
+        font-size: 1.1rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .tarot-result-modal .reading-quote {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+/* ========================================
+   신규 v2 스타일 - 배틀패스/웹툰 카드, 타이프라이터
+   ======================================== */
+
+/* 명조체 (신비로운 폰트) 적용 */
+.reading-text,
+.reading-paragraph,
+.jenny-foreshadow-box p,
+.typewriter-text,
+.insight-text,
+.synthesis-text p,
+.chapter-text p {
+    font-family: 'Nanum Myeongjo', 'Batang', serif;
+    font-weight: 400;
+}
+
+/* clip-path 사선 제거 */
+.tarot-result-modal .reading-hero,
+.tarot-result-page .reading-hero {
+    clip-path: none !important;
+    overflow: hidden;
+}
+
+/* 모달/페이지 ::after 제거 (별도 요소로 대체) */
+.tarot-result-modal .reading-hero::after,
+.tarot-result-page .reading-hero::after {
+    display: none;
+}
+
+/* ========================================
+   Persona Style 카드 바 - 심플 이미지 그리드
+   ======================================== */
+.persona-card-bar {
+    position: sticky;
+    top: 59px; /* 헤더 높이 - 1px (틈 방지) */
+    z-index: 100;
+    width: 100%;
+    padding: 1rem 0 1.5rem;
+    overflow: visible;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: rgb(10, 5, 20);
+}
+
+/* 상단 divider 라인 - 별도 요소로 처리 */
+.persona-bar-divider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.persona-bar-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 107, 107, 0.5) 20%,
+        rgba(255, 215, 0, 0.7) 50%,
+        rgba(255, 107, 107, 0.5) 80%,
+        transparent 100%
+    );
+}
+
+.persona-bar-divider-star {
+    position: relative;
+    z-index: 1;
+    font-size: 0.7rem;
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    background: rgb(10, 5, 20);
+    padding: 0 0.75rem;
+}
+
+.persona-card-bar.visible {
+    opacity: 1;
+}
+
+/* 배경 패턴 - 미묘한 그리드 */
+.persona-bg-pattern {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(180, 100, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180, 100, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+}
+
+/* 헤더 */
+.persona-bar-header {
+    text-align: center;
+    padding: 0.5rem 0 1rem;
+}
+
+.persona-bar-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: rgba(255, 200, 100, 0.8);
+    text-shadow: 0 0 10px rgba(255, 200, 100, 0.3);
+}
+
+/* 카드 row - 간격 있는 그리드 */
+.persona-cards-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0 1rem;
+}
+
+/* 개별 카드 - 크게, 카드 느낌 */
+.persona-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2.5/3.5;
+    min-height: 160px;
+    max-height: 200px;
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.persona-card:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.1);
+    z-index: 10;
+}
+
+.persona-card.ready {
+    animation: cardReadyPulse 2s ease-in-out infinite;
+}
+
+@keyframes cardReadyPulse {
+    0%, 100% {
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(180, 100, 255, 0);
+    }
+    50% {
+        filter: brightness(1.15);
+        box-shadow: 0 0 30px rgba(180, 100, 255, 0.6), 0 0 60px rgba(180, 100, 255, 0.3);
+    }
+}
+
+.persona-card.revealed {
+    /* no transform */
+}
+
+.persona-card.revealed:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.15);
+}
+
+/* 카드 내부 - 카드 테두리 스타일 */
+.persona-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0d0d1a 100%);
+    border-radius: 8px;
+    border: 2px solid rgba(180, 100, 255, 0.3);
+    transition: border-color 0.3s ease;
+}
+
+.persona-card.ready .persona-card-inner {
+    border-color: rgba(254, 0, 85, 0.6);
+}
+
+/* 마지막 카드 스타일 유지 */
+.persona-card:last-child .persona-card-inner {
+    /* 동일 스타일 */
+}
+
+.persona-card.revealed .persona-card-inner {
+    /* revealed 상태 */
+}
+
+.persona-card.finale .persona-card-inner {
+    background: linear-gradient(135deg, #1a1508 0%, #0d0d05 100%);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+/* 카드 이미지 - cover로 꽉 채우기 */
+.persona-card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: cardFadeIn 0.3s ease;
+}
+
+@keyframes cardFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 카드 오버레이 (이름 표시) - 하단 그라데이션 */
+.persona-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.5rem 0.25rem 0.25rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+}
+
+.persona-card-name {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    text-shadow: 1px 1px 2px #000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 카드 뒷면 - 미스터리한 패턴 */
+.persona-card-back {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: linear-gradient(135deg, #1a1a2e 0%, #0d0d1a 100%);
+    overflow: hidden;
+}
+
+/* 카드 뒷면 장식 패턴 */
+.persona-card-back::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(180, 100, 255, 0.15);
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+.persona-card-symbol {
+    position: relative;
+    font-size: 2rem;
+    color: rgba(254, 0, 85, 0.5);
+    text-shadow: 0 0 12px rgba(254, 0, 85, 0.4);
+    z-index: 3;
+}
+
+/* 클릭 가능할 때 - 빨간색 → 보라색 → 골드 순환 애니메이션 */
+.persona-card.ready .persona-card-symbol {
+    animation: symbolColorShift 2.5s ease-in-out infinite, symbolPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes symbolColorShift {
+    0%, 100% {
+        color: #fe0055;
+        text-shadow:
+            0 0 10px rgba(254, 0, 85, 0.9),
+            0 0 20px rgba(254, 0, 85, 0.7),
+            0 0 35px rgba(254, 0, 85, 0.5),
+            0 0 50px rgba(254, 0, 85, 0.3);
+    }
+    33% {
+        color: #b464ff;
+        text-shadow:
+            0 0 10px rgba(180, 100, 255, 0.9),
+            0 0 20px rgba(180, 100, 255, 0.7),
+            0 0 35px rgba(180, 100, 255, 0.5),
+            0 0 50px rgba(180, 100, 255, 0.3);
+    }
+    66% {
+        color: #ffd700;
+        text-shadow:
+            0 0 10px rgba(255, 215, 0, 0.9),
+            0 0 20px rgba(255, 215, 0, 0.7),
+            0 0 35px rgba(255, 215, 0, 0.5),
+            0 0 50px rgba(255, 215, 0, 0.3);
+    }
+}
+
+@keyframes symbolPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* Pulse 원 - ready 상태에서만 (z-index 1로 텍스트 뒤에) */
+.persona-card.ready .persona-card-back .pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid;
+    z-index: 1;
+    animation: pulseRing 2.5s ease-out infinite;
+}
+
+.persona-card.ready .persona-card-back .pulse-ring:nth-child(2) {
+    animation-delay: 0.8s;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        border-color: rgba(254, 0, 85, 0.9);
+        box-shadow: 0 0 20px rgba(254, 0, 85, 0.6);
+    }
+    33% {
+        border-color: rgba(180, 100, 255, 0.8);
+        box-shadow: 0 0 25px rgba(180, 100, 255, 0.5);
+    }
+    66% {
+        border-color: rgba(255, 215, 0, 0.8);
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(4);
+        opacity: 0;
+        border-color: rgba(254, 0, 85, 0);
+        box-shadow: 0 0 0 rgba(254, 0, 85, 0);
+    }
+}
+
+/* 탭 힌트 - 고정 색상, 애니메이션 없음 */
+.persona-tap-hint {
+    position: relative;
+    z-index: 3;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    background: rgba(254, 0, 85, 0.6);
+    border-radius: 4px;
+}
+
+/* 카드 번호 - 숨김 */
+.persona-card-number {
+    display: none;
+}
+
+/* All revealed 상태 - 컴팩트하게 */
+.persona-card-bar.all-revealed {
+    padding: 0.5rem 0;
+}
+
+.persona-card-bar.all-revealed .persona-bar-header {
+    padding: 0.25rem 0 0.5rem;
+}
+
+.persona-card-bar.all-revealed .persona-card {
+    min-height: 80px;
+    max-height: 100px;
+}
+
+/* 모바일 반응형 - 카드 바 */
+@media (max-width: 480px) {
+    .persona-card-bar {
+        padding: 0.75rem 0;
+    }
+
+    .persona-bar-header {
+        padding: 0.25rem 0 0.75rem;
+    }
+
+    .persona-bar-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+    }
+
+    .persona-cards-row {
+        gap: 0.5rem;
+        padding: 0 0.5rem;
+    }
+
+    .persona-card {
+        min-height: 120px;
+        max-height: 160px;
+    }
+
+    .persona-card-symbol {
+        font-size: 1.5rem;
+    }
+
+    .persona-tap-hint {
+        font-size: 0.55rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .persona-card-bar.all-revealed .persona-card {
+        min-height: 70px;
+        max-height: 90px;
+    }
+}
+
+/* Rarity Hook - 숨김 → 표시 */
+.rarity-hook {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.6s ease 0.5s;
+}
+
+.rarity-hook.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Jenny Foreshadow - 숨김 → 표시 */
+.jenny-foreshadow-box {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s ease;
+}
+
+.jenny-foreshadow-box.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 타이프라이터 효과 */
+.typewriter {
+    overflow: hidden;
+    border-right: 2px solid #ffd700;
+    white-space: nowrap;
+    animation: typewriter 3s steps(40) 1s forwards, blinkCursor 0.75s step-end infinite;
+}
+
+@keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes blinkCursor {
+    from, to { border-color: transparent; }
+    50% { border-color: #ffd700; }
+}
+
+.typewriter-text {
+    animation: fadeInText 1s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInText {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ========================================
+   카드 히어로 이미지 - 배틀패스/웹툰 스타일
+   ======================================== */
+
+/* 카드 히어로 이미지 - 중앙 정렬, 각 카드별 다른 색상 Glow */
+.card-hero-image {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 16/10;
+    margin: 1.5rem auto 1rem auto;
+    overflow: visible;
+    border-radius: 16px;
+}
+
+/* 카드별 다른 색상 Glow - 카드 1: 보라-핑크 (한 번만 애니메이션) */
+.card-hero-image.card-index-0::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(135deg,
+        rgba(155, 89, 182, 0.6) 0%,
+        rgba(180, 100, 255, 0.5) 50%,
+        rgba(255, 100, 150, 0.4) 100%
+    );
+    border-radius: 28px;
+    filter: blur(25px);
+    z-index: -1;
+    animation: glowFadeIn 1.5s ease-out forwards;
+}
+
+/* 카드 2: 파랑-청록 */
+.card-hero-image.card-index-1::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(135deg,
+        rgba(52, 152, 219, 0.6) 0%,
+        rgba(100, 200, 255, 0.5) 50%,
+        rgba(26, 188, 156, 0.4) 100%
+    );
+    border-radius: 28px;
+    filter: blur(25px);
+    z-index: -1;
+    animation: glowFadeIn 1.5s ease-out forwards;
+}
+
+/* 카드 3: 오렌지-핑크 */
+.card-hero-image.card-index-2::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(135deg,
+        rgba(255, 150, 50, 0.6) 0%,
+        rgba(255, 100, 100, 0.5) 50%,
+        rgba(255, 0, 85, 0.4) 100%
+    );
+    border-radius: 28px;
+    filter: blur(25px);
+    z-index: -1;
+    animation: glowFadeIn 1.5s ease-out forwards;
+}
+
+/* 카드 4 (결론): 골드 */
+.card-hero-image.card-index-3::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    background: linear-gradient(135deg,
+        rgba(255, 215, 0, 0.7) 0%,
+        rgba(255, 180, 50, 0.6) 50%,
+        rgba(255, 150, 0, 0.5) 100%
+    );
+    border-radius: 28px;
+    filter: blur(25px);
+    z-index: -1;
+    animation: glowFadeIn 1.5s ease-out forwards;
+}
+
+/* Glow 한 번만 페이드인 후 유지 */
+@keyframes glowFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+}
+
+.card-hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 16px;
+    /* 이미지 밝게 */
+    filter: brightness(1.1) saturate(1.15) contrast(1.05);
+    /* 이미지 자체 outer glow + shadow */
+    box-shadow:
+        0 0 30px rgba(180, 100, 255, 0.3),
+        0 0 60px rgba(155, 89, 182, 0.2),
+        0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* 내부 글로우 - 은은하게만 (한 번만) */
+.card-image-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255, 220, 150, 0.15) 0%,
+        transparent 60%
+    );
+    pointer-events: none;
+    border-radius: 20px;
+    animation: innerGlowFade 2s ease-out forwards;
+}
+
+@keyframes innerGlowFade {
+    0% { opacity: 1; }
+    100% { opacity: 0.1; }
+}
+
+/* 카드 이미지 오버레이 - 배경 없이 텍스트 그림자로만 */
+.card-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.25rem 1.5rem;
+    background: none;
+    border-radius: 0 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.card-position-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    background: linear-gradient(135deg, rgba(255, 0, 85, 0.85), rgba(255, 80, 100, 0.7));
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: fit-content;
+    border-radius: 4px;
+}
+
+.card-name-large {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.card-hero-image .card-name-en {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin: 0;
+    font-weight: 600;
+    /* 그라데이션 텍스트 */
+    background: linear-gradient(90deg, #ffd700 0%, #ffb347 30%, #ff6b9d 60%, #c084fc 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+
+/* 카드 개봉 효과 보더 - Holy Shine (한 번만 실행) */
+.card-reveal-border {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* 빛나는 테두리 - 정적 */
+.card-reveal-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.6), rgba(255, 180, 100, 0.4), rgba(200, 150, 255, 0.5), rgba(255, 215, 0, 0.6)) border-box;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) padding-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.7;
+}
+
+/* Holy Shine 효과 - 한 번만 스윕 */
+.card-reveal-border::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 25%,
+        rgba(255, 240, 200, 0.4) 45%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(255, 240, 200, 0.4) 55%,
+        rgba(255, 255, 255, 0.1) 75%,
+        transparent 100%
+    );
+    transform: rotate(25deg);
+    animation: holyShine 1.5s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes holyShine {
+    0% {
+        left: -100%;
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        left: 150%;
+        opacity: 0;
+    }
+}
+
+/* 카드 공개 애니메이션 */
+.card-reveal-animation {
+    animation: cardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardReveal {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* 결론 섹션 특별 스타일 */
+.conclusion-section .card-position-badge {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 180, 0, 0.85));
+    color: #000;
+}
+
+/* 섹션 번호 스타일 */
+.section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #ff0055, #ff6b00);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.section-icon {
+    font-size: 1.2rem;
+}
+
+/* Fade-in-up 애니메이션 */
+.fade-in-up {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 카드 리딩 콘텐츠 */
+.card-reading-content {
+    padding: 1.5rem 2rem;
+}
+
+/* 모바일 반응형 - 카드 히어로 이미지 */
+@media (max-width: 768px) {
+    .card-hero-image {
+        margin: 0 -1rem 1rem -1rem;
+        width: calc(100% + 2rem);
+        max-width: none;
+        aspect-ratio: 16/9;
+        border-radius: 0;
+    }
+
+    .card-hero-image::before {
+        border-radius: 0;
+        inset: -10px;
+    }
+
+    .card-hero-image img {
+        border-radius: 0;
+    }
+
+    .card-image-overlay {
+        padding: 1rem 1.25rem;
+        border-radius: 0;
+    }
+
+    .card-name-large {
+        font-size: 1.4rem;
+    }
+
+    .card-position-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.6rem;
+    }
+
+    .card-hero-image .card-name-en {
+        font-size: 0.7rem;
+    }
+
+    .card-reading-content {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* ========================================
+   페이지 Reveal 효과 + 상단 보더 수정
+   ======================================== */
+
+/* 결과 콘텐츠 reveal 애니메이션 (인트로 후) */
+.tarot-result-page .tarot-result-content {
+    opacity: 0;
+    transform: scale(0.98) translateY(20px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tarot-result-page.revealed .tarot-result-content {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* 상단 보더 수정 - 페이지 전체 */
+.tarot-result-content {
+    border-top: 3px solid;
+    border-image: linear-gradient(90deg, #ff0055, #ffd700, #9b59b6) 1;
+    padding-top: 0;
+}
+
+/* ========================================
+   질문 → 답변 흐름 컨테이너
+   ======================================== */
+.question-answer-flow {
+    position: relative;
+    z-index: 1;
+    background: rgb(10, 5, 20);
+}
+
+/* 질문 상단 심볼 */
+.question-answer-flow::before {
+    content: '~ ✦ ~';
+    display: block;
+    text-align: center;
+    padding: 1.25rem 0 0;
+    font-size: 0.7rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+}
+
+/* 질문 박스 */
+.question-answer-flow .reading-quote {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.5rem 2rem 2rem;
+    margin: 0;
+    background: transparent;
+    border: none;
+    text-align: center;
+}
+
+/* 기존 pseudo-element 제거 */
+.question-answer-flow .reading-quote::before,
+.question-answer-flow .reading-quote::after {
+    display: none;
+}
+
+.question-answer-flow .reading-quote .quote-icon {
+    font-size: 1.25rem;
+    opacity: 0.5;
+}
+
+.question-answer-flow .reading-quote p {
+    margin: 0;
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.8;
+    font-style: italic;
+}
+
+/* 질문/답변 사이 divider */
+.question-answer-flow .qa-divider {
+    position: relative;
+    height: 1px;
+    margin: 0 2rem;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 200, 100, 0.3) 25%,
+        rgba(255, 215, 0, 0.5) 50%,
+        rgba(255, 200, 100, 0.3) 75%,
+        transparent 100%
+    );
+}
+
+.question-answer-flow .qa-divider-star {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.65rem;
+    color: #ffd700;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+    background: rgb(10, 5, 20);
+    padding: 0 0.75rem;
+}
+
+/* 답변 요약 */
+.question-answer-flow .result-intro-summary {
+    position: relative;
+    padding: 2rem 2rem 3.5rem;
+    background: transparent;
+    border: none;
+    text-align: center;
+}
+
+/* 답변 하단 심볼 */
+.question-answer-flow .result-intro-summary::before {
+    display: none;
+}
+
+.question-answer-flow .result-intro-summary::after {
+    content: '~ ✦ ~';
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+}
+
+.intro-hook-text {
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffd080;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.8;
+    text-shadow: 0 0 20px rgba(255, 180, 80, 0.3);
+}
+
+.intro-foreshadow-text {
+    font-family: 'Nanum Myeongjo', serif;
+    font-size: 1.1rem;
+    color: rgba(200, 180, 255, 0.75);
+    margin: 0;
+    line-height: 1.8;
+}
+
+/* ========================================
+   모든 이미지에 border-radius 적용
+   ======================================== */
+.reading-hero-img,
+.card-hero-image,
+.card-hero-image img,
+.card-image,
+.reading-card-image,
+.reading-card-image img,
+.section-image-wrap,
+.section-image-wrap img,
+.main-image {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* 결론 카드는 더 강조된 border-radius */
+.conclusion-section .card-hero-image,
+.conclusion-section .card-hero-image img {
+    border-radius: 16px;
+}
+
+/* 카드 바 아이템에도 border-radius */
+.card-bar-item {
+    border-radius: 8px;
+}
+
+/* ========================================
+   카드 뽑기/개봉 효과 강화 (Gacha Style)
+   ======================================== */
+
+/* 카드 공개 시 빛나는 효과 */
+.card-reveal-animation::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg 60deg,
+        rgba(255, 215, 0, 0.3) 60deg 120deg,
+        transparent 120deg 180deg,
+        rgba(255, 100, 150, 0.3) 180deg 240deg,
+        transparent 240deg 300deg,
+        rgba(180, 130, 255, 0.3) 300deg 360deg
+    );
+    animation: gachaReveal 0.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 12px;
+}
+
+@keyframes gachaReveal {
+    0% {
+        transform: rotate(0deg) scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(180deg) scale(2);
+        opacity: 0;
+    }
+}
+
+/* 카드 섹션 등장 시 빛나는 테두리 */
+.card-section.card-reveal-animation {
+    position: relative;
+}
+
+.card-section.card-reveal-animation .card-hero-image {
+    animation: cardImageReveal 0.8s ease-out;
+}
+
+@keyframes cardImageReveal {
+    0% {
+        filter: brightness(2) saturate(0.5);
+        transform: scale(1.05);
+    }
+    100% {
+        filter: brightness(1) saturate(1);
+        transform: scale(1);
+    }
+}
+
+/* 골든 글로우 효과 (레어 카드 느낌) - 한 번만 실행 후 사라짐 */
+.card-hero-image::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 215, 0, 0.4) 50%,
+        transparent 70%
+    );
+    background-size: 200% 200%;
+    animation: goldenShine 1.5s ease-out forwards;
+    pointer-events: none;
+    border-radius: 12px;
+    opacity: 0.6;
+}
+
+@keyframes goldenShine {
+    0% {
+        background-position: 200% 0;
+        opacity: 0.6;
+    }
+    100% {
+        background-position: -200% 0;
+        opacity: 0;
+    }
+}
+
+/* VN 인트로 모바일 반응형 */
+@media (max-width: 768px) {
+    .vn-typing-text {
+        font-size: 1.2rem;
+    }
+
+    .vn-foreshadow .vn-typing-text {
+        font-size: 1rem;
+    }
+
+    .vn-ornament {
+        font-size: 1.2rem;
+    }
+
+    .vn-skip-btn {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.7rem;
+    }
+
+    .vn-continue-hint {
+        bottom: 2rem;
+        font-size: 0.8rem;
+    }
+
+    .result-intro-summary {
+        padding: 1rem 1.5rem;
+    }
+
+    .intro-hook-text {
+        font-size: 1rem;
+    }
+
+    .intro-foreshadow-text {
+        font-size: 1rem;
+    }
+}
+
+/* ========================================
+   카드 챕터 - 풀 와이드 히어로 스타일
+   ======================================== */
+
+/* 본문 영역 - 패딩 제거, 컨테이너 스타일 제거 */
+.tarot-result-content .reading-body {
+    padding: 0;
+    gap: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* 개별 챕터 섹션 - 컨테이너 스타일 없음 */
+.card-chapter {
+    position: relative;
+    animation: chapterReveal 0.6s ease-out;
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+
+@keyframes chapterReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 챕터 히어로 이미지 - 풀 와이드 (container 내부 full width) */
+.chapter-hero {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+}
+
+/* 챕터 상단 장식 border - 좌우 라인 */
+.chapter-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--divider-color, rgba(155, 89, 182, 0.6)) 15%,
+        transparent 45%,
+        transparent 55%,
+        var(--divider-color, rgba(155, 89, 182, 0.6)) 85%,
+        transparent 100%
+    );
+    z-index: 10;
+}
+
+/* 챕터 상단 중앙 ✦ 심볼 */
+.chapter-hero::after {
+    content: '✦';
+    position: absolute;
+    top: -0.35rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--divider-glow, rgba(180, 100, 255, 0.8));
+    text-shadow: 0 0 10px var(--divider-glow, rgba(180, 100, 255, 0.6));
+    z-index: 11;
+}
+
+/* 카드별 상단 border 색상 */
+.card-chapter-0 .chapter-hero {
+    --divider-color: rgba(155, 89, 182, 0.6);
+    --divider-glow: rgba(180, 100, 255, 0.8);
+}
+
+.card-chapter-1 .chapter-hero {
+    --divider-color: rgba(52, 152, 219, 0.6);
+    --divider-glow: rgba(100, 200, 255, 0.8);
+}
+
+.card-chapter-2 .chapter-hero {
+    --divider-color: rgba(255, 150, 50, 0.6);
+    --divider-glow: rgba(255, 100, 100, 0.8);
+}
+
+.card-chapter-3 .chapter-hero,
+.chapter-finale .chapter-hero {
+    --divider-color: rgba(255, 200, 50, 0.6);
+    --divider-glow: rgba(255, 215, 0, 0.9);
+}
+
+.chapter-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.2) contrast(1.05);
+}
+
+/* 히어로 오버레이 - 하단 그라데이션 */
+.chapter-hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 4rem 3rem 2rem;
+    background: linear-gradient(
+        to top,
+        rgba(10, 5, 20, 0.95) 0%,
+        rgba(10, 5, 20, 0.3) 30%,
+        rgba(10, 5, 20, 0.1) 60%,
+        transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* 챕터 번호 - 좌상단 대형 숫자 */
+.chapter-number {
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 0.1em;
+    line-height: 1;
+}
+
+/* 챕터 뱃지 */
+.chapter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    background: linear-gradient(135deg, rgba(255, 0, 85, 0.9), rgba(255, 80, 120, 0.8));
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    width: fit-content;
+    border-radius: 4px;
+}
+
+/* 카드 이름 - 대형 */
+.chapter-card-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* 영문 카드명 - 그라데이션 */
+.chapter-card-en {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin: 0;
+    font-weight: 600;
+    background: linear-gradient(90deg, #ffd700, #ffb347, #ff6b9d, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 챕터 구분 Divider - 카드별 다른 색상 */
+.chapter-divider {
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--divider-color, rgba(155, 89, 182, 0.6)) 20%,
+        var(--divider-glow, rgba(180, 100, 255, 0.8)) 50%,
+        var(--divider-color, rgba(155, 89, 182, 0.6)) 80%,
+        transparent 100%
+    );
+    box-shadow: 0 0 15px var(--divider-glow, rgba(180, 100, 255, 0.4));
+}
+
+/* 카드 1: 보라-핑크 */
+.chapter-divider-0 {
+    --divider-color: rgba(155, 89, 182, 0.6);
+    --divider-glow: rgba(180, 100, 255, 0.8);
+}
+
+/* 카드 2: 파랑-청록 */
+.chapter-divider-1 {
+    --divider-color: rgba(52, 152, 219, 0.6);
+    --divider-glow: rgba(100, 200, 255, 0.8);
+}
+
+/* 카드 3: 오렌지-핑크 */
+.chapter-divider-2 {
+    --divider-color: rgba(255, 150, 50, 0.6);
+    --divider-glow: rgba(255, 100, 100, 0.8);
+}
+
+/* 결론 카드: 골드 */
+.chapter-divider-3,
+.chapter-finale .chapter-divider {
+    --divider-color: rgba(255, 200, 50, 0.6);
+    --divider-glow: rgba(255, 215, 0, 0.9);
+    height: 1px;
+}
+
+/* 챕터 콘텐츠 영역 */
+.chapter-content {
+    position: relative;
+    padding: 3rem;
+    padding-bottom: 3rem;
+    background: rgb(10, 5, 20);
+}
+
+/* 결론 카드 하단 그라데이션 페이드 */
+.conclusion-section .chapter-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(13, 0, 26, 0.5) 50%,
+        #0d001a 100%
+    );
+    pointer-events: none;
+}
+
+/* 챕터 타이틀 */
+.chapter-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1.5rem 0;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(90deg, rgba(255, 0, 85, 0.15), transparent);
+    border-left: 4px solid #ff0055;
+}
+
+.chapter-title .title-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, #ff0055, #ff4477);
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+/* 해석 텍스트 */
+.chapter-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chapter-text p {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.9;
+    margin: 0;
+}
+
+/* Jenny Transition - 다음 카드 힌트 */
+.chapter-transition {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.1), rgba(140, 100, 180, 0.06));
+    border: 1px solid rgba(180, 140, 220, 0.2);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: rgba(220, 190, 255, 0.9);
+    font-style: italic;
+}
+
+.chapter-transition .transition-icon {
+    color: #c084fc;
+    font-weight: bold;
+}
+
+/* 최종 답변 - 결론 카드 */
+.chapter-answer {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 180, 50, 0.06));
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 16px;
+    text-align: center;
+}
+
+.chapter-answer .answer-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: linear-gradient(135deg, #ffd700, #ffb347);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #1a1a2e;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+}
+
+.chapter-answer .answer-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* 결론 챕터 특별 스타일 */
+.chapter-finale .chapter-hero {
+    height: 400px;
+}
+
+.chapter-finale .chapter-badge {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.95), rgba(255, 180, 50, 0.85));
+    color: #1a1a2e;
+}
+
+.chapter-finale .chapter-number {
+    color: rgba(255, 215, 0, 0.2);
+}
+
+.chapter-finale .chapter-title {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.12), transparent);
+    border-left-color: #ffd700;
+}
+
+.chapter-finale .chapter-title .title-accent {
+    background: linear-gradient(135deg, #ffd700, #ffb347);
+    color: #1a1a2e;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .chapter-hero {
+        height: 280px;
+    }
+
+    .chapter-finale .chapter-hero {
+        height: 320px;
+    }
+
+    .chapter-number {
+        font-size: 2rem;
+        top: 1rem;
+        left: 1rem;
+    }
+
+    .chapter-hero-overlay {
+        padding: 3rem 1.5rem 1.5rem;
+    }
+
+    .chapter-card-name {
+        font-size: 1.5rem;
+    }
+
+    .chapter-card-en {
+        font-size: 0.8rem;
+    }
+
+    .chapter-content {
+        padding: 1.5rem;
+    }
+
+    .chapter-title {
+        font-size: 1.1rem;
+        padding: 0.6rem 1rem;
+    }
+
+    .chapter-text p {
+        font-size: 0.95rem;
+    }
+
+    .chapter-answer .answer-text {
+        font-size: 1.2rem;
+    }
+}
+
+/* ========================================
+   결론 카드 아래 섹션 스타일
+   ======================================== */
+
+/* 카드 챕터 이후 섹션들에 양옆 패딩 적용 */
+.synthesis-section,
+.sealed-insight-section,
+.advice-grid,
+.reading-keywords {
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+/* 결론 카드 → synthesis 섹션 seamless 그라데이션 */
+.synthesis-section,
+.tarot-result-content .synthesis-section {
+    margin-top: 0;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 3rem !important;
+    padding-top: 0 !important;
+}
+
+/* sealed-insight-section margin 0 */
+.sealed-insight-section {
+    margin: 0 !important;
+}
+
+/* sealed-message margin */
+.sealed-message {
+    margin: 0 3rem;
+}
+
+/* reading-keywords 하단 여백 */
+.reading-keywords {
+    margin-bottom: 2rem;
+}
+
+/* 공유 프리뷰 advice 카드 스타일 */
+.tarot-result-modal .advice-card.share-preview-card {
+    border-color: rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 180, 50, 0.05));
+    text-align: center;
+}
+
+.tarot-result-modal .advice-card.share-preview-card .advice-label {
+    color: rgba(255, 215, 0, 0.9);
+}
+
+.tarot-result-modal .advice-card.share-preview-card .share-preview-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0.5rem 0;
+}
+
+.tarot-result-modal .advice-card.share-preview-card .share-preview-verdict {
+    font-size: 0.85rem;
+    color: #ffd700;
+    margin: 0;
+    font-style: italic;
+}
+
+.tarot-result-modal .advice-card.share-preview-card .share-preview-cards {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 1.25rem;
+}
+
+/* 모바일에서 패딩 축소 */
+@media (max-width: 768px) {
+    .synthesis-section,
+    .sealed-insight-section,
+    .advice-grid,
+    .reading-keywords {
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
     }
 }

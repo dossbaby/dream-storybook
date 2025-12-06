@@ -1,4 +1,6 @@
-const ToastNotifications = ({
+import { memo } from 'react';
+
+const ToastNotifications = memo(({
     toasts,
     dopaminePopup
 }) => {
@@ -67,6 +69,8 @@ const ToastNotifications = ({
             )}
         </>
     );
-};
+});
+
+ToastNotifications.displayName = 'ToastNotifications';
 
 export default ToastNotifications;
