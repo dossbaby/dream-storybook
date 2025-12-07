@@ -12,6 +12,7 @@ const NavBar = ({
     onViewChange,
     onOpenPremium,
     onLogin,
+    onLoginRequired, // 액션(타로/꿈/사주 보기) 클릭 시 로그인 필요
     onResetResults
 }) => {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -28,9 +29,9 @@ const NavBar = ({
     };
 
     const modes = [
-        { id: 'tarot', emoji: '🃏', label: '타로', desc: '타로 보기', color: '#9b59b6' },
-        { id: 'dream', emoji: '🌙', label: '꿈', desc: '꿈 해몽하기', color: '#6c5ce7' },
-        { id: 'fortune', emoji: '🔮', label: '사주', desc: '사주 보기', color: '#e84393' },
+        { id: 'tarot', emoji: '🃏', label: '타로', desc: '타로 보기', btnIcon: '🃏', color: '#9b59b6' },
+        { id: 'dream', emoji: '🌙', label: '꿈', desc: '꿈 풀이 보기', btnIcon: '🌙', color: '#6c5ce7' },
+        { id: 'fortune', emoji: '🔮', label: '사주', desc: '사주 보기', btnIcon: '✴️', color: '#e84393' },
     ];
 
     const currentMode = modes.find(m => m.id === mode) || modes[0];
@@ -76,9 +77,9 @@ const NavBar = ({
 
                 <button
                     className={`nav-create-btn ${mode}-btn`}
-                    onClick={() => onViewChange('create')}
+                    onClick={() => user ? onViewChange('create') : onLoginRequired?.()}
                 >
-                    <span className="create-icon">+</span>
+                    <span className="create-icon">{currentMode.btnIcon}</span>
                     <span className="create-text">{currentMode.desc}</span>
                 </button>
 

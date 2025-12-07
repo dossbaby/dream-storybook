@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
@@ -17,3 +17,34 @@ export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+
+// Magic Link 인증 설정
+export const actionCodeSettings = {
+    url: window.location.origin, // 콜백 URL (루트로 리다이렉트)
+    handleCodeInApp: true,
+};
+
+// Magic Link 이메일 전송
+export const sendMagicLink = async (email) => {
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    window.localStorage.setItem('emailForSignIn', email);
+};
+
+// Magic Link로 로그인 완료
+export const completeMagicLinkSignIn = async () => {
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+        let email = window.localStorage.getItem('emailForSignIn');
+        if (!email) {
+            email = window.prompt('이메일 주소를 입력해주세요');
+        }
+        const result = await signInWithEmailLink(auth, email, window.location.href);
+        window.localStorage.removeItem('emailForSignIn');
+        return result;
+    }
+    return null;
+};
+
+// Magic Link 확인
+export const isMagicLinkCallback = () => {
+    return isSignInWithEmailLink(auth, window.location.href);
+};

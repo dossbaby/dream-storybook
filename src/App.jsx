@@ -19,6 +19,7 @@ import { useTarotActions } from './hooks/useTarotActions';
 import { useUserActions } from './hooks/useUserActions';
 import { useLiveUpdates } from './hooks/useLiveUpdates';
 import { useAuth } from './hooks/useAuth';
+import { completeMagicLinkSignIn, isMagicLinkCallback } from './firebase';
 import { useDreamManagement } from './hooks/useDreamManagement';
 import { useReadingActions } from './hooks/useReadingActions';
 import { useViewActions } from './hooks/useViewActions';
@@ -34,6 +35,7 @@ import BottomNav from './components/layout/BottomNav';
 // Lazy loaded 컴포넌트 (코드 스플리팅)
 const NicknameModal = lazy(() => import('./components/modals/NicknameModal'));
 const PremiumModal = lazy(() => import('./components/modals/PremiumModal'));
+const AuthModal = lazy(() => import('./components/modals/AuthModal'));
 const ProfileSettingsModal = lazy(() => import('./components/modals/ProfileSettingsModal'));
 const ShareModal = lazy(() => import('./components/modals/ShareModal'));
 const ReportModal = lazy(() => import('./components/modals/ReportModal'));
@@ -88,9 +90,11 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, onboarding: false, referral: false, shareTarget: null, premiumTrigger: 'general' });
+    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, onboarding: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general', authTrigger: 'action' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
+    const openAuthModal = (trigger = 'action') => setModals(prev => ({ ...prev, auth: true, authTrigger: trigger }));
+    const openLoginModal = () => openAuthModal('login');
     const [mobileSheet, setMobileSheet] = useState({ explore: false });
     const selectedDreamDate = '';
     const [calendar, setCalendar] = useState({ view: false, month: new Date() });
@@ -175,14 +179,14 @@ function App() {
     });
 
     const { triggerCardReveal, startTarotSelection, toggleTarotCard, generateTarotReading } = useTarotActions({
-        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook, dopamineHook, onLoginRequired: handleGoogleLogin
+        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook, dopamineHook, onLoginRequired: openAuthModal
     });
     const { toggleSavedDreamVisibility, deleteDream, deleteTarot, deleteFortune, toggleDreamVisibility, updateVisibility } = useDreamManagement({
         user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setMyTarots, setMyFortunes, setView, setToast, loadDreams, loadMyDreams
     });
     const { generateReading, generateFortuneReading } = useReadingActions({
         user, dreamDescription, selectedDreamDate, setCurrentCard, setResult, setView, setSavedDreamField,
-        setFortuneField, fortune, generateDreamReading, generateFortuneReadingHook, triggerCardReveal, onLoginRequired: handleGoogleLogin
+        setFortuneField, fortune, generateDreamReading, generateFortuneReadingHook, triggerCardReveal, onLoginRequired: openAuthModal
     });
     const {
         resetResults, handleOpenDreamDetail, handleOpenTarotResult, handleOpenFortuneResult, handleResultBack,
@@ -213,6 +217,26 @@ function App() {
             return () => clearTimeout(timer);
         }
     }, [loading.auth]);
+
+    // Magic Link 콜백 처리
+    useEffect(() => {
+        const handleMagicLinkCallback = async () => {
+            if (isMagicLinkCallback()) {
+                try {
+                    const result = await completeMagicLinkSignIn();
+                    if (result) {
+                        setDopaminePopup({ type: 'login', message: '로그인 성공! 환영합니다' });
+                        // URL에서 magic link 파라미터 제거
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (error) {
+                    console.error('Magic link sign in error:', error);
+                    setToast('dopamine', { type: 'error', message: '로그인에 실패했습니다. 다시 시도해주세요' });
+                }
+            }
+        };
+        handleMagicLinkCallback();
+    }, []);
 
     // 온보딩 완료 핸들러
     const handleOnboardingComplete = () => {
@@ -267,7 +291,8 @@ function App() {
                     setSavedDream({ id: null, isPublic: false });
                 }}
                 onViewChange={setView}
-                onLogin={handleGoogleLogin}
+                onLogin={openLoginModal}
+                onLoginRequired={openAuthModal}
                 onResetResults={resetResults}
             />
 
@@ -360,7 +385,7 @@ function App() {
                                 setSavedDream({ id: null, isPublic: false });
                             }}
                             user={user}
-                            onLoginRequired={handleGoogleLogin}
+                            onLoginRequired={openAuthModal}
                         />
                     )}
 
@@ -471,7 +496,7 @@ function App() {
                             onToggleVisibility={toggleSavedDreamVisibility}
                             onGenerateDetailedReading={generateDetailedReading}
                             onShare={openShareModal}
-                            onLogin={handleGoogleLogin}
+                            onLogin={openAuthModal}
                             renderCard={renderCard}
                             isPremium={isPremium}
                             onOpenPremium={openPremiumModal}
@@ -561,7 +586,7 @@ function App() {
                             // 엔게이지먼트 시스템
                             user={user}
                             userNickname={userNickname}
-                            onLoginRequired={handleGoogleLogin}
+                            onLoginRequired={openAuthModal}
                         />
                     )}
 
@@ -593,11 +618,16 @@ function App() {
                     {view === 'my' && !user && (
                         <div className="login-prompt">
                             <div className="login-prompt-content">
-                                <span className="login-prompt-icon">👤</span>
-                                <h3>로그인이 필요합니다</h3>
-                                <p>마이페이지를 이용하려면 로그인해주세요</p>
-                                <button className="login-prompt-btn" onClick={handleGoogleLogin}>
-                                    Google로 로그인
+                                <span className="login-prompt-icon">🔮</span>
+                                <h3>로그인하고 시작하세요</h3>
+                                <p>무료로 주 3회 리딩을 받을 수 있어요</p>
+                                <div className="login-prompt-benefits">
+                                    <span>🎁 무료 리딩 주 3회</span>
+                                    <span>💾 내 리딩 기록 저장</span>
+                                    <span>🌐 커뮤니티 공유</span>
+                                </div>
+                                <button className="login-prompt-btn" onClick={openAuthModal}>
+                                    로그인 / 가입하기
                                 </button>
                                 <button className="login-prompt-back" onClick={() => setView('feed')}>
                                     홈으로 돌아가기
@@ -646,6 +676,7 @@ function App() {
                             onOpenPremium={handleOpenPremiumModal}
                             onSetTier={setTier}
                             initialCategory={myCategory}
+                            usageSummary={getUsageSummary()}
                         />
                     )}
 
@@ -741,6 +772,17 @@ function App() {
                         onSuccess={(result) => {
                             setDopaminePopup({ type: 'referral', message: result.message || `🎁 무료 리딩 +${result.bonus} 획득!` });
                         }}
+                    />
+
+                    {/* 인증 모달 */}
+                    <AuthModal
+                        isOpen={modals.auth}
+                        onClose={() => closeModal('auth')}
+                        onGoogleLogin={handleGoogleLogin}
+                        onSuccess={() => {
+                            setDopaminePopup({ type: 'login', message: '로그인 성공! 환영합니다' });
+                        }}
+                        trigger={modals.authTrigger}
                     />
                 </main>
 

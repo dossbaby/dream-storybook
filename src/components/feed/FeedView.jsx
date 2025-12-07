@@ -174,22 +174,25 @@ const FeedView = ({
                 emoji: '🌙',
                 title: '아직 공유된 꿈이 없어요',
                 subtitle: '첫 번째로 꿈을 공유해보세요!',
-                btnText: '꿈 해몽하기',
-                btnEmoji: '✨'
+                btnText: '꿈 풀이 보기',
+                btnEmoji: '🌙',
+                btnClass: 'dream-btn'
             },
             tarot: {
                 emoji: '🃏',
                 title: '아직 타로 리딩이 없어요',
                 subtitle: '카드가 당신을 기다리고 있어요',
                 btnText: '타로 보기',
-                btnEmoji: '🔮'
+                btnEmoji: '🃏',
+                btnClass: 'tarot-btn'
             },
             fortune: {
                 emoji: '🔮',
                 title: '아직 사주가 없어요',
                 subtitle: '오늘의 사주를 확인해보세요',
                 btnText: '사주 보기',
-                btnEmoji: '⭐'
+                btnEmoji: '✴️',
+                btnClass: 'fortune-btn'
             },
             filtered: {
                 emoji: '🔍',
@@ -215,8 +218,8 @@ const FeedView = ({
                 <h3 className="empty-title">{state.title}</h3>
                 <p className="empty-subtitle">{state.subtitle}</p>
                 <button
-                    className="empty-action-btn"
-                    onClick={currentFilter ? clearFilter : onCreateClick}
+                    className={`empty-action-btn ${state.btnClass || ''}`}
+                    onClick={currentFilter ? clearFilter : (user ? onCreateClick : onLoginRequired)}
                 >
                     <span>{state.btnEmoji}</span>
                     <span>{state.btnText}</span>

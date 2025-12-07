@@ -160,7 +160,9 @@ const MyPage = ({
     // Admin 티어 변경
     onSetTier,
     // 초기 카테고리 (외부에서 설정 가능)
-    initialCategory = 'dream'
+    initialCategory = 'dream',
+    // 사용량 요약
+    usageSummary = null
 }) => {
     // Admin 이메일 목록
     const ADMIN_EMAILS = ['dossbb@naver.com'];
@@ -389,6 +391,37 @@ const MyPage = ({
                             현재: <strong>{tier === 'free' ? '무료' : tier === 'premium' ? '프리미엄' : '울트라'}</strong>
                             {tier !== 'free' && ' (Firestore 미반영, 새로고침 시 리셋)'}
                         </div>
+                    </div>
+                )}
+
+                {/* 무료 리딩 남은 횟수 (비프리미엄 사용자만) */}
+                {!isPremium && usageSummary && (
+                    <div className="usage-summary-card">
+                        <div className="usage-header">
+                            <span className="usage-icon">🎁</span>
+                            <h4>무료 리딩</h4>
+                            <span className="usage-reset">{usageSummary.resetIn}</span>
+                        </div>
+                        <div className="usage-items">
+                            <div className={`usage-item ${!usageSummary.tarot.canUse ? 'depleted' : ''}`}>
+                                <span className="usage-emoji">🃏</span>
+                                <span className="usage-label">타로</span>
+                                <span className="usage-count">{usageSummary.tarot.remaining}/{usageSummary.tarot.limit}</span>
+                            </div>
+                            <div className={`usage-item ${!usageSummary.dream.canUse ? 'depleted' : ''}`}>
+                                <span className="usage-emoji">🌙</span>
+                                <span className="usage-label">꿈</span>
+                                <span className="usage-count">{usageSummary.dream.remaining}/{usageSummary.dream.limit}</span>
+                            </div>
+                            <div className={`usage-item ${!usageSummary.saju.canUse ? 'depleted' : ''}`}>
+                                <span className="usage-emoji">🔮</span>
+                                <span className="usage-label">사주</span>
+                                <span className="usage-count">{usageSummary.saju.remaining}/{usageSummary.saju.limit}</span>
+                            </div>
+                        </div>
+                        <button className="upgrade-btn" onClick={() => onOpenPremium?.('usage')}>
+                            <span>👑</span> 무제한으로 업그레이드
+                        </button>
                     </div>
                 )}
 

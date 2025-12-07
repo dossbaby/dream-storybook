@@ -41,9 +41,9 @@ const PremiumModal = ({
             emoji: '✨'
         },
         general: {
-            title: '더 깊이 들여다볼까요?',
-            subtitle: '당신의 이야기가 더 많이 있어요',
-            emoji: '🌙'
+            title: '차원의 틈, 열어볼까요?',
+            subtitle: '아직 못 본 이야기가 있어요',
+            emoji: '🌌'
         }
     };
 
@@ -220,13 +220,13 @@ const PremiumModal = ({
                         className={`plan-tab ${selectedPlan === 'premium' ? 'active' : ''}`}
                         onClick={() => setSelectedPlan('premium')}
                     >
-                        프리미엄
+                        프리미엄 👑
                     </button>
                     <button
                         className={`plan-tab ultra ${selectedPlan === 'ultra' ? 'active' : ''}`}
                         onClick={() => setSelectedPlan('ultra')}
                     >
-                        울트라 ✨
+                        울트라 💎
                     </button>
                 </div>
 
@@ -234,26 +234,25 @@ const PremiumModal = ({
                 {selectedPlan === 'premium' ? (
                     <div className="plan-details premium">
                         <div className="plan-headline">
-                            <h3>당신만 못 본 이야기가 있어요</h3>
-                            <p>지금 숨겨진 부분을 열어드릴게요</p>
+                            <h3>숨겨진 이야기를 열어드려요</h3>
                         </div>
 
                         <div className="plan-features">
                             <div className="feature-item">
-                                <span className="check">✓</span>
-                                <span>블러 뒤에 숨은 진짜 메시지</span>
+                                <span className="check">👑</span>
+                                <span>점AI 심층 분석 엔진</span>
                             </div>
                             <div className="feature-item">
-                                <span className="check">✓</span>
-                                <span>남들은 이미 본 심층 분석</span>
+                                <span className="check">👑</span>
+                                <span>차원의 틈 너머 숨은 메시지</span>
                             </div>
                             <div className="feature-item">
-                                <span className="check">✓</span>
-                                <span>궁금할 때 바로, 무제한으로</span>
+                                <span className="check">👑</span>
+                                <span>두배 더 길게 두배 더 신중하게</span>
                             </div>
                             <div className="feature-item">
-                                <span className="check">✓</span>
-                                <span>내 상황에 딱 맞는 질문</span>
+                                <span className="check">👑</span>
+                                <span>궁금할 때 바로, 무제한 리딩</span>
                             </div>
                         </div>
 
@@ -280,39 +279,38 @@ const PremiumModal = ({
                             className="subscribe-btn"
                             onClick={() => handleSubscribe('premium', billingCycle)}
                         >
-                            프리미엄 시작하기
+                            차원의 틈 열기
                         </button>
 
                         <button
                             className="onetime-btn"
                             onClick={() => handleSubscribe('premium', 'once')}
                         >
-                            이번만 ₩{PRICING.oneTime.premium.price.toLocaleString()}
+                            첫 리딩 ₩{PRICING.oneTime.premium.price.toLocaleString()}으로 경험해보세요
                         </button>
                     </div>
                 ) : (
                     <div className="plan-details ultra">
                         <div className="plan-headline">
-                            <h3>아무도 말해주지 않은 것</h3>
-                            <p>당신이 몰랐던 진짜 이야기예요</p>
+                            <h3>당신의 무의식을 읽어요</h3>
                         </div>
 
                         <div className="plan-features">
                             <div className="feature-item">
-                                <span className="check">✓</span>
-                                <span>프리미엄 전체 포함</span>
+                                <span className="check">💎</span>
+                                <span>점AI 최상위 해석 엔진</span>
                             </div>
-                            <div className="feature-item ultra-feature">
-                                <span className="check">✨</span>
-                                <span>"어떻게 알았지?" 싶은 해석</span>
+                            <div className="feature-item">
+                                <span className="check">💎</span>
+                                <span>프리미엄의 모든 것 +</span>
                             </div>
-                            <div className="feature-item ultra-feature">
-                                <span className="check">✨</span>
-                                <span>친구도 모르는 나의 진짜 마음</span>
+                            <div className="feature-item">
+                                <span className="check">💎</span>
+                                <span>왜 하필 지금 이게 나왔는지</span>
                             </div>
-                            <div className="feature-item ultra-feature">
-                                <span className="check">✨</span>
-                                <span>읽다 보면 소름돋는 정확함</span>
+                            <div className="feature-item">
+                                <span className="check">💎</span>
+                                <span>"소름돋게 정확하다"는 게 이런 거예요</span>
                             </div>
                         </div>
 
@@ -339,14 +337,14 @@ const PremiumModal = ({
                             className="subscribe-btn ultra"
                             onClick={() => handleSubscribe('ultra', billingCycle)}
                         >
-                            울트라 시작하기
+                            차원의 틈 열기
                         </button>
 
                         <button
                             className="onetime-btn"
                             onClick={() => handleSubscribe('ultra', 'once')}
                         >
-                            이번만 ₩{PRICING.oneTime.ultra.price.toLocaleString()}
+                            첫 리딩 ₩{PRICING.oneTime.ultra.price.toLocaleString()}으로 경험해보세요
                         </button>
                     </div>
                 )}

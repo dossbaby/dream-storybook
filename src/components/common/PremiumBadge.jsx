@@ -49,7 +49,7 @@ const PremiumBadge = ({
             className={`premium-badge upgrade ${sizeClasses[size]} ${className}`}
             onClick={onClick}
         >
-            <span className="badge-icon">✨</span>
+            <span className="badge-icon">👑</span>
             {showLabel && <span className="badge-label">업그레이드</span>}
         </button>
     );

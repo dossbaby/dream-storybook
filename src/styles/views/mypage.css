@@ -1206,6 +1206,125 @@
     color: rgba(255, 255, 255, 0.8);
 }
 
+.login-prompt-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 12px;
+    width: 100%;
+}
+
+.login-prompt-benefits span {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ========== 무료 리딩 사용량 카드 ========== */
+.usage-summary-card {
+    background: linear-gradient(145deg, rgba(155, 89, 182, 0.1), rgba(108, 92, 231, 0.05));
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 16px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.usage-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.usage-icon {
+    font-size: 1.3rem;
+}
+
+.usage-header h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    flex: 1;
+}
+
+.usage-reset {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.3rem 0.6rem;
+    border-radius: 10px;
+}
+
+.usage-items {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.usage-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.usage-item.depleted {
+    opacity: 0.5;
+    background: rgba(231, 76, 60, 0.1);
+    border-color: rgba(231, 76, 60, 0.2);
+}
+
+.usage-emoji {
+    font-size: 1.5rem;
+}
+
+.usage-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.usage-count {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.usage-item.depleted .usage-count {
+    color: #e74c3c;
+}
+
+.upgrade-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, #ffd080, #ff9020);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #1a0030;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 25px rgba(255, 180, 80, 0.35);
+}
+
+.upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(255, 180, 80, 0.5);
+}
+
 /* ========== Admin 티어 전환 패널 ========== */
 .admin-tier-panel {
     background: linear-gradient(165deg,

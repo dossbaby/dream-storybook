@@ -83,13 +83,15 @@
 }
 
 .premium-badge.upgrade {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    color: #FFD700;
+    background: linear-gradient(135deg, #ffd080, #ff9020);
+    color: #1a0030;
+    box-shadow: 0 0 25px rgba(255, 180, 80, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .premium-badge.upgrade:hover {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 165, 0, 0.2));
+    background: linear-gradient(135deg, #ffe0a0, #ffa030);
+    box-shadow: 0 0 35px rgba(255, 180, 80, 0.5);
     transform: translateY(-1px);
 }
 
@@ -1872,13 +1874,14 @@
 
 .plan-headline {
     text-align: center;
-    margin-bottom: 1.25rem;
+    margin-bottom: 12px;
 }
 
 .plan-headline h3 {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #fff;
+    color: rgba(220, 200, 255, 0.9);
+    text-shadow: 0 0 20px rgba(180, 150, 255, 0.3), 0 0 40px rgba(150, 100, 255, 0.15);
     margin: 0 0 0.25rem;
 }
 
@@ -1888,27 +1891,61 @@
     margin: 0;
 }
 
+.plan-headline .plan-subtitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(0, 212, 255, 0.9);
+    margin: 0.5rem 0 0.35rem;
+}
+
+.plan-headline .plan-desc {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+.plan-engine {
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255, 215, 0, 0.7);
+    margin: 0 0 1rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 215, 0, 0.08);
+    border-radius: 20px;
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.plan-engine.ultra {
+    color: rgba(0, 212, 255, 0.9);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.1));
+}
+
 .plan-features {
-    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    margin-bottom: 1rem;
 }
 
 .plan-features .feature-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0;
-    font-size: 0.9rem;
+    display: grid;
+    grid-template-columns: 1.2rem auto;
+    gap: 0.4rem;
+    padding: 0.2rem 0;
+    font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.9);
+    width: 280px;
+    line-height: 1.3;
 }
 
 .plan-features .feature-item .check {
-    color: #00d4ff;
-    font-weight: bold;
-}
-
-.plan-features .feature-item.ultra-feature .check {
-    color: #ff0055;
-    text-shadow: 0 0 8px rgba(255, 0, 85, 0.5);
+    text-align: left;
+    font-size: 0.85rem;
+    line-height: 1.3;
+    width: 1rem;
 }
 
 /* 가격 옵션 */
