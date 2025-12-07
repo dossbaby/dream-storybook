@@ -535,6 +535,11 @@ function App() {
                             similarCount={Math.floor(Math.random() * 10) + 2}
                             isPremium={isPremium}
                             onOpenPremium={openPremiumModal}
+                            onKeywordClick={(keyword) => {
+                                // 키워드 클릭 시 피드로 이동 + 필터 적용
+                                setFilter('keyword', keyword);
+                                setView('feed');
+                            }}
                         />
                     )}
 

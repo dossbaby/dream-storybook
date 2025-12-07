@@ -5374,6 +5374,26 @@
     border-radius: 20px;
 }
 
+/* 클릭 가능한 키워드 태그 */
+.tarot-result-modal .keyword-tag.clickable,
+.tarot-result-page .keyword-tag.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tarot-result-modal .keyword-tag.clickable:hover,
+.tarot-result-page .keyword-tag.clickable:hover {
+    background: linear-gradient(135deg, rgba(180, 140, 220, 0.3), rgba(140, 100, 180, 0.2));
+    border-color: rgba(180, 140, 220, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+}
+
+.tarot-result-modal .keyword-tag.clickable:active,
+.tarot-result-page .keyword-tag.clickable:active {
+    transform: translateY(0);
+}
+
 /* 봉인된 인사이트 */
 .tarot-result-modal .sealed-insight-section {
     margin-top: 1rem;

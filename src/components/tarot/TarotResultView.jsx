@@ -19,7 +19,8 @@ const TarotResultView = ({
     viewerCount = 0,
     similarCount = 0,
     isPremium = false,
-    onOpenPremium
+    onOpenPremium,
+    onKeywordClick
 }) => {
     // Visual Novel 인트로 단계 (클릭 기반 진행)
     // 0: 시작 대기 (fade in)
@@ -537,13 +538,19 @@ const TarotResultView = ({
                         </div>
                     )}
 
-                    {/* 키워드 */}
+                    {/* 키워드 - 클릭 시 피드 필터링 */}
                     {allCardsFlipped && tarotResult.keywords?.length > 0 && (
                         <div className="reading-keywords fade-in-up">
                             <span className="keywords-label">관련 상징</span>
                             <div className="keywords-tags">
                                 {tarotResult.keywords.map((kw, i) => (
-                                    <span key={i} className="keyword-tag">#{kw.word}</span>
+                                    <span
+                                        key={i}
+                                        className="keyword-tag clickable"
+                                        onClick={() => onKeywordClick?.(kw.word)}
+                                    >
+                                        #{kw.word}
+                                    </span>
                                 ))}
                             </div>
                         </div>
