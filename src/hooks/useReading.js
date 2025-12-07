@@ -552,6 +552,10 @@ JSON만 반환:
             setAnalysisPhase, setProgress, null, null  // 초반에는 도파민 팝업 안 띄움
         );
 
+        // interval 변수들을 try 밖에 선언 (에러 시 정리 위해)
+        let dopamineInterval = null;
+        let imageInterval = null;
+
         try {
             // 6단계: API 호출 단계 (5개의 애니메이션 메시지 이후)
             setAnalysisPhase(6);
@@ -559,7 +563,7 @@ JSON만 반환:
 
             // API 호출 중 도파민 팝업 (긴 작업이므로 여러 번 표시)
             showRandomDopamine();
-            const dopamineInterval = setInterval(() => {
+            dopamineInterval = setInterval(() => {
                 showRandomDopamine();
             }, 8000); // 8초마다 새로운 힌트
 
@@ -738,7 +742,7 @@ conclusionCard는 반드시:
 
             // 이미지 생성 중 도파민 팝업 interval 시작
             showRandomDopamine();
-            const imageInterval = setInterval(() => {
+            imageInterval = setInterval(() => {
                 showRandomDopamine();
             }, 6000); // 6초마다 새로운 힌트
 
@@ -813,11 +817,16 @@ conclusionCard는 반드시:
         } catch (err) {
             console.error('타로 리딩 생성 실패:', err);
             setError('타로 리딩 생성에 실패했습니다.');
-            // 에러 시 도파민 팝업 숨김
+            // 에러 시 interval 정리 및 도파민 팝업 숨김
+            if (dopamineInterval) clearInterval(dopamineInterval);
+            if (imageInterval) clearInterval(imageInterval);
             setDopaminePopup?.(null);
             return null;
         } finally {
             setLoading(false);
+            // finally에서도 interval 정리 (안전 장치)
+            if (dopamineInterval) clearInterval(dopamineInterval);
+            if (imageInterval) clearInterval(imageInterval);
         }
     }, [user, generateSingleImage, onSaveTarot, setToast, setDopaminePopup, setSavedDreamField, showRandomDopamine]);
 

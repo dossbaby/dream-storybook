@@ -92,12 +92,17 @@ async function cacheFirst(request) {
 async function networkFirst(request) {
     try {
         const response = await fetch(request);
-        if (response.ok) {
+        // POST 요청은 캐시 불가 - GET만 캐시
+        if (response.ok && request.method === 'GET') {
             const cache = await caches.open(CACHE_NAME);
             cache.put(request, response.clone());
         }
         return response;
     } catch (err) {
+        // POST 요청은 캐시에서 복구 불가
+        if (request.method !== 'GET') {
+            return new Response('Offline', { status: 503 });
+        }
         const cached = await caches.match(request);
         if (cached) return cached;
 
