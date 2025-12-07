@@ -423,6 +423,78 @@
     }
 }
 
+/* 모바일 (768px 이하) - BottomNav 사용 시 상단 네비 단순화 */
+@media (max-width: 768px) {
+    .nav-bar {
+        height: 52px;
+        padding: 0 0.75rem;
+    }
+
+    /* 모드 탭 숨기기 (BottomNav에서 처리) */
+    .nav-mode-tabs {
+        display: none !important;
+    }
+
+    /* 모바일 메뉴 버튼 숨기기 (BottomNav로 대체) */
+    .mobile-menu-btn {
+        display: none !important;
+    }
+
+    .mobile-menu {
+        display: none !important;
+    }
+
+    /* 생성 버튼 숨기기 (BottomNav에서 처리) */
+    .nav-create-btn {
+        display: none !important;
+    }
+
+    /* 프리미엄 배지 컴팩트하게 */
+    .premium-badge {
+        padding: 0.35rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    .premium-badge .badge-label {
+        display: none;
+    }
+
+    .premium-badge .badge-icon {
+        font-size: 1rem;
+    }
+
+    /* 포인트 버튼 컴팩트하게 */
+    .nav-points-btn {
+        padding: 0.35rem 0.5rem;
+    }
+
+    /* 유저 아바타 크기 축소 */
+    .user-avatar-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* 로그인 버튼 컴팩트하게 */
+    .nav-login-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+    }
+
+    /* 액션 버튼 간격 줄이기 */
+    .nav-actions {
+        gap: 0.5rem;
+    }
+
+    /* 온라인 배지 컴팩트하게 */
+    .online-badge {
+        padding: 0.2rem 0.4rem;
+    }
+
+    .online-count {
+        font-size: 0.65rem;
+    }
+}
+
 /* 기존 클래스 호환성 유지 */
 .nav-btn-create {
     padding: 0.6rem 1.25rem;

@@ -5,25 +5,25 @@ const FloatingActionButton = memo(({ mode, onModeChange, onCreateClick }) => {
 
     const actions = [
         {
+            id: 'tarot',
+            emoji: '🃏',
+            label: '타로 보기',
+            color: '#9b59b6',
+            description: '운명의 카드를 뽑아보세요'
+        },
+        {
             id: 'dream',
             emoji: '🌙',
             label: '꿈 해몽',
             color: '#6c5ce7',
-            description: '꿈을 말해주면 해몽해줄게'
-        },
-        {
-            id: 'tarot',
-            emoji: '🃏',
-            label: '타로',
-            color: '#9b59b6',
-            description: '카드가 운명을 속삭여요'
+            description: '꿈의 의미를 알려드려요'
         },
         {
             id: 'fortune',
             emoji: '🔮',
-            label: '운세',
+            label: '사주 보기',
             color: '#e84393',
-            description: '오늘의 기운을 확인하세요'
+            description: '오늘의 운세를 확인하세요'
         },
     ];
 

@@ -995,6 +995,154 @@
     box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
 }
 
+/* ========== EmptyState 컴포넌트 ========== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    min-height: 200px;
+}
+
+.empty-state .empty-emoji {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    filter: none;
+    opacity: 0.9;
+}
+
+.empty-state .empty-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light);
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-state .empty-description {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin: 0 0 1.25rem 0;
+    line-height: 1.5;
+}
+
+.empty-state .empty-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.25rem;
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.3);
+}
+
+.empty-state .empty-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+}
+
+/* ========== 에러 바운더리 ========== */
+.error-boundary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background: var(--dark);
+}
+
+.error-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.error-emoji {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.error-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--light);
+    margin: 0 0 0.75rem 0;
+}
+
+.error-message {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.error-retry,
+.error-home {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.error-retry {
+    background: linear-gradient(135deg, var(--purple), var(--accent));
+    color: white;
+}
+
+.error-retry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+.error-home {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--light);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.error-home:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.error-details {
+    margin-top: 1.5rem;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+
+.error-details summary {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.error-details pre {
+    margin: 0.5rem 0 0;
+    font-size: 0.75rem;
+    color: #ff6b6b;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
 /* ========== 스켈레톤 로딩 UI ========== */
 .skeleton-grid {
     display: grid;
@@ -1182,21 +1330,53 @@
     height: 60px;
     border-radius: 50%;
     background: var(--fab-color, linear-gradient(135deg, #9b59b6, #8e44ad));
-    border: none;
+    border: 2px solid rgba(255, 255, 255, 0.15);
     color: white;
     font-size: 1.8rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+    box-shadow:
+        0 6px 20px rgba(155, 89, 182, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 10;
+    position: relative;
+    overflow: hidden;
+}
+
+/* FAB shimmer 효과 */
+.fab-main::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.15) 50%,
+        transparent 60%
+    );
+    animation: fabShimmer 3s ease-in-out infinite;
+}
+
+@keyframes fabShimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
 }
 
 .fab-main:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 30px rgba(155, 89, 182, 0.5);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow:
+        0 10px 35px rgba(155, 89, 182, 0.5),
+        0 0 20px rgba(155, 89, 182, 0.3);
+}
+
+.fab-main:active {
+    transform: scale(0.95);
 }
 
 .fab-icon {

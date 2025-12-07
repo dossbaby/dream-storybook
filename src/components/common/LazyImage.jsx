@@ -1,61 +1,60 @@
-import { useState, useRef, useEffect, memo } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 
 /**
- * LazyImage - Intersection Observer 기반 이미지 지연 로딩 컴포넌트
- *
- * Features:
- * - 뷰포트 진입 시 이미지 로드
- * - 로딩 중 스켈레톤/플레이스홀더 표시
- * - 로드 완료 시 부드러운 페이드인
- * - 에러 시 폴백 이미지 표시
+ * Lazy Loading 이미지 컴포넌트
+ * IntersectionObserver를 사용하여 뷰포트에 들어올 때만 로드
+ * srcset, sizes 속성 지원으로 반응형 이미지 최적화
  */
-const LazyImage = memo(({
+const LazyImage = ({
     src,
     alt = '',
     className = '',
-    placeholderSrc,
-    fallbackSrc = '/placeholder-image.png',
-    rootMargin = '100px',
-    threshold = 0.1,
+    placeholder = null,
     onLoad,
     onError,
+    threshold = 0.1,
+    rootMargin = '50px',
+    // 반응형 이미지 옵션
+    srcset = null,
+    sizes = null,
+    // 로딩 우선순위
+    priority = false,
+    // 블러 플레이스홀더 (base64 작은 이미지)
+    blurDataURL = null,
     ...props
 }) => {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isInView, setIsInView] = useState(false);
+    const [isInView, setIsInView] = useState(priority); // priority면 바로 로드
     const [hasError, setHasError] = useState(false);
     const imgRef = useRef(null);
 
-    // Intersection Observer로 뷰포트 진입 감지
+    // priority가 아닐 때만 IntersectionObserver 사용
     useEffect(() => {
-        const element = imgRef.current;
-        if (!element) return;
-
-        // 네이티브 lazy loading 지원 확인
-        if ('loading' in HTMLImageElement.prototype) {
-            setIsInView(true);
-            return;
-        }
+        if (priority) return; // priority면 즉시 로드
 
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
                     setIsInView(true);
-                    observer.unobserve(element);
+                    observer.disconnect();
                 }
             },
-            {
-                rootMargin,
-                threshold
-            }
+            { threshold, rootMargin }
         );
 
-        observer.observe(element);
+        if (imgRef.current) {
+            observer.observe(imgRef.current);
+        }
 
-        return () => {
-            observer.unobserve(element);
-        };
-    }, [rootMargin, threshold]);
+        return () => observer.disconnect();
+    }, [threshold, rootMargin, priority]);
+
+    // 기본 sizes 계산 (반응형)
+    const defaultSizes = useMemo(() => {
+        if (sizes) return sizes;
+        // 일반적인 반응형 sizes
+        return '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+    }, [sizes]);
 
     const handleLoad = (e) => {
         setIsLoaded(true);
@@ -67,40 +66,80 @@ const LazyImage = memo(({
         onError?.(e);
     };
 
-    // 현재 표시할 이미지 src 결정
-    const currentSrc = hasError
-        ? fallbackSrc
-        : (isInView ? src : (placeholderSrc || ''));
+    // 블러 플레이스홀더 스타일
+    const blurPlaceholderStyle = blurDataURL ? {
+        backgroundImage: `url(${blurDataURL})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        filter: 'blur(20px)',
+        transform: 'scale(1.1)'
+    } : {};
+
+    // 기본 placeholder
+    const defaultPlaceholder = (
+        <div className={`lazy-image-placeholder ${className}`} style={{
+            background: blurDataURL
+                ? 'transparent'
+                : 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100px',
+            overflow: 'hidden',
+            ...blurPlaceholderStyle
+        }}>
+            {!blurDataURL && <span style={{ opacity: 0.5 }}>...</span>}
+        </div>
+    );
+
+    // 에러 상태
+    if (hasError) {
+        return (
+            <div className={`lazy-image-error ${className}`} style={{
+                background: 'rgba(0,0,0,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100px'
+            }}>
+                <span style={{ opacity: 0.5 }}>이미지 로드 실패</span>
+            </div>
+        );
+    }
 
     return (
-        <div
-            ref={imgRef}
-            className={`lazy-image-wrapper ${isLoaded ? 'loaded' : 'loading'} ${className}`}
-            style={{ position: 'relative', overflow: 'hidden' }}
-        >
-            {/* 스켈레톤/플레이스홀더 */}
-            {!isLoaded && (
-                <div className="lazy-image-skeleton">
-                    <div className="skeleton-shimmer"></div>
-                </div>
-            )}
+        <div ref={imgRef} className={`lazy-image-wrapper ${className}`} style={{ position: 'relative' }}>
+            {/* Placeholder (로딩 전 또는 로딩 중) */}
+            {!isLoaded && (placeholder || defaultPlaceholder)}
 
-            {/* 실제 이미지 */}
-            {currentSrc && (
+            {/* 실제 이미지 (뷰포트에 들어왔을 때만 로드) */}
+            {isInView && src && (
                 <img
-                    src={currentSrc}
+                    src={src}
+                    srcSet={srcset || undefined}
+                    sizes={srcset ? defaultSizes : undefined}
                     alt={alt}
-                    loading="lazy"
                     onLoad={handleLoad}
                     onError={handleError}
-                    className={`lazy-image ${isLoaded ? 'visible' : 'hidden'}`}
+                    loading={priority ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchPriority={priority ? 'high' : 'auto'}
+                    className={className}
+                    style={{
+                        opacity: isLoaded ? 1 : 0,
+                        transition: 'opacity 0.3s ease',
+                        position: isLoaded ? 'relative' : 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                    }}
                     {...props}
                 />
             )}
         </div>
     );
-});
-
-LazyImage.displayName = 'LazyImage';
+};
 
 export default LazyImage;

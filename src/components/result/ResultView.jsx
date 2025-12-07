@@ -1,4 +1,5 @@
-import { forwardRef } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
+import RatingFeedback from '../common/RatingFeedback';
 
 const ResultView = forwardRef(({
     mode,
@@ -28,9 +29,36 @@ const ResultView = forwardRef(({
     onLogin,
     renderCard,
     isPremium = false,
-    onOpenPremium
+    onOpenPremium,
+    onRate,
+    userRating = 0
 }, ref) => {
+    const [localRating, setLocalRating] = useState(userRating);
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const currentResult = result || tarotResult || fortuneResult;
+
+    // 풀스크린 모드에서 body 스크롤 방지
+    useEffect(() => {
+        if (isFullscreen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isFullscreen]);
+
+    // ESC 키로 풀스크린 닫기
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isFullscreen) {
+                setIsFullscreen(false);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isFullscreen]);
 
     // Jenny 전략 필드 가져오기
     const jenny = currentResult?.jenny || {};
@@ -86,6 +114,72 @@ const ResultView = forwardRef(({
 
     return (
         <>
+            {/* 풀스크린 카드 뷰어 */}
+            {isFullscreen && card.image && (
+                <div
+                    className="fullscreen-viewer"
+                    onClick={() => setIsFullscreen(false)}
+                >
+                    <div className="fullscreen-backdrop" style={{ backgroundImage: `url(${card.image})` }} />
+                    <div className="fullscreen-container" onClick={(e) => e.stopPropagation()}>
+                        {/* 닫기 버튼 */}
+                        <button className="fullscreen-close" onClick={() => setIsFullscreen(false)}>
+                            ✕
+                        </button>
+
+                        {/* 진행 표시 */}
+                        <div className="fullscreen-progress">
+                            {cards.map((_, i) => (
+                                <div
+                                    key={i}
+                                    className={`fs-progress-dot ${i === currentCard ? 'active' : ''} ${i < currentCard ? 'done' : ''}`}
+                                    onClick={() => setCurrentCard(i)}
+                                />
+                            ))}
+                        </div>
+
+                        {/* 메인 이미지 */}
+                        <div
+                            className="fullscreen-image-wrapper"
+                            onTouchStart={onTouchStart}
+                            onTouchMove={onTouchMove}
+                            onTouchEnd={onTouchEnd}
+                        >
+                            <img src={card.image} alt="" className="fullscreen-image" />
+                        </div>
+
+                        {/* 카드 정보 오버레이 */}
+                        <div className="fullscreen-info">
+                            {card.card && (
+                                <div className="fs-card-badge">
+                                    <span className="fs-card-emoji">{card.card.emoji}</span>
+                                    <span className="fs-card-name">{card.card.nameKo || card.card.name_ko}</span>
+                                </div>
+                            )}
+                            {currentCard === 0 && currentResult?.title && (
+                                <h2 className="fs-title">{currentResult.title}</h2>
+                            )}
+                            {cardReading && (
+                                <p className="fs-reading">{cardReading.slice(0, 150)}{cardReading.length > 150 ? '...' : ''}</p>
+                            )}
+                        </div>
+
+                        {/* 네비게이션 */}
+                        {currentCard > 0 && (
+                            <button className="fullscreen-nav prev" onClick={onPrevCard}>‹</button>
+                        )}
+                        {currentCard < cards.length - 1 && (
+                            <button className="fullscreen-nav next" onClick={onNextCard}>›</button>
+                        )}
+
+                        {/* 하단 힌트 */}
+                        <div className="fullscreen-hint">
+                            <span>스와이프하여 다른 카드 보기</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* 파티클 효과 */}
             {revealParticles?.length > 0 && (
                 <div className="reveal-particles">
@@ -132,9 +226,14 @@ const ResultView = forwardRef(({
                             <div className="frame-corner br" />
                         </div>
 
-                        {/* 이미지 */}
+                        {/* 이미지 - 클릭 시 풀스크린 */}
                         {card.image ? (
-                            <img src={card.image} alt="" className="royal-image" />
+                            <img
+                                src={card.image}
+                                alt=""
+                                className="royal-image"
+                                onClick={() => setIsFullscreen(true)}
+                            />
                         ) : (
                             <div className="royal-placeholder">
                                 <span>{card.card?.emoji || '🌙'}</span>
@@ -277,6 +376,22 @@ const ResultView = forwardRef(({
                             <button className="login-btn" onClick={onLogin}>로그인하면 저장 가능</button>
                         )}
                     </div>
+
+                    {/* 별점 피드백 - 마지막 카드에서만 표시 */}
+                    {currentCard === cards.length - 1 && savedDreamId && (
+                        <div className="result-feedback-section">
+                            <RatingFeedback
+                                currentRating={localRating}
+                                onRate={async (rating) => {
+                                    setLocalRating(rating);
+                                    if (onRate) {
+                                        await onRate(savedDreamId, rating, mode);
+                                    }
+                                }}
+                                size="medium"
+                            />
+                        </div>
+                    )}
 
                     {/* 액션 */}
                     <div className="action-row">

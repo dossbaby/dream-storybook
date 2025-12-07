@@ -10,6 +10,7 @@
 @import './layouts/navbar.css';
 @import './layouts/sidebar.css';
 @import '../components/layout/BottomNav.css';
+@import '../components/layout/MobileSidebarSheet.css';
 
 /* Components */
 @import './components/toast.css';
@@ -26,6 +27,8 @@
 @import './components/slide-result.css';
 @import './components/cinematic-result.css';
 @import './components/royal-result.css';
+@import './components/rating.css';
+@import './components/skeleton.css';
 
 /* Views */
 @import './views/tarot.css';
@@ -41,11 +44,4 @@
 @import './cards.css';
 
 /* 리디바탕 폰트 - 신비로운 리딩 텍스트용 */
-@font-face {
-    font-family: 'RIDIBatang';
-    src: url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff2') format('woff2'),
-         url('https://cdn.jsdelivr.net/gh/nicenine/ridibatang@main/RIDIBatang.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
+@import url('https://cdn.jsdelivr.net/npm/@noonnu/ridibatang@0.0.1/index.min.css');

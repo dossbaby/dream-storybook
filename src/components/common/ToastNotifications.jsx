@@ -48,7 +48,7 @@ const ToastNotifications = memo(({
             )}
 
             {/* 도파민 팝업 (분석 중 기대감 자극) */}
-            {dopaminePopup && (
+            {dopaminePopup && dopaminePopup.emoji && dopaminePopup.text && (
                 <div className="dopamine-popup">
                     <div className="dopamine-icon">{dopaminePopup.emoji}</div>
                     <div className="dopamine-text">{dopaminePopup.text}</div>

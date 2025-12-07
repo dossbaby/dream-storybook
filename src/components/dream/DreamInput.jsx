@@ -52,6 +52,11 @@ const DreamInput = ({
                             className="dream-input"
                             disabled={loading}
                             onFocus={() => setShowKeywordHints(true)}
+                            inputMode="text"
+                            enterKeyHint="done"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            spellCheck="false"
                         />
                         <div className="input-footer">
                             <span className={`char-count ${dreamDescription.length < 10 ? 'warning' : dreamDescription.length > 50 ? 'good' : ''}`}>

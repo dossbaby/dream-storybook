@@ -2,115 +2,115 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- 메인 페이지 -->
   <url>
-    <loc>https://dream-storybook.vercel.app/</loc>
+    <loc>https://jeom.ai/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- 목록 페이지 -->
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams</loc>
+    <loc>https://jeom.ai/dreams</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/tarots</loc>
+    <loc>https://jeom.ai/tarots</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/fortunes</loc>
+    <loc>https://jeom.ai/fortunes</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- 꿈 카테고리 -->
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/animal</loc>
+    <loc>https://jeom.ai/dreams/category/animal</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/nature</loc>
+    <loc>https://jeom.ai/dreams/category/nature</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/people</loc>
+    <loc>https://jeom.ai/dreams/category/people</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/action</loc>
+    <loc>https://jeom.ai/dreams/category/action</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/object</loc>
+    <loc>https://jeom.ai/dreams/category/object</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/emotion</loc>
+    <loc>https://jeom.ai/dreams/category/emotion</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/dreams/category/place</loc>
+    <loc>https://jeom.ai/dreams/category/place</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- 타로 카테고리 -->
   <url>
-    <loc>https://dream-storybook.vercel.app/tarots/category/love</loc>
+    <loc>https://jeom.ai/tarots/category/love</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/tarots/category/career</loc>
+    <loc>https://jeom.ai/tarots/category/career</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/tarots/category/money</loc>
+    <loc>https://jeom.ai/tarots/category/money</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/tarots/category/general</loc>
+    <loc>https://jeom.ai/tarots/category/general</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/tarots/category/decision</loc>
+    <loc>https://jeom.ai/tarots/category/decision</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- 운세 카테고리 -->
   <url>
-    <loc>https://dream-storybook.vercel.app/fortunes/category/daily</loc>
+    <loc>https://jeom.ai/fortunes/category/daily</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/fortunes/category/weekly</loc>
+    <loc>https://jeom.ai/fortunes/category/weekly</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/fortunes/category/monthly</loc>
+    <loc>https://jeom.ai/fortunes/category/monthly</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/fortunes/category/zodiac</loc>
+    <loc>https://jeom.ai/fortunes/category/zodiac</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://dream-storybook.vercel.app/fortunes/category/blood</loc>
+    <loc>https://jeom.ai/fortunes/category/blood</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

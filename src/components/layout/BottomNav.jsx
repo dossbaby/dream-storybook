@@ -1,36 +1,49 @@
-import { useNavigate, useLocation } from 'react-router-dom';
 import './BottomNav.css';
 
-const BottomNav = ({ onModeChange, currentMode }) => {
-    const navigate = useNavigate();
-    const location = useLocation();
-
+const BottomNav = ({
+    currentMode,
+    currentView,
+    onModeChange,
+    onViewChange,
+    onHomeClick,
+    onOpenExplore
+}) => {
     const navItems = [
-        { id: 'home', icon: '🏠', label: '홈', path: '/' },
-        { id: 'tarot', icon: '🃏', label: '타로', mode: 'tarot' },
-        { id: 'dream', icon: '🌙', label: '꿈해몽', mode: 'dream' },
-        { id: 'fortune', icon: '✨', label: '사주', mode: 'fortune' },
-        { id: 'mypage', icon: '👤', label: '마이', path: '/mypage' },
+        { id: 'home', icon: '🏠', label: '홈', action: 'home' },
+        { id: 'explore', icon: '🔥', label: '탐색', action: 'explore' },
+        { id: 'create', icon: '✨', label: '시작', action: 'create', isCenter: true },
+        { id: 'feed', icon: '📰', label: '피드', action: 'feed' },
+        { id: 'mypage', icon: '👤', label: '마이', action: 'mypage' },
     ];
 
     const handleNavClick = (item) => {
-        if (item.path) {
-            navigate(item.path);
+        if (item.action === 'home') {
+            if (onHomeClick) onHomeClick();
+        } else if (item.action === 'explore') {
+            if (onOpenExplore) onOpenExplore();
+        } else if (item.action === 'create') {
+            if (onViewChange) onViewChange('create');
+        } else if (item.action === 'feed') {
+            if (onViewChange) onViewChange('feed');
+        } else if (item.action === 'mypage') {
+            if (onViewChange) onViewChange('my');
         } else if (item.mode && onModeChange) {
-            // 홈으로 이동 후 모드 변경
-            if (location.pathname !== '/') {
-                navigate('/');
-            }
             onModeChange(item.mode);
         }
     };
 
     const isActive = (item) => {
-        if (item.path) {
-            return location.pathname === item.path;
+        if (item.action === 'home') {
+            return currentView === 'feed' && !document.querySelector('.mobile-sheet-overlay');
         }
-        if (item.mode) {
-            return location.pathname === '/' && currentMode === item.mode;
+        if (item.action === 'create') {
+            return currentView === 'create';
+        }
+        if (item.action === 'feed') {
+            return currentView === 'feed';
+        }
+        if (item.action === 'mypage') {
+            return currentView === 'my';
         }
         return false;
     };
@@ -40,10 +53,12 @@ const BottomNav = ({ onModeChange, currentMode }) => {
             {navItems.map((item) => (
                 <button
                     key={item.id}
-                    className={`bottom-nav-item ${isActive(item) ? 'active' : ''}`}
+                    className={`bottom-nav-item ${isActive(item) ? 'active' : ''} ${item.isCenter ? 'center-btn' : ''}`}
                     onClick={() => handleNavClick(item)}
                 >
-                    <span className="bottom-nav-icon">{item.icon}</span>
+                    <span className={`bottom-nav-icon ${item.isCenter ? 'center-icon' : ''}`}>
+                        {item.icon}
+                    </span>
                     <span className="bottom-nav-label">{item.label}</span>
                 </button>
             ))}

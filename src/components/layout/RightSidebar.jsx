@@ -1,3 +1,5 @@
+import { SkeletonList } from '../common/SkeletonCard';
+
 const RightSidebar = ({
     mode,
     tabs,
@@ -185,7 +187,7 @@ const RightSidebar = ({
             </div>
 
             {loading ? (
-                <div className="feed-loading">{getLoadingText()}</div>
+                <SkeletonList count={4} type="sidebar" />
             ) : currentFeed.length === 0 ? (
                 <div className="feed-empty">
                     <p>{getEmptyText()}</p>

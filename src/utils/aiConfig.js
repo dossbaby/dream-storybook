@@ -24,28 +24,75 @@ export const AI_MODELS = {
 
     // 이미지 생성 (티어별 차등)
     image: {
-        free: 'gemini-2.0-flash-exp',       // HD (무료) - 빠르고 저렴
-        premium: 'gemini-3-pro-image-preview', // HD (프리미엄) - 고품질
-        ultra: 'gemini-3-pro-image-preview'    // HD (울트라) - 고품질
+        free: 'gemini-2.5-flash-image',           // 무료 - Gemini 2.5 Flash Image
+        premium: 'gemini-3-pro-image-preview',    // 프리미엄 - Gemini 3 Pro Image (4K)
+        ultra: 'gemini-3-pro-image-preview'       // 울트라 - Gemini 3 Pro Image (4K)
     }
 };
 
 /**
  * Gemini 3 Pro Image 설정
  * - 리딩 결과: 16:9 슬라이드 형식
- * - 내보내기: 1:1 인스타/공유용 (추후 구현)
+ * - 소셜 공유: 9:16 세로 형식 (인스타 스토리, 릴스 등)
+ * - 내보내기: 1:1 인스타 피드용
  */
 export const IMAGE_CONFIG = {
     // 리딩 결과 이미지 (기본)
     reading: {
         aspectRatio: '16:9',
-        imageSize: 'HD'        // 2K, 4K는 오버킬
+        imageSize: 'HD'
     },
-    // 내보내기용 이미지 (추후 구현)
+    // 소셜 공유용 이미지 (스토리/릴스)
+    share: {
+        aspectRatio: '9:16',
+        imageSize: 'HD'
+    },
+    // 내보내기용 이미지 (인스타 피드)
     export: {
         aspectRatio: '1:1',
         imageSize: 'HD'
     }
+};
+
+/**
+ * 동적 애니메 스타일 시스템
+ * Claude가 질문 분위기에 맞게 선택 → Gemini에 전달
+ *
+ * 사용: const stylePrefix = ANIME_STYLES[imageStyle] || ANIME_STYLES.shinkai;
+ */
+export const ANIME_STYLES = {
+    // 로맨틱/몽환적 계열
+    shinkai: 'Makoto Shinkai style (Your Name, Weathering With You). Golden hour lighting, hyper-detailed backgrounds, dreamy twilight, warm oranges and cool blues',
+    kyoani: 'Kyoto Animation style (Violet Evergarden). Soft lighting, delicate detailed lines, over-saturated pastel colors, elegant and emotional',
+    ghibli: 'Studio Ghibli style (Spirited Away). Magical realism, soft vivid tones, hand-painted aesthetic, childlike wonder',
+
+    // 다크/액션 계열
+    mappa_dark: 'MAPPA dark style (Chainsaw Man). Edgy gritty aesthetic, bold shadows, visceral intensity, mature themes',
+    mappa_action: 'MAPPA action style (Jujutsu Kaisen). Dynamic fluid motion, intense vibrant colors, powerful fight choreography',
+    ufotable: 'Ufotable style (Demon Slayer). CGI-2D seamless blend, layered particle effects, breathtaking vibrant combat',
+
+    // 스타일리시/아트 계열
+    trigger: 'Studio Trigger style (Cyberpunk Edgerunners, Promare). Vivid neon colors, bold geometric shapes, explosive kinetic energy',
+    sciencesaru: 'Science Saru style (Dan Da Dan, Devilman Crybaby). Heavy color washes, flash animation fluidity, experimental bold',
+
+    // 클래식/우아한 계열
+    shojo: 'Classic shojo style (Apothecary Diaries). Breathtaking details, sparkles and flowers, elegant flowing aesthetic',
+    webtoon: 'Webtoon adaptation style (Solo Leveling). Clean digital lines, epic scale, polished action spectacle',
+
+    // 특수 스타일
+    cgi_gem: 'CGI crystalline style (Land of the Lustrous). Gemstone characters, glittering ethereal surfaces, prismatic beauty',
+    minimalist: 'Minimalist artistic anime. Clean simple lines, strategic negative space, subtle muted color palette'
+};
+
+/**
+ * 스타일 선택 가이드 (Claude 프롬프트용)
+ */
+export const STYLE_GUIDE = {
+    romantic: ['shinkai', 'kyoani', 'shojo'],           // 연애, 감성, 그리움
+    dark: ['mappa_dark', 'trigger'],                     // 공포, 불안, 악몽
+    action: ['mappa_action', 'ufotable', 'webtoon'],    // 도전, 변화, 갈등
+    mystical: ['ghibli', 'sciencesaru', 'cgi_gem'],     // 신비, 마법, 환상
+    calm: ['kyoani', 'minimalist', 'ghibli']            // 평화, 치유, 안정
 };
 
 /**

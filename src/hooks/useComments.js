@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
     collection, addDoc, getDocs, query, orderBy,
-    updateDoc, doc, deleteDoc, Timestamp, onSnapshot, getDoc
+    updateDoc, doc, deleteDoc, Timestamp, getDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -11,21 +11,41 @@ export const useComments = (user, selectedDream, userNickname) => {
     const [commentEdit, setCommentEdit] = useState({ id: null, text: '' });
     const [interpretations, setInterpretations] = useState([]);
     const [newInterpretation, setNewInterpretation] = useState('');
+    const pollingRef = useRef(null);
 
     const setCommentEditField = (key, value) => setCommentEdit(prev => ({ ...prev, [key]: value }));
 
-    // 댓글 실시간 구독
+    // 댓글 로드 함수
+    const loadComments = useCallback(async (dreamId) => {
+        if (!dreamId) return;
+        try {
+            const q = query(collection(db, 'dreams', dreamId, 'comments'), orderBy('createdAt', 'asc'));
+            const snapshot = await getDocs(q);
+            setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        } catch (e) {
+            console.error('Load comments error:', e);
+        }
+    }, []);
+
+    // 댓글 폴링 (30초마다) - onSnapshot 대체로 비용 절감
     useEffect(() => {
         if (!selectedDream?.id) {
             setComments([]);
             return;
         }
-        const q = query(collection(db, 'dreams', selectedDream.id, 'comments'), orderBy('createdAt', 'asc'));
-        const unsub = onSnapshot(q, (snapshot) => {
-            setComments(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        });
-        return () => unsub();
-    }, [selectedDream?.id]);
+
+        // 초기 로드
+        loadComments(selectedDream.id);
+
+        // 30초마다 폴링 (실시간 대비 읽기 비용 절감)
+        pollingRef.current = setInterval(() => {
+            loadComments(selectedDream.id);
+        }, 30000);
+
+        return () => {
+            if (pollingRef.current) clearInterval(pollingRef.current);
+        };
+    }, [selectedDream?.id, loadComments]);
 
     // 댓글 추가
     const addComment = async () => {
@@ -38,6 +58,8 @@ export const useComments = (user, selectedDream, userNickname) => {
             });
             await updateDoc(doc(db, 'dreams', selectedDream.id), { commentCount: (selectedDream.commentCount || 0) + 1 });
             setNewComment('');
+            // 즉시 댓글 리로드
+            loadComments(selectedDream.id);
         } catch (err) { console.error(err); }
     };
 

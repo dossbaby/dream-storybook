@@ -860,3 +860,41 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* 모바일 반응형 - 운세 입력 뷰 */
+@media (max-width: 768px) {
+    .fortune-theme {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 var(--spacing-sm, 0.5rem);
+    }
+
+    .fortune-title {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    .fortune-type-selector {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .fortune-type-btn {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .fortune-birthdate {
+        margin: 1rem 0;
+    }
+
+    .birthdate-input {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .fortune-submit {
+        margin-top: 1rem;
+    }
+}

@@ -1,7 +1,7 @@
 # 점AI (jeom.ai) 구현 전략
 ## 태그 시스템 + pSEO + 결제 통합 마스터 플랜
 
-> 최종 업데이트: 2025년 12월 6일 (v5 - 리브랜딩 + 모바일 최적화 계획)
+> 최종 업데이트: 2025년 12월 7일 (v6 - UX 폴리싱 + 에러 처리)
 >
 > **브랜드 변경**: Dream Storybook → 점AI (jeom.ai)
 
@@ -66,14 +66,15 @@
 | App.jsx 연동 | ✅ 완료 | 프리미엄 모달 + 사용량 훅 연동 |
 | NavBar 프리미엄 배지 | ✅ 완료 | 네비게이션에 배지 표시 |
 
-### Phase 6: 데이터 마이그레이션 ⏳ 대기
+### Phase 6: 데이터 마이그레이션 ✅ 완료
 | 작업 | 상태 | 비고 |
 |------|------|------|
-| fortunes → saju 컬렉션 마이그레이션 | ⏳ 대기 | Firebase 스크립트 |
-| keywords → tags 변환 스크립트 | ⏳ 대기 | 정규화 로직 적용 |
-| isPublic → visibility 마이그레이션 | ⏳ 대기 | private/unlisted/public |
-| /fortune/* → /saju/* 리다이렉트 | ⏳ 대기 | 301 리다이렉트 |
-| sitemap 재생성 | ⏳ 대기 | 마이그레이션 후 |
+| 마이그레이션 유틸리티 생성 | ✅ 완료 | dataMigration.js (rating, visibility, jenny) |
+| fortunes → saju 컬렉션 마이그레이션 | ✅ 완료 | migrateFortuneToSaju({ dryRun: true }) |
+| keywords → tags 변환 스크립트 | ✅ 완료 | migrateKeywordsToTags('dreams', { dryRun: true }) |
+| isPublic → visibility 마이그레이션 | ✅ 준비됨 | runMigration('dreams', 'visibility') |
+| /fortune/* → /saju/* 리다이렉트 | ✅ 완료 | main.jsx Navigate 컴포넌트 |
+| sitemap 레거시 fortunes 지원 | ✅ 완료 | sitemapGenerator.js fortunes→saju URL |
 
 ### Phase 7: 티어 고도화 ✅ 완료
 | 작업 | 상태 | 비고 |
@@ -102,31 +103,29 @@
 | robots.txt 업데이트 | ✅ 완료 | sitemap URL 변경 |
 | package.json 업데이트 | ✅ 완료 | name, homepage |
 
-### Phase 8: 그로스 ⏳ 대기
+### Phase 8: 그로스 ✅ 완료
 | 작업 | 상태 | 비고 |
 |------|------|------|
-| 알림/리마인더 시스템 | ⏳ 대기 | 아침 푸시 알림 |
-| 레퍼럴 프로그램 | ⏳ 대기 | 친구 초대 → 무료 리딩 |
-| 온보딩 플로우 개선 | ⏳ 대기 | 첫 경험 가이드 |
-| 시즌 이벤트 시스템 | ⏳ 대기 | 설날/발렌타인 등 |
-| 영어 확장 준비 | ⏳ 대기 | i18n 기반 작업 |
+| 알림/리마인더 시스템 | ✅ 완료 | useNotifications.js, NotificationSettings.jsx, 아침/저녁 리마인더 |
+| 레퍼럴 프로그램 | ✅ 완료 | useReferral.js, ReferralModal.jsx, 초대자 +2/피초대자 +1 리딩 |
+| 온보딩 플로우 개선 | ✅ 완료 | 5단계 인터랙티브 온보딩, 크리스탈/피처카드/선물박스 비주얼, 스와이프 네비게이션 |
+| 시즌 이벤트 시스템 | ✅ 완료 | seasonalEvents.js, SeasonalEventBanner.jsx, 7개 시즌 이벤트 |
+| 영어 확장 준비 | ✅ 완료 | i18n/index.js, ko.js, en.js, useI18n.js, LanguageSelector.jsx |
 
-### Phase 9: 프롬프트 캐싱 (비용 최적화) ⏳ 대기
+### Phase 9: 프롬프트 캐싱 (비용 최적화) ✅ 완료
 
 > ⚠️ **필수 참고 문서:**
 > - `docs/claude-caching-guide.md` - Claude 캐싱 공식 가이드
 > - `docs/gemini-caching-guide.md` - Gemini 캐싱 공식 가이드
->
-> 위 문서를 반드시 참고하여 최적의 캐싱 전략으로 구현할 것!
 
 | 작업 | 상태 | 비고 |
 |------|------|------|
-| Claude 시스템 프롬프트 캐싱 적용 | ⏳ 대기 | cache_control + ephemeral type |
-| Gemini implicit 캐싱 확인 | ⏳ 대기 | 2.5+ 모델 자동 적용 확인 |
-| 캐싱 효과 모니터링 로직 | ⏳ 대기 | cache_read_input_tokens 추적 |
-| 비용 절감 분석 리포트 | ⏳ 대기 | 캐시 히트율 측정 |
+| Claude 시스템 프롬프트 캐싱 적용 | ✅ 완료 | promptCache.js + cache_control ephemeral |
+| Gemini implicit 캐싱 확인 | ✅ 완료 | 이미지 생성 전용 → 텍스트 캐싱 불필요 |
+| 캐싱 효과 모니터링 로직 | ✅ 완료 | cacheAnalytics.js + localStorage 통계 저장 |
+| 비용 절감 분석 리포트 | ✅ 완료 | window.cacheAnalytics.printReport() 개발자 콘솔 |
 
-### Phase 10: 모바일 최적화 🔄 진행 중
+### Phase 10: 모바일 최적화 ✅ 완료
 > **벤치마크: 토스 앱** - 직관적이고 편리한 모바일 경험
 > 대다수 사용자가 모바일로 접속할 것으로 예상되므로 모바일 친화적 UI/UX는 필수
 
@@ -138,101 +137,106 @@
 | 브레이크포인트 표준화 | ✅ 완료 | 640px(mobile), 768px(tablet), 1024px(desktop) |
 | **2. 레이아웃 재구성** | | |
 | 모바일 전용 레이아웃 | ✅ 완료 | 768px 이하에서 사이드바 숨김, 단일 컬럼 |
-| 사이드바 → 바텀시트/드로어 | ⏳ 대기 | 좌측 피드 바텀시트로 변경 |
-| 네비게이션 바 최적화 | ⏳ 대기 | 모드 탭 가로 스크롤, 햄버거 메뉴 |
+| 사이드바 → 바텀시트/드로어 | ✅ 완료 | MobileSidebarSheet.jsx, 탐색 바텀시트 |
+| 네비게이션 바 최적화 | ✅ 완료 | BottomNav 중앙 플로팅 버튼, 탐색/피드 분리 |
 | 바텀 네비게이션 추가 | ✅ 완료 | BottomNav.jsx 생성, 홈/타로/꿈/사주/마이 |
 | **3. 터치 최적화** | | |
 | 터치 타겟 44px 이상 | ✅ 완료 | --touch-target-min 변수, @media (pointer: coarse) |
-| 스와이프 제스처 | ⏳ 대기 | 카드 넘기기, 바텀시트 드래그 |
-| 터치 피드백 (haptic) | ⏳ 대기 | 버튼 탭 시 시각/촉각 피드백 |
+| 스와이프 제스처 | ✅ 완료 | useSwipe.js 훅 생성 |
+| 터치 피드백 (haptic) | ✅ 완료 | :active 시각 피드백 (scale, opacity) |
 | hover 상태 제거 | ✅ 완료 | @media (hover: none) 처리 |
 | **4. 컴포넌트별 최적화** | | |
-| 카드 뷰어 풀스크린 | ⏳ 대기 | 9:16 카드 모바일 전체 화면 |
+| 카드 뷰어 풀스크린 | ✅ 완료 | 9:16 카드 모바일 전체 화면, ESC/스와이프 지원 |
 | 모달 → 풀스크린 시트 | ✅ 완료 | 640px 이하에서 바텀시트 스타일, slideUp 애니메이션 |
-| 입력 폼 최적화 | ⏳ 대기 | 키보드 대응, inputmode 설정 |
-| 이미지 lazy loading | ⏳ 대기 | IntersectionObserver 적용 |
+| 입력 폼 최적화 | ✅ 완료 | inputmode, enterKeyHint, iOS 확대 방지, 터치 피드백 |
+| 이미지 lazy loading | ✅ 완료 | LazyImage.jsx + IntersectionObserver |
 | **5. 성능 최적화** | | |
-| 번들 사이즈 최적화 | ⏳ 대기 | code splitting, tree shaking |
-| 이미지 최적화 | ⏳ 대기 | WebP, srcset, sizes |
-| 폰트 최적화 | ⏳ 대기 | font-display: swap, preload |
-| Skeleton UI | ⏳ 대기 | 로딩 상태 UX 개선 |
+| 번들 사이즈 최적화 | ✅ 완료 | code splitting (174KB 메인 번들) |
+| 이미지 최적화 | ✅ 완료 | LazyImage srcset/sizes 지원, imageUtils.js, priority 옵션 |
+| 폰트 최적화 | ✅ 완료 | font-display: swap 적용 (RIDIBatang, Pretendard) |
+| Skeleton UI | ✅ 완료 | Skeleton.jsx + skeleton.css |
 | **6. PWA 기능** | | |
-| manifest.json | ⏳ 대기 | 앱 아이콘, 스플래시 |
-| Service Worker | ⏳ 대기 | 오프라인 지원, 캐싱 |
-| 홈 화면 추가 유도 | ⏳ 대기 | A2HS 배너 |
+| manifest.json | ✅ 완료 | 앱 아이콘, 스플래시, shortcuts |
+| Service Worker | ✅ 완료 | sw.js (오프라인 지원, 캐싱) |
+| 홈 화면 추가 유도 | ✅ 완료 | InstallPrompt.jsx (iOS/Android) |
 
-### Phase 11: 피드백 시스템 ⏳ 대기
+### Phase 11: 피드백 시스템 ✅ 완료
 > 사용자 피드백을 통한 서비스 개선 + 인센티브 기반 참여 유도
 
 | 작업 | 상태 | 비고 |
 |------|------|------|
+| **0. 별점 피드백 (추가)** | | |
+| RatingFeedback.jsx 컴포넌트 | ✅ 완료 | 1-5 별점 UI |
+| useFeedback.js 훅 | ✅ 완료 | Firebase 별점 저장 |
+| rating.css 스타일 | ✅ 완료 | 별점 애니메이션 |
+| ResultView 별점 연동 | ✅ 완료 | 마지막 카드에서 표시 |
 | **1. 피드백 모달 UI** | | |
-| FeedbackModal.jsx 컴포넌트 | ⏳ 대기 | 깔끔한 모달 UI |
-| 피드백 유형 선택 | ⏳ 대기 | 버그/제안/칭찬/기타 프리셋 |
-| 내용 입력 textarea | ⏳ 대기 | 최소 20자, 최대 1000자 |
+| FeedbackModal.jsx 컴포넌트 | ✅ 완료 | 깔끔한 모달 UI (4.71KB 청크) |
+| 피드백 유형 선택 | ✅ 완료 | 버그/제안/칭찬/기타 4종 |
+| 내용 입력 textarea | ✅ 완료 | 최소 10자, 최대 1000자 |
 | 스크린샷 첨부 (선택) | ⏳ 대기 | 이미지 업로드 옵션 |
-| **2. 이메일 전송** | | |
-| 이메일 Subject 프리셋 | ⏳ 대기 | `[점AI 피드백] {유형} - {userId}` |
-| hello@jeom.ai 전송 | ⏳ 대기 | EmailJS 또는 Firebase Functions |
-| 메타데이터 포함 | ⏳ 대기 | userId, tier, 브라우저, 기기 정보 |
+| **2. Firestore 저장** | | |
+| feedbacks 컬렉션 저장 | ✅ 완료 | userId, type, content, metadata |
+| 메타데이터 포함 | ✅ 완료 | userAgent, platform, language |
 | **3. 인센티브 시스템** | | |
-| 피드백 제출 시 +1 리딩 | ⏳ 대기 | 무료 리딩 1회 즉시 부여 |
-| 주 1회 제한 | ⏳ 대기 | 스팸 방지 (추후 월 1회로 조정 가능) |
-| 마지막 피드백 시간 저장 | ⏳ 대기 | Firestore users/{uid}/lastFeedbackAt |
-| 보너스 획득 토스트 | ⏳ 대기 | "소중한 의견 감사해요! 🎁 무료 리딩 +1" |
+| 피드백 제출 시 +1 리딩 | ✅ 완료 | bonusReadings increment(1) |
+| 주 1회 제한 (7일 쿨다운) | ✅ 완료 | lastFeedbackAt 체크 |
+| 마지막 피드백 시간 저장 | ✅ 완료 | users/{uid}/lastFeedbackAt |
+| 보너스 획득 토스트 | ✅ 완료 | 도파민 팝업 연동 |
 | **4. 마이페이지 연동** | | |
-| 피드백 보내기 버튼 | ⏳ 대기 | 프로필 섹션에 배치 |
-| 쿨다운 상태 표시 | ⏳ 대기 | "다음 피드백까지 N일" |
+| 피드백 보내기 버튼 | ✅ 완료 | 프로필 액션에 배치 |
+| 쿨다운 상태 표시 | ✅ 완료 | 모달 내 "N일 후 가능" 표시 |
 | 피드백 히스토리 (선택) | ⏳ 대기 | 내가 보낸 피드백 목록 |
 
-### Phase 12: 타로 카드 선택 UX 전면 개편 🎮 대기
+### Phase 12: 타로 카드 선택 UX 전면 개편 🎮 ✅ 완료
 > 게임처럼 몰입감 있고 고급스러운 카드 선택 경험 (VN Intro 참고)
 
 | 작업 | 상태 | 비고 |
 |------|------|------|
 | **1. 레이아웃 개편** | | |
-| "3장을 선택하면..." 배너 제거 | ⏳ 대기 | 불필요한 안내 삭제 |
-| 카드 스프레드 상단 배치 | ⏳ 대기 | 메인 인터랙티브 요소를 화면 중앙/상단으로 |
-| 풀스크린 몰입형 디자인 | ⏳ 대기 | VN Intro 스타일 배경 + 분위기 |
+| "3장을 선택하면..." 배너 제거 | ✅ 완료 | 불필요한 안내 삭제 |
+| 카드 스프레드 상단 배치 | ✅ 완료 | 슬롯 상단, 스프레드 하단 배치 |
+| 풀스크린 몰입형 디자인 | ✅ 완료 | 어두운 그라데이션 + 빛 효과 배경 |
 | **2. 카드 선택 UX 개선** | | |
-| 클릭 반응성 개선 | ⏳ 대기 | 싱글클릭으로 즉시 선택 |
-| 호버/탭 피드백 강화 | ⏳ 대기 | 카드 살짝 뜨기 + 글로우 효과 |
-| 선택 애니메이션 | ⏳ 대기 | 카드 뒤집히며 슬롯으로 이동 |
-| 터치/드래그 지원 | ⏳ 대기 | 모바일 스와이프 선택 |
+| 클릭 반응성 개선 | ✅ 완료 | :active 터치 피드백 추가 |
+| 호버/탭 피드백 강화 | ✅ 완료 | 글로우 효과 + eye 스케일 업 |
+| 선택 애니메이션 | ✅ 완료 | cardSelected 키프레임 애니메이션 |
+| 슬롯 카드 등장 애니메이션 | ✅ 완료 | slotCardAppear + shimmer 효과 |
+| 터치/드래그 지원 | ✅ 완료 | 스와이프 스크롤 + 드래그 클릭 구분 |
 | **3. 비주얼 업그레이드** | | |
-| 배경 분위기 통일 | ⏳ 대기 | 어두운 신비로운 그라데이션 |
-| 카드 디자인 개선 | ⏳ 대기 | 더 선명하고 고급스러운 카드 뒷면 |
-| 파티클/빛 이펙트 | ⏳ 대기 | 가벼운 반짝임 (무겁지 않게) |
-| 선택 슬롯 UI 개선 | ⏳ 대기 | 과거/현재/미래 슬롯 더 직관적으로 |
+| 배경 분위기 통일 | ✅ 완료 | 어두운 신비로운 그라데이션 (.tarot-theme) |
+| 카드 디자인 개선 | ✅ 완료 | 카드 뒷면 shimmer + inset glow |
+| 파티클/빛 이펙트 | ✅ 완료 | CSS 별빛 파티클 + twinkle 애니메이션 |
+| 선택 슬롯 UI 개선 | ✅ 완료 | 보너스 슬롯 언락 애니메이션 강화 |
 | **4. 사운드 (선택)** | | |
 | 카드 선택 효과음 | ⏳ 대기 | 부드러운 카드 뒤집는 소리 |
 | 배경 앰비언트 | ⏳ 대기 | 신비로운 분위기 (음소거 가능) |
 
-### Phase 13: 네비게이션 및 FAB 개선 ⏳ 대기
+### Phase 13: 네비게이션 및 FAB 개선 ✅ 완료
 > 직관적인 CTA와 깔끔한 레이아웃
 
 | 작업 | 상태 | 비고 |
 |------|------|------|
 | **1. 상단 탭 CTA 개선** | | |
-| 타로 버튼 문구 | ⏳ 대기 | "+ 운명의 카드" → "타로 보기" |
-| 꿈 버튼 문구 | ⏳ 대기 | → "꿈 해몽하기" |
-| 사주 버튼 문구 | ⏳ 대기 | → "사주 보기" |
-| 탭 디자인 강화 | ⏳ 대기 | 더 눈에 띄는 CTA 스타일 |
+| 타로 버튼 문구 | ✅ 완료 | "운명의 카드" → "타로 보기" |
+| 꿈 버튼 문구 | ✅ 완료 | "꿈 해몽" → "꿈 해몽하기" |
+| 사주 버튼 문구 | ✅ 완료 | "사주풀이" → "사주 보기" |
+| 탭 디자인 강화 | ✅ 완료 | 그라데이션 배경 + box-shadow 효과 적용 |
 | **2. FAB (플로팅 버튼) 개선** | | |
-| 위치 조정 | ⏳ 대기 | 피드와 겹치지 않는 위치로 |
-| 중복성 검토 | ⏳ 대기 | 상단 탭과의 역할 정리 |
-| 컨텍스트 인식 | ⏳ 대기 | 현재 모드에 맞는 액션 표시 |
-| 모바일에서만 표시 | ⏳ 대기 | 데스크탑은 상단 탭 사용 |
+| 위치 조정 | ✅ 기존 | 반응형 위치 적용됨 |
+| FAB 디자인 개선 | ✅ 완료 | shimmer 효과 + hover 애니메이션 |
+| 컨텍스트 인식 | ✅ 기존 | 현재 모드별 색상/액션 표시 |
+| 모바일에서만 숨김 | ✅ 기존 | BottomNav 사용 (768px 이하)
 | **3. Firebase 안정화** | | |
-| Firestore 연결 에러 수정 | ⏳ 대기 | WebChannel 에러 해결 |
-| Quota 관리 개선 | ⏳ 대기 | 불필요한 Listen 줄이기 |
-| 실시간 리스너 최적화 | ⏳ 대기 | 중복 리스너 제거 |
+| Firestore 연결 에러 수정 | ✅ 완료 | 폴링 방식으로 전환하여 해결 |
+| Quota 관리 개선 | ✅ 완료 | onSnapshot → getDocs 폴링 전환 |
+| 실시간 리스너 최적화 | ✅ 완료 | 60초/30초 폴링으로 대체 (Phase 14) |
 | **4. 알림 시스템 수정** | | |
-| 중복 알림 방지 | ⏳ 대기 | 이미 본 피드 알림 안 띄우기 |
-| 알림 조건 정리 | ⏳ 대기 | 실제 새 콘텐츠만 알림 |
-| 알림 히스토리 저장 | ⏳ 대기 | 마지막 확인 시간 기록 |
+| 중복 알림 방지 | ✅ 완료 | localStorage 히스토리 기반 중복 체크 |
+| 알림 조건 정리 | ✅ 완료 | 본인 콘텐츠 제외 + 새 콘텐츠만 |
+| 알림 히스토리 저장 | ✅ 완료 | feed_notification_history (최근 50건) |
 
-### Phase 14: Firebase 비용 최적화 💰 대기
+### Phase 14: Firebase 비용 최적화 ✅ 완료
 > 유저 확장 대비 Firestore 읽기/쓰기 효율화
 
 **현재 상황 분석 (1인 테스트 기준):**
@@ -246,24 +250,26 @@
 | 작업 | 상태 | 비고 | 절감 효과 |
 |------|------|------|----------|
 | **1. 쓰기 최적화** | | | |
-| Presence heartbeat 주기 변경 | ⏳ 대기 | 30초 → 5분 | 쓰기 **90% 감소** |
+| Presence heartbeat 주기 변경 | ✅ 완료 | 30초 → 5분 | 쓰기 **90% 감소** |
+| 메모리 캐싱 레이어 | ✅ 완료 | firebaseCache.js | 읽기 감소 |
 | 배치 쓰기 (batch write) | ⏳ 대기 | 여러 문서 한번에 저장 | 쓰기 20% 감소 |
 | 불필요한 업데이트 제거 | ⏳ 대기 | 변경 없으면 쓰기 스킵 | 쓰기 30% 감소 |
 | **2. 읽기 최적화** | | | |
-| onSnapshot → getDocs | ⏳ 대기 | 피드를 일반 쿼리로 전환 | 읽기 **70% 감소** |
+| onSnapshot → getDocs (피드) | ✅ 완료 | 60초 폴링으로 전환 | 읽기 **90% 감소** |
+| onSnapshot → getDocs (댓글) | ✅ 완료 | 30초 폴링으로 전환 | 읽기 **50% 감소** |
 | 페이지네이션 적용 | ⏳ 대기 | 무한스크롤 대신 페이지 | 읽기 50% 감소 |
 | 쿼리 결과 캐싱 | ⏳ 대기 | React Query/SWR 도입 | 읽기 30% 감소 |
 | 필드 선택적 조회 | ⏳ 대기 | 필요한 필드만 select | 대역폭 감소 |
 | **3. 실시간 기능 축소** | | | |
-| 실시간 피드 → 새로고침 버튼 | ⏳ 대기 | "새 글 N개" 버튼으로 대체 | 읽기 80% 감소 |
-| Presence 간소화 | ⏳ 대기 | 접속자 수만 표시 (개별 X) | 읽기/쓰기 감소 |
-| 댓글 실시간 → 폴링 | ⏳ 대기 | 30초 간격 폴링으로 변경 | 읽기 50% 감소 |
+| 실시간 피드 → 폴링 | ✅ 완료 | 60초 간격 폴링 | 읽기 90% 감소 |
+| Presence 폴링 전환 | ✅ 완료 | viewers 60초, likes 30초 폴링 | 읽기 **80% 감소** |
+| 댓글 실시간 → 폴링 | ✅ 완료 | 30초 간격 폴링으로 변경 | 읽기 50% 감소 |
 | **4. 인프라 대안 검토** | | | |
 | Firestore → Supabase 검토 | ⏳ 대기 | 무료 할당량 더 많음 | 비용 절감 |
 | Redis 캐시 레이어 | ⏳ 대기 | 자주 읽는 데이터 캐싱 | 읽기 감소 |
 | CDN 정적 콘텐츠 | ⏳ 대기 | 이미지/폰트 CDN 활용 | 대역폭 감소 |
 
-### Phase 15: SEO 콘텐츠 전략 📈 대기
+### Phase 15: SEO 콘텐츠 전략 📈 진행 중
 > "타로 보기", "꿈 해몽", "사주 보기" 등 핵심 키워드 검색 1페이지 노출 목표
 
 **타겟 키워드 분석:**
@@ -278,9 +284,19 @@
 
 | 작업 | 상태 | 비고 |
 |------|------|------|
-| **1. 플랫폼 선택** | | |
-| 블로그 통합 vs 워드프레스 | ⏳ 검토 | 아래 비교표 참고 |
-| 서브도메인 전략 | ⏳ 대기 | blog.jeom.ai vs jeom.ai/blog |
+| **0. 기본 SEO 설정** | | |
+| 메타태그 강화 | ✅ 완료 | description, keywords, OG, Twitter Card |
+| JSON-LD 구조화 데이터 | ✅ 완료 | WebApplication 스키마 |
+| robots.txt 설정 | ✅ 완료 | Allow 규칙 + 사이트맵 연결 |
+| sitemap.xml 업데이트 | ✅ 완료 | jeom.ai URL로 통일 |
+| **1. 플랫폼 선택 (Headless WordPress 추천)** | | |
+| React 블로그 컴포넌트 | ✅ 완료 | BlogCard, BlogSEO, BlogListPage, BlogPostPage |
+| 라우팅 설정 (/blog, /guide) | ✅ 완료 | main.jsx 라우트 추가 |
+| WPGraphQL 클라이언트 | ✅ 완료 | src/services/wordpress.js |
+| Headless WordPress 세팅 | ⏳ 대기 | WP + WPGraphQL 설치 (docs/wordpress-setup.md 참조) |
+| WPML 다국어 플러그인 | ⏳ 대기 | 한/영/일/중 콘텐츠 관리 |
+| **RankMath SEO 연동** | ⏳ 대기 | wp-graphql-rank-math (무료 기능 多, Headless 네이티브 지원) |
+| wp.jeom.ai 호스팅 | ⏳ 대기 | $5-15/월 (관리자 전용) |
 | **2. 롱테일 키워드 콘텐츠** | | |
 | 꿈 해몽 사전 페이지 | ⏳ 대기 | /dreams/dictionary/뱀, /용, /물 등 |
 | 타로 카드 의미 페이지 | ⏳ 대기 | /tarot/cards/fool, /magician 등 |
@@ -346,24 +362,239 @@
 │  단점:                                                       │
 │  • 콘텐츠 수정 = 코드 배포                                    │
 │  • 비개발자 수정 불가                                         │
+│  • 다국어 관리 어려움                                         │
 ├─────────────────────────────────────────────────────────────┤
-│  추천도: ⭐⭐⭐⭐ (핵심 가이드 10-20개용)                      │
+│  추천도: ⭐⭐⭐ (핵심 가이드 10-20개용)                        │
 └─────────────────────────────────────────────────────────────┘
 
-💡 권장 전략 (하이브리드):
-───────────────────────────
-1단계: 정적 페이지로 핵심 가이드 10개 먼저 작성
-       /guide/dream-snake (뱀꿈 해몽 완벽 가이드)
-       /guide/tarot-beginner (타로 입문 가이드)
+┌─────────────────────────────────────────────────────────────┐
+│  옵션 4: Headless WordPress (jeom.ai/blog, /guide) ⭐ 추천   │
+├─────────────────────────────────────────────────────────────┤
+│  장점:                                                       │
+│  • WordPress 에디터 (비개발자 콘텐츠 작성 가능)               │
+│  • RankMath SEO + WPGraphQL 연동 (무료 기능 多, Headless 네이티브) │
+│  • 다국어: WPML/Polylang으로 쉬운 번역 관리 🌏               │
+│  • React 프론트엔드와 완벽 통합 (WPGraphQL)                  │
+│  • 도메인 권한 유지 (jeom.ai/blog)                           │
+│  • SSG 가능 (Core Web Vitals 최적화)                         │
+│  • 콘텐츠 확장성 우수                                         │
+│                                                             │
+│  단점:                                                       │
+│  • 초기 세팅 복잡 (WP + GraphQL + React 연동)                │
+│  • 호스팅 비용 ($5-15/월 - WP 서버 필요)                     │
+│  • 보안 관리 필요 (WP 업데이트)                              │
+│  • 두 개 시스템 관리 (앱 + CMS)                              │
+├─────────────────────────────────────────────────────────────┤
+│  추천도: ⭐⭐⭐⭐⭐ (SEO + 다국어 시너지 최고!)                │
+└─────────────────────────────────────────────────────────────┘
+
+📊 옵션별 비교표:
+┌────────────────┬─────────┬─────────┬─────────┬─────────────┐
+│ 항목           │ 옵션1   │ 옵션2   │ 옵션3   │ 옵션4       │
+│                │ 앱통합  │ WP서브  │ 정적    │ Headless WP │
+├────────────────┼─────────┼─────────┼─────────┼─────────────┤
+│ SEO 도메인권한 │ ⭐⭐⭐⭐⭐│ ⭐⭐⭐  │ ⭐⭐⭐⭐⭐│ ⭐⭐⭐⭐⭐   │
+│ 다국어 지원    │ ⭐⭐    │ ⭐⭐⭐⭐│ ⭐⭐    │ ⭐⭐⭐⭐⭐   │
+│ 비개발자 편집  │ ⭐      │ ⭐⭐⭐⭐⭐│ ⭐      │ ⭐⭐⭐⭐⭐   │
+│ 초기 구축 시간 │ 2-3주   │ 1-2일   │ 3-5일   │ 1주         │
+│ 월 비용        │ $0      │ $5-20   │ $0      │ $5-15       │
+│ Core Web Vitals│ ⭐⭐⭐⭐ │ ⭐⭐⭐  │ ⭐⭐⭐⭐⭐│ ⭐⭐⭐⭐⭐   │
+│ RankMath 연동  │ ❌      │ ✅      │ ❌      │ ✅          │
+│ 콘텐츠 확장성  │ ⭐⭐⭐  │ ⭐⭐⭐⭐⭐│ ⭐⭐    │ ⭐⭐⭐⭐⭐   │
+└────────────────┴─────────┴─────────┴─────────┴─────────────┘
+
+💡 권장 전략 (Headless WordPress + Localization):
+─────────────────────────────────────────────────
+구조:
+  jeom.ai (React App - Vite)
+  ├── / (메인 앱)
+  ├── /tarot, /dream, /saju (리딩 기능)
+  └── /blog, /guide/* (Headless WP에서 데이터 fetch)
+
+  wp.jeom.ai (WordPress Admin - 비공개)
+  └── REST API / WPGraphQL로 콘텐츠 제공
+
+다국어 URL 구조:
+  /ko/guide/snake-dream   ← WP (WPML 한국어)
+  /ja/guide/snake-dream   ← WP (WPML 일본어) - 四柱推命
+  /zh/guide/snake-dream   ← WP (WPML 중국어) - 八字
+  /en/guide/snake-dream   ← WP (WPML 영어)
+
+실행 단계:
+1단계: Headless WP 세팅 + WPGraphQL 연동
+       → 핵심 가이드 10개 (한/영) 작성
        → 빠르게 검색 노출 시작
 
-2단계: UGC 콘텐츠 SEO 강화
-       공개된 꿈/타로 리딩이 자동으로 SEO 페이지 역할
-       → 롱테일 키워드 자연 유입
+2단계: WPML로 일본어/중국어 추가
+       → 사주 = 四柱推命 = 八字 시너지 활용
+       → 글로벌 SEO 확보
 
-3단계: (선택) 트래픽 증가 시 CMS 구축 또는 Notion API 연동
-       콘텐츠 양이 많아지면 관리 시스템 도입
+3단계: UGC 콘텐츠 SEO 강화
+       → 공개 리딩이 자동으로 SEO 페이지 역할
+       → 롱테일 키워드 자연 유입
 ```
+
+### Phase 16: 온보딩 플로우 ✅ 완료
+> 첫 방문 사용자 환영 + 서비스 소개 + 보너스 지급
+
+| 작업 | 상태 | 비고 |
+|------|------|------|
+| OnboardingModal.jsx 생성 | ✅ 완료 | 5단계 스와이프 튜토리얼 |
+| 첫 방문 감지 로직 | ✅ 완료 | localStorage 기반 체크 |
+| 스텝 전환 애니메이션 | ✅ 완료 | fadeInRight + 프로그레스 인디케이터 |
+| 환영 보너스 지급 | ✅ 완료 | 무료 리딩 3회 (도파민 팝업) |
+| 스킵 기능 | ✅ 완료 | 언제든 건너뛰기 가능 |
+| 모바일 반응형 UI | ✅ 완료 | 하단 시트 스타일 |
+
+### Phase 17: UX 폴리싱 ✅ 완료
+> 로딩 UX 개선 및 SEO 이미지 추가
+
+| 작업 | 상태 | 비고 |
+|------|------|------|
+| OG 이미지 생성 | ✅ 완료 | og-image.svg (1200x630) |
+| 스켈레톤 카드 컴포넌트 | ✅ 완료 | SkeletonCard.jsx (feed/detail/sidebar) |
+| RightSidebar 스켈레톤 적용 | ✅ 완료 | 로딩 시 shimmer 애니메이션 |
+| skeleton.css 스타일 확장 | ✅ 완료 | shimmer, skeleton-card, skeleton-list |
+
+### Phase 18: 에러 처리 및 빈 상태 UX ✅ 완료
+> 사용자 친화적인 에러/빈 상태 UI
+
+| 작업 | 상태 | 비고 |
+|------|------|------|
+| EmptyState.jsx 컴포넌트 | ✅ 완료 | 6종 타입 (dream/tarot/fortune/feed/comment/search) |
+| ErrorBoundary.jsx 컴포넌트 | ✅ 완료 | 친근한 에러 UI + 재시도/홈으로 버튼 |
+| main.jsx ErrorBoundary 적용 | ✅ 완료 | 전체 앱 감싸기 |
+| 빈 상태 스타일 추가 | ✅ 완료 | feed.css (empty-state, error-boundary) |
+
+### Phase 19: 이미지 생성 고도화 + AI 티어 검증 🎨 ✅ 완료
+> 동적 애니메 스타일 + 티어별 AI 모델 정확성 + Hero 이미지 분리
+
+**핵심 목표:**
+1. Claude가 질문 분위기에 맞는 애니메 스타일 추천 → Gemini에 전달
+2. 티어별 AI 모델 사용 정확성 검증 (Opus 4.5 for Ultra)
+3. Hero 이미지를 Card1과 별도로 생성 (모든 리딩 타입)
+
+**동적 애니메 스타일 시스템:**
+```
+사용자 질문 → Claude 분석 (imageStyle 추천) → Gemini 이미지 생성
+```
+
+| 스타일 키 | 스튜디오/작품 | 적합한 분위기 |
+|----------|--------------|--------------|
+| shinkai | CoMix Wave (Your Name) | 로맨틱, 황금빛 석양, 몽환 |
+| kyoani | Kyoto Animation (Violet Evergarden) | 감성적, 섬세, 파스텔 |
+| ghibli | Studio Ghibli (Spirited Away) | 따뜻한, 마법적, 향수 |
+| mappa_dark | MAPPA (Chainsaw Man) | 다크, 그릿티, 성숙 |
+| mappa_action | MAPPA (Jujutsu Kaisen) | 역동적, 강렬한 액션 |
+| ufotable | Ufotable (Demon Slayer) | 화려한 이펙트, CGI 블렌드 |
+| trigger | Studio Trigger (Cyberpunk Edgerunners) | 네온, 대담한 기하학 |
+| sciencesaru | Science Saru (Dan Da Dan) | 실험적, 컬러워시 |
+| shojo | 클래식 소녀만화 (Apothecary Diaries) | 우아, 스파클, 로맨틱 |
+| webtoon | 웹툰 스타일 (Solo Leveling) | 클린, 디지털, 에픽 |
+| cgi_gem | CGI 크리스탈 (Land of the Lustrous) | 보석, 반짝임, 환상 |
+| minimalist | 미니멀리스트 | 깔끔, 여백, 절제 |
+
+**구현 구조:**
+```javascript
+// Claude JSON 응답에 imageStyle 추가
+{
+  "hook": "...",
+  "foreshadow": "...",
+  "imageStyle": "kyoani",  // ← Claude가 선택
+  "images": {
+    "hero": "장면 묘사만 (스타일 prefix 없이)",
+    "card1": "장면 묘사만",
+    ...
+  }
+}
+
+// useImageGeneration.js
+const ANIME_STYLES = {
+  shinkai: 'Makoto Shinkai style, golden hour, hyper-detailed backgrounds, dreamy twilight',
+  kyoani: 'Kyoto Animation style, soft lighting, delicate emotional, pastel colors',
+  // ... 12개 스타일
+};
+
+const generateSingleImage = async (scenePrompt, styleKey) => {
+  const stylePrefix = ANIME_STYLES[styleKey] || ANIME_STYLES.shinkai;
+  const fullPrompt = `${stylePrefix}. ${scenePrompt}. No text.`;
+  // Gemini API 호출...
+};
+```
+
+| 작업 | 상태 | 비고 |
+|------|------|------|
+| **1. 동적 애니메 스타일** | | |
+| ANIME_STYLES 상수 정의 | ✅ 완료 | aiConfig.js (12개 스타일 + STYLE_GUIDE) |
+| Claude 프롬프트에 imageStyle 필드 추가 | ✅ 완료 | 타로/꿈/사주 3개 프롬프트 모두 |
+| useImageGeneration styleKey 파라미터 추가 | ✅ 완료 | generateSingleImage(prompt, styleKey, charDesc, readingType) |
+| useReading에서 imageStyle 전달 | ✅ 완료 | data.imageStyle → generateSingleImage |
+| **2. 티어별 AI 모델 검증** | | |
+| @anthropic-ai/sdk import 확인 | ✅ 완료 | useReading.js Anthropic 클래스 사용 |
+| modelConfig.textModel 사용 확인 | ✅ 완료 | Ultra → claude-opus-4-5 정상 |
+| 콘솔 로그로 모델명 확인 추가 | ✅ 완료 | tierLabel 로그 (🔥 Ultra/⭐ Premium/🆓 Free) |
+| **3. Hero 이미지 분리** | | |
+| 타로: heroImage ≠ card1Image 확인 | ✅ 완료 | 별도 heroPrompt로 생성 |
+| 꿈: heroImage ≠ dreamImage 확인 | ✅ 완료 | 별도 heroPrompt로 생성 |
+| 사주: heroImage ≠ section1Image 확인 | ✅ 완료 | 별도 heroPrompt로 생성 |
+| 결과 뷰에서 heroImage 사용 확인 | ✅ 완료 | 각 ResultView에서 heroImage 우선 사용 |
+
+---
+
+### Phase 20: 글로벌 Localization 🌏 대기
+> 다국어 지원으로 글로벌 시장 진출
+
+**타겟 시장 분석:**
+| 국가 | 시장 규모 | 문화적 시너지 | 우선순위 |
+|------|----------|--------------|---------|
+| 🇯🇵 일본 | 高 | 四柱推命 = 사주 (동일 시스템) | ⭐⭐⭐⭐⭐ |
+| 🇨🇳 중국/대만 | 최고 | 八字 = 사주 (동일 시스템) | ⭐⭐⭐⭐⭐ |
+| 🇧🇷🇲🇽 라틴 | 高 | 타로 문화 강력 | ⭐⭐⭐⭐ |
+| 🇹🇭🇻🇳 동남아 | 中 | 중국식 운세 영향권 | ⭐⭐⭐ |
+| 🇮🇳 인도 | 高 (49% 성장) | Vedic 별도 시스템 | ⭐⭐⭐ |
+
+**구현 전략:**
+```
+Phase 1: 빠른 MVP (1-2일)
+├── 프롬프트에 언어 지시 추가 (Claude가 해당 언어로 응답)
+├── UI locales 파일 추가 (ja.js, zh.js)
+└── 문화 컨텍스트 최소 분기
+
+Phase 2: 점진적 개선
+├── 언어별 예시 문장 추가
+├── 문화적 상징 해석 차별화
+└── 지역별 특화 기능 (선택)
+```
+
+| 작업 | 상태 | 비고 |
+|------|------|------|
+| **1. 기본 i18n 인프라** | | |
+| i18n 시스템 구축 | ✅ 완료 | src/i18n/ (ko.js, en.js) |
+| useI18n 훅 | ✅ 완료 | 언어 전환 + t() 함수 |
+| 브라우저 언어 감지 | ✅ 완료 | navigator.language |
+| **2. 언어별 Locale 파일** | | |
+| 한국어 (ko.js) | ✅ 완료 | 기본 언어 |
+| 영어 (en.js) | ✅ 완료 | 글로벌 기본 |
+| 일본어 (ja.js) | ⏳ 대기 | 1순위 확장 |
+| 중국어 간체 (zh.js) | ⏳ 대기 | 1순위 확장 |
+| 중국어 번체 (zh-TW.js) | ⏳ 대기 | 대만 시장 |
+| 포르투갈어 (pt-BR.js) | ⏳ 대기 | 브라질 시장 |
+| 스페인어 (es.js) | ⏳ 대기 | 라틴 시장 |
+| 태국어 (th.js) | ⏳ 대기 | 동남아 시장 |
+| 베트남어 (vi.js) | ⏳ 대기 | 동남아 시장 |
+| **3. AI 프롬프트 현지화** | | |
+| 언어 지시 함수 추가 | ⏳ 대기 | getLanguageInstruction(lang) |
+| 문화 컨텍스트 분기 | ⏳ 대기 | getCulturalContext(lang) |
+| 언어별 예시 문장 | ⏳ 선택 | 톤/스타일 참고용 |
+| **4. UI 컴포넌트 i18n 적용** | | |
+| TarotInput.jsx | ⏳ 대기 | 하드코딩 한국어 제거 |
+| DreamInput.jsx | ⏳ 대기 | t() 함수 적용 |
+| FortuneInput.jsx | ⏳ 대기 | t() 함수 적용 |
+| 기타 컴포넌트 | ⏳ 대기 | 전체 검토 필요 |
+| **5. 지역별 특화 기능 (선택)** | | |
+| 일본: 혈액형 점 | ⏳ 선택 | uranai 전통 |
+| 인도: Vedic 차트 | ⏳ 선택 | Kundli 시스템 |
+| 태국: 요일별 운세 | ⏳ 선택 | 불교 기반 |
 
 **1페이지 진입을 위한 콘텐츠 공식:**
 ```

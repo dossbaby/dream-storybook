@@ -329,14 +329,17 @@ const renderMainContent = (content, type) => {
                         <section className="reading-section">
                             <h2>카드 리딩</h2>
                             <div className="reading-grid">
-                                {['past', 'present', 'future'].map((time, index) => (
-                                    content.reading[time] && (
-                                        <div key={time} className={`reading-item ${time}`}>
-                                            <h3>{['과거', '현재', '미래'][index]}</h3>
-                                            <p>{content.reading[time]}</p>
+                                {['card1', 'card2', 'card3'].map((cardKey, index) => {
+                                    // 새 구조 (card1, card2, card3) 또는 레거시 (past, present, future)
+                                    const legacyKeys = ['past', 'present', 'future'];
+                                    const reading = content.reading[cardKey] || content.reading[legacyKeys[index]];
+                                    return reading && (
+                                        <div key={cardKey} className={`reading-item card-${index + 1}`}>
+                                            <h3>{['첫 번째 카드', '두 번째 카드', '세 번째 카드'][index]}</h3>
+                                            <p>{reading}</p>
                                         </div>
-                                    )
-                                ))}
+                                    );
+                                })}
                             </div>
                             {content.reading.action && (
                                 <div className="reading-action">

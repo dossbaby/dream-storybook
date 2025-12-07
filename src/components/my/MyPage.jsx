@@ -93,6 +93,8 @@ const MyPage = ({
     onBack,
     onOpenNicknameModal,
     onOpenProfileModal,
+    onOpenFeedback,
+    onOpenReferral,
     onLogout,
     onGenerateAiReport,
     onSetCalendarView,
@@ -110,8 +112,12 @@ const MyPage = ({
     // 프리미엄 관련
     isPremium = false,
     tier = 'free',
-    onOpenPremium
+    onOpenPremium,
+    // Admin 티어 변경
+    onSetTier
 }) => {
+    // Admin 이메일 목록
+    const ADMIN_EMAILS = ['dossbb@naver.com'];
     // 히스토리 제한 계산
     const historyLimit = HISTORY_LIMITS[tier] || HISTORY_LIMITS.free;
     // 현재 선택된 카테고리 (dream, tarot, fortune)
@@ -223,6 +229,12 @@ const MyPage = ({
                                 <button className="nickname-btn" onClick={onOpenProfileModal || onOpenNicknameModal}>
                                     프로필 설정
                                 </button>
+                                <button className="referral-btn" onClick={onOpenReferral}>
+                                    🎁 친구 초대
+                                </button>
+                                <button className="feedback-btn" onClick={onOpenFeedback}>
+                                    💬 의견 보내기
+                                </button>
                                 <button className="logout-btn" onClick={onLogout}>로그아웃</button>
                             </div>
                         </div>
@@ -288,6 +300,40 @@ const MyPage = ({
                         )}
                     </div>
                 </div>
+
+                {/* Admin 티어 전환 패널 */}
+                {ADMIN_EMAILS.includes(user?.email) && onSetTier && (
+                    <div className="admin-tier-panel">
+                        <div className="admin-panel-header">
+                            <span className="admin-badge">DEV</span>
+                            <span className="admin-title">티어 전환 (테스트용)</span>
+                        </div>
+                        <div className="admin-tier-buttons">
+                            <button
+                                className={`tier-btn ${tier === 'free' ? 'active' : ''}`}
+                                onClick={() => onSetTier('free')}
+                            >
+                                무료
+                            </button>
+                            <button
+                                className={`tier-btn premium ${tier === 'premium' ? 'active' : ''}`}
+                                onClick={() => onSetTier('premium')}
+                            >
+                                프리미엄
+                            </button>
+                            <button
+                                className={`tier-btn ultra ${tier === 'ultra' ? 'active' : ''}`}
+                                onClick={() => onSetTier('ultra')}
+                            >
+                                울트라
+                            </button>
+                        </div>
+                        <div className="admin-tier-info">
+                            현재: <strong>{tier === 'free' ? '무료' : tier === 'premium' ? '프리미엄' : '울트라'}</strong>
+                            {tier !== 'free' && ' (Firestore 미반영, 새로고침 시 리셋)'}
+                        </div>
+                    </div>
+                )}
 
                 {/* 통계 섹션 */}
                 {myStats && myStats.totalDreams > 0 && (

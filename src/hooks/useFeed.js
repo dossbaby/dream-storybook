@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../firebase';
+import { getCached, setCache, CACHE_KEYS, CACHE_TTL } from '../utils/firebaseCache';
 
 /**
  * 피드 로딩 및 관리 훅
@@ -132,16 +133,26 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         }
     }, [activeTab, filters.type, filters.keyword, user, myDreams]);
 
-    // 타로 피드 로드
+    // 타로 피드 로드 (캐싱 적용)
     const loadTarots = useCallback(async () => {
         try {
-            // 복합 인덱스 없이 동작하도록 클라이언트에서 필터링
+            // 캐시 확인
+            const cached = getCached(CACHE_KEYS.TAROTS_FEED);
+            if (cached) {
+                console.log('[useFeed] Using cached tarots');
+                setTarotReadings(cached);
+                return;
+            }
+
             const q = query(collection(db, 'tarots'), orderBy('createdAt', 'desc'), limit(100));
             const snapshot = await getDocs(q);
             const tarots = snapshot.docs
                 .map(d => ({ id: d.id, ...d.data() }))
                 .filter(t => t.isPublic === true);
             console.log('[useFeed] Loaded', tarots.length, 'public tarots');
+
+            // 캐시 저장
+            setCache(CACHE_KEYS.TAROTS_FEED, tarots, CACHE_TTL.FEED);
             setTarotReadings(tarots);
         } catch (e) {
             console.error('Failed to load tarots:', e);
@@ -149,16 +160,26 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         }
     }, []);
 
-    // 사주 피드 로드
+    // 사주 피드 로드 (캐싱 적용)
     const loadSajus = useCallback(async () => {
         try {
-            // 복합 인덱스 없이 동작하도록 클라이언트에서 필터링
+            // 캐시 확인
+            const cached = getCached(CACHE_KEYS.SAJUS_FEED);
+            if (cached) {
+                console.log('[useFeed] Using cached sajus');
+                setFortuneReadings(cached);
+                return;
+            }
+
             const q = query(collection(db, 'sajus'), orderBy('createdAt', 'desc'), limit(100));
             const snapshot = await getDocs(q);
             const sajus = snapshot.docs
                 .map(d => ({ id: d.id, ...d.data() }))
                 .filter(f => f.isPublic === true);
             console.log('[useFeed] Loaded', sajus.length, 'public sajus');
+
+            // 캐시 저장
+            setCache(CACHE_KEYS.SAJUS_FEED, sajus, CACHE_TTL.FEED);
             setFortuneReadings(sajus);
         } catch (e) {
             console.error('Failed to load sajus:', e);
@@ -177,7 +198,8 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
             } catch (e) { setHotDreams([]); }
         };
         loadHotDreams();
-        const interval = setInterval(loadHotDreams, 30000);
+        // 5분마다 핫 랭킹 리프레시 (Firebase 비용 최적화)
+        const interval = setInterval(loadHotDreams, 300000);
         return () => clearInterval(interval);
     }, []);
 
@@ -197,15 +219,16 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
             }
         };
         loadLiveStories();
-        const interval = setInterval(loadLiveStories, 60000);
+        // 3분마다 라이브 스토리 리프레시 (Firebase 비용 최적화)
+        const interval = setInterval(loadLiveStories, 180000);
         return () => clearInterval(interval);
     }, []);
 
-    // 온라인 카운트 시뮬레이션
+    // 온라인 카운트 시뮬레이션 (Firebase 사용 안함, 1분 간격)
     useEffect(() => {
         const updateOnline = () => setOnlineCount(Math.floor(Math.random() * 50) + 80);
         updateOnline();
-        const interval = setInterval(updateOnline, 10000);
+        const interval = setInterval(updateOnline, 60000);
         return () => clearInterval(interval);
     }, []);
 

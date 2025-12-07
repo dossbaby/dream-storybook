@@ -7,17 +7,38 @@
     gap: 1rem;
 }
 
-/* 타로 모드 - 넓게 설정 */
-.create-card.tarot-theme {
-    max-width: 900px; /* 타로 모드 전체 넓게 */
-    overflow: visible; /* 카드가 잘리지 않게 */
+/* 타로 모드 - 넓게 설정 + 은은한 glow */
+.create-card.tarot-input-card {
+    max-width: 900px;
+    overflow: visible;
+    position: relative;
+}
+
+/* prompt 주변 은은한 보라색 glow - 크게 (prompt 바깥으로) */
+.create-card.tarot-input-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200%;
+    height: 250%;
+    background: radial-gradient(
+        ellipse 60% 50% at 50% 50%,
+        rgba(138, 43, 226, 0.18) 0%,
+        rgba(138, 43, 226, 0.08) 35%,
+        rgba(138, 43, 226, 0.02) 55%,
+        transparent 75%
+    );
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* 타로 질문 입력창은 중앙 정렬 */
-.create-card.tarot-theme .tarot-question-header,
-.create-card.tarot-theme .dream-input,
-.create-card.tarot-theme .submit-btn,
-.create-card.tarot-theme .error {
+.create-card.tarot-input-card .tarot-question-header,
+.create-card.tarot-input-card .dream-input,
+.create-card.tarot-input-card .submit-btn,
+.create-card.tarot-input-card .error {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
@@ -56,6 +77,20 @@
 .dream-input:focus {
     outline: none;
     border-color: var(--accent);
+}
+
+/* 타로 모드 - 그라데이션 테두리 */
+.tarot-input-card .dream-input.tarot-input {
+    border: 1px solid transparent;
+    background:
+        linear-gradient(var(--dark), var(--dark)) padding-box,
+        linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(100, 149, 237, 0.3)) border-box;
+}
+
+.tarot-input-card .dream-input.tarot-input:focus {
+    background:
+        linear-gradient(var(--dark), var(--dark)) padding-box,
+        linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(100, 149, 237, 0.8)) border-box;
 }
 
 .dream-input::placeholder {
@@ -466,4 +501,80 @@
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.3));
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+/* ========== 모바일 반응형 - 일관된 레이아웃 ========== */
+@media (max-width: 768px) {
+    /* 모든 모드의 컨테이너 통일 */
+    .create-card {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 var(--spacing-sm, 0.5rem);
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    /* 타로 모드도 동일하게 */
+    .create-card.tarot-theme {
+        max-width: 100%;
+    }
+
+    /* 제목 통일 */
+    .create-title {
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 0.75rem;
+        padding: 0 var(--spacing-sm, 0.5rem);
+    }
+
+    /* 입력 영역 통일 */
+    .dream-input {
+        min-height: 150px;
+        padding: 1rem;
+        font-size: 0.95rem;
+        border-radius: 12px;
+    }
+
+    /* 버튼 통일 */
+    .submit-btn {
+        padding: 0.85rem;
+        font-size: 0.85rem;
+        border-radius: 10px;
+    }
+
+    /* 키워드 힌트 영역 */
+    .keyword-hints,
+    .keywords-detected {
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+
+    /* 날짜 선택기 */
+    .dream-date-picker {
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+
+    /* 자동 저장 섹션 */
+    .auto-saved-section {
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 1rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .create-card {
+        padding: 0;
+    }
+
+    .create-title {
+        font-size: 1rem;
+    }
+
+    .dream-input {
+        min-height: 120px;
+        padding: 0.85rem;
+        font-size: 0.9rem;
+    }
 }

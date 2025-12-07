@@ -95,6 +95,11 @@ const CustomQuestionSelector = ({
                         className="custom-question-input"
                         disabled={disabled}
                         rows={2}
+                        inputMode="text"
+                        enterKeyHint="done"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck="false"
                     />
                     <div className="custom-input-footer">
                         <span className="char-count">

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import './App.css';
 
 // 상수 및 훅 import
@@ -23,29 +23,39 @@ import { useDreamManagement } from './hooks/useDreamManagement';
 import { useReadingActions } from './hooks/useReadingActions';
 import { useViewActions } from './hooks/useViewActions';
 import { useUsageLimit } from './hooks/useUsageLimit';
-import NicknameModal from './components/modals/NicknameModal';
-import PremiumModal from './components/modals/PremiumModal';
-import ProfileSettingsModal from './components/modals/ProfileSettingsModal';
-import ShareModal from './components/modals/ShareModal';
-import ReportModal from './components/modals/ReportModal';
-import PointsModal from './components/modals/PointsModal';
-import DetailedReadingModal from './components/modals/DetailedReadingModal';
+import { useFeedback } from './hooks/useFeedback';
+
+// 항상 필요한 컴포넌트 (정적 import)
 import ToastNotifications from './components/common/ToastNotifications';
-import StoryCard from './components/common/StoryCard';
 import NavBar from './components/layout/NavBar';
-import LeftSidebar from './components/layout/LeftSidebar';
-import RightSidebar from './components/layout/RightSidebar';
-import DreamInput from './components/dream/DreamInput';
-import TarotInput from './components/tarot/TarotInput';
-import TarotResultView from './components/tarot/TarotResultView';
-import FortuneInput from './components/fortune/FortuneInput';
-import FortuneResultView from './components/fortune/FortuneResultView';
-import ResultView from './components/result/ResultView';
-import DreamDetailView from './components/detail/DreamDetailView';
-import MyPage from './components/my/MyPage';
-import FeedView from './components/feed/FeedView';
-import FloatingActionButton from './components/common/FloatingActionButton';
 import BottomNav from './components/layout/BottomNav';
+
+// Lazy loaded 컴포넌트 (코드 스플리팅)
+const NicknameModal = lazy(() => import('./components/modals/NicknameModal'));
+const PremiumModal = lazy(() => import('./components/modals/PremiumModal'));
+const ProfileSettingsModal = lazy(() => import('./components/modals/ProfileSettingsModal'));
+const ShareModal = lazy(() => import('./components/modals/ShareModal'));
+const ReportModal = lazy(() => import('./components/modals/ReportModal'));
+const PointsModal = lazy(() => import('./components/modals/PointsModal'));
+const DetailedReadingModal = lazy(() => import('./components/modals/DetailedReadingModal'));
+const FeedbackModal = lazy(() => import('./components/modals/FeedbackModal'));
+const OnboardingModal = lazy(() => import('./components/modals/OnboardingModal'));
+const ReferralModal = lazy(() => import('./components/modals/ReferralModal'));
+const StoryCard = lazy(() => import('./components/common/StoryCard'));
+const LeftSidebar = lazy(() => import('./components/layout/LeftSidebar'));
+const RightSidebar = lazy(() => import('./components/layout/RightSidebar'));
+const DreamInput = lazy(() => import('./components/dream/DreamInput'));
+const TarotInput = lazy(() => import('./components/tarot/TarotInput'));
+const TarotResultView = lazy(() => import('./components/tarot/TarotResultView'));
+const FortuneInput = lazy(() => import('./components/fortune/FortuneInput'));
+const FortuneResultView = lazy(() => import('./components/fortune/FortuneResultView'));
+const ResultView = lazy(() => import('./components/result/ResultView'));
+const DreamDetailView = lazy(() => import('./components/detail/DreamDetailView'));
+const MyPage = lazy(() => import('./components/my/MyPage'));
+const FeedView = lazy(() => import('./components/feed/FeedView'));
+const FloatingActionButton = lazy(() => import('./components/common/FloatingActionButton'));
+const InstallPrompt = lazy(() => import('./components/common/InstallPrompt'));
+const MobileSidebarSheet = lazy(() => import('./components/layout/MobileSidebarSheet'));
 
 function App() {
     // 로딩 상태 (그룹화)
@@ -75,9 +85,10 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, shareTarget: null, premiumTrigger: 'general' });
+    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, onboarding: false, referral: false, shareTarget: null, premiumTrigger: 'general' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
+    const [mobileSheet, setMobileSheet] = useState({ explore: false });
     const selectedDreamDate = '';
     const [calendar, setCalendar] = useState({ view: false, month: new Date() });
     const setCalendarField = (key, value) => setCalendar(prev => ({ ...prev, [key]: value }));
@@ -122,7 +133,7 @@ function App() {
     } = useFeed(null, [], activeTab, filters, mode);
     const {
         user, userNickname, setUserNickname, userProfile, setUserProfile,
-        tier, isPremium, isUltra, subscription,
+        tier, setTier, isPremium, isUltra, subscription,
         myDreams, setMyDreams, myTarots, setMyTarots, myFortunes, setMyFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
     } = useAuth({ setLoadingState, checkAndAwardBadges, loadMyDreamsRef });
     const { userPoints, freeUsesLeft, addPoints } = usePoints(user);
@@ -144,6 +155,7 @@ function App() {
         onSaveFortune: saveFirebaseFortune, onNewDreamType: handleNewDreamType, setToast, setDopaminePopup, setSavedDreamField
     });
     const { aiReport, setAiReport, generateAiReport } = useAiReport(myDreams, dreamTypes, openModal, closeModal);
+    const { rateDream, rateTarot, rateFortune } = useFeedback(user);
     const { filterBySymbol, toggleLike, openDreamDetail, generateDetailedReading } = useDreamActions({
         user, dreams, selectedDream, setSelectedDream,
         setDetailedReadingField, setLoadingState, setCurrentCard, setView, loadInterpretations,
@@ -166,7 +178,7 @@ function App() {
     });
     const {
         resetResults, handleOpenDreamDetail, handleOpenTarotResult, handleOpenFortuneResult, handleResultBack,
-        handleRestart, handleTarotBack, handleDetailBack, handleTarotResultBack, handleTarotResultRestart,
+        handleRestart, handleTarotBack, handleTarotCancel, handleDetailBack, handleTarotResultBack, handleTarotResultRestart,
         handleFortuneResultBack, handleFortuneResultRestart
     } = useViewActions({
         setView, setResult, setSelectedDream, setCurrentCard, setTarotField, setFortuneField, setDreamDescription, setSavedDreamField, resetTarot, resetFortune
@@ -180,6 +192,29 @@ function App() {
         const detected = Object.entries(dreamSymbols).filter(([k]) => dreamDescription.includes(k)).map(([k, d]) => ({ keyword: k, ...d }));
         setDetectedKeywords(detected.slice(0, 4));
     }, [dreamDescription]);
+
+    // 첫 방문 온보딩 체크
+    useEffect(() => {
+        if (loading.auth) return;
+        const hasSeenOnboarding = localStorage.getItem('jeom_onboarding_completed');
+        if (!hasSeenOnboarding) {
+            // 약간의 딜레이 후 온보딩 표시 (앱 로딩 완료 후)
+            const timer = setTimeout(() => {
+                openModal('onboarding');
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [loading.auth]);
+
+    // 온보딩 완료 핸들러
+    const handleOnboardingComplete = () => {
+        localStorage.setItem('jeom_onboarding_completed', 'true');
+        // 보너스 리딩 지급은 로그인 후 처리 (비로그인 시 localStorage에 플래그)
+        if (!user) {
+            localStorage.setItem('jeom_pending_onboarding_bonus', 'true');
+        }
+        setDopaminePopup({ type: 'welcome', message: '환영합니다! 무료 리딩 3회가 지급되었어요' });
+    };
     const prevMonth = () => setCalendarField('month', getAdjacentMonth(calendar.month, -1));
     const nextMonth = () => setCalendarField('month', getAdjacentMonth(calendar.month, 1));
     const cards = getCards(result, tarot.result, fortune.result, selectedDream);
@@ -232,8 +267,9 @@ function App() {
             {/* 토스트 알림들 */}
             <ToastNotifications toasts={toasts} dopaminePopup={toasts.dopamine} />
 
-            {/* 메인 3단 레이아웃 */}
-            <div className="main-layout">
+            {/* 메인 3단 레이아웃 - Suspense로 lazy 컴포넌트 감싸기 */}
+            <Suspense fallback={<div className="loading-spinner">로딩중...</div>}>
+            <div className={`main-layout ${mode === 'tarot' && view === 'create' && !tarot.result ? 'tarot-bg' : ''}`}>
                 {/* 왼쪽 사이드바 - 실시간 정보 */}
                 <LeftSidebar
                     mode={mode}
@@ -355,6 +391,7 @@ function App() {
                             progress={progress}
                             error={error}
                             onBack={handleTarotBack}
+                            onCancel={handleTarotCancel}
                             onStartSelection={startTarotSelection}
                             onToggleCard={toggleTarotCard}
                             onGenerateReading={generateTarotReading}
@@ -414,6 +451,11 @@ function App() {
                             renderCard={renderCard}
                             isPremium={isPremium}
                             onOpenPremium={openPremiumModal}
+                            onRate={async (docId, rating, readingMode) => {
+                                if (readingMode === 'dream') await rateDream(docId, rating);
+                                else if (readingMode === 'tarot') await rateTarot(docId, rating);
+                                else if (readingMode === 'fortune') await rateFortune(docId, rating);
+                            }}
                         />
                     )}
 
@@ -503,6 +545,23 @@ function App() {
                         isLoggedIn={!!user}
                     />
 
+                    {/* 마이페이지 - 비로그인 시 로그인 유도 */}
+                    {view === 'my' && !user && (
+                        <div className="login-prompt">
+                            <div className="login-prompt-content">
+                                <span className="login-prompt-icon">👤</span>
+                                <h3>로그인이 필요합니다</h3>
+                                <p>마이페이지를 이용하려면 로그인해주세요</p>
+                                <button className="login-prompt-btn" onClick={handleGoogleLogin}>
+                                    Google로 로그인
+                                </button>
+                                <button className="login-prompt-back" onClick={() => setView('feed')}>
+                                    홈으로 돌아가기
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     {/* 마이페이지 */}
                     {view === 'my' && user && (
                         <MyPage
@@ -520,6 +579,8 @@ function App() {
                             onBack={() => setView('feed')}
                             onOpenNicknameModal={() => openModal('nickname')}
                             onOpenProfileModal={() => openModal('profile')}
+                            onOpenFeedback={() => openModal('feedback')}
+                            onOpenReferral={() => openModal('referral')}
                             onLogout={handleLogout}
                             onGenerateAiReport={generateAiReport}
                             onSetCalendarView={(val) => setCalendarField('view', val)}
@@ -537,6 +598,7 @@ function App() {
                             isPremium={isPremium}
                             tier={tier}
                             onOpenPremium={handleOpenPremiumModal}
+                            onSetTier={setTier}
                         />
                     )}
 
@@ -606,6 +668,33 @@ function App() {
                         currentTier={tier}
                         trigger={modals.premiumTrigger}
                     />
+
+                    {/* 피드백 모달 */}
+                    <FeedbackModal
+                        isOpen={modals.feedback}
+                        onClose={() => closeModal('feedback')}
+                        user={user}
+                        onSuccess={() => {
+                            setToast('dopamine', { type: 'feedback', message: '피드백 감사합니다! 무료 리딩 +1 획득!' });
+                        }}
+                    />
+
+                    {/* 온보딩 모달 */}
+                    <OnboardingModal
+                        isOpen={modals.onboarding}
+                        onClose={() => closeModal('onboarding')}
+                        onComplete={handleOnboardingComplete}
+                    />
+
+                    {/* 레퍼럴 모달 */}
+                    <ReferralModal
+                        isOpen={modals.referral}
+                        onClose={() => closeModal('referral')}
+                        user={user}
+                        onSuccess={(result) => {
+                            setDopaminePopup({ type: 'referral', message: result.message || `🎁 무료 리딩 +${result.bonus} 획득!` });
+                        }}
+                    />
                 </main>
 
                 {/* 오른쪽 사이드바 - 피드 */}
@@ -625,8 +714,10 @@ function App() {
                     onCreateClick={() => setView('create')}
                 />
             </div>
+            </Suspense>
 
             {/* Floating Action Button - 데스크탑에서만 표시 */}
+            <Suspense fallback={null}>
             <FloatingActionButton
                 mode={mode}
                 onModeChange={(newMode) => {
@@ -650,20 +741,77 @@ function App() {
                     }
                 }}
             />
+            </Suspense>
 
             {/* Bottom Navigation - 모바일에서만 표시 */}
             <BottomNav
                 currentMode={mode}
+                currentView={view}
                 onModeChange={(newMode) => {
                     setMode(newMode);
                     setView('create');
-                    // 모든 결과 초기화
                     resetTarot();
                     setResult(null);
                     resetFortune();
                     setSavedDream({ id: null, isPublic: false });
                 }}
+                onViewChange={setView}
+                onHomeClick={() => {
+                    setView('feed');
+                    resetTarot();
+                    setResult(null);
+                    resetFortune();
+                    setSavedDream({ id: null, isPublic: false });
+                }}
+                onOpenExplore={() => setMobileSheet(prev => ({ ...prev, explore: true }))}
             />
+
+            {/* 모바일 탐색 바텀시트 */}
+            <Suspense fallback={null}>
+                <MobileSidebarSheet
+                    isOpen={mobileSheet.explore}
+                    onClose={() => setMobileSheet(prev => ({ ...prev, explore: false }))}
+                    title="탐색"
+                    icon="🔥"
+                >
+                    <LeftSidebar
+                        mode={mode}
+                        onlineCount={onlineCount}
+                        todayStats={todayStats}
+                        dreamTypes={DREAM_CATEGORIES}
+                        hotDreams={hotDreams}
+                        hotTarots={feedTarotReadings.slice(0, 3)}
+                        hotFortunes={fortuneReadings.slice(0, 3)}
+                        typeFilter={filters.type}
+                        typeCounts={typeCounts}
+                        popularKeywords={popularKeywords}
+                        categories={DREAM_CATEGORIES}
+                        onOpenDreamDetail={(dream) => {
+                            setMobileSheet(prev => ({ ...prev, explore: false }));
+                            openDreamDetail(dream);
+                        }}
+                        onOpenTarotResult={(reading) => {
+                            setMobileSheet(prev => ({ ...prev, explore: false }));
+                            openTarotResult(reading);
+                        }}
+                        onOpenFortuneResult={(fortune) => {
+                            setMobileSheet(prev => ({ ...prev, explore: false }));
+                            openFortuneResult(fortune);
+                        }}
+                        onTypeFilterChange={(type) => setFilter('type', type)}
+                        onFilterBySymbol={(keyword) => {
+                            setMobileSheet(prev => ({ ...prev, explore: false }));
+                            setFilter('keyword', keyword);
+                            setView('feed');
+                        }}
+                    />
+                </MobileSidebarSheet>
+            </Suspense>
+
+            {/* PWA 설치 프롬프트 */}
+            <Suspense fallback={null}>
+                <InstallPrompt />
+            </Suspense>
         </div>
     );
 }

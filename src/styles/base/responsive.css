@@ -108,3 +108,55 @@
         height: 52px;
     }
 }
+
+/* ========== 모바일 입력 폼 최적화 ========== */
+@media (max-width: 640px) {
+    /* textarea 포커스 시 스크롤 조정 */
+    textarea:focus,
+    input[type="text"]:focus,
+    input[type="date"]:focus {
+        scroll-margin-bottom: 200px;
+    }
+
+    /* 입력 필드 기본 스타일 */
+    textarea,
+    input[type="text"],
+    input[type="date"] {
+        font-size: 16px; /* iOS 자동 확대 방지 */
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: var(--radius-md);
+    }
+
+    /* 가상 키보드 대응 */
+    .create-card,
+    .feedback-modal {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* 제출 버튼 하단 고정 시 키보드 공간 확보 */
+    .submit-btn,
+    .feedback-submit-btn {
+        margin-bottom: env(safe-area-inset-bottom, 0);
+    }
+}
+
+/* 터치 피드백 */
+@media (pointer: coarse) {
+    button:active,
+    .clickable:active,
+    .preset-btn:active,
+    .hint-tag:active,
+    .keyword-tag-wrap:active {
+        transform: scale(0.97);
+        opacity: 0.85;
+        transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+
+    /* 제출 버튼 강조 피드백 */
+    .submit-btn:active,
+    .feedback-submit-btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+    }
+}

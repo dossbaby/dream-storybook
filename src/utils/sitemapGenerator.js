@@ -65,7 +65,7 @@ export const generateSitemap = async () => {
             }
         });
 
-        // 사주 콘텐츠
+        // 사주 콘텐츠 (sajus 컬렉션)
         const sajusQuery = query(collection(db, 'sajus'), orderBy('createdAt', 'desc'), limit(500));
         const sajusSnap = await getDocs(sajusQuery);
         sajusSnap.docs.forEach(doc => {
@@ -79,6 +79,25 @@ export const generateSitemap = async () => {
                 });
             }
         });
+
+        // 레거시 fortunes 컬렉션도 saju URL로 포함
+        try {
+            const fortunesQuery = query(collection(db, 'fortunes'), orderBy('createdAt', 'desc'), limit(500));
+            const fortunesSnap = await getDocs(fortunesQuery);
+            fortunesSnap.docs.forEach(doc => {
+                const data = doc.data();
+                if (data.isPublic) {
+                    urls.push({
+                        loc: `${SITE_URL}/saju/${doc.id}`,
+                        priority: '0.7',
+                        changefreq: 'monthly',
+                        lastmod: data.createdAt?.toDate?.()?.toISOString().split('T')[0] || new Date().toISOString().split('T')[0]
+                    });
+                }
+            });
+        } catch (e) {
+            // fortunes 컬렉션이 없으면 무시
+        }
 
         // 태그 페이지들 (인기 태그만)
         const allTags = new Set();

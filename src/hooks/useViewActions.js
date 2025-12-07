@@ -68,6 +68,12 @@ export const useViewActions = ({
         setTarotField('selectedCards', []);
     };
 
+    // 타로 선택 취소 (selecting → question으로만 돌아감)
+    const handleTarotCancel = () => {
+        setTarotField('phase', 'question');
+        setTarotField('selectedCards', []);
+    };
+
     // 상세 뷰 뒤로가기
     const handleDetailBack = () => {
         setView('feed');
@@ -106,6 +112,7 @@ export const useViewActions = ({
         handleResultBack,
         handleRestart,
         handleTarotBack,
+        handleTarotCancel,
         handleDetailBack,
         handleTarotResultBack,
         handleTarotResultRestart,

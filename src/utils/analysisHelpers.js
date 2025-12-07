@@ -70,15 +70,12 @@ export const getDreamMessages = (dreamDescription) => [
 /**
  * 타로 분석 메시지 생성
  * @param {string} question - 타로 질문
- * @param {Object} past - 과거 카드
- * @param {Object} present - 현재 카드
- * @param {Object} future - 미래 카드
  */
-export const getTarotMessages = (question, past, present, future) => [
+export const getTarotMessages = (question) => [
     `흠... "${question.slice(0, 15)}${question.length > 15 ? '...' : ''}" 이라고?`,
-    `${past.nameKo}... 과거가 속삭이고 있군...`,
-    `${present.nameKo}... 현재의 진실이 보여...`,
-    `${future.nameKo}... 운명의 길이 펼쳐지고 있어...`,
+    '첫 번째 카드가 속삭이고 있어...',
+    '두 번째 카드에서 진실이 드러나...',
+    '세 번째 카드... 운명의 길이 펼쳐지고 있어...',
     '자, 이제 카드의 비밀을 보여줄게...',
 ];
 

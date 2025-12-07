@@ -5,6 +5,27 @@
     box-sizing: border-box;
 }
 
+/* 입력 필드와 텍스트 영역 */
+input,
+textarea,
+[contenteditable="true"] {
+    cursor: text;
+    caret-color: auto;
+}
+
+/* 버튼과 클릭 가능한 요소 */
+button,
+a,
+[role="button"],
+.clickable,
+.card,
+.tab,
+.nav-item,
+.dream-card,
+.tarot-card {
+    cursor: pointer;
+}
+
 body {
     font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: var(--black);

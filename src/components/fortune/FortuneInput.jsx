@@ -51,6 +51,7 @@ const FortuneInput = ({
                             value={fortuneBirthdate}
                             onChange={(e) => setFortuneBirthdate(e.target.value)}
                             className="birthdate-input"
+                            autoComplete="bday"
                         />
                     </div>
 

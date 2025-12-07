@@ -1,0 +1,101 @@
+{
+  "name": "점AI - AI 타로 & 꿈해몽 & 사주",
+  "short_name": "점AI",
+  "description": "AI가 읽어주는 당신의 운명. 타로, 꿈해몽, 사주를 한 곳에서.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ko",
+  "categories": ["lifestyle", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/tarot.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "타로 리딩"
+    },
+    {
+      "src": "/screenshots/dream.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "꿈 해몽"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "타로 보기",
+      "short_name": "타로",
+      "url": "/?mode=tarot",
+      "icons": [{ "src": "/icons/tarot-shortcut.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "꿈 해몽",
+      "short_name": "꿈",
+      "url": "/?mode=dream",
+      "icons": [{ "src": "/icons/dream-shortcut.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "사주 보기",
+      "short_name": "사주",
+      "url": "/?mode=fortune",
+      "icons": [{ "src": "/icons/fortune-shortcut.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

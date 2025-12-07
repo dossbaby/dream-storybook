@@ -5,6 +5,11 @@
     padding-top: var(--nav-height);
 }
 
+/* 타로 모드 - 기본 검은 배경 유지 */
+.main-layout.tarot-bg {
+    position: relative;
+}
+
 /* 왼쪽 사이드바 - 실시간 정보 */
 .left-sidebar {
     width: var(--sidebar-width);
@@ -30,6 +35,12 @@
     padding: var(--spacing-xl);
     padding-bottom: 6rem;
     min-height: calc(100vh - var(--nav-height));
+}
+
+/* 타로 모드 - 수직 중앙 정렬 (Claude/ChatGPT 스타일) */
+.tarot-bg .center-main {
+    justify-content: center;
+    padding-top: 0;
 }
 
 /* 오른쪽 사이드바 - 피드 */
