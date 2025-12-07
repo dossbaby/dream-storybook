@@ -2,8 +2,8 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 
 // 인트로 텍스트
 const INTRO_TEXTS = [
-    '카드가 당신을 기다리고 있어요',
-    '마음속 질문에 집중하며 세 장을 선택하세요'
+    '카드가 당신을 기다리고 있어요.',
+    '마음속 질문에 집중하며 세 장을 선택하세요.'
 ];
 
 // 타로 단계별 이모지와 색상

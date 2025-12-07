@@ -16,7 +16,7 @@ export default defineConfig({
           // Firebase (가장 큰 의존성)
           'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
           // AI SDK
-          'vendor-ai': ['@anthropic-ai/sdk', '@google/generative-ai'],
+          'vendor-ai': ['@anthropic-ai/sdk', '@google/genai'],
         }
       }
     },
