@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useComments } from '../../hooks/useComments';
 
 // 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
@@ -9,6 +10,22 @@ const FALLBACK_INSIGHTS = [
 
 // 카드 위치별 라벨 (간결하게)
 const CARD_LABELS = ['첫 번째', '두 번째', '세 번째'];
+
+// 시간 포맷팅 헬퍼
+const formatTimeAgo = (date) => {
+    if (!date) return '';
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return '방금';
+    if (minutes < 60) return `${minutes}분 전`;
+    if (hours < 24) return `${hours}시간 전`;
+    if (days < 7) return `${days}일 전`;
+    return date.toLocaleDateString('ko-KR');
+};
 
 const TarotResultView = ({
     tarotResult,
@@ -21,7 +38,14 @@ const TarotResultView = ({
     isPremium = false,
     onOpenPremium,
     onKeywordClick,
-    onUpdateVisibility // (visibility: 'private' | 'unlisted' | 'public') => void
+    onUpdateVisibility, // (visibility: 'private' | 'unlisted' | 'public') => void
+    onOpenReferral,
+    onOpenFeedback,
+    showToast,
+    // 엔게이지먼트 시스템용
+    user,
+    userNickname,
+    onLoginRequired
 }) => {
     // Visual Novel 인트로 단계 (클릭 기반 진행)
     // 0: 시작 대기 (fade in)
@@ -43,6 +67,26 @@ const TarotResultView = ({
     // 섹션 참조 (자동 스크롤용)
     const sectionRefs = useRef([]);
     const cardBarRef = useRef(null);
+
+    // 엔게이지먼트 시스템 (좋아요/댓글)
+    const {
+        isLiked,
+        likeCount,
+        toggleLike,
+        comments,
+        newComment,
+        setNewComment,
+        addComment,
+        deleteComment
+    } = useComments('tarotReadings', user, tarotResult, userNickname);
+
+    // 댓글 더보기 상태 (기본 3개 표시, 더보기 클릭 시 전체)
+    const [showAllComments, setShowAllComments] = useState(false);
+    const commentInputRef = useRef(null);
+
+    // 표시할 댓글 (기본 3개, 더보기 시 전체)
+    const displayedComments = showAllComments ? comments : comments.slice(0, 3);
+    const hasMoreComments = comments.length > 3;
 
     // AI 생성 Jenny 전략 필드 사용 (없으면 폴백)
     const jenny = tarotResult.jenny || {};
@@ -84,6 +128,27 @@ const TarotResultView = ({
     // 카드 개수 (3장 또는 4장)
     const cardCount = tarotResult.cards?.length || 3;
     const hasConclusion = cardCount >= 4;
+
+    // 링크 공유 클릭 시 링크 복사 + visibility 업데이트
+    const handleLinkShare = async () => {
+        onUpdateVisibility?.('unlisted');
+        if (tarotResult.id) {
+            const shareUrl = `${window.location.origin}/tarot/${tarotResult.id}`;
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                showToast?.('live', { message: '🔗 링크가 복사되었어요!', type: 'success' });
+            } catch (err) {
+                // 폴백
+                const textArea = document.createElement('textarea');
+                textArea.value = shareUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast?.('live', { message: '🔗 링크가 복사되었어요!', type: 'success' });
+            }
+        }
+    };
 
     // 모든 카드가 뒤집혔는지 확인
     const allCardsFlipped = flippedCards.length >= cardCount;
@@ -131,6 +196,18 @@ const TarotResultView = ({
         }
     }, [introPhase]);
 
+    // ESC 키로 뒤로가기
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                onBack?.();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onBack]);
+
     // 카드 뒤집기 핸들러 + 자동 스크롤
     const handleCardFlip = (index) => {
         // 인트로 완료 전에는 카드 선택 불가
@@ -157,9 +234,9 @@ const TarotResultView = ({
             const stickyBarHeight = cardBarRef.current?.offsetHeight || 120;
             const sectionTop = section.getBoundingClientRect().top + window.scrollY;
 
-            // 이미지 상단이 보이도록 여유를 줌
+            // 이미지 상단이 보이도록 여유를 줌 (30px 더 내림)
             window.scrollTo({
-                top: sectionTop - stickyBarHeight - 75,
+                top: sectionTop - stickyBarHeight - 45,
                 behavior: 'smooth'
             });
         }
@@ -325,7 +402,7 @@ const TarotResultView = ({
 
                     {/* 상단 텍스트 */}
                     <div className="persona-bar-header">
-                        <span className="persona-bar-label">
+                        <span className={`persona-bar-label ${allCardsFlipped ? 'revealed' : 'selecting'}`}>
                             {allCardsFlipped ? 'ALL CARDS REVEALED' : 'SELECT YOUR DESTINY'}
                         </span>
                     </div>
@@ -365,8 +442,12 @@ const TarotResultView = ({
                                                         <div className="pulse-ring"></div>
                                                     </>
                                                 )}
-                                                <span className="persona-card-symbol">{isConclusion ? '★' : '✦'}</span>
-                                                {canFlip && <span className="persona-tap-hint">{isConclusion ? '결론 카드 오픈' : `카드 ${i + 1} 오픈`}</span>}
+                                                <span className="persona-card-symbol">{isConclusion ? '★' : ['✦', '✶', '✧'][i] || '✦'}</span>
+                                                <span className={`persona-tap-hint ${!canFlip ? 'inactive' : ''}`}>
+                                                    {isConclusion
+                                                        ? (canFlip ? '결과 카드 오픈' : '?')
+                                                        : `카드 ${i + 1} 오픈`}
+                                                </span>
                                             </div>
                                         )}
                                     </div>
@@ -484,7 +565,10 @@ const TarotResultView = ({
                                     <div className="seal-hint">
                                         {isPremium ? '잠깐, 뭔가 더 있어요!!!' : '숨겨진 메시지가 있어요'}
                                     </div>
-                                    <button className={`unseal-btn ${!isPremium ? 'locked' : ''}`}>
+                                    <button
+                                        className={`unseal-btn ${!isPremium ? 'locked' : ''}`}
+                                        data-tooltip={!isPremium ? '✨ 프리미엄으로 차원의 틈 너머를 엿보세요' : undefined}
+                                    >
                                         {isPremium ? '✦ 틈새 엿보기' : '🔒 프리미엄으로 확인'}
                                     </button>
                                 </div>
@@ -561,32 +645,247 @@ const TarotResultView = ({
                         </div>
                     )}
 
-                    {/* 공개 설정 토글 */}
-                    {allCardsFlipped && tarotResult.id && onUpdateVisibility && (
-                        <div className="visibility-toggle-section fade-in-up">
-                            <span className="visibility-label">공개 설정</span>
-                            <div className="visibility-options">
-                                <button
-                                    className={`visibility-btn ${tarotResult.visibility === 'private' || (!tarotResult.visibility && !tarotResult.isPublic) ? 'active' : ''}`}
-                                    onClick={() => onUpdateVisibility('private')}
-                                >
-                                    <span className="visibility-icon">🔒</span>
-                                    <span>비공개</span>
-                                </button>
-                                <button
-                                    className={`visibility-btn ${tarotResult.visibility === 'public' || (!tarotResult.visibility && tarotResult.isPublic) ? 'active' : ''}`}
-                                    onClick={() => onUpdateVisibility('public')}
-                                >
-                                    <span className="visibility-icon">🌐</span>
-                                    <span>전체 공개</span>
-                                </button>
+                    {/* 공개 설정 + 친구 초대/피드백 - Advice Card Style Grid */}
+                    {allCardsFlipped && tarotResult.id && (
+                        <div className="result-footer-grid fade-in-up">
+                            {/* 왼쪽 카드 - 친구 초대 & 의견 보내기 */}
+                            <div className="footer-card invite-card">
+                                <div className="footer-card-header">
+                                    <span className="footer-card-icon">💝</span>
+                                    <span className="footer-card-title">함께하기</span>
+                                </div>
+                                <div className="footer-card-actions">
+                                    <button className="footer-action-btn" onClick={onOpenReferral} data-tooltip="친구를 초대하면 리딩 2회가 충전돼요">
+                                        <span>🎁</span> 친구 초대
+                                        <span className="footer-badge">+2 리딩</span>
+                                    </button>
+                                    <button className="footer-action-btn" onClick={onOpenFeedback} data-tooltip="의견을 보내면 리딩 1회가 충전돼요">
+                                        <span>💬</span> 의견 보내기
+                                        <span className="footer-badge">+1 리딩</span>
+                                    </button>
+                                </div>
                             </div>
+
+                            {/* 오른쪽 카드 - 공개 설정 토글 */}
+                            {onUpdateVisibility && (
+                                <div className="footer-card visibility-card">
+                                    <div className="footer-card-header">
+                                        <span className="footer-card-icon">🔐</span>
+                                        <span className="footer-card-title">공개 설정</span>
+                                    </div>
+                                    {/* Premium/Ultra 토글 스타일 */}
+                                    <div className="visibility-toggle-tabs">
+                                        <button
+                                            className={`visibility-tab ${tarotResult.visibility === 'private' ? 'active' : ''}`}
+                                            onClick={() => onUpdateVisibility('private')}
+                                            data-tooltip="나만 볼 수 있어요"
+                                        >
+                                            <span className="tab-icon">🔒</span>
+                                            <span className="tab-label">비공개</span>
+                                            <span className="tab-badge-small">나만</span>
+                                        </button>
+                                        <button
+                                            className={`visibility-tab ${tarotResult.visibility === 'unlisted' || !tarotResult.visibility ? 'active' : ''}`}
+                                            onClick={handleLinkShare}
+                                            data-tooltip="링크를 아는 사람만 볼 수 있어요"
+                                        >
+                                            <span className="tab-icon">🔗</span>
+                                            <span className="tab-label">링크 공유</span>
+                                            <span className="tab-badge-small">친구만</span>
+                                        </button>
+                                        <button
+                                            className={`visibility-tab ${tarotResult.visibility === 'public' ? 'active' : ''}`}
+                                            onClick={() => onUpdateVisibility('public')}
+                                            data-tooltip="전체 공개하면 리딩 1회가 충전돼요"
+                                        >
+                                            <span className="tab-icon">🌐</span>
+                                            <span className="tab-label">전체 공개</span>
+                                            <span className="tab-bonus">+1 리딩</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
+
                 </div>
                 )}
 
             </div>
+
+            {/* 하단 뒤로가기 버튼 - tarot-result-content 바깥 */}
+            {introPhase >= 5 && (
+                <div className="bottom-back-section">
+                    <button className="bottom-back-btn" onClick={onBack}>
+                        <span>←</span>
+                        <span>돌아가기</span>
+                    </button>
+                </div>
+            )}
+
+            {/* 엔게이지먼트 사이드 패널 - 카드 오픈 전에도 표시 */}
+            {tarotResult.id && introPhase >= 5 && (
+                <aside className="engagement-panel">
+                    <div className="engagement-panel-inner">
+                        {/* 좋아요 버튼 - hover 이모지 효과 */}
+                        <div className="engagement-like-section">
+                            <button
+                                className={`like-button-fancy ${isLiked ? 'liked' : ''}`}
+                                onClick={() => {
+                                    if (!user) {
+                                        onLoginRequired?.();
+                                        return;
+                                    }
+                                    toggleLike();
+                                    if (!isLiked) {
+                                        showToast?.('live', { message: '💜 리딩에 공감했어요!', type: 'success' });
+                                    }
+                                }}
+                            >
+                                <span className="like-emoji-default">{isLiked ? '💜' : '🤍'}</span>
+                                <span className="like-emoji-hover">💖</span>
+                                <span className="like-ripple"></span>
+                            </button>
+                            <span className="like-count">{likeCount}</span>
+                        </div>
+
+                        {/* 구분선 */}
+                        <div className="engagement-divider"></div>
+
+                        {/* 조회수 & 게시일 - 심플 텍스트 */}
+                        <div className="engagement-stats-simple">
+                            <span className="stat-text">조회수 {tarotResult.viewCount || 0}</span>
+                            <span className="stat-dot">·</span>
+                            <span className="stat-text">
+                                {tarotResult.createdAt?.toDate
+                                    ? tarotResult.createdAt.toDate().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+                                    : '-'}
+                            </span>
+                        </div>
+
+                        {/* 구분선 */}
+                        <div className="engagement-divider"></div>
+
+                        {/* 댓글 헤더 */}
+                        <div className="comments-header">
+                            <span className="comments-title">💬 댓글</span>
+                            <span className="comments-count-badge">{comments.length}</span>
+                        </div>
+
+                        {/* 댓글 입력 */}
+                        <div className="comment-input-area">
+                            {user ? (
+                                <form
+                                    className="comment-form"
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        if (newComment.trim()) {
+                                            addComment();
+                                            showToast?.('live', { message: '💬 댓글이 등록됐어요!', type: 'success' });
+                                        }
+                                    }}
+                                >
+                                    <div className="comment-input-wrapper">
+                                        {user.photoURL ? (
+                                            <img src={user.photoURL} alt="" className="comment-avatar" />
+                                        ) : (
+                                            <div className="comment-avatar-placeholder">
+                                                {(userNickname || user.displayName || '?').charAt(0)}
+                                            </div>
+                                        )}
+                                        <input
+                                            ref={commentInputRef}
+                                            type="text"
+                                            className="comment-input"
+                                            placeholder="생각을 남겨보세요..."
+                                            value={newComment}
+                                            onChange={(e) => setNewComment(e.target.value)}
+                                            maxLength={500}
+                                        />
+                                        <button
+                                            type="submit"
+                                            className="comment-submit-btn"
+                                            disabled={!newComment.trim()}
+                                        >
+                                            <span>↑</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div
+                                    className="comment-login-prompt"
+                                    onClick={onLoginRequired}
+                                >
+                                    <span className="login-icon">✨</span>
+                                    <span>로그인하고 댓글을 남겨보세요</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 댓글 리스트 */}
+                        <div className="comments-list">
+                            {comments.length === 0 ? (
+                                <div className="comments-empty">
+                                    <span className="empty-icon">💭</span>
+                                    <p>아직 댓글이 없어요</p>
+                                    <p className="empty-hint">첫 번째 댓글을 남겨보세요!</p>
+                                </div>
+                            ) : (
+                                <>
+                                    {displayedComments.map((comment) => (
+                                        <div key={comment.id} className="comment-item">
+                                            <div className="comment-header">
+                                                {comment.userPhoto ? (
+                                                    <img src={comment.userPhoto} alt="" className="comment-avatar" />
+                                                ) : (
+                                                    <div className="comment-avatar-placeholder">
+                                                        {(comment.userName || '?').charAt(0)}
+                                                    </div>
+                                                )}
+                                                <div className="comment-meta">
+                                                    <span className="comment-author">{comment.userName}</span>
+                                                    <span className="comment-time">
+                                                        {comment.createdAt?.toDate ? formatTimeAgo(comment.createdAt.toDate()) : ''}
+                                                    </span>
+                                                </div>
+                                                {user?.uid === comment.userId && (
+                                                    <button
+                                                        className="comment-delete-btn"
+                                                        onClick={() => deleteComment(comment.id, comment.userId)}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <p className="comment-text">{comment.text}</p>
+                                        </div>
+                                    ))}
+
+                                    {/* 더보기 버튼 */}
+                                    {hasMoreComments && !showAllComments && (
+                                        <button
+                                            className="comments-show-more"
+                                            onClick={() => setShowAllComments(true)}
+                                        >
+                                            <span>+ {comments.length - 3}개 더보기</span>
+                                        </button>
+                                    )}
+
+                                    {/* 접기 버튼 */}
+                                    {showAllComments && hasMoreComments && (
+                                        <button
+                                            className="comments-show-less"
+                                            onClick={() => setShowAllComments(false)}
+                                        >
+                                            <span>↑ 접기</span>
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </aside>
+            )}
         </div>
     );
 };

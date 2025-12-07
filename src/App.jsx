@@ -131,7 +131,7 @@ function App() {
     // 커스텀 훅들
     const { userBadges, checkAndAwardBadges } = useBadges(setToast);
     const {
-        dreams, hotDreams, tarotReadings: feedTarotReadings, fortuneReadings, popularKeywords,
+        dreams, hotDreams, tarotReadings: feedTarotReadings, fortuneReadings, popularKeywords, tarotKeywords, tarotTopicCounts,
         typeCounts, todayStats, onlineCount, loading: feedLoading, loadDreams, loadDreamsRef, loadTarotsRef, loadFortunesRef, loadMyDreamsRef
     } = useFeed(null, [], activeTab, filters, mode);
     const {
@@ -168,19 +168,21 @@ function App() {
     // 도파민 메시지 시스템
     const dopamineHook = useDopamineMessages();
 
-    const { triggerCardReveal, startTarotSelection, toggleTarotCard, generateTarotReading } = useTarotActions({
-        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook, dopamineHook
-    });
+    // 유저 액션 (로그인 등) - 타로 액션보다 먼저 정의
     const setShareTarget = (target) => setModals(prev => ({ ...prev, shareTarget: target }));
     const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
         user, setUserNickname, setUserProfile, shareTarget: modals.shareTarget, setShareTarget, dreamTypes, openModal, closeModal
+    });
+
+    const { triggerCardReveal, startTarotSelection, toggleTarotCard, generateTarotReading } = useTarotActions({
+        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook, dopamineHook, onLoginRequired: handleGoogleLogin
     });
     const { toggleSavedDreamVisibility, deleteDream, deleteTarot, deleteFortune, toggleDreamVisibility, updateVisibility } = useDreamManagement({
         user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setMyTarots, setMyFortunes, setView, setToast, loadDreams, loadMyDreams
     });
     const { generateReading, generateFortuneReading } = useReadingActions({
         user, dreamDescription, selectedDreamDate, setCurrentCard, setResult, setView, setSavedDreamField,
-        setFortuneField, fortune, generateDreamReading, generateFortuneReadingHook, triggerCardReveal
+        setFortuneField, fortune, generateDreamReading, generateFortuneReadingHook, triggerCardReveal, onLoginRequired: handleGoogleLogin
     });
     const {
         resetResults, handleOpenDreamDetail, handleOpenTarotResult, handleOpenFortuneResult, handleResultBack,
@@ -274,31 +276,27 @@ function App() {
 
             {/* 메인 3단 레이아웃 - Suspense로 lazy 컴포넌트 감싸기 */}
             <Suspense fallback={<div className="loading-spinner">로딩중...</div>}>
-            <div className={`main-layout ${mode === 'tarot' && view === 'create' && !tarot.result ? 'tarot-bg' : ''}`}>
+            <div className={`main-layout ${mode === 'tarot' && view === 'create' && !tarot.result ? 'tarot-bg' : ''} ${view === 'tarot-result' || view === 'fortune-result' || view === 'detail' ? 'full-view' : ''}`}>
                 {/* 왼쪽 사이드바 - 실시간 정보 */}
                 <LeftSidebar
                     mode={mode}
                     onlineCount={onlineCount}
                     todayStats={todayStats}
                     dreamTypes={dreamTypes}
-                    hotDreams={hotDreams}
-                    hotTarots={feedTarotReadings.slice(0, 3)}
-                    hotFortunes={fortuneReadings.slice(0, 3)}
                     typeFilter={filters.type}
                     typeCounts={typeCounts}
                     popularKeywords={popularKeywords}
+                    tarotKeywords={tarotKeywords}
+                    tarotTopicCounts={tarotTopicCounts}
                     categories={DREAM_CATEGORIES}
-                    onOpenDreamDetail={openDreamDetail}
-                    onOpenTarotResult={handleOpenTarotResult}
-                    onOpenFortuneResult={handleOpenFortuneResult}
                     onTypeFilterChange={(val) => setFilter('type', val)}
                     onFilterBySymbol={filterBySymbol}
                 />
 
                 {/* 중앙 - 메인 콘텐츠 */}
                 <main className="center-main">
-                    {/* 공통 뒤로가기 버튼 - feed 외의 뷰에서만 표시 */}
-                    {view !== 'feed' && (
+                    {/* 공통 뒤로가기 버튼 - feed 외의 뷰에서만 표시 (타로 결과 페이지는 자체 버튼 사용) */}
+                    {view !== 'feed' && !(mode === 'tarot' && view === 'result') && (
                         <button
                             className="global-back-btn"
                             onClick={() => {
@@ -330,7 +328,17 @@ function App() {
                             dreamTypes={dreamTypes}
                             popularKeywords={popularKeywords}
                             symbolFilter={filters.keyword}
-                            onCreateClick={() => setView('create')}
+                            onCreateClick={() => {
+                                setView('create');
+                                // 현재 모드의 결과 초기화 (피드에서 본 결과 클리어)
+                                if (mode === 'tarot') {
+                                    resetTarot();
+                                } else if (mode === 'dream') {
+                                    setResult(null);
+                                } else if (mode === 'fortune') {
+                                    resetFortune();
+                                }
+                            }}
                             onOpenDreamDetail={handleOpenDreamDetail}
                             onOpenTarotResult={handleOpenTarotResult}
                             onOpenFortuneResult={handleOpenFortuneResult}
@@ -547,6 +555,13 @@ function App() {
                                     updateVisibility('tarot', tarot.result.id, visibility);
                                 }
                             }}
+                            onOpenReferral={() => openModal('referral')}
+                            onOpenFeedback={() => openModal('feedback')}
+                            showToast={setToast}
+                            // 엔게이지먼트 시스템
+                            user={user}
+                            userNickname={userNickname}
+                            onLoginRequired={handleGoogleLogin}
                         />
                     )}
 
@@ -729,50 +744,30 @@ function App() {
                     />
                 </main>
 
-                {/* 오른쪽 사이드바 - 피드 */}
+                {/* 오른쪽 사이드바 - 인기 피드 (EGR 기반) */}
                 <RightSidebar
                     mode={mode}
-                    tabs={TABS}
-                    activeTab={activeTab}
                     loading={feedLoading}
                     dreams={dreams}
                     tarotReadings={feedTarotReadings}
                     fortuneReadings={fortuneReadings}
                     dreamTypes={dreamTypes}
-                    onTabChange={setActiveTab}
                     onOpenDreamDetail={openDreamDetail}
                     onOpenTarotResult={handleOpenTarotResult}
                     onOpenFortuneResult={handleOpenFortuneResult}
-                    onCreateClick={() => setView('create')}
+                    onCreateClick={() => {
+                        setView('create');
+                        // 현재 모드의 결과 초기화
+                        if (mode === 'tarot') {
+                            resetTarot();
+                        } else if (mode === 'dream') {
+                            setResult(null);
+                        } else if (mode === 'fortune') {
+                            resetFortune();
+                        }
+                    }}
                 />
             </div>
-            </Suspense>
-
-            {/* Floating Action Button - 데스크탑에서만 표시 */}
-            <Suspense fallback={null}>
-            <FloatingActionButton
-                mode={mode}
-                onModeChange={(newMode) => {
-                    setMode(newMode);
-                    setView('create');
-                    // 모든 결과 초기화
-                    resetTarot();
-                    setResult(null);
-                    resetFortune();
-                    setSavedDream({ id: null, isPublic: false });
-                }}
-                onCreateClick={() => {
-                    setView('create');
-                    // 현재 모드의 결과 초기화
-                    if (mode === 'tarot') {
-                        resetTarot();
-                    } else if (mode === 'dream') {
-                        setResult(null);
-                    } else if (mode === 'fortune') {
-                        resetFortune();
-                    }
-                }}
-            />
             </Suspense>
 
             {/* Bottom Navigation - 모바일에서만 표시 */}
@@ -831,8 +826,9 @@ function App() {
                             openFortuneResult(fortune);
                         }}
                         onTypeFilterChange={(type) => setFilter('type', type)}
-                        onFilterBySymbol={(keyword) => {
+                        onFilterBySymbol={(keyword, targetMode = 'dream') => {
                             setMobileSheet(prev => ({ ...prev, explore: false }));
+                            setMode(targetMode);
                             setFilter('keyword', keyword);
                             setView('feed');
                         }}

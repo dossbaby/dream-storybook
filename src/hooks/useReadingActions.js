@@ -15,10 +15,16 @@ export const useReadingActions = ({
     fortune,
     generateDreamReading,
     generateFortuneReadingHook,
-    triggerCardReveal
+    triggerCardReveal,
+    onLoginRequired
 }) => {
     // 꿈 생성
     const generateReading = async () => {
+        // 로그인 체크 - 비로그인 시 로그인 유도
+        if (!user) {
+            onLoginRequired?.();
+            return;
+        }
         setCurrentCard(0);
         const resultData = await generateDreamReading(dreamDescription, selectedDreamDate);
         if (resultData) {
@@ -34,6 +40,11 @@ export const useReadingActions = ({
 
     // 운세 리딩 생성
     const generateFortuneReading = async () => {
+        // 로그인 체크 - 비로그인 시 로그인 유도
+        if (!user) {
+            onLoginRequired?.();
+            return;
+        }
         setCurrentCard(0);
         const resultData = await generateFortuneReadingHook(fortune.type, FORTUNE_TYPES);
         if (resultData) {

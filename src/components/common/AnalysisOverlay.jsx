@@ -49,13 +49,19 @@ const AnalysisOverlay = memo(({
         setStars(newStars);
     }, [isVisible]);
 
-    // 단계 자동 진행 (8초마다)
+    // 단계 자동 진행 (8초마다) - 마지막 단계에서 멈춤 (반복 X)
     useEffect(() => {
         if (!isVisible || isComplete) return;
 
         const stageInterval = setInterval(() => {
-            setCurrentStage(prev => (prev + 1) % PHASE_CONFIG.length);
-        }, 8000);
+            setCurrentStage(prev => {
+                // 마지막 단계에 도달하면 더 이상 진행하지 않음
+                if (prev >= PHASE_CONFIG.length - 1) {
+                    return prev; // 마지막에서 멈춤
+                }
+                return prev + 1;
+            });
+        }, 10000); // 10초로 늘려서 더 천천히 진행
 
         return () => clearInterval(stageInterval);
     }, [isVisible, isComplete]);

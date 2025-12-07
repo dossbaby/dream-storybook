@@ -1,3 +1,6 @@
+import { doc, updateDoc, increment } from 'firebase/firestore';
+import { db } from '../firebase';
+
 /**
  * 뷰 전환 및 결과 관련 액션 훅
  */
@@ -13,6 +16,23 @@ export const useViewActions = ({
     resetTarot,
     resetFortune
 }) => {
+    // 조회수 증가 (중복 방지를 위해 sessionStorage 사용)
+    const incrementViewCount = async (collectionName, itemId) => {
+        if (!itemId) return;
+
+        // 세션당 한 번만 카운트 (같은 문서 중복 방지)
+        const viewedKey = `viewed_${collectionName}_${itemId}`;
+        if (sessionStorage.getItem(viewedKey)) return;
+
+        try {
+            await updateDoc(doc(db, collectionName, itemId), {
+                viewCount: increment(1)
+            });
+            sessionStorage.setItem(viewedKey, 'true');
+        } catch (err) {
+            console.error('View count error:', err);
+        }
+    };
     // 결과 리셋
     const resetResults = () => {
         setResult(null);
@@ -26,6 +46,8 @@ export const useViewActions = ({
         setSelectedDream(dream);
         setView('detail');
         setCurrentCard(0);
+        // 조회수 증가
+        incrementViewCount('dreams', dream?.id);
     };
 
     // 타로 결과 열기 (hero image 중복 방지를 위해 깨끗한 상태로 설정)
@@ -37,6 +59,8 @@ export const useViewActions = ({
             setView('tarot-result');
             setCurrentCard(0);
         }, 0);
+        // 조회수 증가
+        incrementViewCount('tarotReadings', t?.id);
     };
 
     // 운세 결과 열기
@@ -44,6 +68,8 @@ export const useViewActions = ({
         setFortuneField('result', f);
         setView('fortune-result');
         setCurrentCard(0);
+        // 조회수 증가
+        incrementViewCount('fortuneReadings', f?.id);
     };
 
     // 결과 뷰에서 뒤로가기

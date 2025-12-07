@@ -40,11 +40,16 @@
     margin-bottom: 0.75rem;
 }
 
+.symbol-section + .symbol-section {
+    margin-top: 1rem;
+}
+
 .symbol-section-label {
     display: block;
     font-size: 0.7rem;
-    color: var(--light-gray);
-    margin-bottom: 0.4rem;
+    color: rgba(180, 160, 220, 0.9);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
 .symbol-tags {
@@ -103,17 +108,125 @@
     border-radius: 8px;
 }
 
-/* 타로 주제 태그 */
-.symbol-tag.tarot-topic {
-    background: rgba(155, 89, 182, 0.15);
-    border-color: rgba(155, 89, 182, 0.4);
-    color: #d4a5ff;
+/* ========== 타로 주제별 메뉴 (Matte Black) ========== */
+.tarot-topics-menu {
+    background: rgba(18, 18, 22, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
-.symbol-tag.tarot-topic:hover {
-    background: rgba(155, 89, 182, 0.3);
-    border-color: rgba(155, 89, 182, 0.6);
-    transform: scale(1.05);
+.tarot-topics-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+}
+
+.tarot-topics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.tarot-topic-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.tarot-topic-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tarot-topic-item .topic-emoji {
+    font-size: 1rem;
+}
+
+.tarot-topic-item .topic-name {
+    flex: 1;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.tarot-topic-item .topic-count {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15rem 0.4rem;
+    border-radius: 10px;
+}
+
+/* ========== 타로 인기 키워드 박스 (Matte Black) ========== */
+.tarot-keywords-box {
+    background: rgba(18, 18, 22, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.75rem;
+}
+
+.tarot-keywords-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.3px;
+    margin-bottom: 0.5rem;
+    padding-left: 0.25rem;
+}
+
+.tarot-keywords-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tarot-keyword-tag {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.tarot-keyword-tag:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.tarot-keyword-tag .keyword-count {
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-left: 0.3rem;
+}
+
+/* 레거시 호환용 tarot-theme */
+.unified-symbols-card.tarot-theme {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.08), rgba(103, 58, 183, 0.05));
+    border-color: rgba(155, 89, 182, 0.25);
+    max-height: none;
+    overflow: visible;
+}
+
+.unified-symbols-card.tarot-theme .symbol-section {
+    margin-bottom: 0;
+}
+
+.unified-symbols-card.tarot-theme .symbol-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    max-height: none;
+    overflow: visible;
 }
 
 /* ========== 뱃지 시스템 ========== */
@@ -982,10 +1095,6 @@
     gap: 0.5rem;
 }
 
-.comments-title::before {
-    content: '💬';
-}
-
 /* ========== 공개/비공개 토글 ========== */
 .visibility-toggle {
     display: flex;
@@ -1647,41 +1756,43 @@
     color: var(--white);
 }
 
-/* ========== 모드 토글 (꿈/타로) ========== */
+/* ========== 모드 토글 (꿈/타로) - Premium Modal 스타일 ========== */
 .nav-mode-toggle {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 25px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 0;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mode-btn {
-    padding: 0.5rem 1rem;
+    flex: 1;
+    padding: 0.6rem 1rem;
     background: transparent;
     border: none;
-    border-radius: 20px;
-    color: var(--light-gray);
-    font-size: 0.8rem;
-    font-weight: 500;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.4rem;
 }
 
-.mode-btn:hover {
-    color: var(--white);
+.mode-btn:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.7);
     background: rgba(255, 255, 255, 0.05);
 }
 
 .mode-btn.active {
-    background: linear-gradient(135deg, var(--accent), var(--purple));
-    color: var(--white);
-    box-shadow: 0 2px 10px rgba(255, 51, 102, 0.3);
+    background: linear-gradient(135deg, #00d4ff, #6366f1, #9b59b6);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 /* ========== 상세 풀이 CTA 버튼 (카드 하단) ========== */

@@ -17,10 +17,10 @@ export const useDreamActions = ({
     setFilter,
     setMode
 }) => {
-    // 상징 클릭 시 피드에서 필터링
-    const filterBySymbol = (symbol) => {
-        // 꿈 모드로 전환하고 피드 뷰로 이동
-        setMode?.('dream');
+    // 상징 클릭 시 피드에서 필터링 (mode 파라미터로 타로/꿈 구분)
+    const filterBySymbol = (symbol, targetMode = 'dream') => {
+        // 지정된 모드로 전환하고 피드 뷰로 이동
+        setMode?.(targetMode);
         setView('feed');
         // 키워드 필터 설정
         setFilter?.('keyword', symbol);

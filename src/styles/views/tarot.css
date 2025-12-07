@@ -7,7 +7,6 @@
         #1a0f35 60%,
         #0d0820 100%
     );
-    min-height: 100%;
 }
 
 .tarot-theme::before {
@@ -21,28 +20,24 @@
     z-index: 0;
 }
 
-/* 별빛 파티클 효과 */
+/* 별빛 파티클 효과 (정적 - 애니메이션 제거) */
 .tarot-theme::after {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-        radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.8) 0%, transparent 100%),
-        radial-gradient(1px 1px at 40% 70%, rgba(255, 215, 0, 0.6) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 60% 20%, rgba(155, 89, 182, 0.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 80% 50%, rgba(255, 255, 255, 0.5) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 10% 80%, rgba(255, 215, 0, 0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 90% 90%, rgba(155, 89, 182, 0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 30% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 70% 40%, rgba(255, 215, 0, 0.4) 0%, transparent 100%);
-    animation: twinkle 4s ease-in-out infinite alternate;
+        radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 70%, rgba(139, 92, 246, 0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 60% 20%, rgba(99, 102, 241, 0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 10% 80%, rgba(139, 92, 246, 0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 90%, rgba(99, 102, 241, 0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 50%, rgba(255, 255, 255, 0.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 40%, rgba(168, 85, 247, 0.4) 0%, transparent 100%);
+    /* 애니메이션 제거 - 정적 별빛 */
+    opacity: 0.8;
     pointer-events: none;
     z-index: 0;
-}
-
-@keyframes twinkle {
-    0% { opacity: 0.4; }
-    100% { opacity: 1; }
 }
 
 .tarot-theme > * {
@@ -1813,7 +1808,7 @@
 }
 
 /* ========================================
-   조언 그리드 - Glacial Glow 디자인
+   조언 카드 그리드 - Premium Modal Style
    ======================================== */
 
 .advice-grid {
@@ -1829,51 +1824,52 @@
     }
 }
 
-/* 4개 카드가 하나의 그라데이션처럼 보이는 밝은 스타일 */
+/* Premium Modal 스타일 - gradient border with border-radius */
 .advice-card {
     position: relative;
     padding: 1.25rem;
-    background: linear-gradient(135deg,
-        rgba(20, 30, 50, 0.6) 0%,
-        rgba(30, 45, 70, 0.5) 100%);
     border-radius: 16px;
-    border: 1px solid;
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
     overflow: hidden;
     transition: all 0.3s ease;
+    /* Gradient border technique - works with border-radius */
+    background:
+        linear-gradient(135deg, rgba(12, 8, 24, 0.95) 0%, rgba(20, 12, 35, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.4) 0%, rgba(155, 89, 182, 0.4) 100%) border-box;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* 카드별 그라데이션 위치 - 4개가 하나처럼 보이게 */
+/* 카드별 그라데이션 - 연속적 흐름 (Cyan → Purple) */
 .advice-card:nth-child(1) {
-    background: linear-gradient(135deg,
-        rgba(0, 212, 255, 0.08) 0%,
-        rgba(20, 35, 55, 0.7) 100%);
-    border: 1px solid rgba(0, 212, 255, 0.35);
+    background:
+        linear-gradient(135deg, rgba(12, 8, 24, 0.95) 0%, rgba(15, 10, 28, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(0, 180, 220, 0.35) 100%) border-box;
+    border: 1px solid transparent;
 }
 
 .advice-card:nth-child(2) {
-    background: linear-gradient(135deg,
-        rgba(80, 180, 220, 0.06) 0%,
-        rgba(25, 40, 60, 0.7) 100%);
-    border: 1px solid rgba(80, 180, 220, 0.3);
+    background:
+        linear-gradient(135deg, rgba(14, 10, 26, 0.95) 0%, rgba(18, 12, 32, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 180, 220, 0.45) 0%, rgba(100, 140, 200, 0.35) 100%) border-box;
+    border: 1px solid transparent;
 }
 
 .advice-card:nth-child(3) {
-    background: linear-gradient(135deg,
-        rgba(120, 130, 200, 0.06) 0%,
-        rgba(30, 35, 60, 0.7) 100%);
-    border: 1px solid rgba(140, 120, 200, 0.3);
+    background:
+        linear-gradient(135deg, rgba(16, 10, 28, 0.95) 0%, rgba(20, 14, 35, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(120, 100, 200, 0.45) 0%, rgba(155, 89, 182, 0.4) 100%) border-box;
+    border: 1px solid transparent;
 }
 
 .advice-card:nth-child(4),
 .advice-card.share-preview-card {
-    background: linear-gradient(135deg,
-        rgba(155, 89, 182, 0.08) 0%,
-        rgba(35, 30, 55, 0.7) 100%);
-    border: 1px solid rgba(155, 89, 182, 0.35);
+    background:
+        linear-gradient(135deg, rgba(18, 12, 30, 0.95) 0%, rgba(22, 15, 38, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(155, 89, 182, 0.5) 0%, rgba(180, 100, 200, 0.4) 100%) border-box;
+    border: 1px solid transparent;
 }
 
-/* 상단 그라데이션 라인 */
+/* 상단 글로우 라인 */
 .advice-card::before {
     content: '';
     position: absolute;
@@ -1885,35 +1881,61 @@
 }
 
 .advice-card:nth-child(1)::before {
-    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.8), rgba(80, 180, 220, 0.5), transparent);
+    background: linear-gradient(90deg, transparent 5%, rgba(0, 212, 255, 0.8) 50%, transparent 95%);
 }
 
 .advice-card:nth-child(2)::before {
-    background: linear-gradient(90deg, transparent, rgba(80, 180, 220, 0.7), rgba(120, 150, 200, 0.5), transparent);
+    background: linear-gradient(90deg, transparent 5%, rgba(0, 180, 220, 0.7) 50%, transparent 95%);
 }
 
 .advice-card:nth-child(3)::before {
-    background: linear-gradient(90deg, transparent, rgba(140, 120, 200, 0.7), rgba(155, 89, 182, 0.5), transparent);
+    background: linear-gradient(90deg, transparent 5%, rgba(140, 100, 200, 0.7) 50%, transparent 95%);
 }
 
 .advice-card:nth-child(4)::before,
 .advice-card.share-preview-card::before {
-    background: linear-gradient(90deg, transparent, rgba(155, 89, 182, 0.8), rgba(180, 100, 200, 0.5), transparent);
+    background: linear-gradient(90deg, transparent 5%, rgba(155, 89, 182, 0.8) 50%, transparent 95%);
 }
 
+/* 내부 글로우 오버레이 */
+.advice-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at top center, rgba(0, 212, 255, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.advice-card:hover::after {
+    opacity: 1;
+}
+
+/* Hover 효과 - Premium glow */
 .advice-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.25),
-        0 0 20px rgba(0, 212, 255, 0.1),
-        0 0 30px rgba(155, 89, 182, 0.08);
+        0 12px 35px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(0, 212, 255, 0.15),
+        0 0 40px rgba(155, 89, 182, 0.1);
 }
 
-.advice-card:nth-child(1):hover { border-color: rgba(0, 212, 255, 0.5); }
-.advice-card:nth-child(2):hover { border-color: rgba(80, 180, 220, 0.45); }
-.advice-card:nth-child(3):hover { border-color: rgba(140, 120, 200, 0.45); }
+.advice-card:nth-child(1):hover {
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(0, 212, 255, 0.25);
+}
+
 .advice-card:nth-child(4):hover,
-.advice-card.share-preview-card:hover { border-color: rgba(155, 89, 182, 0.5); }
+.advice-card.share-preview-card:hover {
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(155, 89, 182, 0.25);
+}
 
 .advice-header {
     display: flex;
@@ -1985,64 +2007,709 @@
 }
 
 /* ========================================
-   공개 설정 토글
+   결과 푸터 그리드 - Advice Card Style
+   ======================================== */
+
+.result-footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 0 3rem 2rem;
+}
+
+@media (max-width: 480px) {
+    .result-footer-grid {
+        grid-template-columns: 1fr;
+        margin: 0 1.5rem 2rem;
+    }
+}
+
+/* 푸터 카드 - Advice Card 스타일 */
+.footer-card {
+    position: relative;
+    padding: 1.25rem;
+    border-radius: 16px;
+    overflow: hidden;
+    /* Gradient border technique */
+    background:
+        linear-gradient(135deg, rgba(12, 8, 24, 0.95) 0%, rgba(20, 12, 35, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.4) 0%, rgba(155, 89, 182, 0.4) 100%) border-box;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.footer-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.footer-card-icon {
+    font-size: 1rem;
+}
+
+.footer-card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* 함께하기 카드 - 액션 버튼들 */
+.footer-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.footer-action-btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.footer-badge {
+    margin-left: auto;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.15));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    color: rgba(255, 215, 0, 0.9);
+}
+
+/* 공개 설정 토글 탭 - Premium/Ultra plan-tabs 스타일 */
+.visibility-toggle-tabs {
+    display: flex;
+    gap: 0;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.visibility-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.5rem 0.4rem;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.visibility-tab .tab-icon {
+    font-size: 0.9rem;
+}
+
+.visibility-tab .tab-label {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.visibility-tab .tab-bonus {
+    font-size: 0.55rem;
+    padding: 0.1rem 0.3rem;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 4px;
+    color: rgba(255, 215, 0, 0.8);
+}
+
+/* 나만, 친구만 작은 뱃지 */
+.visibility-tab .tab-badge-small {
+    font-size: 0.5rem;
+    padding: 0.1rem 0.25rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: 0.2rem;
+}
+
+.visibility-tab.active:first-child .tab-badge-small {
+    background: rgba(200, 200, 210, 0.2);
+    color: rgba(200, 200, 210, 0.9);
+}
+
+.visibility-tab.active:nth-child(2) .tab-badge-small {
+    background: rgba(0, 20, 40, 0.2);
+    color: rgba(0, 30, 50, 0.9);
+}
+
+.visibility-tab:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* 비공개 Active */
+.visibility-tab.active:first-child {
+    background: rgba(180, 180, 190, 0.15);
+    color: rgba(200, 200, 210, 1);
+    box-shadow: 0 2px 8px rgba(180, 180, 190, 0.15);
+}
+
+/* 링크 공유 Active - Cyan 그라디언트 */
+.visibility-tab.active:nth-child(2) {
+    background: linear-gradient(135deg, #00d4ff, #00b4d8);
+    color: #0a1f2e;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.35);
+}
+
+/* 전체 공개 Active - Purple/Gold 그라디언트 */
+.visibility-tab.active:last-child {
+    background: linear-gradient(135deg, #9b59b6, #a78bfa);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.35);
+}
+
+.visibility-tab.active:last-child .tab-bonus {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* ========================================
+   CSS 툴팁 스타일 - Premium Modal 매치
+   ======================================== */
+.visibility-tab[data-tooltip],
+.footer-action-btn[data-tooltip] {
+    position: relative;
+}
+
+.visibility-tab[data-tooltip]::before,
+.footer-action-btn[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    padding: 0.6rem 1rem;
+    background:
+        linear-gradient(135deg, rgba(12, 8, 24, 0.98) 0%, rgba(20, 12, 35, 0.97) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(155, 89, 182, 0.4) 100%) border-box;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(0, 212, 255, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* 툴팁 화살표 */
+.visibility-tab[data-tooltip]::after,
+.footer-action-btn[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    border: 6px solid transparent;
+    border-top-color: rgba(20, 12, 35, 0.97);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+}
+
+/* 호버 시 툴팁 표시 */
+.visibility-tab[data-tooltip]:hover::before,
+.footer-action-btn[data-tooltip]:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+.visibility-tab[data-tooltip]:hover::after,
+.footer-action-btn[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+/* 첫 번째 탭 (비공개) - 툴팁 왼쪽 정렬 */
+.visibility-tab:first-child[data-tooltip]::before {
+    left: 0;
+    transform: translateX(0) scale(0.9);
+}
+
+.visibility-tab:first-child[data-tooltip]:hover::before {
+    transform: translateX(0) scale(1);
+}
+
+.visibility-tab:first-child[data-tooltip]::after {
+    left: 20px;
+    transform: translateX(0) scale(0.9);
+}
+
+.visibility-tab:first-child[data-tooltip]:hover::after {
+    transform: translateX(0) scale(1);
+}
+
+/* 마지막 탭 (전체공개) - 툴팁 오른쪽 정렬 */
+.visibility-tab:last-child[data-tooltip]::before {
+    left: auto;
+    right: 0;
+    transform: translateX(0) scale(0.9);
+}
+
+.visibility-tab:last-child[data-tooltip]:hover::before {
+    transform: translateX(0) scale(1);
+}
+
+.visibility-tab:last-child[data-tooltip]::after {
+    left: auto;
+    right: 20px;
+    transform: translateX(0) scale(0.9);
+}
+
+.visibility-tab:last-child[data-tooltip]:hover::after {
+    transform: translateX(0) scale(1);
+}
+
+/* ========================================
+   (레거시) 결과 액션 섹션
+   ======================================== */
+
+.result-actions-section {
+    display: none; /* 새 디자인으로 대체됨 */
+}
+
+.result-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.result-action-btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.result-action-btn .action-icon {
+    font-size: 1rem;
+}
+
+.result-action-btn .action-text {
+    flex: 1;
+    font-weight: 500;
+}
+
+/* 통합 배지 스타일 */
+.action-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 8px;
+    min-width: 32px;
+}
+
+.action-badge.bonus {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.15));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    color: rgba(255, 215, 0, 0.9);
+}
+
+.action-badge.muted {
+    background: rgba(180, 180, 190, 0.1);
+    border: 1px solid rgba(180, 180, 190, 0.2);
+    color: rgba(180, 180, 190, 0.7);
+}
+
+.action-badge.link {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.25);
+    color: rgba(0, 212, 255, 0.8);
+}
+
+/* 오른쪽 50% - 공개 설정 */
+.result-actions-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ========================================
+   공개 설정 토글 - Premium Modal Style
    ======================================== */
 
 .visibility-toggle-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1.25rem;
-    margin: 0 3rem 3rem;
-    background: linear-gradient(145deg,
-        rgba(0, 30, 60, 0.4) 0%,
-        rgba(20, 40, 80, 0.3) 100%);
-    border: 1px solid rgba(0, 217, 255, 0.15);
-    border-radius: 16px;
+    gap: 1rem;
+    padding: 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 420px;
+    /* Premium Modal gradient border */
+    background:
+        linear-gradient(135deg, rgba(12, 8, 24, 0.95) 0%, rgba(20, 12, 35, 0.92) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.35) 0%, rgba(155, 89, 182, 0.35) 100%) border-box;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* 상단 글로우 라인 */
+.visibility-toggle-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.6), rgba(155, 89, 182, 0.6), transparent);
+    border-radius: 2px;
 }
 
 .visibility-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.visibility-label::before {
+    content: '🔐';
     font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 500;
 }
 
 .visibility-options {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 14px;
+    position: relative;
+}
+
+/* 슬라이딩 배경 인디케이터 */
+.visibility-slider {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(155, 89, 182, 0.25) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
 }
 
 .visibility-toggle-section .visibility-btn {
+    position: relative;
+    z-index: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.25rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 25px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
+    gap: 0.25rem;
+    padding: 0.65rem 1rem;
+    min-width: 85px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.visibility-toggle-section .visibility-btn:hover {
-    background: rgba(155, 89, 182, 0.15);
-    border-color: rgba(155, 89, 182, 0.4);
+.visibility-toggle-section .visibility-btn .visibility-icon {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
 }
 
+.visibility-toggle-section .visibility-btn .visibility-text {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.visibility-toggle-section .visibility-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.visibility-toggle-section .visibility-btn:hover .visibility-icon {
+    transform: scale(1.1);
+}
+
+/* Active 상태 */
 .visibility-toggle-section .visibility-btn.active {
-    background: linear-gradient(135deg,
-        rgba(155, 89, 182, 0.3) 0%,
-        rgba(108, 92, 231, 0.3) 100%);
-    border-color: rgba(155, 89, 182, 0.6);
     color: #fff;
-    box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+}
+
+.visibility-toggle-section .visibility-btn.active .visibility-icon {
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* 비공개 - 회색 */
+.visibility-toggle-section .visibility-btn.private-btn.active {
+    color: rgba(180, 180, 190, 1);
+}
+
+/* 링크 공유 (기본) - Cyan */
+.visibility-toggle-section .visibility-btn.unlisted-btn.active {
+    color: rgba(0, 212, 255, 1);
+}
+
+/* 전체 공개 - Purple/Gold */
+.visibility-toggle-section .visibility-btn.public-btn.active {
+    color: rgba(200, 160, 255, 1);
+}
+
+/* ========================================
+   결과 액션 내 공개 설정 - 컴팩트 토글
+   ======================================== */
+
+.result-actions-right .visibility-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.result-actions-right .visibility-label::before {
+    content: '🔐';
+    font-size: 0.7rem;
+    margin-right: 0.4rem;
+}
+
+.result-actions-right .visibility-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0;
+    background: transparent;
+}
+
+.result-actions-right .visibility-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.result-actions-right .visibility-btn .visibility-icon {
+    font-size: 0.9rem;
+}
+
+.result-actions-right .visibility-btn .visibility-text {
+    flex: 1;
+    font-weight: 500;
+    text-align: left;
+}
+
+.result-actions-right .visibility-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Active 토글 상태 - 확실한 배경 */
+.result-actions-right .visibility-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(155, 89, 182, 0.12) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.15);
+}
+
+.result-actions-right .visibility-btn.private-btn.active {
+    background: rgba(180, 180, 190, 0.1);
+    border-color: rgba(180, 180, 190, 0.35);
+    box-shadow: none;
+}
+
+.result-actions-right .visibility-btn.unlisted-btn.active {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.18) 0%, rgba(0, 180, 220, 0.12) 100%);
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+
+.result-actions-right .visibility-btn.public-btn.active {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%);
+    border-color: rgba(200, 160, 255, 0.5);
+    box-shadow: 0 0 12px rgba(155, 89, 182, 0.2);
+}
+
+/* 공개 보너스 배지 */
+.visibility-bonus {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.15));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    color: rgba(255, 215, 0, 0.9);
+    margin-top: 0.2rem;
+}
+
+/* 툴팁 스타일 */
+.visibility-tooltip-wrapper {
+    position: relative;
+}
+
+.visibility-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.95);
+    min-width: 180px;
+    padding: 0.75rem 1rem;
+    background:
+        linear-gradient(135deg, rgba(8, 5, 18, 0.98) 0%, rgba(15, 10, 25, 0.97) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5) 0%, rgba(155, 89, 182, 0.5) 100%) border-box;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.visibility-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: rgba(15, 10, 25, 0.97);
+}
+
+.visibility-tooltip-wrapper:hover .visibility-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+.visibility-tooltip-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.visibility-tooltip-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.5;
+}
+
+.visibility-tooltip-highlight {
+    color: rgba(255, 215, 0, 0.9);
+    font-weight: 600;
 }
 
 .visibility-icon {
     font-size: 1rem;
+}
+
+/* 모바일 반응형 - 결과 액션 섹션 */
+@media (max-width: 480px) {
+    .result-actions-section {
+        flex-direction: column;
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .result-actions-left {
+        flex-direction: row;
+        padding-right: 0;
+        padding-bottom: 1rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .result-action-btn {
+        flex: 1;
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 0.25rem;
+    }
+
+    .result-action-btn .action-text {
+        font-size: 0.7rem;
+    }
+
+    .result-actions-right .visibility-options {
+        flex-direction: row;
+    }
+
+    .result-actions-right .visibility-btn {
+        flex: 1;
+        flex-direction: column;
+        padding: 0.4rem;
+        text-align: center;
+    }
+
+    .result-actions-right .visibility-btn .visibility-text {
+        text-align: center;
+        font-size: 0.65rem;
+    }
+
+    .action-badge {
+        font-size: 0.55rem;
+        padding: 0.1rem 0.3rem;
+        min-width: 28px;
+    }
 }
 
 /* ========================================
@@ -3880,7 +4547,9 @@
     align-items: center;
     gap: 0.75rem;
     padding: 2rem;
-    background: linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9));
+    background:
+        linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9)) padding-box,
+        linear-gradient(135deg, rgba(100, 150, 200, 0.3), rgba(150, 120, 180, 0.25)) border-box;
     border: 1px solid transparent;
     border-radius: 20px;
     cursor: pointer;
@@ -3888,6 +4557,12 @@
     position: relative;
     overflow: hidden;
     animation: riftPulse 4s ease-in-out infinite;
+}
+
+.sealed-message:hover {
+    background:
+        linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9)) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.6), rgba(155, 89, 182, 0.5)) border-box;
 }
 
 /* 차원의 틈 - 중앙 균열 효과 (파랑→보라 우주 그라데이션) */
@@ -4057,8 +4732,9 @@
 }
 
 .seal-hint {
+    font-family: 'RIDIBatang', 'Noto Serif KR', serif;
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 400;
     color: rgba(255, 220, 150, 0.95);
     font-style: normal;
     z-index: 2;
@@ -4078,6 +4754,8 @@
     transition: all 0.3s ease;
     margin-top: 0.5rem;
     text-shadow: 0 0 8px rgba(200, 240, 255, 0.6);
+    position: relative;
+    z-index: 10;
 }
 
 .unseal-btn:hover {
@@ -4090,20 +4768,71 @@
     border-color: rgba(200, 240, 255, 0.5);
 }
 
-/* 프리미엄 잠금 상태 */
+/* 프리미엄 잠금 상태 - Premium Button Style (Brand Color System) */
 .unseal-btn.locked {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 180, 0, 0.15));
-    border: 2px solid rgba(255, 215, 0, 0.4);
-    color: rgba(255, 215, 0, 0.95);
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, #00c6fb 0%, #6366f1 50%, #a855f7 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    text-shadow: none;
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
 }
 
 .unseal-btn.locked:hover {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(255, 180, 0, 0.25));
+    background: linear-gradient(135deg, #00d4ff 0%, #7c8dff 50%, #b366f1 100%);
     box-shadow:
-        0 0 15px rgba(255, 215, 0, 0.5),
-        0 5px 25px rgba(255, 180, 0, 0.3);
-    border-color: rgba(255, 215, 0, 0.6);
+        0 0 40px rgba(99, 102, 241, 0.6),
+        0 0 80px rgba(99, 102, 241, 0.3);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+/* 프리미엄 버튼 툴팁 - 차원의 틈 테마 */
+.unseal-btn.locked[data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    padding: 0.75rem 1.25rem;
+    background:
+        linear-gradient(145deg, rgba(5, 10, 30, 0.98), rgba(15, 25, 55, 0.97)) padding-box,
+        linear-gradient(135deg, rgba(100, 150, 255, 0.5), rgba(160, 120, 255, 0.4)) border-box;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: rgba(180, 200, 255, 0.95);
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(100, 150, 255, 0.2),
+        inset 0 0 20px rgba(100, 150, 255, 0.05);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.unseal-btn.locked[data-tooltip]::after {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    border: 7px solid transparent;
+    border-top-color: rgba(15, 25, 55, 0.97);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+}
+
+.unseal-btn.locked[data-tooltip]:hover::before,
+.unseal-btn.locked[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
 }
 
 /* 봉인 해제된 인사이트 - 양옆 3rem + 하단 그라데이션 border */
@@ -4299,11 +5028,11 @@
 /* 페이지 뷰 컨테이너 - 페이지 전체 스크롤 */
 .tarot-result-page {
     min-height: 100vh;
-    background: #000;
+    background: #08080c;
     position: relative;
 }
 
-/* 외부 검정 배경 + 별 효과 */
+/* 외부 어두운 배경 + 별 효과 */
 .tarot-result-page::before {
     content: '';
     position: fixed;
@@ -4311,10 +5040,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    /* 완전 검정 베이스 + 아주 미세한 파란 틴트 */
+    /* 어두운 검정 베이스 #08080c */
     background:
-        radial-gradient(ellipse at center, rgba(5, 15, 30, 0.3) 0%, #000 100%),
-        #000;
+        radial-gradient(ellipse at center, rgba(8, 10, 18, 0.5) 0%, #08080c 100%),
+        #08080c;
     pointer-events: none;
     z-index: 0;
 }
@@ -4420,18 +5149,36 @@
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
-    padding-top: 60px; /* 헤더에 가리지 않게 */
-    background: linear-gradient(165deg, #050a12 0%, #0c1628 30%, #080d18 70%, #030508 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 212, 255, 0.2);
+    padding-top: 0; /* 상단 여백 제거 - 이미지 바로 시작 */
+    border-radius: 20px;
+    /* 그라디언트 보더: padding-box/border-box 기법 + conic 그라디언트 (vivid) */
+    border: 3px solid transparent;
+    background:
+        linear-gradient(165deg, #050a12 0%, #0c1628 30%, #080d18 70%, #030508 100%) padding-box,
+        conic-gradient(
+            from 180deg at 50% 50%,
+            rgba(100, 50, 140, 0.5) 0deg,      /* 하단: 어두운 보라 */
+            rgba(255, 0, 85, 1) 45deg,         /* 왼쪽하단: 빨강 */
+            rgba(255, 0, 85, 1) 90deg,         /* 왼쪽: 빨강 (vivid) */
+            rgba(255, 100, 50, 0.95) 120deg,   /* 왼쪽상단: 주황 */
+            rgba(255, 215, 0, 1) 180deg,       /* 상단: 노랑 (vivid, top center) */
+            rgba(0, 212, 255, 1) 220deg,       /* 상단우측: 시안 */
+            rgba(155, 89, 182, 1) 270deg,      /* 오른쪽: 보라 (vivid) */
+            rgba(120, 60, 160, 0.7) 315deg,    /* 하단우측: 진보라 */
+            rgba(100, 50, 140, 0.5) 360deg     /* 다시 하단: 어두운 보라 */
+        ) border-box;
     box-shadow:
-        /* 양옆 subtle glacial glow */
-        -10px 0 30px rgba(0, 212, 255, 0.08),
-        10px 0 30px rgba(155, 89, 182, 0.06),
+        /* 왼쪽 빨강 글로우 (강화) */
+        -25px 0 60px rgba(255, 0, 85, 0.25),
+        /* 위쪽 노랑 글로우 (강화) */
+        0 -25px 60px rgba(255, 215, 0, 0.2),
+        /* 오른쪽 보라 글로우 (강화) */
+        25px 0 60px rgba(155, 89, 182, 0.25),
         /* 전체 은은한 글로우 */
-        0 0 60px rgba(0, 212, 255, 0.04),
-        inset 0 0 80px rgba(0, 212, 255, 0.01);
-    /* overflow: hidden 제거 - sticky 작동 필요 */
+        0 0 100px rgba(155, 89, 182, 0.1),
+        inset 0 0 80px rgba(100, 80, 150, 0.02);
+    /* overflow: clip으로 border-radius 클리핑 유지하면서 sticky 지원 */
+    overflow: clip;
 }
 
 /* ========================================
@@ -4452,26 +5199,26 @@
     overflow: hidden;
 }
 
-/* 배경 글로우 효과 - glacial theme */
+/* 배경 글로우 효과 - 성능 최적화 (blur 제거, 큰 radial-gradient로 대체) */
 .vn-bg-glow {
     position: absolute;
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 30%, transparent 60%);
     animation: glowFloat 8s ease-in-out infinite;
-    top: 20%;
-    left: 30%;
-    filter: blur(60px);
+    top: 15%;
+    left: 25%;
+    /* filter: blur 제거 - 성능 최적화 */
 }
 
 .vn-bg-glow.secondary {
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(155, 89, 182, 0.08) 0%, transparent 70%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(155, 89, 182, 0.12) 0%, rgba(155, 89, 182, 0.04) 30%, transparent 60%);
     animation: glowFloat 10s ease-in-out infinite reverse;
-    top: 50%;
-    left: 55%;
+    top: 45%;
+    left: 50%;
     animation-delay: -3s;
 }
 
@@ -4503,7 +5250,6 @@
         radial-gradient(1.5px 1.5px at 85% 35%, rgba(180, 140, 255, 0.4), transparent);
     background-size: 300px 300px;
     animation: particleDrift 30s linear infinite;
-    will-change: transform;
 }
 
 @keyframes particleDrift {
@@ -4650,7 +5396,7 @@
     aspect-ratio: 16 / 9;
     max-height: 450px;
     overflow: hidden;
-    border-radius: 8px 8px 0 0;
+    border-radius: 0; /* border-radius 제거 */
 }
 
 /* 히어로 하단 섬세한 divider */
@@ -5221,10 +5967,10 @@
     position: sticky;
     top: 0;
     z-index: 50;
-    background: linear-gradient(180deg, rgba(10, 0, 20, 0.98), rgba(10, 0, 20, 0.95));
+    background: linear-gradient(180deg, rgba(10, 0, 20, 0.99), rgba(10, 0, 20, 0.97));
     padding: 1rem 1.5rem;
     border-bottom: 2px solid rgba(255, 0, 85, 0.3);
-    backdrop-filter: blur(10px);
+    /* backdrop-filter 제거 - 성능 최적화 */
 }
 
 .card-bar-instruction {
@@ -5974,7 +6720,7 @@
 }
 
 /* ========================================
-   Persona Style 카드 바 - 심플 이미지 그리드
+   Persona Style 카드 바 - Premium Modal Style
    ======================================== */
 .persona-card-bar {
     position: sticky;
@@ -5985,7 +6731,11 @@
     overflow: visible;
     opacity: 0;
     transition: opacity 0.5s ease;
-    background: rgb(10, 5, 20);
+    /* Premium Modal 스타일 배경 + 그라디언트 보더 */
+    background: linear-gradient(165deg, rgba(12, 8, 24, 0.99) 0%, rgba(20, 12, 35, 0.98) 40%, rgba(8, 5, 18, 1) 100%);
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, transparent 0%, rgba(0, 212, 255, 0.5) 30%, rgba(155, 89, 182, 0.5) 70%, transparent 100%) 1;
 }
 
 /* 상단 divider 라인 - 별도 요소로 처리 */
@@ -6009,9 +6759,9 @@
     height: 1px;
     background: linear-gradient(90deg,
         transparent 0%,
-        rgba(255, 107, 107, 0.5) 20%,
-        rgba(255, 215, 0, 0.7) 50%,
-        rgba(255, 107, 107, 0.5) 80%,
+        rgba(0, 212, 255, 0.5) 20%,
+        rgba(155, 89, 182, 0.7) 50%,
+        rgba(0, 212, 255, 0.5) 80%,
         transparent 100%
     );
 }
@@ -6020,9 +6770,9 @@
     position: relative;
     z-index: 1;
     font-size: 0.7rem;
-    color: #ffd700;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
-    background: rgb(10, 5, 20);
+    color: #00d4ff;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
+    background: rgba(12, 8, 24, 1);
     padding: 0 0.75rem;
 }
 
@@ -6030,21 +6780,21 @@
     opacity: 1;
 }
 
-/* 배경 패턴 - 미묘한 그리드 */
+/* 배경 패턴 - 미묘한 그리드 (cyan/purple) */
 .persona-bg-pattern {
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(rgba(180, 100, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(180, 100, 255, 0.03) 1px, transparent 1px);
+        linear-gradient(rgba(0, 212, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(155, 89, 182, 0.02) 1px, transparent 1px);
     background-size: 20px 20px;
     pointer-events: none;
 }
 
-/* 헤더 */
+/* 헤더 - 상단 border와 카드 사이 적절한 여유 */
 .persona-bar-header {
     text-align: center;
-    padding: 0.5rem 0 1rem;
+    padding: 0 0 1rem 0;
 }
 
 .persona-bar-label {
@@ -6052,8 +6802,57 @@
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.25em;
-    color: rgba(255, 200, 100, 0.8);
-    text-shadow: 0 0 10px rgba(255, 200, 100, 0.3);
+    transition: all 0.5s ease;
+}
+
+/* SELECT YOUR DESTINY - blink effect like VN Intro */
+.persona-bar-label.selecting {
+    color: rgba(150, 200, 255, 0.9);
+    text-shadow:
+        0 0 15px rgba(0, 212, 255, 0.6),
+        0 0 30px rgba(155, 89, 182, 0.4),
+        1px 1px 2px rgba(0, 0, 0, 0.8);
+    animation: selectingBlink 2s ease-in-out infinite;
+}
+
+@keyframes selectingBlink {
+    0%, 100% {
+        opacity: 0.5;
+        text-shadow:
+            0 0 10px rgba(0, 212, 255, 0.4),
+            0 0 20px rgba(155, 89, 182, 0.2),
+            1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    50% {
+        opacity: 1;
+        text-shadow:
+            0 0 20px rgba(0, 212, 255, 0.8),
+            0 0 40px rgba(155, 89, 182, 0.5),
+            1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+}
+
+/* ALL CARDS REVEALED - flashy gradient, no blink */
+.persona-bar-label.revealed {
+    background: linear-gradient(
+        90deg,
+        #00d9ff 0%,
+        #9b59b6 30%,
+        #ff0055 50%,
+        #ffd080 70%,
+        #00d9ff 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: revealedShimmer 3s linear infinite;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.5)) drop-shadow(0 0 15px rgba(155, 89, 182, 0.3));
+}
+
+@keyframes revealedShimmer {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
 }
 
 /* 카드 row - 간격 있는 그리드 */
@@ -6062,7 +6861,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 0.75rem;
     width: 100%;
-    padding: 0 1rem;
+    padding: 0 0.75rem;
 }
 
 /* 개별 카드 - 크게, 카드 느낌 */
@@ -6091,11 +6890,11 @@
 @keyframes cardReadyPulse {
     0%, 100% {
         filter: brightness(1);
-        box-shadow: 0 0 0 rgba(180, 100, 255, 0);
+        box-shadow: 0 0 0 rgba(0, 212, 255, 0);
     }
     50% {
         filter: brightness(1.15);
-        box-shadow: 0 0 30px rgba(180, 100, 255, 0.6), 0 0 60px rgba(180, 100, 255, 0.3);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(155, 89, 182, 0.3);
     }
 }
 
@@ -6108,20 +6907,21 @@
     filter: brightness(1.15);
 }
 
-/* 카드 내부 - 카드 테두리 스타일 */
+/* 카드 내부 - Premium Modal 스타일 테두리 */
 .persona-card-inner {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: linear-gradient(135deg, #1a1a2e 0%, #0d0d1a 100%);
+    background: linear-gradient(135deg, rgba(12, 8, 24, 0.95) 0%, rgba(8, 5, 18, 0.98) 100%);
     border-radius: 8px;
-    border: 2px solid rgba(180, 100, 255, 0.3);
-    transition: border-color 0.3s ease;
+    border: 2px solid rgba(155, 89, 182, 0.3);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .persona-card.ready .persona-card-inner {
-    border-color: rgba(254, 0, 85, 0.6);
+    border-color: rgba(0, 212, 255, 0.6);
+    box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.1);
 }
 
 /* 마지막 카드 스타일 유지 */
@@ -6134,8 +6934,8 @@
 }
 
 .persona-card.finale .persona-card-inner {
-    background: linear-gradient(135deg, #1a1508 0%, #0d0d05 100%);
-    border-color: rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, rgba(20, 12, 35, 0.95) 0%, rgba(12, 8, 24, 0.98) 100%);
+    border-color: rgba(155, 89, 182, 0.5);
 }
 
 /* 카드 이미지 - cover로 꽉 채우기 */
@@ -6188,7 +6988,7 @@
     text-shadow: 1px 1px 2px #000;
 }
 
-/* 카드 뒷면 - 미스터리한 패턴 */
+/* 카드 뒷면 - Premium Modal 스타일 */
 .persona-card-back {
     position: relative;
     display: flex;
@@ -6196,7 +6996,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    background: linear-gradient(135deg, #1a1a2e 0%, #0d0d1a 100%);
+    background: linear-gradient(135deg, rgba(12, 8, 24, 0.95) 0%, rgba(8, 5, 18, 0.98) 100%);
     overflow: hidden;
 }
 
@@ -6205,7 +7005,7 @@
     content: '';
     position: absolute;
     inset: 8px;
-    border: 1px solid rgba(180, 100, 255, 0.15);
+    border: 1px solid rgba(0, 212, 255, 0.15);
     border-radius: 4px;
     pointer-events: none;
 }
@@ -6213,41 +7013,17 @@
 .persona-card-symbol {
     position: relative;
     font-size: 2rem;
-    color: rgba(254, 0, 85, 0.5);
-    text-shadow: 0 0 12px rgba(254, 0, 85, 0.4);
+    /* Primary Yellow - #ffd080 */
+    color: #ffd080;
+    text-shadow: 0 0 10px rgba(255, 208, 128, 0.5);
     z-index: 3;
 }
 
-/* 클릭 가능할 때 - 빨간색 → 보라색 → 골드 순환 애니메이션 */
+/* 클릭 가능할 때 - 노랑 글로우 펄스 */
 .persona-card.ready .persona-card-symbol {
-    animation: symbolColorShift 2.5s ease-in-out infinite, symbolPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes symbolColorShift {
-    0%, 100% {
-        color: #fe0055;
-        text-shadow:
-            0 0 10px rgba(254, 0, 85, 0.9),
-            0 0 20px rgba(254, 0, 85, 0.7),
-            0 0 35px rgba(254, 0, 85, 0.5),
-            0 0 50px rgba(254, 0, 85, 0.3);
-    }
-    33% {
-        color: #b464ff;
-        text-shadow:
-            0 0 10px rgba(180, 100, 255, 0.9),
-            0 0 20px rgba(180, 100, 255, 0.7),
-            0 0 35px rgba(180, 100, 255, 0.5),
-            0 0 50px rgba(180, 100, 255, 0.3);
-    }
-    66% {
-        color: #ffd700;
-        text-shadow:
-            0 0 10px rgba(255, 215, 0, 0.9),
-            0 0 20px rgba(255, 215, 0, 0.7),
-            0 0 35px rgba(255, 215, 0, 0.5),
-            0 0 50px rgba(255, 215, 0, 0.3);
-    }
+    animation: symbolPulse 1.5s ease-in-out infinite;
+    color: #ffd080;
+    text-shadow: 0 0 15px rgba(255, 208, 128, 0.8), 0 0 30px rgba(255, 208, 128, 0.4);
 }
 
 @keyframes symbolPulse {
@@ -6259,48 +7035,120 @@
     }
 }
 
-/* Pulse 원 - ready 상태에서만 (z-index 1로 텍스트 뒤에) */
+/* Pulse 원 - ready 상태에서만 (purple 먼저 → cyan) */
+/* 심볼 기준 중앙 정렬: tap-hint 높이만큼 위로 offset */
 .persona-card.ready .persona-card-back .pulse-ring {
     position: absolute;
-    top: 50%;
+    top: calc(50% - 14px);  /* 심볼 위치에 맞춤 (tap-hint offset) */
     left: 50%;
     transform: translate(-50%, -50%);
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 2px solid;
+    border: 2px solid rgba(155, 89, 182, 0.8);
+    box-shadow: 0 0 15px rgba(155, 89, 182, 0.4);
     z-index: 1;
-    animation: pulseRing 2.5s ease-out infinite;
+    animation: pulseRingPurple 2.5s ease-out infinite;
 }
 
 .persona-card.ready .persona-card-back .pulse-ring:nth-child(2) {
+    border-color: rgba(0, 212, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+    animation: pulseRingCyan 2.5s ease-out infinite;
     animation-delay: 0.8s;
 }
 
-@keyframes pulseRing {
+@keyframes pulseRingPurple {
     0% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, calc(-50%)) scale(1);
         opacity: 1;
-        border-color: rgba(254, 0, 85, 0.9);
-        box-shadow: 0 0 20px rgba(254, 0, 85, 0.6);
-    }
-    33% {
-        border-color: rgba(180, 100, 255, 0.8);
-        box-shadow: 0 0 25px rgba(180, 100, 255, 0.5);
-    }
-    66% {
-        border-color: rgba(255, 215, 0, 0.8);
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        border-color: rgba(155, 89, 182, 0.9);
+        box-shadow: 0 0 20px rgba(155, 89, 182, 0.6);
     }
     100% {
-        transform: translate(-50%, -50%) scale(4);
+        transform: translate(-50%, calc(-50%)) scale(4);
         opacity: 0;
-        border-color: rgba(254, 0, 85, 0);
-        box-shadow: 0 0 0 rgba(254, 0, 85, 0);
+        border-color: rgba(155, 89, 182, 0);
+        box-shadow: 0 0 0 rgba(155, 89, 182, 0);
     }
 }
 
-/* 탭 힌트 - 고정 색상, 애니메이션 없음 */
+@keyframes pulseRingCyan {
+    0% {
+        transform: translate(-50%, calc(-50%)) scale(1);
+        opacity: 1;
+        border-color: rgba(0, 212, 255, 0.9);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    }
+    100% {
+        transform: translate(-50%, calc(-50%)) scale(4);
+        opacity: 0;
+        border-color: rgba(0, 212, 255, 0);
+        box-shadow: 0 0 0 rgba(0, 212, 255, 0);
+    }
+}
+
+/* 결과 카드 (finale) 전용 특별 Pulse - luminous 다양한 색상 */
+.persona-card.finale.ready .persona-card-back .pulse-ring {
+    border: 3px solid rgba(255, 215, 0, 1);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.7), 0 0 50px rgba(155, 89, 182, 0.3);
+    animation: pulseRingFinale1 2.5s ease-out infinite;
+}
+
+.persona-card.finale.ready .persona-card-back .pulse-ring:nth-child(2) {
+    border-color: rgba(255, 100, 150, 1);
+    box-shadow: 0 0 25px rgba(255, 100, 150, 0.7), 0 0 50px rgba(0, 212, 255, 0.3);
+    animation: pulseRingFinale2 2.5s ease-out infinite;
+    animation-delay: 0.8s;
+}
+
+@keyframes pulseRingFinale1 {
+    0% {
+        transform: translate(-50%, calc(-50%)) scale(1);
+        opacity: 1;
+        border-color: rgba(255, 215, 0, 1);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(155, 89, 182, 0.4);
+    }
+    33% {
+        border-color: rgba(0, 212, 255, 1);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+    }
+    66% {
+        border-color: rgba(155, 89, 182, 1);
+        box-shadow: 0 0 30px rgba(155, 89, 182, 0.8), 0 0 60px rgba(255, 100, 150, 0.4);
+    }
+    100% {
+        transform: translate(-50%, calc(-50%)) scale(4);
+        opacity: 0;
+        border-color: rgba(255, 215, 0, 0);
+        box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    }
+}
+
+@keyframes pulseRingFinale2 {
+    0% {
+        transform: translate(-50%, calc(-50%)) scale(1);
+        opacity: 1;
+        border-color: rgba(255, 100, 150, 1);
+        box-shadow: 0 0 30px rgba(255, 100, 150, 0.8), 0 0 60px rgba(0, 212, 255, 0.4);
+    }
+    33% {
+        border-color: rgba(155, 89, 182, 1);
+        box-shadow: 0 0 30px rgba(155, 89, 182, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+    }
+    66% {
+        border-color: rgba(0, 212, 255, 1);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.8), 0 0 60px rgba(155, 89, 182, 0.4);
+    }
+    100% {
+        transform: translate(-50%, calc(-50%)) scale(4);
+        opacity: 0;
+        border-color: rgba(255, 100, 150, 0);
+        box-shadow: 0 0 0 rgba(255, 100, 150, 0);
+    }
+}
+
+/* 탭 힌트 - 솔리드 배경, 애니메이션 없음 */
 .persona-tap-hint {
     position: relative;
     z-index: 3;
@@ -6310,8 +7158,44 @@
     color: #fff;
     margin-top: 0.5rem;
     padding: 0.3rem 0.6rem;
-    background: rgba(254, 0, 85, 0.6);
+    /* 솔리드 보라색 배경 - opacity 1 */
+    background: rgb(88, 55, 130);
     border-radius: 4px;
+    border: 1px solid rgba(155, 89, 182, 0.5);
+}
+
+/* 결론 카드 탭 힌트 - 특별 그라데이션 */
+.persona-card.finale .persona-tap-hint {
+    background: linear-gradient(135deg, #9b59b6 0%, #00d4ff 50%, #ffd080 100%);
+    border: 1px solid rgba(255, 208, 128, 0.6);
+    /* 그라디언트 배경 + 노란 텍스트 + 검정 아웃라인 */
+    color: #ffd080;
+    font-weight: 800;
+    text-shadow:
+        1px 1px 0 #000,
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        0 0 8px rgba(255, 208, 128, 0.6);
+    box-shadow: 0 0 15px rgba(155, 89, 182, 0.5);
+}
+
+/* 비활성 카드 라벨 - dimmed */
+.persona-tap-hint.inactive {
+    opacity: 0.35;
+    background: rgba(50, 40, 70, 0.6);
+    border-color: rgba(100, 80, 130, 0.3);
+    color: rgba(180, 170, 200, 0.7);
+}
+
+/* 결론 카드 ? 미스터리 스타일 (inactive) - 동일한 높이 유지 */
+.persona-card.finale .persona-tap-hint.inactive {
+    background: rgba(50, 40, 70, 0.5);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    color: rgba(200, 180, 220, 0.5);
+    /* font-size 동일하게 유지 (높이 일관성) */
+    text-shadow: none;
+    box-shadow: none;
 }
 
 /* 카드 번호 - 숨김 */
@@ -6440,68 +7324,42 @@
     border-radius: 16px;
 }
 
-/* 카드별 다른 색상 Glow - 카드 1: 보라-핑크 (한 번만 애니메이션) */
-.card-hero-image.card-index-0::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    background: linear-gradient(135deg,
-        rgba(155, 89, 182, 0.6) 0%,
-        rgba(180, 100, 255, 0.5) 50%,
-        rgba(255, 100, 150, 0.4) 100%
-    );
-    border-radius: 28px;
-    filter: blur(25px);
-    z-index: -1;
-    animation: glowFadeIn 1.5s ease-out forwards;
+/* 카드별 다른 색상 Glow - box-shadow 방식 (GPU 가속, 성능 최적화) */
+/* 카드 1: 보라-핑크 */
+.card-hero-image.card-index-0 {
+    box-shadow:
+        0 0 30px rgba(155, 89, 182, 0.4),
+        0 0 60px rgba(180, 100, 255, 0.2);
+    animation: cardGlowFadeIn 1.5s ease-out forwards;
 }
 
 /* 카드 2: 파랑-청록 */
-.card-hero-image.card-index-1::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    background: linear-gradient(135deg,
-        rgba(52, 152, 219, 0.6) 0%,
-        rgba(100, 200, 255, 0.5) 50%,
-        rgba(26, 188, 156, 0.4) 100%
-    );
-    border-radius: 28px;
-    filter: blur(25px);
-    z-index: -1;
-    animation: glowFadeIn 1.5s ease-out forwards;
+.card-hero-image.card-index-1 {
+    box-shadow:
+        0 0 30px rgba(52, 152, 219, 0.4),
+        0 0 60px rgba(26, 188, 156, 0.2);
+    animation: cardGlowFadeIn 1.5s ease-out forwards;
 }
 
 /* 카드 3: 오렌지-핑크 */
-.card-hero-image.card-index-2::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    background: linear-gradient(135deg,
-        rgba(255, 150, 50, 0.6) 0%,
-        rgba(255, 100, 100, 0.5) 50%,
-        rgba(255, 0, 85, 0.4) 100%
-    );
-    border-radius: 28px;
-    filter: blur(25px);
-    z-index: -1;
-    animation: glowFadeIn 1.5s ease-out forwards;
+.card-hero-image.card-index-2 {
+    box-shadow:
+        0 0 30px rgba(255, 100, 100, 0.4),
+        0 0 60px rgba(255, 0, 85, 0.2);
+    animation: cardGlowFadeIn 1.5s ease-out forwards;
 }
 
 /* 카드 4 (결론): 골드 */
-.card-hero-image.card-index-3::before {
-    content: '';
-    position: absolute;
-    inset: -20px;
-    background: linear-gradient(135deg,
-        rgba(255, 215, 0, 0.7) 0%,
-        rgba(255, 180, 50, 0.6) 50%,
-        rgba(255, 150, 0, 0.5) 100%
-    );
-    border-radius: 28px;
-    filter: blur(25px);
-    z-index: -1;
-    animation: glowFadeIn 1.5s ease-out forwards;
+.card-hero-image.card-index-3 {
+    box-shadow:
+        0 0 30px rgba(255, 215, 0, 0.5),
+        0 0 60px rgba(255, 150, 0, 0.25);
+    animation: cardGlowFadeIn 1.5s ease-out forwards;
+}
+
+@keyframes cardGlowFadeIn {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
 }
 
 /* Glow 한 번만 페이드인 후 유지 */
@@ -6783,13 +7641,6 @@
 .tarot-result-page.revealed .tarot-result-content {
     opacity: 1;
     transform: scale(1) translateY(0);
-}
-
-/* 상단 보더 수정 - 페이지 전체 */
-.tarot-result-content {
-    border-top: 3px solid;
-    border-image: linear-gradient(90deg, #ff0055, #ffd700, #9b59b6) 1;
-    padding-top: 0;
 }
 
 /* ========================================
@@ -7492,9 +8343,10 @@
     padding-top: 0 !important;
 }
 
-/* sealed-insight-section margin 0 */
+/* sealed-insight-section - 아래 advice-grid와 갭 */
 .sealed-insight-section {
     margin: 0 !important;
+    margin-bottom: 2rem !important;
 }
 
 /* sealed-message margin */
@@ -7568,26 +8420,13 @@
     padding: 1.5rem 1rem;
     z-index: 1000;
     overflow: hidden;
-    /* Glacial blue + purple, 중앙 blur 더 어둡게, 바깥 검은색 */
-    background:
-        radial-gradient(ellipse 50% 40% at 50% 45%, rgba(60, 80, 130, 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 50% 50%, rgba(80, 60, 120, 0.1) 0%, transparent 60%),
-        radial-gradient(ellipse at center, rgba(15, 12, 30, 0.98) 0%, rgba(5, 4, 12, 0.99) 40%, rgba(0, 0, 0, 1) 100%);
+    /* VN Intro 스타일 배경 - 단순화 */
+    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%);
 }
 
-/* 중앙 신비로운 blur 효과 - 더 어둡게 */
+/* 중앙 blur 효과 제거 - VN Intro 스타일로 단순화 */
 .tarot-table::before {
-    content: '';
-    position: absolute;
-    width: 60%;
-    height: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(70, 90, 140, 0.08) 0%, rgba(60, 50, 100, 0.05) 40%, transparent 70%);
-    filter: blur(80px);
-    pointer-events: none;
+    content: none; /* 원형 blur 효과 제거 */
 }
 
 .tarot-table::after {
@@ -7608,39 +8447,38 @@
     user-select: none;
 }
 
-/* 별 - 작고 은은한 반짝임, cursor 제거 */
+/* 별 - 정적 (애니메이션 제거) */
 .star {
     position: absolute;
     width: 3px;
     height: 3px;
-    background: rgba(200, 210, 255, 0.9);
+    background: rgba(200, 210, 255, 0.7);
     border-radius: 50%;
-    box-shadow: 0 0 6px 2px rgba(180, 200, 255, 0.6),
-                0 0 12px 4px rgba(150, 170, 220, 0.3);
-    animation: starTwinkle 3s ease-in-out infinite;
+    box-shadow: 0 0 4px 1px rgba(180, 200, 255, 0.4);
+    opacity: 0.6; /* 정적 상태 */
     pointer-events: none;
     cursor: default;
 }
 
-/* 별 위치 - 바깥쪽 + 중앙쪽으로 40% 추가 */
-.star.star-1 { top: 8%; left: 5%; animation-delay: 0s; }
-.star.star-2 { top: 12%; left: 15%; animation-delay: -0.7s; width: 2px; height: 2px; }
-.star.star-3 { top: 5%; left: 28%; animation-delay: -1.5s; }
-.star.star-4 { top: 18%; left: 3%; animation-delay: -2.2s; width: 2px; height: 2px; }
-.star.star-5 { top: 6%; right: 25%; animation-delay: -0.3s; }
-.star.star-6 { top: 10%; right: 12%; animation-delay: -1.8s; width: 2px; height: 2px; }
-.star.star-7 { top: 4%; right: 6%; animation-delay: -2.5s; }
-.star.star-8 { top: 15%; right: 2%; animation-delay: -0.9s; width: 2px; height: 2px; }
-.star.star-9 { bottom: 25%; left: 4%; animation-delay: -1.2s; }
-.star.star-10 { bottom: 18%; left: 10%; animation-delay: -2s; width: 2px; height: 2px; }
-.star.star-11 { bottom: 30%; right: 5%; animation-delay: -0.5s; }
-.star.star-12 { bottom: 22%; right: 12%; animation-delay: -1.7s; width: 2px; height: 2px; }
+/* 별 위치 - 정적 (애니메이션 없음) */
+.star.star-1 { top: 8%; left: 5%; }
+.star.star-2 { top: 12%; left: 15%; width: 2px; height: 2px; }
+.star.star-3 { top: 5%; left: 28%; }
+.star.star-4 { top: 18%; left: 3%; width: 2px; height: 2px; }
+.star.star-5 { top: 6%; right: 25%; }
+.star.star-6 { top: 10%; right: 12%; width: 2px; height: 2px; }
+.star.star-7 { top: 4%; right: 6%; }
+.star.star-8 { top: 15%; right: 2%; width: 2px; height: 2px; }
+.star.star-9 { bottom: 25%; left: 4%; }
+.star.star-10 { bottom: 18%; left: 10%; width: 2px; height: 2px; }
+.star.star-11 { bottom: 30%; right: 5%; }
+.star.star-12 { bottom: 22%; right: 12%; width: 2px; height: 2px; }
 /* 중앙쪽 추가 별들 */
-.star.star-13 { top: 25%; left: 22%; animation-delay: -0.4s; width: 2px; height: 2px; }
-.star.star-14 { top: 35%; left: 8%; animation-delay: -1.1s; }
-.star.star-15 { top: 28%; right: 18%; animation-delay: -1.9s; width: 2px; height: 2px; }
-.star.star-16 { top: 40%; right: 6%; animation-delay: -0.6s; }
-.star.star-17 { bottom: 40%; left: 15%; animation-delay: -2.3s; width: 2px; height: 2px; }
+.star.star-13 { top: 25%; left: 22%; width: 2px; height: 2px; }
+.star.star-14 { top: 35%; left: 8%; }
+.star.star-15 { top: 28%; right: 18%; width: 2px; height: 2px; }
+.star.star-16 { top: 40%; right: 6%; }
+.star.star-17 { bottom: 40%; left: 15%; width: 2px; height: 2px; }
 
 @keyframes starTwinkle {
     0%, 100% {
@@ -8041,36 +8879,37 @@
     transform: scale(1.05);
 }
 
-/* 선택 슬롯 - 스프레드 카드와 동일 크기 (116x174) */
+/* 선택 슬롯 - 스프레드 카드와 동일 크기 (116x174) - Blue-Purple Theme */
 .slot-card {
     width: 116px;
     height: 174px;
     border-radius: 10px;
     background:
-        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(180, 200, 255, 0.15) 0%, transparent 60%),
-        linear-gradient(170deg, #3a4570 0%, #2a3355 25%, #1e2545 50%, #151c35 75%, #0f1428 100%);
+        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(99, 102, 241, 0.2) 0%, transparent 60%),
+        linear-gradient(170deg, #2a2855 0%, #1e1e45 25%, #151535 50%, #0f0f28 75%, #080815 100%);
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 미세한 white glow */
+    /* Blue-purple glow 강화 */
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.4),
-        0 0 12px rgba(255, 255, 255, 0.15),
-        0 0 20px rgba(200, 210, 255, 0.1);
+        0 8px 25px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(99, 102, 241, 0.3),
+        0 0 40px rgba(139, 92, 246, 0.2),
+        0 0 60px rgba(168, 85, 247, 0.1);
     transition: all 0.15s ease-out;
     position: relative;
     animation: slotCardIn 0.25s ease-out;
 }
 
-/* gradient border - pseudo element */
+/* gradient border - Blue-Purple Theme */
 .slot-card::before {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: 10px;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(200, 180, 255, 0.4) 0%, rgba(150, 130, 200, 0.2) 50%, rgba(180, 160, 220, 0.3) 100%);
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6) 0%, rgba(99, 102, 241, 0.4) 35%, rgba(139, 92, 246, 0.5) 70%, rgba(168, 85, 247, 0.6) 100%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
@@ -8078,17 +8917,17 @@
     pointer-events: none;
 }
 
-/* 각 슬롯별 다른 gradient border 색상 */
+/* 각 슬롯별 다른 gradient border 색상 - Blue-Purple Theme 유지 */
 .selected-slot:nth-child(1) .slot-card::before {
-    background: linear-gradient(135deg, rgba(255, 200, 150, 0.5) 0%, rgba(220, 180, 140, 0.2) 50%, rgba(255, 210, 170, 0.4) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.7) 0%, rgba(99, 102, 241, 0.4) 50%, rgba(139, 92, 246, 0.6) 100%);
 }
 
 .selected-slot:nth-child(2) .slot-card::before {
-    background: linear-gradient(135deg, rgba(200, 220, 255, 0.5) 0%, rgba(170, 190, 230, 0.2) 50%, rgba(210, 230, 255, 0.4) 100%);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.7) 0%, rgba(139, 92, 246, 0.4) 50%, rgba(168, 85, 247, 0.6) 100%);
 }
 
 .selected-slot:nth-child(3) .slot-card::before {
-    background: linear-gradient(135deg, rgba(220, 200, 255, 0.5) 0%, rgba(190, 170, 230, 0.2) 50%, rgba(230, 210, 255, 0.4) 100%);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.7) 0%, rgba(168, 85, 247, 0.4) 50%, rgba(192, 132, 252, 0.6) 100%);
 }
 
 @keyframes slotCardIn {
@@ -8109,23 +8948,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 모든 심볼 푸른빛 glow */
-    color: #c0d8ff;
+    /* Blue-Purple glow 강화 */
+    color: #c4b5fd;
     text-shadow:
-        0 0 15px rgba(180, 210, 255, 0.8),
-        0 0 30px rgba(150, 190, 255, 0.5),
-        0 0 45px rgba(120, 160, 255, 0.3);
-    filter: drop-shadow(0 0 8px rgba(180, 210, 255, 0.6));
+        0 0 15px rgba(139, 92, 246, 0.9),
+        0 0 30px rgba(99, 102, 241, 0.6),
+        0 0 50px rgba(168, 85, 247, 0.4);
+    filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.7));
 }
 
-/* 빈 슬롯 - 스프레드 카드와 동일 크기 (116x174) */
+/* 빈 슬롯 - Blue-Purple Theme */
 .tarot-table .selected-cards-area .selected-slot .slot-empty {
     width: 116px !important;
     height: 174px !important;
     border-radius: 10px !important;
-    background: rgba(25, 30, 50, 0.6) !important;
-    border: 1px dashed rgba(80, 90, 130, 0.4) !important;
-    border-color: rgba(80, 90, 130, 0.4) !important;
+    background: rgba(20, 15, 40, 0.7) !important;
+    border: 2px dashed rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1), inset 0 0 30px rgba(139, 92, 246, 0.05) !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -8136,7 +8975,7 @@
 .tarot-table .slot-label {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
     font-size: 0.75rem !important;
-    color: rgba(140, 150, 180, 0.5) !important;
+    color: rgba(139, 92, 246, 0.5) !important;
     letter-spacing: 0.02em !important;
     font-weight: 400 !important;
 }
@@ -8371,4 +9210,641 @@
 .tarot-view .card-selection-phase {
     overflow: hidden;
     max-width: 100vw;
+}
+
+/* ========== 하단 뒤로가기 버튼 ========== */
+.bottom-back-section {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+}
+
+.bottom-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bottom-back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+}
+
+.bottom-back-btn:active {
+    transform: translateY(0);
+}
+
+/* ========== 엔게이지먼트 사이드 패널 (Desktop: 오른쪽 / Mobile: 하단) ========== */
+
+/* 엔게이지먼트 사이드 패널 (Desktop) - fixed 위치로 오른쪽, 메인 콘텐츠는 원래 위치 유지 */
+.engagement-panel {
+    position: fixed;
+    top: 100px;
+    right: 24px;
+    width: 300px;
+    height: calc(100vh - 140px);
+    padding: 0;
+    z-index: 100;
+    opacity: 0.25;
+    transition: opacity 0.15s ease-out;
+}
+
+.engagement-panel:hover {
+    opacity: 1;
+}
+
+.engagement-panel-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: rgba(15, 10, 30, 0.85);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* 좋아요 섹션 */
+.engagement-like-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    gap: 0.5rem;
+}
+
+/* 좋아요 버튼 - Hover 이모지 효과 */
+.like-button-fancy {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.like-button-fancy:hover {
+    transform: scale(1.1);
+    border-color: rgba(236, 72, 153, 0.5);
+    background: rgba(236, 72, 153, 0.1);
+    box-shadow: 0 0 25px rgba(236, 72, 153, 0.3);
+}
+
+.like-button-fancy.liked {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.2));
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.like-button-fancy.liked:hover {
+    border-color: rgba(168, 85, 247, 0.7);
+}
+
+/* 이모지 레이어 */
+.like-emoji-default,
+.like-emoji-hover {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.like-emoji-default {
+    opacity: 1;
+}
+
+.like-emoji-hover {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+.like-button-fancy:hover .like-emoji-default {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+.like-button-fancy:hover .like-emoji-hover {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: heartBeat 0.6s ease;
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    25% { transform: translate(-50%, -50%) scale(1.2); }
+    50% { transform: translate(-50%, -50%) scale(0.95); }
+    75% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* 좋아요 누를 때 ripple 효과 */
+.like-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.4), transparent 70%);
+    pointer-events: none;
+}
+
+.like-button-fancy.liked .like-ripple {
+    animation: rippleOut 0.6s ease-out;
+}
+
+@keyframes rippleOut {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+/* 좋아요 개수 */
+.like-count {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.5px;
+}
+
+/* 구분선 */
+.engagement-divider {
+    height: 1px;
+    margin: 0 1.25rem;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+}
+
+/* 조회수 & 게시일 - 심플 텍스트 */
+.engagement-stats-simple {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.engagement-stats-simple .stat-text {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.3px;
+}
+
+.engagement-stats-simple .stat-dot {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* 댓글 헤더 */
+.comments-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+}
+
+.comments-icon {
+    font-size: 1.1rem;
+}
+
+.comments-title {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.comments-count-badge {
+    padding: 0.2rem 0.6rem;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #c4b5fd;
+}
+
+/* 댓글 입력 영역 */
+.comment-input-area {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.comment-form {
+    width: 100%;
+}
+
+.comment-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.2s;
+}
+
+.comment-input-wrapper:focus-within {
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+}
+
+.comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.comment-avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+}
+
+.comment-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+    outline: none;
+}
+
+.comment-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.comment-submit-btn {
+    padding: 0.6rem 1.25rem;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.comment-submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.comment-submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* 로그인 프롬프트 */
+.comment-login-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.comment-login-prompt:hover {
+    background: rgba(139, 92, 246, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.login-icon {
+    font-size: 1.1rem;
+}
+
+/* 댓글 리스트 */
+.comments-list {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    padding: 1rem 1.25rem;
+}
+
+.comments-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.3);
+    border-radius: 2px;
+}
+
+/* 빈 댓글 상태 */
+.comments-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.comments-empty .empty-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.75rem;
+    opacity: 0.6;
+}
+
+.comments-empty p {
+    margin: 0.25rem 0;
+}
+
+.comments-empty .empty-hint {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+/* 개별 댓글 아이템 */
+.comment-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.comment-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.comment-author {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.comment-delete-btn {
+    padding: 0.4rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+    border-radius: 50%;
+}
+
+.comment-item:hover .comment-delete-btn {
+    opacity: 1;
+}
+
+.comment-delete-btn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.comment-text {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    padding-left: calc(36px + 0.75rem);
+}
+
+/* 댓글 더보기/접기 버튼 */
+.comments-show-more,
+.comments-show-less {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    margin-top: 0.75rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 12px;
+    color: #a5b4fc;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.comments-show-more:hover,
+.comments-show-less:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+}
+
+.comments-show-less {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.comments-show-less:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ========== 태블릿 (1024px 이하) - 사이드 패널 폭 축소 ========== */
+@media (max-width: 1024px) {
+    .engagement-panel {
+        width: 280px;
+    }
+
+    .like-button-fancy {
+        width: 56px;
+        height: 56px;
+    }
+
+    .like-emoji-default,
+    .like-emoji-hover {
+        font-size: 1.5rem;
+    }
+}
+
+/* ========== 모바일 (768px 이하) - 하단 고정 레이아웃 ========== */
+@media (max-width: 768px) {
+    /* 사이드 패널 → 하단 고정 */
+    .engagement-panel {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        max-height: 70vh;
+        z-index: 1000;
+    }
+
+    .engagement-panel-inner {
+        height: auto;
+        max-height: 70vh;
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 좋아요 섹션 - 가로 배치 */
+    .engagement-like-section {
+        flex-direction: row;
+        justify-content: center;
+        padding: 1rem;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .like-button-fancy {
+        width: 48px;
+        height: 48px;
+    }
+
+    .like-emoji-default,
+    .like-emoji-hover {
+        font-size: 1.3rem;
+    }
+
+    .like-count {
+        font-size: 1rem;
+    }
+
+    /* 구분선 숨김 (섹션 구분은 border로) */
+    .engagement-divider {
+        display: none;
+    }
+
+    /* 조회수 & 게시일 - 모바일 */
+    .engagement-stats-simple {
+        padding: 0.4rem 1rem;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .engagement-stats-simple .stat-text {
+        font-size: 0.65rem;
+    }
+
+    /* 댓글 헤더 */
+    .comments-header {
+        padding: 0.75rem 1rem;
+    }
+
+    /* 댓글 리스트 높이 제한 */
+    .comments-list {
+        max-height: 300px;
+        padding: 0.75rem 1rem;
+    }
+
+    /* 댓글 입력 영역 */
+    .comment-input-area {
+        padding: 0.75rem 1rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    }
+
+    .comment-input-wrapper {
+        gap: 0.5rem;
+    }
+
+    .comment-avatar,
+    .comment-avatar-placeholder {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    .comment-submit-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .comment-submit-btn span {
+        font-size: 1.1rem;
+    }
+
+    .comment-text {
+        padding-left: calc(32px + 0.5rem);
+        font-size: 0.85rem;
+    }
+
+    /* 더보기 버튼 */
+    .comments-show-more,
+    .comments-show-less {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    /* 메인 콘텐츠 하단 패딩 (패널 공간 확보) */
+    .tarot-result-page > .tarot-result-content {
+        padding-bottom: 180px;
+    }
+}
+
+/* ========== 작은 모바일 (480px 이하) ========== */
+@media (max-width: 480px) {
+    .engagement-panel-inner {
+        border-radius: 20px 20px 0 0;
+    }
+
+    .engagement-like-section {
+        padding: 0.75rem;
+    }
+
+    .like-button-fancy {
+        width: 44px;
+        height: 44px;
+    }
+
+    .comments-list {
+        max-height: 250px;
+    }
+
+    .comment-item {
+        padding: 0.75rem 0;
+    }
 }

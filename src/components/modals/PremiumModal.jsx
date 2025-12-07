@@ -102,25 +102,25 @@ const PremiumModal = ({
 
                     <div className="premium-header">
                         <span className="premium-emoji">✨</span>
-                        <h2>더 깊이 들여다볼까요?</h2>
-                        <p>울트라로 소름돋는 통찰을 경험하세요</p>
+                        <h2>아직 못 본 게 있어요</h2>
+                        <p>당신의 이야기, 끝까지 들려드릴게요</p>
                     </div>
 
                     <div className="ultra-benefits">
                         <div className="benefit-card">
                             <span className="benefit-icon">🔮</span>
-                            <h3>소름돋는 통찰</h3>
-                            <p>당신만 몰랐던 이야기를 들려드려요</p>
+                            <h3>"어떻게 알았지?"</h3>
+                            <p>읽는 순간 소름돋을 거예요</p>
                         </div>
                         <div className="benefit-card">
                             <span className="benefit-icon">🧠</span>
-                            <h3>더 깊은 해석</h3>
-                            <p>표면 아래 숨은 의미까지</p>
+                            <h3>나도 몰랐던 나</h3>
+                            <p>진짜 마음을 들여다봐요</p>
                         </div>
                         <div className="benefit-card">
                             <span className="benefit-icon">✨</span>
-                            <h3>특별한 경험</h3>
-                            <p>매번 새로운 발견이 있어요</p>
+                            <h3>매번 새로운 발견</h3>
+                            <p>볼 때마다 다른 이야기</p>
                         </div>
                     </div>
 
@@ -234,26 +234,26 @@ const PremiumModal = ({
                 {selectedPlan === 'premium' ? (
                     <div className="plan-details premium">
                         <div className="plan-headline">
-                            <h3>숨겨진 메시지까지 전부</h3>
-                            <p>블러 처리된 내용을 모두 확인하세요</p>
+                            <h3>당신만 못 본 이야기가 있어요</h3>
+                            <p>지금 숨겨진 부분을 열어드릴게요</p>
                         </div>
 
                         <div className="plan-features">
                             <div className="feature-item">
                                 <span className="check">✓</span>
-                                <span>숨겨진 메시지 전체 공개</span>
+                                <span>블러 뒤에 숨은 진짜 메시지</span>
                             </div>
                             <div className="feature-item">
                                 <span className="check">✓</span>
-                                <span>심층 분석 해금</span>
+                                <span>남들은 이미 본 심층 분석</span>
                             </div>
                             <div className="feature-item">
                                 <span className="check">✓</span>
-                                <span>무제한 사용</span>
+                                <span>궁금할 때 바로, 무제한으로</span>
                             </div>
                             <div className="feature-item">
                                 <span className="check">✓</span>
-                                <span>맞춤 질문 자유 입력</span>
+                                <span>내 상황에 딱 맞는 질문</span>
                             </div>
                         </div>
 
@@ -293,26 +293,26 @@ const PremiumModal = ({
                 ) : (
                     <div className="plan-details ultra">
                         <div className="plan-headline">
-                            <h3>소름돋는 통찰</h3>
-                            <p>당신만 몰랐던 이야기를 들려드려요</p>
+                            <h3>아무도 말해주지 않은 것</h3>
+                            <p>당신이 몰랐던 진짜 이야기예요</p>
                         </div>
 
                         <div className="plan-features">
                             <div className="feature-item">
                                 <span className="check">✓</span>
-                                <span>프리미엄의 모든 기능</span>
+                                <span>프리미엄 전체 포함</span>
                             </div>
                             <div className="feature-item ultra-feature">
                                 <span className="check">✨</span>
-                                <span>소름돋는 깊이의 해석</span>
+                                <span>"어떻게 알았지?" 싶은 해석</span>
                             </div>
                             <div className="feature-item ultra-feature">
                                 <span className="check">✨</span>
-                                <span>당신만 몰랐던 통찰</span>
+                                <span>친구도 모르는 나의 진짜 마음</span>
                             </div>
                             <div className="feature-item ultra-feature">
                                 <span className="check">✨</span>
-                                <span>더 섬세한 맞춤 분석</span>
+                                <span>읽다 보면 소름돋는 정확함</span>
                             </div>
                         </div>
 

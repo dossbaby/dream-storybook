@@ -692,6 +692,57 @@ Phase 2: 점진적 개선
 
 ---
 
+### Phase 22: 브랜드 컬러 리브랜딩 🎨 대기
+> `docs/jeomai-brand-color-system.md` 기반 전체 UI 컬러 개편
+
+**참조 문서:** `docs/jeomai-brand-color-system.md` (완전한 브랜드 컬러 시스템 v2)
+
+| 작업 | 상태 | 비고 |
+|------|------|------|
+| **1. 공통 요소** | | |
+| 페이지 배경 Deep Space 적용 | ⏳ 대기 | `linear-gradient(165deg, #0a0a0f 0%, #12101a 30%, #0d0b14 60%, #08080c 100%)` |
+| 상단 네비게이션 탭 재디자인 | ⏳ 대기 | 프리미엄 모달 토글 스타일 적용 |
+| 모든 모달 배경 통일 | ⏳ 대기 | Modal Surface 적용 |
+| **2. 타로 섹션** | | |
+| 질문 입력 섹션 | ⏳ 대기 | Tarot Card Surface + Tarot Border |
+| 카드 선택 섹션 | ⏳ 대기 | Mystic Violet Blue 그라디언트 적용 |
+| 결과 페이지 hero/container | ⏳ 대기 | Blue-Purple 그라디언트 보더 |
+| 결과 페이지 Select Your Destiny | ⏳ 대기 | Tarot 테마 glow + pulse |
+| Hidden Insights 모달 | ⏳ 대기 | 하늘-보라 그라디언트, 은은한 glow |
+| **3. 꿈해몽 섹션** | | |
+| 꿈 입력 섹션 | ⏳ 대기 | Dream Card Surface + Dream Border |
+| 결과 페이지 | ⏳ 대기 | Dreamy Teal 테마 적용 |
+| Hidden Insights 모달 | ⏳ 대기 | Teal 테마 그라디언트 |
+| **4. 사주 섹션** | | |
+| 생년월일 입력 섹션 | ⏳ 대기 | Fortune Card Surface + Saju Border |
+| 결과 페이지 | ⏳ 대기 | Fortune Fire 테마 적용 |
+| Hidden Insights 모달 | ⏳ 대기 | Red-Gold 테마 그라디언트 |
+| **5. 피드** | | |
+| 좌측 사이드바 | ⏳ 대기 | Card Surface + 서브브랜드별 필터 색상 |
+| 피드 카드 | ⏳ 대기 | 타입별 보더/글로우 색상 |
+| 우측 사이드바 | ⏳ 대기 | 추천/인기 섹션 스타일 |
+| **6. 프로필/마이페이지** | | |
+| 프로필 설정 모달 | ⏳ 대기 | Modal + Gradient 적용 |
+| 마이페이지 히스토리 | ⏳ 대기 | 서브브랜드별 카드 스타일 |
+| 공개 설정 토글 | ⏳ 대기 | Premium 토글 스타일 적용 |
+| **7. 프리미엄/울트라 모달** | | |
+| border-radius 수정 | ⏳ 대기 | 모든 요소 `border-radius: 16px` 통일 |
+| 월간/연간 버튼 수정 | ⏳ 대기 | border-radius 적용 |
+| **8. 4개 박스 (프롬프트 가이드)** | | |
+| 서브브랜드 컬러 적용 | ⏳ 대기 | Premium 모달 스타일 참고, Radial Gradient |
+| **9. 로그인 모달** | | |
+| 3가지 로그인 옵션 | ⏳ 대기 | Google, Apple, Email |
+| Modal + Gradient 적용 | ⏳ 대기 | 깔끔한 UI |
+
+**핵심 원칙:**
+1. 탁한 색 절대 금지 (grayish, muted, desaturated)
+2. 서브브랜드 컬러 일관성 유지
+3. 그라디언트 보더 적극 활용
+4. hover 시 glow 효과 강화
+5. 창의적 variation 허용 (브랜드 팔레트 범위 내)
+
+---
+
 ## AI Tier System 상세 설계
 
 ### 현재 구조 분석

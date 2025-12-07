@@ -75,9 +75,8 @@ const NavBar = ({
                 />
 
                 <button
-                    className="nav-create-btn"
+                    className={`nav-create-btn ${mode}-btn`}
                     onClick={() => onViewChange('create')}
-                    style={{ '--btn-color': currentMode.color }}
                 >
                     <span className="create-icon">+</span>
                     <span className="create-text">{currentMode.desc}</span>

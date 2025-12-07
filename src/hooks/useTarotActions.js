@@ -15,7 +15,9 @@ export const useTarotActions = ({
     user,
     generateTarotReadingHook,
     // 도파민 메시지 시스템
-    dopamineHook
+    dopamineHook,
+    // 로그인 필요 시 콜백
+    onLoginRequired
 }) => {
     // 레어카드 효과 트리거
     const triggerCardReveal = () => {
@@ -60,6 +62,13 @@ export const useTarotActions = ({
     // 타로 리딩 생성
     const generateTarotReading = async () => {
         if (tarot.selectedCards.length !== 3 || !tarot.question.trim()) return;
+
+        // 로그인 체크 - 비로그인 시 로그인 유도
+        if (!user) {
+            onLoginRequired?.();
+            return;
+        }
+
         setTarotField('phase', 'revealing'); // 로딩 애니메이션 표시
         setCurrentCard(0);
 

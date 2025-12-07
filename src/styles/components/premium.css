@@ -1819,8 +1819,10 @@
    ======================================== */
 .premium-modal.three-tier {
     max-width: 440px;
-    border: 1px solid;
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(165deg, rgba(12, 8, 24, 0.98) 0%, rgba(20, 12, 35, 0.97) 40%, rgba(8, 5, 18, 0.99) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4)) border-box;
 }
 
 /* 플랜 토글 탭 */
@@ -1920,12 +1922,13 @@
     flex: 1;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
+    box-sizing: border-box;
 }
 
 .price-option:hover {
@@ -1934,9 +1937,11 @@
 }
 
 .price-option.selected {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.08));
-    border: 1px solid;
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4)) 1;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.08)) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4)) border-box;
+    border-radius: 12px;
 }
 
 .price-option.best {
@@ -1944,7 +1949,9 @@
 }
 
 .price-option.best.selected {
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.7), rgba(155, 89, 182, 0.6)) 1;
+    background:
+        linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(155, 89, 182, 0.12)) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.7), rgba(155, 89, 182, 0.6)) border-box;
 }
 
 .price-option .savings-badge {
@@ -2010,8 +2017,10 @@
    ======================================== */
 .premium-modal.ultra-upgrade {
     max-width: 420px;
-    border: 1px solid;
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4), rgba(255, 0, 85, 0.3)) 1;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(165deg, rgba(12, 8, 24, 0.98) 0%, rgba(20, 12, 35, 0.97) 40%, rgba(8, 5, 18, 0.99) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4), rgba(255, 0, 85, 0.3)) border-box;
 }
 
 .premium-modal.ultra-upgrade .premium-header {
@@ -2107,7 +2116,10 @@
 
 /* 울트라 활성 상태 */
 .premium-modal.premium-active.ultra {
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4), rgba(255, 0, 85, 0.3)) 1;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(165deg, rgba(12, 8, 24, 0.98) 0%, rgba(20, 12, 35, 0.97) 40%, rgba(8, 5, 18, 0.99) 100%) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4), rgba(255, 0, 85, 0.3)) border-box;
 }
 
 .premium-modal.premium-active.ultra .premium-header {
@@ -2124,20 +2136,26 @@
 }
 
 .benefit-item.active.ultra {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.08));
-    border: 1px solid;
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.08)) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) border-box;
+    border-radius: 12px;
 }
 
 .premium-modal.premium-active.ultra .premium-close-btn {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(155, 89, 182, 0.1));
-    border: 1px solid;
-    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(155, 89, 182, 0.1)) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) border-box;
     color: #00d4ff;
+    border-radius: 12px;
 }
 
 .premium-modal.premium-active.ultra .premium-close-btn:hover {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(155, 89, 182, 0.18));
+    background:
+        linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(155, 89, 182, 0.18)) padding-box,
+        linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4)) border-box;
 }
 
 /* 반응형 - 3티어/울트라 모달 */

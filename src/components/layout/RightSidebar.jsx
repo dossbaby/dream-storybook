@@ -2,25 +2,35 @@ import { SkeletonList } from '../common/SkeletonCard';
 
 const RightSidebar = ({
     mode,
-    tabs,
-    activeTab,
     loading,
     dreams,
     tarotReadings,
     fortuneReadings,
     dreamTypes,
-    onTabChange,
     onOpenDreamDetail,
     onOpenTarotResult,
     onOpenFortuneResult,
     onCreateClick
 }) => {
+    // EGR (Engagement Rate) 계산: 좋아요×2 + 댓글×1
+    const calculateEGR = (item) => {
+        return ((item.likeCount || 0) * 2) + (item.commentCount || 0);
+    };
+
+    // EGR 기준으로 정렬 후 상위 5개 반환
+    const sortByEGR = (items) => {
+        return [...(items || [])]
+            .map(item => ({ ...item, egr: calculateEGR(item) }))
+            .sort((a, b) => b.egr - a.egr)
+            .slice(0, 5);
+    };
+
     const getModeTitle = () => {
         switch(mode) {
-            case 'dream': return '실시간 꿈 피드';
-            case 'tarot': return '실시간 타로 피드';
-            case 'fortune': return '실시간 운세 피드';
-            default: return '실시간 피드';
+            case 'dream': return '인기 꿈 해몽';
+            case 'tarot': return '인기 타로 리딩';
+            case 'fortune': return '인기 운세';
+            default: return '인기 피드';
         }
     };
 
@@ -35,10 +45,10 @@ const RightSidebar = ({
 
     const getEmptyText = () => {
         switch(mode) {
-            case 'dream': return '아직 공유된 꿈이 없어요';
-            case 'tarot': return '아직 공유된 타로가 없어요';
-            case 'fortune': return '아직 공유된 운세가 없어요';
-            default: return '아직 공유된 내용이 없어요';
+            case 'dream': return '아직 인기 꿈 해몽이 없어요';
+            case 'tarot': return '아직 인기 타로가 없어요';
+            case 'fortune': return '아직 인기 운세가 없어요';
+            default: return '아직 인기 콘텐츠가 없어요';
         }
     };
 
@@ -53,9 +63,9 @@ const RightSidebar = ({
 
     const getCurrentFeed = () => {
         switch(mode) {
-            case 'dream': return dreams || [];
-            case 'tarot': return tarotReadings || [];
-            case 'fortune': return fortuneReadings || [];
+            case 'dream': return sortByEGR(dreams);
+            case 'tarot': return sortByEGR(tarotReadings);
+            case 'fortune': return sortByEGR(fortuneReadings);
             default: return [];
         }
     };
@@ -70,8 +80,11 @@ const RightSidebar = ({
 
     const currentFeed = getCurrentFeed();
 
-    const renderDreamItem = (dream) => (
-        <div key={dream.id} className="feed-item" onClick={() => handleItemClick(dream)}>
+    const renderDreamItem = (dream, index) => (
+        <div key={dream.id} className="feed-item popular-item" onClick={() => handleItemClick(dream)}>
+            <span className={`popular-rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : 'bronze'}`}>
+                {index + 1}
+            </span>
             <div className="feed-item-thumb">
                 {dream.dreamImage ? (
                     <img src={dream.dreamImage} alt="" />
@@ -100,8 +113,11 @@ const RightSidebar = ({
         </div>
     );
 
-    const renderTarotItem = (tarot) => (
-        <div key={tarot.id} className="feed-item tarot-item" onClick={() => handleItemClick(tarot)}>
+    const renderTarotItem = (tarot, index) => (
+        <div key={tarot.id} className="feed-item tarot-item popular-item" onClick={() => handleItemClick(tarot)}>
+            <span className={`popular-rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : 'bronze'}`}>
+                {index + 1}
+            </span>
             <div className="feed-item-thumb">
                 {tarot.pastImage ? (
                     <img src={tarot.pastImage} alt="" />
@@ -119,15 +135,18 @@ const RightSidebar = ({
                         {tarot.userName}
                     </span>
                     <span className="feed-item-stats">
-                        ❤️ {tarot.likeCount || 0}
+                        ❤️ {tarot.likeCount || 0} 💬 {tarot.commentCount || 0}
                     </span>
                 </div>
             </div>
         </div>
     );
 
-    const renderFortuneItem = (fortune) => (
-        <div key={fortune.id} className="feed-item fortune-item" onClick={() => handleItemClick(fortune)}>
+    const renderFortuneItem = (fortune, index) => (
+        <div key={fortune.id} className="feed-item fortune-item popular-item" onClick={() => handleItemClick(fortune)}>
+            <span className={`popular-rank ${index === 0 ? 'gold' : index === 1 ? 'silver' : 'bronze'}`}>
+                {index + 1}
+            </span>
             <div className="feed-item-thumb">
                 {fortune.morningImage ? (
                     <img src={fortune.morningImage} alt="" />
@@ -145,18 +164,18 @@ const RightSidebar = ({
                         {fortune.userName}
                     </span>
                     <span className="feed-item-stats">
-                        점수: {fortune.score}점
+                        ❤️ {fortune.likeCount || 0} 💬 {fortune.commentCount || 0}
                     </span>
                 </div>
             </div>
         </div>
     );
 
-    const renderItem = (item) => {
+    const renderItem = (item, index) => {
         switch(mode) {
-            case 'dream': return renderDreamItem(item);
-            case 'tarot': return renderTarotItem(item);
-            case 'fortune': return renderFortuneItem(item);
+            case 'dream': return renderDreamItem(item, index);
+            case 'tarot': return renderTarotItem(item, index);
+            case 'fortune': return renderFortuneItem(item, index);
             default: return null;
         }
     };
@@ -165,25 +184,9 @@ const RightSidebar = ({
         <aside className={`right-sidebar ${mode}-mode`}>
             <div className="feed-header">
                 <div className="feed-header-top">
-                    <span className="live-dot small"></span>
+                    <span className="popular-icon">🔥</span>
                     <span className="feed-title">{getModeTitle()}</span>
                 </div>
-
-                {/* 꿈 모드일 때만 필터 탭 표시 */}
-                {mode === 'dream' && tabs && (
-                    <div className="feed-tabs">
-                        {tabs.map(tab => (
-                            <button
-                                key={tab.id}
-                                className={`feed-tab ${activeTab === tab.id ? 'active' : ''}`}
-                                onClick={() => onTabChange(tab.id)}
-                                title={tab.tooltip}
-                            >
-                                {tab.icon}
-                            </button>
-                        ))}
-                    </div>
-                )}
             </div>
 
             {loading ? (
@@ -194,8 +197,8 @@ const RightSidebar = ({
                     <button onClick={onCreateClick}>{getCreateText()}</button>
                 </div>
             ) : (
-                <div className="feed-list">
-                    {currentFeed.map(item => renderItem(item))}
+                <div className="feed-list popular-list">
+                    {currentFeed.map((item, index) => renderItem(item, index))}
                 </div>
             )}
         </aside>

@@ -46,8 +46,8 @@ const FeedView = ({
 
     const filteredTarots = currentFilter
         ? tarotReadings.filter(t =>
-            // topic 필드로 필터링
-            t.topic === currentFilter ||
+            // topics 배열로 필터링 (기존 topic 호환)
+            (t.topics || (t.topic ? [t.topic] : [])).includes(currentFilter) ||
             // keywords로 필터링
             t.keywords?.some(k =>
                 k.word === currentFilter ||
@@ -181,7 +181,7 @@ const FeedView = ({
                 emoji: '🃏',
                 title: '아직 타로 리딩이 없어요',
                 subtitle: '카드가 당신을 기다리고 있어요',
-                btnText: '타로 카드 뽑기',
+                btnText: '타로 보기',
                 btnEmoji: '🔮'
             },
             fortune: {
@@ -226,29 +226,12 @@ const FeedView = ({
     };
 
     if (mode === 'dream') {
-        // 꿈에서 추출한 인기 키워드
-        const dreamKeywords = [...new Set(dreams.flatMap(d => d.keywords?.map(k => k.word) || []))].slice(0, 10);
-
         return (
             <div className="feed-view dream-feed">
                 {/* 트렌딩 섹션 */}
                 {trendingKeywords.length > 0 && renderTrending()}
 
-                {/* 상단 CTA */}
-                <div className="feed-cta">
-                    <div className="feed-cta-content">
-                        <h2>🌙 오늘 밤 어떤 꿈을 꿨어?</h2>
-                        <p>꿈을 말해주면 해몽해줄게</p>
-                    </div>
-                    <button className="feed-cta-btn" onClick={onCreateClick}>
-                        + 꿈 해몽하기
-                    </button>
-                </div>
-
-                {/* 태그 필터 바 */}
-                {renderTagBar(dreamKeywords)}
-
-                {/* 필터 상태 표시 */}
+                {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
                         <span>"{currentFilter}" 관련 꿈 {filteredDreams.length}개</span>
@@ -315,33 +298,9 @@ const FeedView = ({
     }
 
     if (mode === 'tarot') {
-        // 타로 주제 목록
-        const tarotTopics = ['연애', '직장', '금전', '학업', '건강', '인간관계', '미래', '결정'];
-        // 기존 키워드 (주제 제외)
-        const tarotKeywords = [...new Set(tarotReadings.flatMap(t => t.keywords?.map(k => k.word) || []))]
-            .filter(kw => !tarotTopics.includes(kw))
-            .slice(0, 6);
-
         return (
             <div className="feed-view tarot-feed">
-                {/* 트렌딩 섹션 */}
-                {trendingKeywords.length > 0 && renderTrending()}
-
-                {/* 상단 CTA */}
-                <div className="feed-cta tarot-cta">
-                    <div className="feed-cta-content">
-                        <h2>🃏 타로에게 물어보세요</h2>
-                        <p>카드가 당신의 운명을 속삭여요</p>
-                    </div>
-                    <button className="feed-cta-btn tarot-btn" onClick={onCreateClick}>
-                        + 타로 카드 뽑기
-                    </button>
-                </div>
-
-                {/* 주제 + 키워드 필터 바 */}
-                {renderTagBar([...tarotTopics, ...tarotKeywords])}
-
-                {/* 필터 상태 표시 */}
+                {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
                         <span>"{currentFilter}" 관련 타로 {filteredTarots.length}개</span>
@@ -382,17 +341,18 @@ const FeedView = ({
                                         <span className="feed-card-time">{formatTime(tarot.createdAt)}</span>
                                     </div>
                                     <div className="feed-card-tags">
-                                        {/* 주제 태그 (있으면 먼저 표시) */}
-                                        {tarot.topic && (
+                                        {/* 주제 태그들 (topics 배열 또는 기존 topic 호환) */}
+                                        {(tarot.topics || (tarot.topic ? [tarot.topic] : [])).map((topic, i) => (
                                             <span
+                                                key={`topic-${i}`}
                                                 className="feed-card-tag topic-tag"
-                                                onClick={(e) => navigateToTagPage(tarot.topic, e)}
+                                                onClick={(e) => navigateToTagPage(topic, e)}
                                             >
-                                                #{tarot.topic}
+                                                #{topic}
                                             </span>
-                                        )}
+                                        ))}
                                         {/* 키워드 태그 (주제 제외) */}
-                                        {tarot.keywords?.filter(k => k.word !== tarot.topic).slice(0, 2).map((k, i) => (
+                                        {tarot.keywords?.filter(k => !(tarot.topics || [tarot.topic]).includes(k.word)).slice(0, 2).map((k, i) => (
                                             <span
                                                 key={i}
                                                 className="feed-card-tag"
@@ -415,28 +375,12 @@ const FeedView = ({
     }
 
     if (mode === 'fortune') {
-        const fortuneKeywords = [...new Set(fortuneReadings.flatMap(f => f.keywords?.map(k => k.word) || []))].slice(0, 10);
-
         return (
             <div className="feed-view fortune-feed">
                 {/* 트렌딩 섹션 */}
                 {trendingKeywords.length > 0 && renderTrending()}
 
-                {/* 상단 CTA */}
-                <div className="feed-cta fortune-cta">
-                    <div className="feed-cta-content">
-                        <h2>🔮 오늘의 사주를 확인하세요</h2>
-                        <p>하루의 기운을 미리 엿보세요</p>
-                    </div>
-                    <button className="feed-cta-btn fortune-btn" onClick={onCreateClick}>
-                        + 오늘의 사주 보기
-                    </button>
-                </div>
-
-                {/* 태그 필터 바 */}
-                {renderTagBar(fortuneKeywords)}
-
-                {/* 필터 상태 표시 */}
+                {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
                         <span>"{currentFilter}" 관련 운세 {filteredFortunes.length}개</span>

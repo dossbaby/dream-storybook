@@ -39,37 +39,61 @@ git push --force origin main
 
 ## 디자인 규칙
 
-### 색상 금지 목록 (절대 사용 금지!)
+> **참조 문서:** `docs/jeomai-brand-color-system.md` (완전한 브랜드 컬러 시스템)
 
-**탁한 색, mute 색, 채도 낮은 색 사용 금지!**
+### 핵심 컬러 팔레트
 
-이 프로젝트는 "Glacial Theme"으로, 선명하고 깨끗한 색상만 사용합니다.
+#### 배경
+- **Void Black**: `#08080c` (가장 깊은 레이어)
+- **Deep Space**: `linear-gradient(165deg, #0a0a0f 0%, #12101a 30%, #0d0b14 60%, #08080c 100%)`
 
-#### ❌ 금지하는 색상 유형:
-- 탁한 회색빛 색상 (grayish, muddy)
-- 채도가 낮은 색 (desaturated, muted)
-- 어둡고 칙칙한 색 (dull, murky)
-- 혼탁한 중간톤 (brownish, greenish-gray)
+#### 텍스트
+- **Mystic Gold** (메인 강조): `#ffd080`
+- **Cosmic Lavender**: `rgba(200, 180, 255, 0.75)`
+- **흰색 스케일**: `#fff`, `rgba(255,255,255,0.9/0.75/0.5)`
 
-#### ✅ 사용해야 하는 색상:
-- **Primary Cyan**: `#00d4ff` (메인 강조)
-- **Secondary Purple**: `#9b59b6` (보조 강조)
-- **Light Blue**: `rgba(100, 180, 255)` (밝은 파란색)
-- **배경**: 순수한 검정 `#000` 또는 매우 어두운 파란 계열
-- **텍스트**: 순백 `#fff` 또는 `rgba(255,255,255,0.9)`
+#### 티어 그라디언트
+| 티어 | 그라디언트 |
+|------|-----------|
+| Free | `#ffd080 → #ff9020` |
+| Premium | `#00c6fb → #6366f1 → #a855f7` |
+| Ultra | `#00d4ff → #a855f7 → #ff0080` |
 
-#### Border 규칙:
-- 단색 border보다 **그라데이션 border** 선호
-- 그라데이션: cyan → purple 방향 (`linear-gradient(135deg, #00d4ff, #9b59b6)`)
-- hover 시 border glow 효과 추가
+#### 서브브랜드 컬러
+| 서비스 | 프라이머리 | 그라디언트 |
+|--------|-----------|-----------|
+| 타로 | `#6366f1` | `#3b82f6 → #6366f1 → #8b5cf6 → #a855f7` |
+| 꿈해몽 | `#14b8a6` | `#0891b2 → #0d9488 → #14b8a6 → #5eead4` |
+| 사주 | `#f59e0b` | `#b91c1c → #dc2626 → #f59e0b → #fbbf24` |
 
-#### 예시:
+### 보더 스타일
+- **기본**: `1px solid rgba(80, 70, 120, 0.2)`
+- **그라디언트 보더** (강조용):
 ```css
-/* ❌ 나쁜 예 - 탁한 색 */
-background: rgba(50, 55, 60, 0.5);  /* 탁한 회색 */
-border: 1px solid #444;             /* 칙칙한 회색 */
-
-/* ✅ 좋은 예 - 선명한 색 */
-background: rgba(0, 20, 40, 0.8);   /* 깨끗한 어두운 파랑 */
-border: 1px solid rgba(0, 212, 255, 0.3);  /* 투명한 시안 */
+border: 2px solid transparent;
+background: linear-gradient(rgba(20, 18, 28, 0.95), rgba(20, 18, 28, 0.95)) padding-box,
+            linear-gradient(135deg, #00c6fb, #6366f1, #a855f7) border-box;
 ```
+
+### ❌ 금지 색상
+- 탁한 회색빛 (grayish, muddy)
+- 채도 낮은 색 (desaturated, muted)
+- 칙칙한 중간톤 (brownish, greenish-gray)
+
+### 버튼 스타일
+- **border-radius**: `30px` (pill shape)
+- 티어별 그라디언트 적용
+- hover 시 `translateY(-2px)` + glow 강화
+
+## 작업 규칙
+
+### 모든 모드에 동일하게 반영 (필수)
+
+타로/꿈해몽/사주 중 하나에 변경사항을 적용할 때, **반드시 다른 모드에도 동일하게 적용해야 하는지 사용자에게 확인**하세요.
+
+예시:
+- 타로 피드에서 필터 바 삭제 → "꿈해몽, 사주 피드에서도 삭제할까요?"
+- 타로 버튼 색상 변경 → "꿈해몽, 사주 버튼도 같이 변경할까요?"
+- 타로 결과 페이지 UI 수정 → "다른 결과 페이지도 같이 수정할까요?"
+
+**절대 한 모드만 바꾸고 넘어가지 마세요!**

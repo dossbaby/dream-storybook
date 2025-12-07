@@ -662,7 +662,7 @@ conclusionCard는 반드시:
   "title": "제목 (4-8글자)",
   "verdict": "핵심 메시지 (20자 이내)",
   "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
-  "topic": "주제 (연애/직장/금전/학업/건강/인간관계/미래/결정 중 하나)",
+  "topics": ["질문에 가장 맞는 주제 1-2개 선택 (사랑/관계/돈/성장/건강/선택/운세 중). 최대 2개까지. 예: 연애질문→['사랑'], 취업고민→['돈','선택'], 시험→['성장'], 애매하면→['운세']"],
 
   "jenny": {
     "hook": "⚠️질문자가 '뭐야 이거?' 하고 멈출 수밖에 없는 첫 마디. 답 먼저 + 반전 구조. 군더더기 없이. ❌금지: 희귀도/카드조합/숫자 절대 금지! 🚨매번 완전히 다른 시작 필수! 예시는 참고만, 그대로 복사 금지! 느낌만 살려서 창의적으로: 연애→답/결과 먼저 + '근데' 반전 / 금전→방향 제시 + 예상 밖 루트 / 직장→결정 방향 + 숨은 이유 / 결정→답 + 의외의 전개. 시작어도 매번 다르게(OO님~/잠깐요~/먼저요~/글쎄요~ 등 다양하게)",
@@ -794,19 +794,21 @@ conclusionCard는 반드시:
                 presentImage: card2Image,
                 futureImage: card3Image,
                 question,
-                type: 'tarot'
+                type: 'tarot',
+                // 기본 공개 설정: 링크 공유 (unlisted)
+                visibility: 'unlisted'
             };
 
             setProgress('');
             setAnalysisPhase(0);
 
-            // 자동 저장
+            // 자동 저장 - 기본값: 링크 공유 (unlisted)
             if (user && onSaveTarot) {
                 setTimeout(async () => {
-                    const savedId = await onSaveTarot(tarotResultData, true);
+                    const savedId = await onSaveTarot(tarotResultData, { visibility: 'unlisted' });
                     if (savedId) {
                         setSavedDreamField?.('id', savedId);
-                        setSavedDreamField?.('isPublic', true);
+                        setSavedDreamField?.('visibility', 'unlisted');
                         setToast('live', { type: 'save', message: '타로 리딩이 저장되었어요!' });
                         setTimeout(() => setToast('live', null), 3000);
                     }

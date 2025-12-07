@@ -3,46 +3,15 @@ const LeftSidebar = ({
     onlineCount,
     todayStats,
     dreamTypes,
-    hotDreams,
-    hotTarots,
-    hotFortunes,
     typeFilter,
     typeCounts,
     popularKeywords,
+    tarotKeywords = [],
+    tarotTopicCounts = {},
     categories,
-    onOpenDreamDetail,
-    onOpenTarotResult,
-    onOpenFortuneResult,
     onTypeFilterChange,
     onFilterBySymbol
 }) => {
-    // 통합 HOT 랭킹 (꿈/타로/운세 합산)
-    const getUnifiedHotList = () => {
-        const dreamItems = (hotDreams || []).map(d => ({ ...d, type: 'dream', score: d.likeCount || 0 }));
-        const tarotItems = (hotTarots || []).map(t => ({ ...t, type: 'tarot', score: t.likeCount || 0 }));
-        const fortuneItems = (hotFortunes || []).map(f => ({ ...f, type: 'fortune', score: f.likeCount || 0 }));
-        return [...dreamItems, ...tarotItems, ...fortuneItems]
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 5);
-    };
-
-    const unifiedHot = getUnifiedHotList();
-
-    const getTypeIcon = (type) => {
-        switch(type) {
-            case 'dream': return '🌙';
-            case 'tarot': return '🃏';
-            case 'fortune': return '🔮';
-            default: return '✨';
-        }
-    };
-
-    const handleHotItemClick = (item) => {
-        if (item.type === 'dream') onOpenDreamDetail?.(item);
-        else if (item.type === 'tarot') onOpenTarotResult?.(item);
-        else if (item.type === 'fortune') onOpenFortuneResult?.(item);
-    };
-
     return (
         <aside className="left-sidebar">
             {/* 실시간 통합 상태 */}
@@ -70,32 +39,6 @@ const LeftSidebar = ({
                     )}
                 </div>
             </div>
-
-            {/* 통합 HOT 랭킹 */}
-            {unifiedHot.length > 0 && (
-                <div className="hot-ranking-card">
-                    <div className="hot-ranking-header">
-                        <span className="fire-icon">🔥</span>
-                        <span className="hot-ranking-title">HOT 랭킹</span>
-                    </div>
-                    <div className="hot-ranking-list">
-                        {unifiedHot.map((item, i) => (
-                            <div key={`${item.type}-${item.id}`} className="hot-item" onClick={() => handleHotItemClick(item)}>
-                                <span className={`hot-rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze'}`}>
-                                    {i + 1}
-                                </span>
-                                <div className="hot-info">
-                                    <div className="hot-title">
-                                        <span className="hot-type-icon">{getTypeIcon(item.type)}</span>
-                                        {item.title}
-                                    </div>
-                                    <div className="hot-meta">❤️ {item.score}</div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
 
             {/* 모드별 추가 정보 */}
             {mode === 'dream' && (
@@ -167,36 +110,52 @@ const LeftSidebar = ({
 
             {mode === 'tarot' && (
                 <>
-                    {/* 타로 주제별 필터 */}
-                    <div className="unified-symbols-card tarot-theme">
-                        <div className="unified-symbols-header">
-                            <span>🃏</span>
-                            <span>타로 주제</span>
-                            <span className="symbol-hint">클릭해서 관련 리딩 보기</span>
+                    {/* 주제별 메뉴 */}
+                    <div className="tarot-topics-menu">
+                        <div className="tarot-topics-header">주제별</div>
+                        <div className="tarot-topics-list">
+                            {[
+                                { topic: '사랑', emoji: '💕' },
+                                { topic: '관계', emoji: '🙌' },
+                                { topic: '돈', emoji: '💰' },
+                                { topic: '성장', emoji: '🌱' },
+                                { topic: '건강', emoji: '💪' },
+                                { topic: '선택', emoji: '⚖️' },
+                                { topic: '운세', emoji: '🔮' }
+                            ].map((item, i) => (
+                                <div
+                                    key={i}
+                                    className="tarot-topic-item"
+                                    onClick={() => onFilterBySymbol(item.topic, 'tarot')}
+                                >
+                                    <span className="topic-emoji">{item.emoji}</span>
+                                    <span className="topic-name">{item.topic}</span>
+                                    {tarotTopicCounts[item.topic] > 0 && (
+                                        <span className="topic-count">{tarotTopicCounts[item.topic]}</span>
+                                    )}
+                                </div>
+                            ))}
                         </div>
-                        <div className="symbol-section">
-                            <div className="symbol-tags">
-                                {[
-                                    { topic: '연애', emoji: '💕' },
-                                    { topic: '직장', emoji: '💼' },
-                                    { topic: '금전', emoji: '💰' },
-                                    { topic: '학업', emoji: '📚' },
-                                    { topic: '건강', emoji: '💪' },
-                                    { topic: '인간관계', emoji: '👥' },
-                                    { topic: '미래', emoji: '🔮' },
-                                    { topic: '결정', emoji: '⚖️' }
-                                ].map((item, i) => (
+                    </div>
+
+                    {/* 인기 키워드 */}
+                    {tarotKeywords.length > 0 && (
+                        <div className="tarot-keywords-box">
+                            <div className="tarot-keywords-header">인기 키워드</div>
+                            <div className="tarot-keywords-tags">
+                                {tarotKeywords.slice(0, 8).map((kw, i) => (
                                     <span
                                         key={i}
-                                        className="symbol-tag tarot-topic"
-                                        onClick={() => onFilterBySymbol(item.topic)}
+                                        className="tarot-keyword-tag"
+                                        onClick={() => onFilterBySymbol(kw.word || kw, 'tarot')}
                                     >
-                                        {item.emoji} {item.topic}
+                                        #{kw.word || kw}
+                                        {kw.count && <span className="keyword-count">{kw.count}</span>}
                                     </span>
                                 ))}
                             </div>
                         </div>
-                    </div>
+                    )}
                 </>
             )}
 

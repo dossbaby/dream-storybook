@@ -101,7 +101,7 @@ export const useFirebaseSave = (user, userNickname, callbacks = {}) => {
                 userPhoto: isAnonymous ? null : user.photoURL,
                 question: tarotData.question, title: tarotData.title, verdict: tarotData.verdict,
                 affirmation: tarotData.affirmation || null,
-                topic: tarotData.topic || '미래',
+                topics: tarotData.topics || (tarotData.topic ? [tarotData.topic] : ['운세']),
                 rarity: tarotData.rarity || null, keywords: tarotData.keywords || [],
                 reading: tarotData.reading || null, cardMeaning: tarotData.cardMeaning || null,
                 storyReading: tarotData.storyReading || null,

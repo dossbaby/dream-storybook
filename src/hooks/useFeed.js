@@ -14,6 +14,8 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
     const [tarotReadings, setTarotReadings] = useState([]);
     const [fortuneReadings, setFortuneReadings] = useState([]);
     const [popularKeywords, setPopularKeywords] = useState([]);
+    const [tarotKeywords, setTarotKeywords] = useState([]);
+    const [tarotTopicCounts, setTarotTopicCounts] = useState({});
     const [typeCounts, setTypeCounts] = useState({});
     const [todayStats, setTodayStats] = useState({ total: 0, topType: null });
     const [onlineCount, setOnlineCount] = useState(0);
@@ -133,7 +135,7 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         }
     }, [activeTab, filters.type, filters.keyword, user, myDreams]);
 
-    // 타로 피드 로드 (캐싱 적용)
+    // 타로 피드 로드 (캐싱 적용) + 키워드 추출
     const loadTarots = useCallback(async () => {
         try {
             // 캐시 확인
@@ -141,6 +143,8 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
             if (cached) {
                 console.log('[useFeed] Using cached tarots');
                 setTarotReadings(cached);
+                // 캐시된 데이터에서도 키워드 추출
+                extractTarotKeywords(cached);
                 return;
             }
 
@@ -154,11 +158,59 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
             // 캐시 저장
             setCache(CACHE_KEYS.TAROTS_FEED, tarots, CACHE_TTL.FEED);
             setTarotReadings(tarots);
+
+            // 타로 키워드 추출
+            extractTarotKeywords(tarots);
         } catch (e) {
             console.error('Failed to load tarots:', e);
             setTarotReadings([]);
         }
     }, []);
+
+    // 타로 키워드 + 주제별 카운트 추출 함수
+    const extractTarotKeywords = (tarots) => {
+        const keywordData = {};
+        const topicData = {};
+        const currentTime = Date.now();
+
+        tarots.forEach((t, idx) => {
+            const tarotTime = t.createdAt?.toDate?.()?.getTime?.() || (currentTime - idx * 86400000);
+            const recencyScore = Math.max(0, 1 - (currentTime - tarotTime) / (7 * 86400000));
+
+            // 키워드 추출
+            t.keywords?.forEach(k => {
+                const word = k.word || k;
+                if (!word) return;
+                if (!keywordData[word]) {
+                    keywordData[word] = { count: 0, recency: 0, lastSeen: 0 };
+                }
+                keywordData[word].count += 1;
+                keywordData[word].recency += recencyScore;
+                keywordData[word].lastSeen = Math.max(keywordData[word].lastSeen, tarotTime);
+            });
+
+            // 주제별 카운트 (topics 배열 또는 기존 topic 호환)
+            const topics = t.topics || (t.topic ? [t.topic] : []);
+            topics.forEach(topic => {
+                if (!topic) return;
+                topicData[topic] = (topicData[topic] || 0) + 1;
+            });
+        });
+
+        const sortedKeywords = Object.entries(keywordData)
+            .sort((a, b) => {
+                const aRecent = a[1].recency > 0.1;
+                const bRecent = b[1].recency > 0.1;
+                if (aRecent !== bRecent) return bRecent - aRecent;
+                return (b[1].count + b[1].recency * 2) - (a[1].count + a[1].recency * 2);
+            })
+            .slice(0, 12)
+            .map(([word, data]) => ({ word, count: data.count, isRecent: data.recency > 0.1 }));
+
+        setTarotKeywords(sortedKeywords);
+        setTarotTopicCounts(topicData);
+        console.log('[useFeed] Extracted', sortedKeywords.length, 'tarot keywords,', Object.keys(topicData).length, 'topic counts');
+    };
 
     // 사주 피드 로드 (캐싱 적용)
     const loadSajus = useCallback(async () => {
@@ -269,6 +321,8 @@ export const useFeed = (user, myDreams, activeTab, filters, mode) => {
         tarotReadings,
         fortuneReadings,
         popularKeywords,
+        tarotKeywords,
+        tarotTopicCounts,
         typeCounts,
         todayStats,
         onlineCount,

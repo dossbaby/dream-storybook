@@ -531,18 +531,30 @@
     transition: all 0.6s ease-out;
 }
 
-/* ========== 숨겨진 인사이트 (Rewatchability) ========== */
+/* ========== 숨겨진 인사이트 (Rewatchability) - Blue-Purple Gradient ========== */
 .hidden-insight-reveal {
     position: relative;
     margin: 1.5rem 0;
     padding: 1.25rem;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 140, 0, 0.05));
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.06), rgba(168, 85, 247, 0.04));
+    border: 2px solid transparent;
     border-radius: 16px;
     overflow: hidden;
     animation: insightReveal 0.8s ease-out;
-    /* glow 줄임 */
-    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.08);
+    /* 은은한 파랑-보라 glow */
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12);
+    /* 그라디언트 보더 */
+    background-clip: padding-box;
+}
+
+.hidden-insight-reveal::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 35%, #8b5cf6 70%, #a855f7 100%);
+    border-radius: 18px;
+    z-index: -1;
+    opacity: 0.5;
 }
 
 @keyframes insightReveal {
@@ -565,8 +577,8 @@
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 60%);
-    animation: glowPulse 3s infinite;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.03) 40%, transparent 60%);
+    animation: glowPulse 4s infinite;
 }
 
 @keyframes glowPulse {
@@ -597,9 +609,10 @@
 .hidden-insight-reveal .insight-label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #ffd700;
+    color: #a78bfa;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    text-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
 }
 
 .hidden-insight-reveal .insight-text {
