@@ -391,6 +391,23 @@
     color: #c896ff;
 }
 
+/* 클릭 가능한 키워드 */
+.keyword.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.keyword.clickable:hover {
+    background: rgba(155, 89, 182, 0.25);
+    border-color: rgba(155, 89, 182, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
+}
+
+.keyword.clickable:active {
+    transform: translateY(0);
+}
+
 /* CTA 버튼 */
 .royal-cta {
     width: 100%;

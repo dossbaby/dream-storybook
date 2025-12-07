@@ -5,8 +5,9 @@ import './VisibilitySelector.css';
  * 통합 공개 설정 컴포넌트
  * 꿈, 타로, 사주 모두 동일한 UI로 공개 설정
  */
-const VisibilitySelector = ({ value, onChange, showAnonymous = true }) => {
+const VisibilitySelector = ({ value, onChange, showAnonymous = true, shareUrl = null }) => {
     const [isAnonymous, setIsAnonymous] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
 
     const options = [
         {
@@ -45,6 +46,17 @@ const VisibilitySelector = ({ value, onChange, showAnonymous = true }) => {
         });
     };
 
+    const handleCopyLink = async () => {
+        const url = shareUrl || window.location.href;
+        try {
+            await navigator.clipboard.writeText(url);
+            setLinkCopied(true);
+            setTimeout(() => setLinkCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy link:', err);
+        }
+    };
+
     return (
         <div className="visibility-selector">
             <div className="visibility-options">
@@ -66,6 +78,23 @@ const VisibilitySelector = ({ value, onChange, showAnonymous = true }) => {
                     </button>
                 ))}
             </div>
+
+            {/* 링크 공유 버튼 - unlisted 선택 시에만 표시 */}
+            {value === 'unlisted' && (
+                <div className="link-share-toggle">
+                    <span className="link-share-label">
+                        <span className="link-share-icon">🔗</span>
+                        링크를 복사해서 공유하세요
+                    </span>
+                    <button
+                        type="button"
+                        className="link-share-btn"
+                        onClick={handleCopyLink}
+                    >
+                        {linkCopied ? '✓ 복사됨!' : '링크 복사'}
+                    </button>
+                </div>
+            )}
 
             {/* 익명 공개 옵션 - public 선택 시에만 표시 */}
             {value === 'public' && showAnonymous && (

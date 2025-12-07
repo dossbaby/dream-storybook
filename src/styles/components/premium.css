@@ -28,6 +28,60 @@
     box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
 }
 
+/* 울트라 배지 - 더 멋있는 스타일 */
+.premium-badge.active.ultra {
+    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ff0055 100%);
+    color: #fff;
+    box-shadow:
+        0 2px 10px rgba(0, 212, 255, 0.4),
+        0 0 20px rgba(155, 89, 182, 0.3);
+    animation: ultraShimmer 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-badge.active.ultra::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 60%
+    );
+    animation: ultraSweep 2s ease-in-out infinite;
+}
+
+@keyframes ultraShimmer {
+    0%, 100% {
+        box-shadow:
+            0 2px 10px rgba(0, 212, 255, 0.4),
+            0 0 20px rgba(155, 89, 182, 0.3);
+    }
+    50% {
+        box-shadow:
+            0 4px 20px rgba(0, 212, 255, 0.6),
+            0 0 30px rgba(155, 89, 182, 0.5),
+            0 0 40px rgba(255, 0, 85, 0.2);
+    }
+}
+
+@keyframes ultraSweep {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.premium-badge.active.ultra:hover {
+    transform: scale(1.08);
+    box-shadow:
+        0 6px 25px rgba(0, 212, 255, 0.6),
+        0 0 35px rgba(155, 89, 182, 0.5);
+}
+
 .premium-badge.upgrade {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
     border: 1px solid rgba(255, 215, 0, 0.3);
@@ -124,8 +178,11 @@
 
 /* ========== 프리미엄 모달 ========== */
 .premium-modal {
-    background: linear-gradient(145deg, #1a1a2e 0%, #0d0d1a 100%);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: linear-gradient(165deg,
+        rgba(12, 8, 24, 0.98) 0%,
+        rgba(20, 12, 35, 0.97) 40%,
+        rgba(8, 5, 18, 0.99) 100%);
+    border: 1px solid rgba(0, 212, 255, 0.2);
     border-radius: 24px;
     padding: 0;
     max-width: 420px;
@@ -133,7 +190,8 @@
     overflow: hidden;
     box-shadow:
         0 25px 60px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(255, 215, 0, 0.1),
+        0 0 0 1px rgba(155, 89, 182, 0.15),
+        0 0 40px rgba(0, 212, 255, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
     animation: premiumModalEnter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -174,7 +232,7 @@
 .premium-header {
     text-align: center;
     padding: 2rem 1.5rem 1rem;
-    background: linear-gradient(180deg, rgba(255, 215, 0, 0.08) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.06) 0%, rgba(155, 89, 182, 0.03) 50%, transparent 100%);
 }
 
 .premium-emoji {
@@ -374,28 +432,59 @@
 .subscribe-btn {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
+    background: linear-gradient(135deg, #00d4ff, #9b59b6);
     border: none;
     border-radius: 14px;
     font-size: 1rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: #fff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
 }
 
 .subscribe-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4), 0 0 30px rgba(155, 89, 182, 0.3);
 }
 
 .subscribe-btn:active {
     transform: translateY(0);
+}
+
+/* 울트라 버튼 - 더 화려한 스타일 */
+.subscribe-btn.ultra {
+    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ff0055 100%);
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4), 0 0 25px rgba(155, 89, 182, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.subscribe-btn.ultra::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.2) 50%,
+        transparent 60%
+    );
+    animation: ultraSweep 2.5s ease-in-out infinite;
+}
+
+.subscribe-btn.ultra:hover {
+    box-shadow:
+        0 8px 30px rgba(0, 212, 255, 0.5),
+        0 0 40px rgba(155, 89, 182, 0.4),
+        0 0 50px rgba(255, 0, 85, 0.2);
 }
 
 .subscribe-btn .btn-icon {
@@ -1722,5 +1811,375 @@
     .premium-benefits-active {
         grid-template-columns: 1fr;
         padding: 0.75rem 1rem 1rem;
+    }
+}
+
+/* ========================================
+   3티어 모달 스타일 (무료 사용자)
+   ======================================== */
+.premium-modal.three-tier {
+    max-width: 440px;
+    border: 1px solid;
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
+}
+
+/* 플랜 토글 탭 */
+.plan-tabs {
+    display: flex;
+    gap: 0;
+    margin: 0 1.25rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.plan-tab {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.plan-tab:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.plan-tab.active {
+    background: linear-gradient(135deg, #00d4ff, #9b59b6);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.plan-tab.ultra.active {
+    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ff0055 100%);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+}
+
+/* 플랜 상세 내용 */
+.plan-details {
+    padding: 0 1.25rem;
+}
+
+.plan-headline {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.plan-headline h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.25rem;
+}
+
+.plan-headline p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.plan-features {
+    margin-bottom: 1.25rem;
+}
+
+.plan-features .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.plan-features .feature-item .check {
+    color: #00d4ff;
+    font-weight: bold;
+}
+
+.plan-features .feature-item.ultra-feature .check {
+    color: #ff0055;
+    text-shadow: 0 0 8px rgba(255, 0, 85, 0.5);
+}
+
+/* 가격 옵션 */
+.plan-pricing {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.price-option {
+    flex: 1;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.price-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.price-option.selected {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.08));
+    border: 1px solid;
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4)) 1;
+}
+
+.price-option.best {
+    border-color: rgba(0, 212, 255, 0.4);
+}
+
+.price-option.best.selected {
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.7), rgba(155, 89, 182, 0.6)) 1;
+}
+
+.price-option .savings-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #00d4ff, #9b59b6);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    text-transform: uppercase;
+}
+
+.price-option .price-label {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.35rem;
+}
+
+.price-option .price-amount {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.price-option .price-note {
+    display: block;
+    font-size: 0.7rem;
+    color: rgba(0, 212, 255, 0.8);
+    margin-top: 0.25rem;
+}
+
+/* 버튼 마진 통일 */
+.plan-details .subscribe-btn {
+    margin-bottom: 0.5rem;
+}
+
+.onetime-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+}
+
+.onetime-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* ========================================
+   울트라 업그레이드 모달 (프리미엄 사용자)
+   ======================================== */
+.premium-modal.ultra-upgrade {
+    max-width: 420px;
+    border: 1px solid;
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4), rgba(255, 0, 85, 0.3)) 1;
+}
+
+.premium-modal.ultra-upgrade .premium-header {
+    background: linear-gradient(180deg, rgba(155, 89, 182, 0.1) 0%, rgba(0, 212, 255, 0.05) 50%, transparent 100%);
+}
+
+.ultra-benefits {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding: 0 1.25rem 1.25rem;
+}
+
+.benefit-card {
+    text-align: center;
+    padding: 1rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.benefit-card:hover {
+    background: rgba(155, 89, 182, 0.08);
+    border-color: rgba(155, 89, 182, 0.4);
+}
+
+.benefit-card .benefit-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.benefit-card h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 0.25rem;
+}
+
+.benefit-card p {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+.upgrade-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 1.25rem 1rem;
+}
+
+.upgrade-pricing .price-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    text-align: left;
+}
+
+.upgrade-pricing .price-option input[type="radio"] {
+    accent-color: #00d4ff;
+    width: 18px;
+    height: 18px;
+}
+
+.upgrade-pricing .price-info {
+    flex: 1;
+}
+
+.upgrade-pricing .price-info .price-label {
+    margin-bottom: 0.15rem;
+}
+
+.upgrade-pricing .price-info .price-amount {
+    font-size: 1rem;
+}
+
+.upgrade-pricing .price-option.best {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(155, 89, 182, 0.06));
+}
+
+.premium-modal.ultra-upgrade .subscribe-btn {
+    margin: 0 1.25rem 0.5rem;
+    width: calc(100% - 2.5rem);
+}
+
+.premium-modal.ultra-upgrade .later-btn {
+    margin: 0 1.25rem 1rem;
+    width: calc(100% - 2.5rem);
+}
+
+/* 울트라 활성 상태 */
+.premium-modal.premium-active.ultra {
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(155, 89, 182, 0.4), rgba(255, 0, 85, 0.3)) 1;
+}
+
+.premium-modal.premium-active.ultra .premium-header {
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.08) 0%, rgba(155, 89, 182, 0.05) 50%, transparent 100%);
+}
+
+.premium-modal.premium-active.ultra .premium-crown {
+    animation: ultraCrownShine 2s ease-in-out infinite;
+}
+
+@keyframes ultraCrownShine {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.4)); }
+    50% { filter: drop-shadow(0 0 25px rgba(155, 89, 182, 0.6)); }
+}
+
+.benefit-item.active.ultra {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.08));
+    border: 1px solid;
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
+}
+
+.premium-modal.premium-active.ultra .premium-close-btn {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(155, 89, 182, 0.1));
+    border: 1px solid;
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3)) 1;
+    color: #00d4ff;
+}
+
+.premium-modal.premium-active.ultra .premium-close-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(155, 89, 182, 0.18));
+}
+
+/* 반응형 - 3티어/울트라 모달 */
+@media (max-width: 480px) {
+    .plan-tabs {
+        margin: 0 1rem 0.75rem;
+    }
+
+    .plan-tab {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .plan-details {
+        padding: 0 1rem;
+    }
+
+    .ultra-benefits {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 0 1rem 1rem;
+    }
+
+    .benefit-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-align: left;
+        padding: 0.75rem 1rem;
+    }
+
+    .benefit-card .benefit-icon {
+        margin-bottom: 0;
+    }
+
+    .plan-pricing {
+        flex-direction: column;
+    }
+
+    .premium-modal.ultra-upgrade .subscribe-btn,
+    .premium-modal.ultra-upgrade .later-btn {
+        margin: 0 1rem 0.5rem;
+        width: calc(100% - 2rem);
     }
 }

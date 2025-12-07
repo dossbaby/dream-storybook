@@ -23,7 +23,8 @@ export const AI_MODELS = {
     keywords: 'claude-sonnet-4-5',
 
     // 도파민 메시지 (Haiku - 가장 빠른 모델로 분석 중 메시지 선생성)
-    dopamine: 'claude-3-5-haiku-20241022',
+    // Alias 사용: 자동으로 최신 스냅샷으로 업데이트됨
+    dopamine: 'claude-haiku-4-5',
 
     // 이미지 생성 (티어별 차등)
     image: {
@@ -80,7 +81,7 @@ export const ANIME_STYLES = {
 
     // 클래식/우아한 계열
     shojo: 'Classic shojo style (Apothecary Diaries). Breathtaking details, sparkles and flowers, elegant flowing aesthetic',
-    webtoon: 'Webtoon adaptation style (Solo Leveling). Clean digital lines, epic scale, polished action spectacle',
+    persona5: 'Persona 5 style. Bold red-black-white contrast, stylish UI elements, sharp angular designs, rebellious punk aesthetic, striking silhouettes',
 
     // 특수 스타일
     cgi_gem: 'CGI crystalline style (Land of the Lustrous). Gemstone characters, glittering ethereal surfaces, prismatic beauty',
@@ -93,9 +94,48 @@ export const ANIME_STYLES = {
 export const STYLE_GUIDE = {
     romantic: ['shinkai', 'kyoani', 'shojo'],           // 연애, 감성, 그리움
     dark: ['mappa_dark', 'trigger'],                     // 공포, 불안, 악몽
-    action: ['mappa_action', 'ufotable', 'webtoon'],    // 도전, 변화, 갈등
+    action: ['mappa_action', 'ufotable', 'persona5'],    // 도전, 변화, 갈등
     mystical: ['ghibli', 'sciencesaru', 'cgi_gem'],     // 신비, 마법, 환상
     calm: ['kyoani', 'minimalist', 'ghibli']            // 평화, 치유, 안정
+};
+
+/**
+ * 티어별 프롬프트 글자 수 설정 (언어별)
+ * - 프롬프트에서 Claude에게 글자 수 가이드로 전달
+ * - 언어별로 다른 글자 수 적용 가능 (한글/영어/일본어 등)
+ */
+export const TIER_CONTENT_LENGTH = {
+    ko: {
+        tarot: {
+            cardAnalysis: { free: 700, premium: 1300, ultra: 1400 },
+            conclusion: { free: 800, premium: 1500, ultra: 1600 },
+            hiddenInsight: { free: 1300, premium: 1300, ultra: 1400 }
+        },
+        dream: {
+            summary: { free: 350, premium: 450, ultra: 500 },
+            detail: { free: 700, premium: 1300, ultra: 1500 },
+            hiddenInsight: { free: 1300, premium: 1300, ultra: 1400 }
+        },
+        fortune: {
+            section: { free: 400, premium: 800, ultra: 900 },
+            overall: { free: 800, premium: 1600, ultra: 1700 },
+            hiddenInsight: { free: 1300, premium: 1300, ultra: 1400 }
+        }
+    }
+    // en: { ... },  // 나중에 추가
+    // ja: { ... },  // 나중에 추가
+};
+
+/**
+ * 티어별 콘텐츠 길이 가져오기
+ * @param {string} mode - 'tarot' | 'dream' | 'fortune'
+ * @param {string} field - 필드명 (cardAnalysis, conclusion, summary 등)
+ * @param {string} tier - 'free' | 'premium' | 'ultra'
+ * @param {string} lang - 언어 코드 (기본: 'ko')
+ * @returns {number} 글자 수
+ */
+export const getContentLength = (mode, field, tier = 'free', lang = 'ko') => {
+    return TIER_CONTENT_LENGTH[lang]?.[mode]?.[field]?.[tier] || 700;
 };
 
 /**
@@ -275,32 +315,3 @@ export const getCustomQuestionAccess = (tier = 'free') => {
     };
 };
 
-/**
- * 티어별 프롬프트 글자수 제한
- * Hook, Foreshadow는 동일 / Main Reading, 결과만 차등
- */
-export const PROMPT_LIMITS = {
-    free: {
-        // Hook, Foreshadow: 제한 없음 (동일)
-        // Card/Section Analysis: 절반
-        cardAnalysis: { minChars: 650, minSentences: 8 },
-        conclusionAnalysis: { minChars: 750, minSentences: 10 },
-        synthesis: { minChars: 250 },
-        hiddenInsight: { minChars: 500 }  // 블러 처리되지만 생성은 함
-    },
-    premium: {
-        // 기능 해금 + 동일 품질
-        cardAnalysis: { minChars: 1300, minSentences: 17 },
-        conclusionAnalysis: { minChars: 1500, minSentences: 20 },
-        synthesis: { minChars: 500 },
-        hiddenInsight: { minChars: 1000 }
-    },
-    ultra: {
-        // Opus의 소름돋는 통찰 - 더 길고 깊은 분석
-        cardAnalysis: { minChars: 1800, minSentences: 22 },
-        conclusionAnalysis: { minChars: 2000, minSentences: 25 },
-        synthesis: { minChars: 700 },
-        hiddenInsight: { minChars: 1500 },
-        ultraInsight: { minChars: 800 }  // 울트라만의 추가 통찰
-    }
-};

@@ -275,6 +275,45 @@
     box-shadow: none;
 }
 
+/* 타로 모드 버튼 - 초기부터 glacial theme 적용 */
+.submit-btn.tarot-submit {
+    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ec4899 100%);
+    color: #fff;
+    border: none;
+    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn.tarot-submit::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    transform: rotate(45deg);
+    animation: tarotBtnShine 3s linear infinite;
+}
+
+@keyframes tarotBtnShine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.submit-btn.tarot-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ec4899 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 212, 255, 0.4), 0 0 30px rgba(155, 89, 182, 0.2);
+}
+
+.submit-btn.tarot-submit:disabled {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(155, 89, 182, 0.3) 100%);
+    opacity: 0.5;
+    box-shadow: none;
+}
+
 /* 로딩 중 버튼 */
 .submit-btn.loading {
     position: relative;

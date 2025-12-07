@@ -4,13 +4,12 @@ import PremiumBadge from '../common/PremiumBadge';
 const NavBar = ({
     mode,
     user,
-    userPoints,
     onlineCount,
     isPremium,
+    tier, // 추가: 티어 정보
     usageSummary,
     onModeChange,
     onViewChange,
-    onOpenPoints,
     onOpenPremium,
     onLogin,
     onResetResults
@@ -67,19 +66,13 @@ const NavBar = ({
 
             {/* 액션 버튼들 */}
             <div className="nav-actions">
-                {/* 프리미엄 배지 */}
+                {/* 프리미엄/울트라 배지 */}
                 <PremiumBadge
                     isPremium={isPremium}
+                    tier={tier}
                     size="small"
                     onClick={onOpenPremium}
                 />
-
-                {user && (
-                    <button className="nav-points-btn" onClick={onOpenPoints}>
-                        <span className="points-gem">💎</span>
-                        <span className="points-value">{userPoints}</span>
-                    </button>
-                )}
 
                 <button
                     className="nav-create-btn"

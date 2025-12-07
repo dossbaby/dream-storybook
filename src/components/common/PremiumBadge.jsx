@@ -1,9 +1,10 @@
 /**
  * 프리미엄 배지 컴포넌트
- * 프리미엄 상태 표시 및 업그레이드 유도
+ * 프리미엄/울트라 상태 표시 및 업그레이드 유도
  */
 const PremiumBadge = ({
     isPremium = false,
+    tier = 'free', // 'free', 'premium', 'ultra'
     size = 'small', // 'tiny', 'small', 'medium', 'large'
     showLabel = true,
     onClick,
@@ -16,7 +17,21 @@ const PremiumBadge = ({
         large: 'premium-badge-large'
     };
 
-    if (isPremium) {
+    // 울트라 티어
+    if (tier === 'ultra') {
+        return (
+            <span
+                className={`premium-badge active ultra ${sizeClasses[size]} ${className}`}
+                onClick={onClick}
+            >
+                <span className="badge-icon">✦</span>
+                {showLabel && <span className="badge-label">Ultra</span>}
+            </span>
+        );
+    }
+
+    // 프리미엄 티어
+    if (isPremium || tier === 'premium') {
         return (
             <span
                 className={`premium-badge active ${sizeClasses[size]} ${className}`}
@@ -28,6 +43,7 @@ const PremiumBadge = ({
         );
     }
 
+    // 무료 티어 - 업그레이드 유도
     return (
         <button
             className={`premium-badge upgrade ${sizeClasses[size]} ${className}`}

@@ -1073,6 +1073,64 @@
     color: #ff0055;
 }
 
+/* 삭제 옵션 구분선 */
+.visibility-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0.3rem 0;
+}
+
+/* 삭제 메뉴 아이템 */
+.visibility-menu-item.delete-item {
+    color: #ff4757;
+}
+
+.visibility-menu-item.delete-item:hover {
+    background: rgba(255, 71, 87, 0.15);
+}
+
+/* 삭제 확인 행 */
+.delete-confirm-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.6rem;
+}
+
+.delete-confirm-text {
+    flex: 1;
+    font-size: 0.75rem;
+    color: #ff4757;
+}
+
+.delete-confirm-btn {
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.delete-confirm-btn.yes {
+    background: #ff4757;
+    color: #fff;
+}
+
+.delete-confirm-btn.yes:hover {
+    background: #ff6b7a;
+}
+
+.delete-confirm-btn.no {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.delete-confirm-btn.no:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
 /* ========== 로그인 프롬프트 (비로그인 마이페이지) ========== */
 .login-prompt {
     width: 100%;

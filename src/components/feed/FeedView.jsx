@@ -186,9 +186,9 @@ const FeedView = ({
             },
             fortune: {
                 emoji: '🔮',
-                title: '아직 운세가 없어요',
-                subtitle: '오늘의 운세를 확인해보세요',
-                btnText: '운세 보기',
+                title: '아직 사주가 없어요',
+                subtitle: '오늘의 사주를 확인해보세요',
+                btnText: '사주 보기',
                 btnEmoji: '⭐'
             },
             filtered: {
@@ -425,11 +425,11 @@ const FeedView = ({
                 {/* 상단 CTA */}
                 <div className="feed-cta fortune-cta">
                     <div className="feed-cta-content">
-                        <h2>🔮 오늘의 운세를 확인하세요</h2>
+                        <h2>🔮 오늘의 사주를 확인하세요</h2>
                         <p>하루의 기운을 미리 엿보세요</p>
                     </div>
                     <button className="feed-cta-btn fortune-btn" onClick={onCreateClick}>
-                        + 오늘의 운세 보기
+                        + 오늘의 사주 보기
                     </button>
                 </div>
 

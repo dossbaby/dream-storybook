@@ -45,25 +45,18 @@ export const useImageGeneration = (tier = 'free') => {
             // Gemini 3 Pro Image vs Gemini 2.5 Flash Image
             const isGemini3Pro = imageModelName.includes('gemini-3');
 
-            let response;
-            if (isGemini3Pro) {
-                // Gemini 3 Pro Image (프리미엄/울트라) - 16:9
-                response = await ai.models.generateContent({
-                    model: imageModelName,
-                    contents: fullPrompt,
-                    config: {
-                        imageConfig: {
-                            aspectRatio: '16:9'
-                        }
-                    }
-                });
-            } else {
-                // Gemini 2.5 Flash Image (무료) - 기본 설정
-                response = await ai.models.generateContent({
-                    model: imageModelName,
-                    contents: fullPrompt
-                });
-            }
+            // 모든 티어에서 16:9 가로 비율로 생성
+            const response = await ai.models.generateContent({
+                model: imageModelName,
+                contents: fullPrompt,
+                config: {
+                    responseModalities: ['image', 'text'],
+                    imageSafety: 'block_low_and_above'
+                },
+                generationConfig: {
+                    aspectRatio: '16:9'
+                }
+            });
 
             // 응답에서 이미지 추출
             if (response.candidates?.[0]?.content?.parts) {

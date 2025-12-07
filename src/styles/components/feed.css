@@ -27,21 +27,51 @@
     border-radius: 2px;
 }
 
-/* 피드 카드 */
+/* 피드 카드 - gradient border on hover */
 .feed-card {
     display: flex;
     gap: 1rem;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    /* 기본 border 제거 - hover시 gradient border 사용 */
+    border: none;
+}
+
+/* 기본 상태 - 미세한 border */
+.feed-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Hover 상태 - 밝은 gradient border */
+.feed-card:hover::after {
+    padding: 2px;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.8) 0%,
+        rgba(100, 180, 255, 0.6) 30%,
+        rgba(155, 89, 182, 0.7) 70%,
+        rgba(180, 100, 200, 0.6) 100%);
 }
 
 .feed-card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(138, 43, 226, 0.3);
+    background: rgba(12, 10, 22, 0.95);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.25),
+        0 0 30px rgba(0, 212, 255, 0.15),
+        0 0 50px rgba(155, 89, 182, 0.1);
     transform: translateY(-2px);
 }
 
@@ -349,8 +379,10 @@
 
 .feed-item:hover {
     background: var(--gray);
-    border-color: #333;
-    transform: translateX(4px);
+    border-color: rgba(155, 89, 182, 0.5);
+    box-shadow:
+        0 0 0 1px rgba(155, 89, 182, 0.3),
+        0 0 15px rgba(155, 89, 182, 0.2);
 }
 
 .feed-item-thumb {
@@ -700,38 +732,41 @@
 }
 
 .feed-view .feed-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(155, 89, 182, 0.3);
+    border-color: rgba(155, 89, 182, 0.5);
     box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.35),
-        0 0 20px rgba(155, 89, 182, 0.15);
+        0 0 0 1px rgba(155, 89, 182, 0.4),
+        0 0 25px rgba(155, 89, 182, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* 꿈 피드 카드 */
 .dream-feed .feed-view .feed-card:hover,
 .feed-view .feed-card.dream-card:hover {
-    border-color: rgba(108, 92, 231, 0.4);
+    border-color: rgba(108, 92, 231, 0.5);
     box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.35),
-        0 0 25px rgba(108, 92, 231, 0.2);
+        0 0 0 1px rgba(108, 92, 231, 0.4),
+        0 0 25px rgba(108, 92, 231, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* 타로 피드 카드 */
 .tarot-feed .feed-view .feed-card:hover,
 .feed-view .feed-card.tarot-card:hover {
-    border-color: rgba(155, 89, 182, 0.4);
+    border-color: rgba(155, 89, 182, 0.5);
     box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.35),
-        0 0 25px rgba(155, 89, 182, 0.2);
+        0 0 0 1px rgba(155, 89, 182, 0.4),
+        0 0 25px rgba(155, 89, 182, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* 운세 피드 카드 */
 .fortune-feed .feed-view .feed-card:hover,
 .feed-view .feed-card.fortune-card:hover {
-    border-color: rgba(26, 188, 156, 0.4);
+    border-color: rgba(26, 188, 156, 0.5);
     box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.35),
-        0 0 25px rgba(26, 188, 156, 0.2);
+        0 0 0 1px rgba(26, 188, 156, 0.4),
+        0 0 25px rgba(26, 188, 156, 0.3),
+        0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* 썸네일 영역 */
@@ -749,8 +784,9 @@
     transition: transform 0.3s ease;
 }
 
+/* Thumbnail scale 효과 제거 - hover 시 위치 shift 방지 */
 .feed-view .feed-card:hover .feed-card-thumb img {
-    transform: scale(1.05);
+    transform: none;
 }
 
 .feed-card-emoji {

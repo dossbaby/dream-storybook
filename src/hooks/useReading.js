@@ -3,16 +3,10 @@ import Anthropic from '@anthropic-ai/sdk';
 import { runAnalysisAnimation, getApiKeys, getDreamMessages, getTarotMessages, getFortuneMessages } from '../utils/analysisHelpers';
 import { DOPAMINE_HINTS } from '../utils/constants';
 import { useImageGeneration } from './useImageGeneration';
-import { getModelConfig, AI_MODELS } from '../utils/aiConfig';
+import { getModelConfig, AI_MODELS, getContentLength } from '../utils/aiConfig';
 import {
-    DREAM_SYSTEM_PROMPT,
-    TAROT_SYSTEM_PROMPT,
-    FORTUNE_SYSTEM_PROMPT,
     DETAILED_ANALYSIS_SYSTEM_PROMPT,
-    callClaudeWithCache,
-    buildDreamUserMessage,
-    buildTarotUserMessage,
-    buildFortuneUserMessage
+    callClaudeWithCache
 } from '../utils/promptCache';
 
 // 별자리 계산 함수
@@ -308,6 +302,11 @@ export const useReading = ({
             // 프로필 정보 블록 생성
             const profileBlock = buildProfileBlock(userProfile, 'dream');
 
+            // 티어별 글자 수 설정
+            const dreamSummaryLen = getContentLength('dream', 'summary', tier);
+            const dreamDetailLen = getContentLength('dream', 'detail', tier);
+            const dreamHiddenLen = getContentLength('dream', 'hiddenInsight', tier);
+
             // MrBeast + Jenny Hoyos 텍스트 도파민 기반 꿈 해몽 프롬프트
             const analysisPrompt = `너는 30년 경력의 무속인이자 융 심리학 전문가다.
 꿈을 보면 그 사람이 최근 겪고 있는 일, 숨기고 있는 감정, 본인도 모르는 욕망이 다 보인다.
@@ -371,7 +370,7 @@ JSON만 반환:
       "title": "숨겨진 메시지",
       "message": "반전 메시지 (80자) - 표면과 다른 진짜 의미. 문장 끝 반전 필수. 소름끼치는 인사이트. 매번 새로운 통찰!"
     },
-    "hiddenInsight": "⚠️프로필 이름으로 호칭! 4-6문장 봉인 해제 메시지. 매번 완전히 다른 인사이트와 표현! 구조: 의외의 시작 → 꿈이 말하는 것 → 지금 상황 연결 → 구체적 예언/조언 → 기억할 것. 예시 문장 절대 복사 금지!",
+    "hiddenInsight": "⚠️프로필 이름으로 호칭! \${dreamHiddenLen}자 이상 봉인 해제 메시지. 매번 완전히 다른 인사이트와 표현! 구조: 의외의 시작 → 꿈이 말하는 것 → 지금 상황 연결 → 구체적 예언/조언 → 기억할 것. 예시 문장 절대 복사 금지!",
     "shareHook": "공유 유도 - 매번 다르게! (참고: 소름/신기/대박이면 공유 / 친구한테 보여줘 등 느낌)",
     "rewatchHook": "재방문 유도 - 매번 새롭게! (참고: 내일 다시 보면 / 일주일 후에 / 기억해뒀다가 등 느낌)"
   },
@@ -398,8 +397,8 @@ JSON만 반환:
   "tarot": {"name": "타로 카드 이름 (영어)", "meaning": "의미 (40자)"},
 
   "dreamMeaning": {
-    "summary": "핵심 의미 (150자) - jenny.twist 반영. 확정 답 + Twist",
-    "detail": "상세 해석 (300자 이상) - 스토리텔링으로 풀어서. But-Therefore 구조",
+    "summary": "핵심 의미 (\${dreamSummaryLen}자) - jenny.twist 반영. 확정 답 + Twist",
+    "detail": "상세 해석 (\${dreamDetailLen}자 이상) - 스토리텔링으로 풀어서. But-Therefore 구조",
     "future": "미래 암시 (150자) - 이 꿈이 예고하는 것. 구체적 시기/상황"
   },
 
@@ -575,19 +574,22 @@ JSON만 반환:
             // 프로필 정보 블록 생성
             const profileBlock = buildProfileBlock(userProfile, 'tarot');
 
+            // 티어별 글자 수 설정
+            const tarotCardLen = getContentLength('tarot', 'cardAnalysis', tier);
+            const tarotConclusionLen = getContentLength('tarot', 'conclusion', tier);
+            const tarotHiddenLen = getContentLength('tarot', 'hiddenInsight', tier);
+
             // MrBeast + Jenny Hoyos 텍스트 도파민 기반 프롬프트 (dopamine-prompt-guide.md 완전 반영)
             const tarotPrompt = `너는 30년 경력의 신비로운 타로 마스터다. 카드 리딩을 할 때 단순한 해석이 아니라 그 사람의 인생 이야기를 들려주듯이 깊고 감동적으로 풀어낸다.
 ${profileBlock}
 
 ###### 🚨🚨🚨 최우선 규칙: 카드 분석 길이 🚨🚨🚨
 각 카드 분석(card1Analysis, card2Analysis, card3Analysis)은 반드시:
-- 최소 17문장 이상 (22문장 권장)
-- 최소 1300자 이상 (1600자 권장)
+- 최소 ${tarotCardLen}자 이상
 - 6개 섹션 모두 포함: 상황/배경 → 감정 → 숨은 맥락 → 원인 → 미처 몰랐던 것 → 반전/디테일
 
 conclusionCard는 반드시:
-- 최소 20문장 이상 (25문장 권장)
-- 최소 1500자 이상 (1800자 권장)
+- 최소 ${tarotConclusionLen}자 이상
 - 확실한 답 + 예상 밖 방식 + 감동적인 마무리
 
 - 짧게 쓰면 실패로 간주됨
@@ -617,17 +619,17 @@ conclusionCard는 반드시:
 |------|------|------|
 | Hook | 답 먼저 + 반전 | "만나요. 근데 그 사람이 아니에요." |
 | Foreshadow | 카드 순서 프레임 제거 | "누군지 힌트가 나와요" (O) / "세 번째 카드에서" (X) |
-| Card 1-3 | **17-22문장 (1300자+)** | 상황 → 감정 → 숨은 맥락 → 미처 몰랐던 것 → 심층 분석 |
-| Conclusion | **20-25문장 (1500자+)** | 확실한 답 + Twist + 감동적 마무리 |
+| Card 1-3 | **\${tarotCardLen}자+** | 상황 → 감정 → 숨은 맥락 → 미처 몰랐던 것 → 심층 분석 |
+| Conclusion | **\${tarotConclusionLen}자+** | 확실한 답 + Twist + 감동적 마무리 |
 | Bonus | 기대 초과 | "이건 안 물어보셨는데..." |
-| Hidden Insight | **1000자+, EXCEED + Payoff** | 타로만 봤는데 이것까지! 이름힌트, 시기, 구체적 행동 가이드 |
+| Hidden Insight | **\${tarotHiddenLen}자+, EXCEED + Payoff** | 타로만 봤는데 이것까지! 이름힌트, 시기, 구체적 행동 가이드 |
 | 텍스트 도파민 | 문장 끝 반전, 구체적 디테일 | "이 사람 이름에 ㅇ 들어가요" |
 | 심리 분석 | 질문 뒤 숨은 진짜 심리 | "이미 답 알면서 확인받고 싶은 거죠" |
 
 ## ❌ 절대 금지 사항
 - Hook에서 희귀도/카드조합/숫자/통계 언급 금지 ("1000명 중 17명" 같은 표현 절대 금지!)
 - Foreshadow에서 카드 순서 언급 금지 ("첫 번째 카드", "세 번째 카드", "네 번째 카드" 금지!)
-- 짧은 분석 금지 - 카드 1,2,3은 반드시 17문장/1300자 이상! 결론은 20문장/1500자 이상!
+- 짧은 분석 금지 - 카드 1,2,3은 반드시 \${tarotCardLen}자 이상! 결론은 \${tarotConclusionLen}자 이상!
 
 ## 질문 유형별 심리 분석 (질문자의 숨은 심리 파악)
 - 연애/관계: '이 사람 맞아?' → 이미 답을 알면서 확인받고 싶은 마음
@@ -671,7 +673,7 @@ conclusionCard는 반드시:
       "title": "숨겨진 진실",
       "message": "반전 메시지 (80자) - 결론 카드에서 발견한 예상치 못한 인사이트. 문장 끝 반전 필수. 구체적 디테일 포함. 매번 새로운 통찰!"
     },
-    "hiddenInsight": "🚨반드시 1000자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가정보/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/감정) 3)예상 못한 추가 4-5문장(질문 외 정보) 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수!",
+    "hiddenInsight": "🚨반드시 \${tarotHiddenLen}자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가정보/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/감정) 3)예상 못한 추가 4-5문장(질문 외 정보) 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수!",
     "shareHook": "공유 유도 - 매번 다르게! (느낌: 드문 조합/신기하면/대박이면 공유 등)"
   },
 
@@ -689,10 +691,10 @@ conclusionCard는 반드시:
 
   "storyReading": {
     "opening": "도입부 (200자 이상) - jenny.hook을 자연스럽게 녹여서 시작. 질문 뒤 숨은 심리 짚기. 🚨매번 완전히 다른 도입! 예시 복사 금지! 느낌: 질문자 심리 읽기 + 공감 + 답을 알려주겠다는 암시. 창의적으로!",
-    "card1Analysis": "🚨반드시 1300자 이상, 17문장 이상 작성! 이것보다 짧으면 실패! 구조: 1)현재 상황/배경 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용. 문장마다 줄바꿈 없이 이어서 작성.",
-    "card2Analysis": "🚨반드시 1300자 이상, 17문장 이상 작성! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전/디테일 2-3문장. 말투 친근하게.",
-    "card3Analysis": "🚨반드시 1300자 이상, 17문장 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드/반전 2-3문장. 말투 친근하게.",
-    "conclusionCard": "🚨반드시 1500자 이상, 20문장 이상 작성! 결론 카드는 가장 길고 감동적이어야 함! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. 말투 친근하게.",
+    "card1Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! 이것보다 짧으면 실패! 구조: 1)현재 상황/배경 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용. 문장마다 줄바꿈 없이 이어서 작성.",
+    "card2Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전/디테일 2-3문장. 말투 친근하게.",
+    "card3Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드/반전 2-3문장. 말투 친근하게.",
+    "conclusionCard": "🚨반드시 \${tarotConclusionLen}자 이상 작성! 결론 카드는 가장 길고 감동적이어야 함! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. 말투 친근하게.",
     "synthesis": "🚨종합 메시지 (500자 이상) - 4장의 카드가 함께 말하는 것. EXCEED expectations! 확정 답 3-4문장 + Twist 4-5문장 + 핵심 조언 3-4문장 + 구체적 타이밍/행동 2-3문장. 질문에 대한 답을 넘어서 기대 이상의 가치를 주세요.",
     "actionAdvice": "구체적 행동 조언 (150자 이상) - 오늘/이번 주에 실제로 할 수 있는 것. 구체적인 시간, 장소, 행동 포함.",
     "warning": "주의할 점 (100자) - 반드시 피해야 할 것",
@@ -722,7 +724,6 @@ conclusionCard는 반드시:
 
             // 캐싱 미적용 (프롬프트 구조가 복잡하여 분리 어려움)
             const data = await callClaudeApi(null, tarotPrompt, 8000);
-            console.log('🎯 Tarot API Response - jenny:', data.jenny); // 디버깅용
 
             // API 호출 완료 - 도파민 interval 정리
             clearInterval(dopamineInterval);
@@ -862,6 +863,11 @@ conclusionCard는 반드시:
             const currentYear = new Date().getFullYear();
             const todayFull = new Date();
 
+            // 티어별 글자 수 설정
+            const fortuneSectionLen = getContentLength('fortune', 'section', tier);
+            const fortuneOverallLen = getContentLength('fortune', 'overall', tier);
+            const fortuneHiddenLen = getContentLength('fortune', 'hiddenInsight', tier);
+
             // MrBeast + Jenny Hoyos 텍스트 도파민 기반 사주 프롬프트
             const fortunePrompt = `너는 30년 경력의 사주명리학 전문가다.
 동양 사주명리학을 바탕으로 사주풀이를 하되, 사람들이 끝까지 보고 공유하고 싶게 만드는 콘텐츠를 만든다.
@@ -884,13 +890,11 @@ ${profileBlock}
 
 ###### 🚨🚨🚨 최우선 규칙: 각 분석 길이 🚨🚨🚨
 각 섹션 분석(section1Analysis, section2Analysis, section3Analysis)은 반드시:
-- 최소 17문장 이상 (22문장 권장)
-- 최소 1200자 이상 (1500자 권장)
+- 최소 \${fortuneSectionLen}자 이상
 - 6개 섹션 모두 포함: 사주 분석 → 현재 상황 → 감정 → 숨은 맥락 → 원인 → 미처 몰랐던 것 → 반전/디테일
 
 synthesisAnalysis(종합 분석)는 반드시:
-- 최소 20문장 이상 (25문장 권장)
-- 최소 1500자 이상 (1800자 권장)
+- 최소 \${fortuneOverallLen}자 이상
 - 사주팔자 종합 해석 + 확실한 답 + 예상 밖 방식 + EXCEED bonus + 감동적인 마무리
 
 - 짧게 쓰면 실패로 간주됨
@@ -919,10 +923,10 @@ synthesisAnalysis(종합 분석)는 반드시:
 |------|------|------|
 | Hook | 답 먼저 + 반전 | "올해 대박나요. 근데 상반기가 아니에요." |
 | Foreshadow | 섹션 순서 프레임 제거 | "어디서 터지는지 나와요" (O) / "세 번째 섹션에서" (X) |
-| Section 1-3 | **17-22문장 (1200자+)** | 사주분석 → 상황 → 감정 → 숨은 맥락 → 미처 몰랐던 것 → 심층 분석 |
-| Synthesis | **20-25문장 (1500자+)** | 사주 종합 + 확실한 답 + Twist + EXCEED + 감동적 마무리 |
+| Section 1-3 | **\${fortuneSectionLen}자+** | 사주분석 → 상황 → 감정 → 숨은 맥락 → 미처 몰랐던 것 → 심층 분석 |
+| Synthesis | **\${fortuneOverallLen}자+** | 사주 종합 + 확실한 답 + Twist + EXCEED + 감동적 마무리 |
 | Bonus | 기대 초과 | "이건 안 물어보셨는데..." |
-| Hidden Insight | **1000자+, EXCEED + Payoff** | 사주만 봤는데 이것까지! 이름힌트, 시기, 구체적 행동 가이드 |
+| Hidden Insight | **\${fortuneHiddenLen}자+, EXCEED + Payoff** | 사주만 봤는데 이것까지! 이름힌트, 시기, 구체적 행동 가이드 |
 | 텍스트 도파민 | 문장 끝 반전, 구체적 디테일 | "${currentYear}년 하반기에 뭔가 있어요" |
 
 ## 섹션 카테고리 분류 규칙
@@ -966,7 +970,7 @@ JSON만 반환:
       "title": "숨겨진 운명의 시간",
       "message": "반전 메시지 (80자) - 사주에서 발견한 예상치 못한 인사이트. 문장 끝 반전 필수. 구체적 디테일. 매번 새로운 통찰!"
     },
-    "hiddenInsight": "🚨반드시 1000자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/기회위험) 3)예상 못한 추가 4-5문장 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수!",
+    "hiddenInsight": "🚨반드시 \${fortuneHiddenLen}자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/기회위험) 3)예상 못한 추가 4-5문장 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수!",
     "shareHook": "공유 유도 - 매번 다르게! (느낌: 소름/신기/대박이면 공유 등)"
   },
 
@@ -981,23 +985,23 @@ JSON만 반환:
       "category": "첫 번째 카테고리 이름 (예: 연애운, 재물운, 직장운 등)",
       "icon": "카테고리 이모지",
       "title": "섹션 제목 (10자 이내)",
-      "analysis": "🚨반드시 1200자 이상, 17문장 이상 작성! 구조: 1)사주 분석 4-5문장(년주/월주/일주 연결) 2)현재 상황 3-4문장 3)감정/심리 3-4문장 4)숨겨진 맥락 4-5문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용."
+      "analysis": "🚨반드시 \${fortuneSectionLen}자 이상 작성! 구조: 1)사주 분석 4-5문장(년주/월주/일주 연결) 2)현재 상황 3-4문장 3)감정/심리 3-4문장 4)숨겨진 맥락 4-5문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용."
     },
     "section2": {
       "category": "두 번째 카테고리 이름",
       "icon": "카테고리 이모지",
       "title": "섹션 제목 (10자 이내)",
-      "analysis": "🚨반드시 1200자 이상, 17문장 이상 작성! But 구조. 1)첫 섹션 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)반전/디테일 2-3문장. 말투 친근하게."
+      "analysis": "🚨반드시 \${fortuneSectionLen}자 이상 작성! But 구조. 1)첫 섹션 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)반전/디테일 2-3문장. 말투 친근하게."
     },
     "section3": {
       "category": "세 번째 카테고리 이름",
       "icon": "카테고리 이모지",
       "title": "섹션 제목 (10자 이내)",
-      "analysis": "🚨반드시 1200자 이상, 17문장 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)앞으로 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)행동 가이드/반전 2-3문장. 말투 친근하게."
+      "analysis": "🚨반드시 \${fortuneSectionLen}자 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)앞으로 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)행동 가이드/반전 2-3문장. 말투 친근하게."
     }
   },
 
-  "synthesisAnalysis": "🚨반드시 1500자 이상, 20문장 이상 작성! 사주 종합 분석은 가장 길고 감동적이어야 함! 1)사주팔자 종합 해석 5-6문장 2)${currentYear}년 운세 핵심 5-6문장 3)EXCEED bonus (안 물어본 것까지) 5-6문장 4)구체적 행동 가이드 3-4문장 5)감동적 마무리 3-4문장. 말투 친근하게.",
+  "synthesisAnalysis": "🚨반드시 \${fortuneOverallLen}자 이상 작성! 사주 종합 분석은 가장 길고 감동적이어야 함! 1)사주팔자 종합 해석 5-6문장 2)${currentYear}년 운세 핵심 5-6문장 3)EXCEED bonus (안 물어본 것까지) 5-6문장 4)구체적 행동 가이드 3-4문장 5)감동적 마무리 3-4문장. 말투 친근하게.",
 
   "keywords": [
     {"word": "질문 '${question}'에서 추출한 주제 키워드 (명사형, 2-4글자)", "surface": "표면적 의미 (50자)", "hidden": "5-7문장 숨겨진 의미 (300자 이상). But-Therefore 구조."},

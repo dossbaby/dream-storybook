@@ -23,6 +23,27 @@
     top: var(--nav-height);
     height: calc(100vh - var(--nav-height));
     overflow-y: auto;
+    /* 커스텀 스크롤바 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 212, 255, 0.3) transparent;
+}
+
+/* 왼쪽 사이드바 스크롤바 - Webkit */
+.left-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.left-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.left-sidebar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3));
+    border-radius: 3px;
+}
+
+.left-sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.6), rgba(155, 89, 182, 0.5));
 }
 
 /* 중앙 - 9:16 카드 메인 */
@@ -55,6 +76,27 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    /* 커스텀 스크롤바 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 212, 255, 0.3) transparent;
+}
+
+/* 오른쪽 사이드바 스크롤바 - Webkit */
+.right-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.right-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.right-sidebar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.4), rgba(155, 89, 182, 0.3));
+    border-radius: 3px;
+}
+
+.right-sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.6), rgba(155, 89, 182, 0.5));
 }
 
 /* ========== 태블릿 반응형 (768px ~ 1024px) ========== */
@@ -130,16 +172,17 @@
     }
 }
 
-/* ========== 글로벌 뒤로가기 버튼 ========== */
+/* ========== 글로벌 뒤로가기 버튼 - 하단 배치 ========== */
 .global-back-btn {
     position: fixed;
-    top: calc(var(--nav-height) + var(--spacing-md));
-    left: var(--spacing-md);
+    bottom: calc(var(--spacing-xl) + 2rem);
+    /* 데스크톱: 왼쪽 사이드바 오른쪽에 위치 */
+    left: calc(var(--sidebar-width) + var(--spacing-lg));
     width: var(--touch-target-min);
     height: var(--touch-target-min);
-    background: rgba(26, 26, 26, 0.9);
+    background: linear-gradient(135deg, rgba(12, 20, 40, 0.95), rgba(20, 35, 65, 0.9));
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.25);
     border-radius: var(--radius-full);
     color: var(--white);
     font-size: 1.25rem;
@@ -150,23 +193,34 @@
     z-index: var(--z-sticky);
     transition: var(--transition-fast);
     -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 212, 255, 0.12);
 }
 
 .global-back-btn:hover {
-    background: rgba(155, 89, 182, 0.3);
-    transform: scale(1.05);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(155, 89, 182, 0.2));
+    border-color: rgba(0, 212, 255, 0.5);
+    transform: scale(1.08);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35), 0 0 30px rgba(0, 212, 255, 0.2);
 }
 
 .global-back-btn:active {
     transform: scale(0.95);
 }
 
+/* 태블릿: 사이드바 없으므로 왼쪽에 */
+@media (max-width: 1024px) {
+    .global-back-btn {
+        left: var(--spacing-md);
+        bottom: calc(var(--spacing-lg) + 1rem);
+    }
+}
+
 @media (max-width: 768px) {
     .global-back-btn {
-        top: calc(var(--nav-height) + var(--spacing-sm));
+        bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + var(--spacing-md));
         left: var(--spacing-sm);
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
     }
 }

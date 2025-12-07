@@ -95,7 +95,7 @@ const NotificationSettings = ({ compact = false }) => {
                 <div className="permission-request">
                     <div className="permission-icon">🔕</div>
                     <h4>알림을 받아보시겠어요?</h4>
-                    <p>매일 아침 오늘의 운세와 저녁에 꿈 해몽 알림을 받을 수 있어요.</p>
+                    <p>매일 아침 오늘의 사주와 저녁에 꿈 해몽 알림을 받을 수 있어요.</p>
                     <button
                         className="request-btn"
                         onClick={requestPermission}
@@ -123,13 +123,13 @@ const NotificationSettings = ({ compact = false }) => {
 
                     {settings.enabled && (
                         <>
-                            {/* 아침 운세 알림 */}
+                            {/* 아침 사주 알림 */}
                             <div className="setting-item">
                                 <div className="setting-info">
                                     <span className="setting-icon">☀️</span>
                                     <div>
-                                        <span className="setting-title">아침 운세 알림</span>
-                                        <span className="setting-desc">매일 아침 오늘의 운세를 알려드려요</span>
+                                        <span className="setting-title">아침 사주 알림</span>
+                                        <span className="setting-desc">매일 아침 오늘의 사주를 알려드려요</span>
                                     </div>
                                 </div>
                                 <label className="toggle-switch">
@@ -207,7 +207,7 @@ const NotificationSettings = ({ compact = false }) => {
                                 <div className="next-notification-box">
                                     <span className="next-icon">⏰</span>
                                     <span>
-                                        다음 알림: {nextNotification.type === 'morning' ? '아침 운세' : '저녁 꿈'}{' '}
+                                        다음 알림: {nextNotification.type === 'morning' ? '아침 사주' : '저녁 꿈'}{' '}
                                         ({nextNotification.time.toLocaleTimeString('ko-KR', {
                                             hour: '2-digit',
                                             minute: '2-digit'

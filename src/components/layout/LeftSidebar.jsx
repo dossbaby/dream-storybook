@@ -197,13 +197,6 @@ const LeftSidebar = ({
                             </div>
                         </div>
                     </div>
-
-                    <div className="mode-info-card tarot-theme">
-                        <div className="mode-info-header">🃏 타로 가이드</div>
-                        <div className="mode-info-content">
-                            <p>3장의 카드가 과거, 현재, 미래를 보여줍니다.</p>
-                        </div>
-                    </div>
                 </>
             )}
 

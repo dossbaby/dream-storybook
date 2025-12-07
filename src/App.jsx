@@ -7,7 +7,7 @@ import { getCards, formatTime } from './utils/cardHelpers';
 import { getCalendarDays, getDreamsForDate, getAdjacentMonth } from './utils/calendarHelpers';
 import { useFirebaseSave } from './hooks/useFirebaseSave';
 import { useSwipe } from './hooks/useSwipe';
-import { usePoints } from './hooks/usePoints';
+// usePoints 삭제됨 (포인트 시스템 제거)
 import { useBadges } from './hooks/useBadges';
 import { useComments } from './hooks/useComments';
 import { usePresence } from './hooks/usePresence';
@@ -37,7 +37,7 @@ const PremiumModal = lazy(() => import('./components/modals/PremiumModal'));
 const ProfileSettingsModal = lazy(() => import('./components/modals/ProfileSettingsModal'));
 const ShareModal = lazy(() => import('./components/modals/ShareModal'));
 const ReportModal = lazy(() => import('./components/modals/ReportModal'));
-const PointsModal = lazy(() => import('./components/modals/PointsModal'));
+// PointsModal 삭제됨 (포인트 시스템 제거)
 const DetailedReadingModal = lazy(() => import('./components/modals/DetailedReadingModal'));
 const FeedbackModal = lazy(() => import('./components/modals/FeedbackModal'));
 const OnboardingModal = lazy(() => import('./components/modals/OnboardingModal'));
@@ -71,11 +71,12 @@ function App() {
     const setLoadingState = (key, value) => setLoading(prev => ({ ...prev, [key]: value }));
 
     // 네비게이션 상태 통합
-    const [navigation, setNavigation] = useState({ view: 'feed', activeTab: 'today' });
-    const setView = (v) => setNavigation(prev => ({ ...prev, view: v }));
+    const [navigation, setNavigation] = useState({ view: 'feed', activeTab: 'today', myCategory: null });
+    const setView = (v, options = {}) => setNavigation(prev => ({ ...prev, view: v, myCategory: options.myCategory || null }));
     const setActiveTab = (t) => setNavigation(prev => ({ ...prev, activeTab: t }));
     const view = navigation.view;
     const activeTab = navigation.activeTab;
+    const myCategory = navigation.myCategory;
 
     const [dreamDescription, setDreamDescription] = useState('');
     const [result, setResult] = useState(null);
@@ -138,7 +139,7 @@ function App() {
         tier, setTier, isPremium, isUltra, subscription,
         myDreams, setMyDreams, myTarots, setMyTarots, myFortunes, setMyFortunes, myStats, dreamTypes, loadMyDreams, loadMyTarots, loadMyFortunes, handleNewDreamType
     } = useAuth({ setLoadingState, checkAndAwardBadges, loadMyDreamsRef });
-    const { userPoints, freeUsesLeft, addPoints } = usePoints(user);
+    // 포인트 시스템 삭제됨
     const { usage, canUse, incrementUsage, getRemainingUses, getResetTimeFormatted, getUsageSummary, grantShareBonus, hasReceivedShareBonus } = useUsageLimit(user, isPremium);
     const openPremiumModal = (trigger = 'general') => setModals(prev => ({ ...prev, premium: true, premiumTrigger: trigger }));
     const {
@@ -174,7 +175,7 @@ function App() {
     const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
         user, setUserNickname, setUserProfile, shareTarget: modals.shareTarget, setShareTarget, dreamTypes, openModal, closeModal
     });
-    const { toggleSavedDreamVisibility, deleteDream, toggleDreamVisibility, updateVisibility } = useDreamManagement({
+    const { toggleSavedDreamVisibility, deleteDream, deleteTarot, deleteFortune, toggleDreamVisibility, updateVisibility } = useDreamManagement({
         user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setMyTarots, setMyFortunes, setView, setToast, loadDreams, loadMyDreams
     });
     const { generateReading, generateFortuneReading } = useReadingActions({
@@ -242,9 +243,9 @@ function App() {
             <NavBar
                 mode={mode}
                 user={user}
-                userPoints={userPoints}
                 onlineCount={onlineCount}
                 isPremium={isPremium}
+                tier={tier}
                 usageSummary={getUsageSummary()}
                 onOpenPremium={() => openPremiumModal('general')}
                 onModeChange={(newMode) => {
@@ -264,7 +265,6 @@ function App() {
                     setSavedDream({ id: null, isPublic: false });
                 }}
                 onViewChange={setView}
-                onOpenPoints={() => openModal('points')}
                 onLogin={handleGoogleLogin}
                 onResetResults={resetResults}
             />
@@ -402,17 +402,13 @@ function App() {
                                 onToggleCard={toggleTarotCard}
                                 onGenerateReading={generateTarotReading}
                             />
-                            {/* 도파민 분석 오버레이 */}
-                            {readingLoading && dopamineHook.isActive && (
+                            {/* 도파민 분석 오버레이 - 리딩 중일 때 표시 */}
+                            {readingLoading && (
                                 <AnalysisOverlay
                                     isVisible={true}
                                     mode="tarot"
-                                    emotionPhrase={dopamineHook.emotionPhrase}
                                     currentMessage={dopamineHook.currentMessage}
-                                    messageIndex={dopamineHook.currentIndex}
-                                    totalMessages={dopamineHook.totalMessages}
                                     isComplete={dopamineHook.isComplete}
-                                    progress={dopamineHook.progress}
                                 />
                             )}
                         </>
@@ -476,6 +472,11 @@ function App() {
                                 else if (readingMode === 'tarot') await rateTarot(docId, rating);
                                 else if (readingMode === 'fortune') await rateFortune(docId, rating);
                             }}
+                            onKeywordClick={(keyword) => {
+                                // 키워드 클릭 시 피드로 이동 + 필터 적용 (현재 모드 유지)
+                                setFilter('keyword', keyword);
+                                setView('feed');
+                            }}
                         />
                     )}
 
@@ -537,8 +538,14 @@ function App() {
                             onOpenPremium={openPremiumModal}
                             onKeywordClick={(keyword) => {
                                 // 키워드 클릭 시 피드로 이동 + 필터 적용
+                                setMode('tarot');
                                 setFilter('keyword', keyword);
                                 setView('feed');
+                            }}
+                            onUpdateVisibility={(visibility) => {
+                                if (tarot.result?.id) {
+                                    updateVisibility('tarot', tarot.result.id, visibility);
+                                }
                             }}
                         />
                     )}
@@ -556,19 +563,16 @@ function App() {
                             similarCount={Math.floor(Math.random() * 10) + 2}
                             isPremium={isPremium}
                             onOpenPremium={openPremiumModal}
+                            onKeywordClick={(keyword) => {
+                                // 키워드 클릭 시 피드로 이동 + 필터 적용
+                                setMode('fortune');
+                                setFilter('keyword', keyword);
+                                setView('feed');
+                            }}
                         />
                     )}
 
-                    {/* 포인트 모달 */}
-                    <PointsModal
-                        isOpen={modals.points}
-                        onClose={() => closeModal('points')}
-                        userPoints={userPoints}
-                        freeUsesLeft={freeUsesLeft}
-                        onAddPoints={addPoints}
-                        onLogin={handleGoogleLogin}
-                        isLoggedIn={!!user}
-                    />
+                    {/* 포인트 모달 삭제됨 */}
 
                     {/* 마이페이지 - 비로그인 시 로그인 유도 */}
                     {view === 'my' && !user && (
@@ -619,11 +623,14 @@ function App() {
                             onToggleDreamVisibility={toggleDreamVisibility}
                             onUpdateVisibility={updateVisibility}
                             onDeleteDream={deleteDream}
+                            onDeleteTarot={deleteTarot}
+                            onDeleteFortune={deleteFortune}
                             formatTime={formatTime}
                             isPremium={isPremium}
                             tier={tier}
                             onOpenPremium={handleOpenPremiumModal}
                             onSetTier={setTier}
+                            initialCategory={myCategory}
                         />
                     )}
 

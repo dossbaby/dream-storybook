@@ -5,15 +5,10 @@ import { AI_MODELS } from '../utils/aiConfig';
 /**
  * 도파민 메시지 훅 - Haiku로 질문 기반 메시지 선생성
  *
- * 시스템 구조:
- * 1. 리딩 시작 시 Haiku API로 10-15개 질문 기반 메시지 생성
- * 2. 큐에 저장하고 순차적으로 표시
- * 3. 메인 API 완료 시 큐 정지 및 완료 상태 전환
- *
- * 메시지 구조:
- * - 처음: Hook/Foreshadow 스타일 (궁금증 유발)
- * - 중간: 진행 상황 (분석 중 메시지)
- * - 끝: 완료 예고 메시지
+ * 새로운 Phase 기반 타이밍 시스템:
+ * - Phase 1 (0-15초): Hook 메시지 3개 빠르게 (5초 간격)
+ * - Phase 2 (15초~API완료): 중간 메시지들 천천히 순환 (8초 간격), 마지막 도달 시 반복
+ * - Phase 3 (API 완료): isComplete = true → 완료 메시지 표시
  */
 export const useDopamineMessages = () => {
     const [messages, setMessages] = useState([]);
@@ -21,15 +16,15 @@ export const useDopamineMessages = () => {
     const [isActive, setIsActive] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
     const [emotionPhrase, setEmotionPhrase] = useState('');
+    const [keywords, setKeywords] = useState([]);
+    const [phase, setPhase] = useState(1); // 1: Hook, 2: 순환, 3: 완료
 
     const intervalRef = useRef(null);
+    const phaseTimeoutRef = useRef(null);
     const messagesRef = useRef([]);
 
     /**
      * Haiku API로 질문 기반 도파민 메시지 생성
-     * @param {string} question - 사용자 질문
-     * @param {string} readingType - 'dream' | 'tarot' | 'fortune'
-     * @param {string} claudeApiKey - Claude API 키
      */
     const generateDopamineMessages = useCallback(async (question, readingType, claudeApiKey) => {
         if (!claudeApiKey || !question) {
@@ -52,42 +47,55 @@ export const useDopamineMessages = () => {
             const prompt = `사용자 질문: "${question}"
 리딩 종류: ${typeContext[readingType] || '운세 리딩'}
 
-## 역할
-너는 ${typeContext[readingType]} 분석 중 표시할 도파민 메시지를 생성하는 AI다.
-분석이 진행되는 동안 사용자가 기대감을 갖고 끝까지 보게 만드는 메시지들을 만들어야 한다.
+## 너의 역할
+${typeContext[readingType]} 분석 중 표시할 Hook/Foreshadow 스타일 메시지를 생성해.
 
-## 핵심 규칙
-1. 모든 메시지는 반드시 질문 "${question}"과 직접 연관되어야 함
-2. 일반적인 메시지 절대 금지 (예: "운이 보여요", "기운이 느껴져요" 등)
-3. 질문에서 추출한 구체적 키워드/상황/감정을 메시지에 반영
-4. emotionPhrase는 질문자의 복합적 감정을 한 문장으로 표현
+## MrBeast 도파민 원칙
+- Hook: 답 먼저 + 반전 ("만나요. 근데 그 사람이 아니에요")
+- Foreshadow: 못 보면 잠 못 잠 ("누군지 힌트가 나와요...")
+- 구체적 디테일: 이름, 시기, 상황을 암시
 
-## 메시지 흐름
-- 1-3번: Hook/Foreshadow (궁금증 극대화, 질문 기반)
-- 4-8번: 분석 진행 (발견하고 있는 것들, 질문 관련)
-- 9-12번: 심화 (더 깊이 들어가는 느낌, 구체적 힌트)
-- 13-15번: 완료 예고 (거의 다 됐어요, 결과 암시)
+## 절대 금지
+❌ "운이 보여요", "기운이 느껴져요", "에너지가 읽혀요" (일반적인 표현)
+❌ 질문과 무관한 뻔한 메시지
+❌ "잠시만요", "기다려주세요" 같은 단순 로딩 메시지
 
-## 예시 (질문: "남자친구가 바람피는 것 같아요")
-❌ 잘못된 메시지: "연애운이 보여요...", "누군가 생각하고 있어요..."
-✅ 올바른 메시지: "그 사람의 마음이 읽히고 있어요...", "숨기고 있는 게 보여요...", "진실이 드러나려 해요..."
+## 메시지 흐름 (12개)
+1-3: Hook/Foreshadow (질문에 대한 첫인상, 반전 암시) - 처음 15초
+4-9: 발견/심화 (숨겨진 것들, 구체적 힌트) - API 완료까지 순환
+10-12: 완료 예고 (거의 다 됐어요, 결과 기대감) - 마지막
+
+## 질문별 예시
+"남친이 바람피는 것 같아요"
+→ "답이 보여요. 근데 생각한 대로는 아니에요..."
+→ "숨기고 있는 게 있어요. 확실히."
+→ "그 사람 마음에 제3자가... 있긴 해요."
+
+"이직해도 될까요"
+→ "가도 돼요. 근데 지금은 아니에요."
+→ "타이밍이 보이는데... 좀 놀라실 수도."
+→ "3으로 시작하는 숫자가 계속 나와요."
+
+## keywords
+질문에서 추출한 핵심 키워드 3-5개.
 
 JSON만 반환:
 {
-  "emotionPhrase": "질문자의 복합 감정 (예: '의심과 불안 속에 확인받고 싶은 마음이 느껴져요')",
+  "emotionPhrase": "질문자의 복합 감정 한 문장",
+  "keywords": ["키워드1", "키워드2", "키워드3"],
   "messages": [
-    "첫 번째 메시지 (질문 기반 Hook)",
-    "두 번째 메시지",
-    "세 번째 메시지",
-    "네 번째 메시지",
-    "다섯 번째 메시지",
-    "여섯 번째 메시지",
-    "일곱 번째 메시지",
-    "여덟 번째 메시지",
-    "아홉 번째 메시지",
-    "열 번째 메시지",
-    "열한 번째 메시지",
-    "열두 번째 메시지"
+    "Hook 메시지 1",
+    "Hook 메시지 2",
+    "Foreshadow 메시지 3",
+    "발견 메시지 4",
+    "발견 메시지 5",
+    "심화 메시지 6",
+    "심화 메시지 7",
+    "심화 메시지 8",
+    "심화 메시지 9",
+    "완료 예고 10",
+    "완료 예고 11",
+    "완료 예고 12"
   ]
 }`;
 
@@ -116,56 +124,93 @@ JSON만 반환:
     }, []);
 
     /**
-     * 도파민 메시지 큐 시작
-     * @param {Array} messageList - 메시지 배열
-     * @param {string} emotion - 감정 구문
-     * @param {number} intervalMs - 메시지 간격 (기본 4초)
+     * Phase 기반 도파민 메시지 큐 시작
+     * - Phase 1: Hook 메시지 (0-3) 빠르게
+     * - Phase 2: 발견/심화 메시지 (3-9) 순환하며 천천히
+     * - API 완료 시: stopQueue 호출로 종료
      */
-    const startQueue = useCallback((messageList, emotion, intervalMs = 4000) => {
+    const startQueue = useCallback((messageList, emotion, _, keywordList = []) => {
         if (!messageList || messageList.length === 0) {
             console.warn('도파민 큐 시작 실패: 메시지 없음');
             return;
         }
 
-        // 이전 interval 정리
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-        }
+        // 이전 타이머들 정리
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        if (phaseTimeoutRef.current) clearTimeout(phaseTimeoutRef.current);
 
         setMessages(messageList);
         messagesRef.current = messageList;
         setEmotionPhrase(emotion || '');
+        setKeywords(keywordList);
         setCurrentIndex(0);
         setIsActive(true);
         setIsComplete(false);
+        setPhase(1);
 
-        console.log(`▶️ Dopamine queue started: ${messageList.length} messages`);
+        console.log(`▶️ Dopamine queue started: ${messageList.length} messages (Phase 1 - Hook)`);
 
-        // 첫 메시지 즉시 표시
-        // interval로 다음 메시지들 순차 표시
+        // === Phase 1: Hook 메시지 (인덱스 0-2) 빠르게 5초 간격 ===
+        let hookIndex = 0;
         intervalRef.current = setInterval(() => {
-            setCurrentIndex(prev => {
-                const nextIndex = prev + 1;
-                // 마지막 메시지에 도달하면 멈추고 대기 (isComplete가 될 때까지)
-                if (nextIndex >= messagesRef.current.length) {
-                    return prev; // 마지막 메시지 유지
-                }
-                return nextIndex;
-            });
-        }, intervalMs);
+            hookIndex++;
+            if (hookIndex < 3 && hookIndex < messagesRef.current.length) {
+                setCurrentIndex(hookIndex);
+            } else {
+                // Phase 1 완료 → Phase 2로 전환
+                clearInterval(intervalRef.current);
+                startPhase2();
+            }
+        }, 5000); // 5초 간격
+    }, []);
+
+    /**
+     * Phase 2: 발견/심화 메시지 순환 (인덱스 3-8)
+     * API 완료까지 무한 순환
+     */
+    const startPhase2 = useCallback(() => {
+        setPhase(2);
+        console.log('▶️ Phase 2 started - 발견/심화 순환');
+
+        // 발견/심화 메시지 범위 (인덱스 3-8, 총 6개)
+        const loopStart = 3;
+        const loopEnd = Math.min(8, messagesRef.current.length - 1);
+        let loopIndex = loopStart;
+
+        setCurrentIndex(loopStart);
+
+        intervalRef.current = setInterval(() => {
+            loopIndex++;
+            if (loopIndex > loopEnd) {
+                loopIndex = loopStart; // 순환
+            }
+            setCurrentIndex(loopIndex);
+        }, 8000); // 8초 간격 (더 천천히)
     }, []);
 
     /**
      * 도파민 큐 정지 및 완료 처리
+     * API 완료 시 호출 → 완료 예고 메시지 표시
      */
     const stopQueue = useCallback(() => {
         if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
+        if (phaseTimeoutRef.current) {
+            clearTimeout(phaseTimeoutRef.current);
+            phaseTimeoutRef.current = null;
+        }
+
+        setPhase(3);
         setIsActive(false);
         setIsComplete(true);
-        console.log('⏹️ Dopamine queue stopped');
+
+        // 완료 예고 메시지 중 하나 선택 (인덱스 9-11)
+        const completionIndex = Math.min(10, messagesRef.current.length - 1);
+        setCurrentIndex(completionIndex);
+
+        console.log('⏹️ Dopamine queue stopped - Phase 3 (완료)');
     }, []);
 
     /**
@@ -176,11 +221,17 @@ JSON만 반환:
             clearInterval(intervalRef.current);
             intervalRef.current = null;
         }
+        if (phaseTimeoutRef.current) {
+            clearTimeout(phaseTimeoutRef.current);
+            phaseTimeoutRef.current = null;
+        }
         setMessages([]);
         setCurrentIndex(0);
         setIsActive(false);
         setIsComplete(false);
         setEmotionPhrase('');
+        setKeywords([]);
+        setPhase(1);
         messagesRef.current = [];
     }, []);
 
@@ -207,6 +258,8 @@ JSON만 반환:
         isActive,
         isComplete,
         emotionPhrase,
+        keywords,
+        phase,
 
         // 계산된 값
         currentMessage: getCurrentMessage(),

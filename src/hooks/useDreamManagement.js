@@ -42,7 +42,6 @@ export const useDreamManagement = ({
     // 꿈 삭제
     const deleteDream = async (dreamId, dreamData) => {
         if (!user || dreamData.userId !== user.uid) return;
-        if (!confirm('정말 이 꿈을 삭제할까요?')) return;
 
         try {
             await deleteDoc(doc(db, 'dreams', dreamId));
@@ -52,10 +51,42 @@ export const useDreamManagement = ({
                 setSelectedDream(null);
                 setView('feed');
             }
-            alert('꿈이 삭제되었어요');
+            setToast({ message: '꿈이 삭제되었어요', type: 'success' });
         } catch (err) {
             console.error(err);
-            alert('삭제 실패: ' + err.message);
+            setToast({ message: '삭제 실패: ' + err.message, type: 'error' });
+        }
+    };
+
+    // 타로 삭제
+    const deleteTarot = async (tarotId, tarotData) => {
+        if (!user || tarotData.userId !== user.uid) return;
+
+        try {
+            await deleteDoc(doc(db, 'tarots', tarotId));
+            if (setMyTarots) {
+                setMyTarots(prev => prev.filter(t => t.id !== tarotId));
+            }
+            setToast({ message: '타로 리딩이 삭제되었어요', type: 'success' });
+        } catch (err) {
+            console.error(err);
+            setToast({ message: '삭제 실패: ' + err.message, type: 'error' });
+        }
+    };
+
+    // 사주 삭제
+    const deleteFortune = async (fortuneId, fortuneData) => {
+        if (!user || fortuneData.userId !== user.uid) return;
+
+        try {
+            await deleteDoc(doc(db, 'sajus', fortuneId));
+            if (setMyFortunes) {
+                setMyFortunes(prev => prev.filter(f => f.id !== fortuneId));
+            }
+            setToast({ message: '사주 리딩이 삭제되었어요', type: 'success' });
+        } catch (err) {
+            console.error(err);
+            setToast({ message: '삭제 실패: ' + err.message, type: 'error' });
         }
     };
 
@@ -135,6 +166,8 @@ export const useDreamManagement = ({
     return {
         toggleSavedDreamVisibility,
         deleteDream,
+        deleteTarot,
+        deleteFortune,
         toggleDreamVisibility,
         updateVisibility
     };

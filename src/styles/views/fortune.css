@@ -898,3 +898,20 @@
         margin-top: 1rem;
     }
 }
+
+/* 클릭 가능한 키워드 태그 */
+.fortune-result-modal .keyword-tag.clickable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fortune-result-modal .keyword-tag.clickable:hover {
+    background: linear-gradient(135deg, rgba(26, 188, 156, 0.3), rgba(0, 206, 201, 0.2));
+    border-color: rgba(26, 188, 156, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+}
+
+.fortune-result-modal .keyword-tag.clickable:active {
+    transform: translateY(0);
+}

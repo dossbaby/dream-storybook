@@ -31,7 +31,8 @@ const ResultView = forwardRef(({
     isPremium = false,
     onOpenPremium,
     onRate,
-    userRating = 0
+    userRating = 0,
+    onKeywordClick
 }, ref) => {
     const [localRating, setLocalRating] = useState(userRating);
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -331,11 +332,17 @@ const ResultView = forwardRef(({
                         </div>
                     )}
 
-                    {/* 키워드 */}
+                    {/* 키워드 - 클릭 시 피드 필터링 */}
                     {currentResult?.keywords?.length > 0 && currentCard === 0 && (
                         <div className="keyword-row">
                             {currentResult.keywords.map((kw, i) => (
-                                <span key={i} className="keyword">#{kw.word}</span>
+                                <span
+                                    key={i}
+                                    className="keyword clickable"
+                                    onClick={() => onKeywordClick?.(kw.word)}
+                                >
+                                    #{kw.word}
+                                </span>
                             ))}
                         </div>
                     )}

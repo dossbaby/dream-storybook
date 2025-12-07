@@ -22,9 +22,10 @@ const MBTI_TYPES = [
     'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ];
 
-// 공개 설정 드롭다운 컴포넌트
-const VisibilityDropdown = ({ item, type, onUpdate }) => {
+// 공개 설정 드롭다운 컴포넌트 (삭제 기능 포함)
+const VisibilityDropdown = ({ item, type, onUpdate, onDelete }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const dropdownRef = useRef(null);
     const currentVisibility = normalizeVisibility(item);
     const currentOption = VISIBILITY_OPTIONS.find(o => o.value === currentVisibility) || VISIBILITY_OPTIONS[0];
@@ -34,6 +35,7 @@ const VisibilityDropdown = ({ item, type, onUpdate }) => {
         const handleClickOutside = (e) => {
             if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
                 setIsOpen(false);
+                setShowDeleteConfirm(false);
             }
         };
         if (isOpen) {
@@ -47,6 +49,25 @@ const VisibilityDropdown = ({ item, type, onUpdate }) => {
             await onUpdate(type, item.id, newVisibility);
         }
         setIsOpen(false);
+    };
+
+    const handleDeleteClick = (e) => {
+        e.stopPropagation();
+        setShowDeleteConfirm(true);
+    };
+
+    const handleDeleteConfirm = async (e) => {
+        e.stopPropagation();
+        if (onDelete) {
+            await onDelete(type, item.id, item);
+        }
+        setIsOpen(false);
+        setShowDeleteConfirm(false);
+    };
+
+    const handleDeleteCancel = (e) => {
+        e.stopPropagation();
+        setShowDeleteConfirm(false);
     };
 
     return (
@@ -72,6 +93,27 @@ const VisibilityDropdown = ({ item, type, onUpdate }) => {
                             {option.value === currentVisibility && <span className="menu-check">✓</span>}
                         </button>
                     ))}
+                    {/* 구분선 + 삭제 옵션 */}
+                    {onDelete && (
+                        <>
+                            <div className="visibility-menu-divider" />
+                            {showDeleteConfirm ? (
+                                <div className="delete-confirm-row">
+                                    <span className="delete-confirm-text">삭제할까요?</span>
+                                    <button className="delete-confirm-btn yes" onClick={handleDeleteConfirm}>예</button>
+                                    <button className="delete-confirm-btn no" onClick={handleDeleteCancel}>아니오</button>
+                                </div>
+                            ) : (
+                                <button
+                                    className="visibility-menu-item delete-item"
+                                    onClick={handleDeleteClick}
+                                >
+                                    <span className="menu-icon">🗑️</span>
+                                    <span className="menu-label">삭제</span>
+                                </button>
+                            )}
+                        </>
+                    )}
                 </div>
             )}
         </div>
@@ -108,20 +150,35 @@ const MyPage = ({
     onToggleDreamVisibility,
     onUpdateVisibility,
     onDeleteDream,
+    onDeleteTarot,
+    onDeleteFortune,
     formatTime,
     // 프리미엄 관련
     isPremium = false,
     tier = 'free',
     onOpenPremium,
     // Admin 티어 변경
-    onSetTier
+    onSetTier,
+    // 초기 카테고리 (외부에서 설정 가능)
+    initialCategory = 'dream'
 }) => {
     // Admin 이메일 목록
     const ADMIN_EMAILS = ['dossbb@naver.com'];
     // 히스토리 제한 계산
     const historyLimit = HISTORY_LIMITS[tier] || HISTORY_LIMITS.free;
     // 현재 선택된 카테고리 (dream, tarot, fortune)
-    const [category, setCategory] = useState('dream');
+    const [category, setCategory] = useState(initialCategory);
+
+    // 통합 삭제 핸들러
+    const handleDelete = async (type, id, item) => {
+        if (type === 'dream' && onDeleteDream) {
+            await onDeleteDream(id, item);
+        } else if (type === 'tarot' && onDeleteTarot) {
+            await onDeleteTarot(id, item);
+        } else if (type === 'fortune' && onDeleteFortune) {
+            await onDeleteFortune(id, item);
+        }
+    };
 
     // 프로필 완성도 계산
     const calculateProfileCompletion = () => {
@@ -501,14 +558,12 @@ const MyPage = ({
                                                             {isLocked ? (
                                                                 <button className="unlock-btn" onClick={() => onOpenPremium?.('history')}>🔓 해제</button>
                                                             ) : (
-                                                                <>
-                                                                    <VisibilityDropdown
-                                                                        item={dream}
-                                                                        type="dream"
-                                                                        onUpdate={onUpdateVisibility}
-                                                                    />
-                                                                    <button className="delete-btn" onClick={(e) => { e.stopPropagation(); onDeleteDream(dream.id, dream); }}>삭제</button>
-                                                                </>
+                                                                <VisibilityDropdown
+                                                                    item={dream}
+                                                                    type="dream"
+                                                                    onUpdate={onUpdateVisibility}
+                                                                    onDelete={handleDelete}
+                                                                />
                                                             )}
                                                         </div>
                                                     </div>
@@ -571,6 +626,7 @@ const MyPage = ({
                                                             item={tarot}
                                                             type="tarot"
                                                             onUpdate={onUpdateVisibility}
+                                                            onDelete={handleDelete}
                                                         />
                                                     )}
                                                 </div>
@@ -630,6 +686,7 @@ const MyPage = ({
                                                             item={fortune}
                                                             type="fortune"
                                                             onUpdate={onUpdateVisibility}
+                                                            onDelete={handleDelete}
                                                         />
                                                     )}
                                                 </div>

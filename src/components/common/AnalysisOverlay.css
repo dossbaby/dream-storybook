@@ -1,4 +1,4 @@
-/* AnalysisOverlay - 전체 화면 분석 오버레이 스타일 */
+/* AnalysisOverlay - VN Intro 스타일과 통일 */
 
 .analysis-overlay {
     position: fixed;
@@ -7,24 +7,22 @@
     right: 0;
     bottom: 0;
     z-index: 9999;
-    background: var(--mode-gradient);
+    /* VN Intro와 동일한 배경 */
+    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     animation: overlayFadeIn 0.5s ease-out;
 }
 
 @keyframes overlayFadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* 파티클 배경 */
-.analysis-particles {
+/* 별 효과 */
+.analysis-stars {
     position: absolute;
     top: 0;
     left: 0;
@@ -34,124 +32,158 @@
     pointer-events: none;
 }
 
-.analysis-particle {
+.analysis-star {
     position: absolute;
-    background: var(--mode-accent);
+    background: radial-gradient(circle, rgba(255, 200, 100, 0.8) 0%, transparent 70%);
     border-radius: 50%;
-    animation: floatParticle linear infinite;
-    box-shadow: 0 0 10px var(--mode-accent);
+    animation: twinkle ease-in-out infinite;
 }
 
-@keyframes floatParticle {
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* 플로팅 버블 효과 - glacial blue/purple */
+.analysis-bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%,
+        rgba(0, 217, 255, 0.12) 0%,
+        rgba(155, 89, 182, 0.08) 50%,
+        transparent 70%);
+    animation: floatBubble linear infinite;
+}
+
+.bubble-1 {
+    width: 200px;
+    height: 200px;
+    left: -50px;
+    bottom: -100px;
+    animation-duration: 15s;
+}
+
+.bubble-2 {
+    width: 150px;
+    height: 150px;
+    right: -30px;
+    bottom: 20%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+}
+
+.bubble-3 {
+    width: 100px;
+    height: 100px;
+    left: 20%;
+    bottom: 10%;
+    animation-duration: 10s;
+    animation-delay: 4s;
+}
+
+.bubble-4 {
+    width: 80px;
+    height: 80px;
+    right: 30%;
+    bottom: -20px;
+    animation-duration: 14s;
+    animation-delay: 1s;
+}
+
+.bubble-5 {
+    width: 120px;
+    height: 120px;
+    left: 50%;
+    bottom: 5%;
+    animation-duration: 11s;
+    animation-delay: 3s;
+}
+
+@keyframes floatBubble {
     0% {
-        transform: translateY(0) translateX(0) scale(1);
+        transform: translateY(0) scale(1);
         opacity: 0;
     }
     10% {
         opacity: 0.6;
     }
-    50% {
-        transform: translateY(-200px) translateX(50px) scale(1.2);
-        opacity: 0.4;
-    }
     90% {
-        opacity: 0.2;
+        opacity: 0.3;
     }
     100% {
-        transform: translateY(-400px) translateX(100px) scale(0.8);
+        transform: translateY(-100vh) scale(0.8);
         opacity: 0;
     }
 }
 
-/* 중앙 컨텐츠 */
-.analysis-content {
-    position: relative;
+/* 상단 도파민 메시지 - VN Intro 스타일 */
+.analysis-top-message {
+    position: absolute;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    padding: 2rem;
-    max-width: 90%;
-    width: 600px;
-    text-align: center;
+    gap: 1rem;
 }
 
-/* 감정 구문 */
-.analysis-emotion {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: emotionFadeIn 1s ease-out;
+/* VN 장식 - 상단/하단 */
+.vn-ornament-analysis {
+    font-size: 0.9rem;
+    color: rgba(255, 200, 100, 0.4);
+    letter-spacing: 0.5em;
+    opacity: 0.7;
 }
 
-@keyframes emotionFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.vn-ornament-analysis.bottom {
+    margin-top: 0.5rem;
 }
 
-.emotion-emoji {
-    font-size: 1.5rem;
-    animation: emotionPulse 2s ease-in-out infinite;
+/* 도파민 텍스트 - 리디바탕, VN 스타일 */
+.dopamine-text {
+    font-family: 'RIDIBatang', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 2;
+    transition: opacity 0.25s ease-out, color 0.5s ease;
 }
 
-@keyframes emotionPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
+/* 금색 텍스트 - VN Hook 스타일 */
+.dopamine-text.gold-text {
+    color: #ffd080;
+    text-shadow:
+        0 0 30px rgba(255, 180, 80, 0.4),
+        0 0 60px rgba(255, 150, 50, 0.2);
 }
 
-.emotion-text {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-style: italic;
-    letter-spacing: 0.02em;
+/* 보라색 텍스트 - VN Foreshadow 스타일 */
+.dopamine-text.purple-text {
+    color: rgba(220, 200, 255, 0.9);
+    text-shadow:
+        0 0 20px rgba(180, 150, 255, 0.3),
+        0 0 40px rgba(150, 100, 255, 0.15);
 }
 
-/* 메인 메시지 컨테이너 */
-.analysis-message-container {
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.3s ease-out;
-}
-
-.analysis-message-container.fading {
+.dopamine-text.fading {
     opacity: 0.3;
 }
 
-.analysis-message {
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: #fff;
-    line-height: 1.6;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0.02em;
-}
-
-@media (max-width: 480px) {
-    .analysis-message {
-        font-size: 1.2rem;
-    }
-}
-
-.message-text {
+.message-content {
     display: inline;
 }
 
@@ -159,148 +191,230 @@
     display: inline-block;
     margin-left: 2px;
     animation: cursorBlink 0.8s ease-in-out infinite;
-    color: var(--mode-accent);
+    color: #ffb050;
+    text-shadow: 0 0 10px rgba(255, 180, 80, 0.8);
     font-weight: 300;
 }
 
 @keyframes cursorBlink {
-    0%, 50% {
-        opacity: 1;
-    }
-    51%, 100% {
-        opacity: 0;
-    }
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 
-/* 진행률 표시 */
-.analysis-progress-container {
-    width: 100%;
-    max-width: 300px;
+/* 중앙 Pulsing Orb - Glacial Blue/Purple */
+.analysis-center {
+    position: relative;
+    z-index: 10;
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
 }
 
-.analysis-progress-bar {
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.analysis-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--mode-accent), rgba(255, 255, 255, 0.5));
-    border-radius: 2px;
-    transition: width 0.5s ease-out;
-    box-shadow: 0 0 10px var(--mode-accent);
-}
-
-.analysis-progress-text {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    text-align: center;
-}
-
-.complete-text {
-    color: var(--mode-accent);
-    font-weight: 600;
-    animation: completePulse 1s ease-in-out infinite;
-}
-
-@keyframes completePulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.6;
-    }
-}
-
-/* 하단 안내 */
-.analysis-hint {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.4);
-    margin-top: 1rem;
-}
-
-/* 장식 요소들 */
-.analysis-decoration {
-    position: absolute;
+.pulsing-orb {
+    position: relative;
     width: 150px;
     height: 150px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.orb-ring {
+    position: absolute;
     border-radius: 50%;
-    pointer-events: none;
+    border: 2px solid;
+    animation: orbPulse ease-in-out infinite;
 }
 
-.analysis-decoration.top-left {
-    top: 5%;
-    left: 5%;
-    animation: decorFloat 8s ease-in-out infinite;
+.orb-ring.ring-1 {
+    width: 100%;
+    height: 100%;
+    border-color: var(--primary-color, rgba(0, 217, 255, 0.4));
+    animation-duration: 2s;
+    box-shadow: 0 0 15px var(--primary-color, rgba(0, 217, 255, 0.3));
 }
 
-.analysis-decoration.top-right {
-    top: 10%;
-    right: 8%;
-    width: 100px;
-    height: 100px;
-    animation: decorFloat 6s ease-in-out infinite reverse;
+.orb-ring.ring-2 {
+    width: 125%;
+    height: 125%;
+    border-color: var(--secondary-color, rgba(155, 89, 182, 0.3));
+    animation-duration: 2.5s;
+    animation-delay: 0.3s;
+    box-shadow: 0 0 20px var(--secondary-color, rgba(155, 89, 182, 0.2));
 }
 
-.analysis-decoration.bottom-left {
-    bottom: 15%;
-    left: 10%;
-    width: 80px;
-    height: 80px;
-    animation: decorFloat 7s ease-in-out infinite;
-    animation-delay: 1s;
+.orb-ring.ring-3 {
+    width: 150%;
+    height: 150%;
+    border-color: rgba(0, 217, 255, 0.15);
+    animation-duration: 3s;
+    animation-delay: 0.6s;
 }
 
-.analysis-decoration.bottom-right {
-    bottom: 8%;
-    right: 5%;
-    width: 120px;
-    height: 120px;
-    animation: decorFloat 9s ease-in-out infinite reverse;
-    animation-delay: 0.5s;
-}
-
-@keyframes decorFloat {
+@keyframes orbPulse {
     0%, 100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0.3;
-    }
-    50% {
-        transform: translate(20px, -20px) scale(1.1);
+        transform: scale(1);
         opacity: 0.5;
     }
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+.orb-core {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    /* Glacial blue/purple gradient */
+    background: radial-gradient(circle at 30% 30%,
+        rgba(0, 217, 255, 0.25) 0%,
+        rgba(155, 89, 182, 0.2) 40%,
+        rgba(30, 20, 50, 0.9) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 0 40px var(--primary-color, rgba(0, 217, 255, 0.4)),
+        0 0 80px var(--secondary-color, rgba(155, 89, 182, 0.3)),
+        inset 0 0 25px rgba(255, 255, 255, 0.08);
+    animation: coreGlow 2s ease-in-out infinite;
+    transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+
+@keyframes coreGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 40px var(--primary-color, rgba(0, 217, 255, 0.4)),
+            0 0 80px var(--secondary-color, rgba(155, 89, 182, 0.3)),
+            inset 0 0 25px rgba(255, 255, 255, 0.08);
+    }
+    50% {
+        box-shadow:
+            0 0 60px var(--primary-color, rgba(0, 217, 255, 0.6)),
+            0 0 100px var(--secondary-color, rgba(155, 89, 182, 0.4)),
+            inset 0 0 35px rgba(255, 255, 255, 0.12);
+    }
+}
+
+.orb-emoji {
+    font-size: 2.8rem;
+    animation: emojiFloat 3s ease-in-out infinite, emojiFadeIn 0.5s ease-out;
+    filter: drop-shadow(0 0 15px var(--primary-color, rgba(0, 217, 255, 0.6)));
+}
+
+@keyframes emojiFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.05); }
+}
+
+@keyframes emojiFadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* 단계 Circle들 */
+.analysis-stages {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+    z-index: 10;
+}
+
+.stage-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+}
+
+.stage-dot.completed {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.6), rgba(155, 89, 182, 0.5));
+    border-color: rgba(0, 217, 255, 0.6);
+    box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+}
+
+.stage-dot.active {
+    background: linear-gradient(135deg, #00d9ff, #9b59b6);
+    border-color: #00d9ff;
+    transform: scale(1.5);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+    animation: stagePulse 1s ease-in-out infinite;
+}
+
+@keyframes stagePulse {
+    0%, 100% {
+        transform: scale(1.5);
+        box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+    }
+    50% {
+        transform: scale(1.7);
+        box-shadow: 0 0 25px rgba(0, 217, 255, 0.8);
+    }
+}
+
+/* 하단 안내 텍스트 - VN 스타일 */
+.analysis-bottom-hint {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'RIDIBatang', serif;
+    font-size: 0.9rem;
+    color: rgba(255, 200, 150, 0.5);
+    text-align: center;
+    z-index: 10;
+    letter-spacing: 0.1em;
+    animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
 }
 
 /* 반응형 */
 @media (max-width: 480px) {
-    .analysis-content {
-        gap: 1.5rem;
-        padding: 1.5rem;
+    .analysis-top-message {
+        top: 15%;
     }
 
-    .analysis-emotion {
-        padding: 0.75rem 1rem;
-    }
-
-    .emotion-emoji {
+    .dopamine-text {
         font-size: 1.2rem;
     }
 
-    .emotion-text {
-        font-size: 0.85rem;
+    .vn-ornament-analysis {
+        font-size: 0.75rem;
     }
 
-    .analysis-message-container {
-        min-height: 100px;
+    .pulsing-orb {
+        width: 130px;
+        height: 130px;
     }
 
-    .analysis-decoration {
-        display: none;
+    .orb-core {
+        width: 70px;
+        height: 70px;
+    }
+
+    .orb-emoji {
+        font-size: 2.2rem;
+    }
+
+    .analysis-stages {
+        margin-top: 2rem;
+    }
+
+    .stage-dot {
+        width: 8px;
+        height: 8px;
+    }
+
+    .analysis-bottom-hint {
+        bottom: 8%;
+        font-size: 0.8rem;
     }
 }

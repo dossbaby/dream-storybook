@@ -3,7 +3,7 @@
  *
  * 기능:
  * - 브라우저 알림 권한 관리
- * - 로컬 리마인더 스케줄링 (아침 운세 알림 등)
+ * - 로컬 리마인더 스케줄링 (아침 사주 알림 등)
  * - 알림 설정 localStorage 저장
  */
 
@@ -16,7 +16,7 @@ const NOTIFICATION_HISTORY_KEY = 'jeom_notification_history';
 // 기본 알림 설정
 const DEFAULT_SETTINGS = {
     enabled: false,
-    morningReminder: true,  // 아침 운세 알림
+    morningReminder: true,  // 아침 사주 알림
     morningTime: '08:00',   // 아침 알림 시간
     eveningReminder: false, // 저녁 꿈 해몽 알림
     eveningTime: '22:00',   // 저녁 알림 시간
@@ -26,9 +26,9 @@ const DEFAULT_SETTINGS = {
 // 알림 메시지 템플릿
 const NOTIFICATION_TEMPLATES = {
     morning: [
-        { title: '☀️ 오늘의 운세', body: '오늘 하루는 어떤 기운이 감싸고 있을까요? 사주로 확인해보세요!' },
+        { title: '☀️ 오늘의 사주', body: '오늘 하루는 어떤 기운이 감싸고 있을까요? 사주로 확인해보세요!' },
         { title: '🌅 좋은 아침이에요!', body: '타로 카드가 오늘의 메시지를 전해드릴게요.' },
-        { title: '✨ 새로운 하루', body: '오늘의 운세를 확인하고 하루를 시작해보세요!' },
+        { title: '✨ 새로운 하루', body: '오늘의 사주를 확인하고 하루를 시작해보세요!' },
     ],
     evening: [
         { title: '🌙 간밤의 꿈', body: '특별한 꿈을 꾸셨나요? AI가 해석해드릴게요.' },
@@ -169,7 +169,7 @@ export const useNotifications = () => {
                 // 환영 알림
                 setTimeout(() => {
                     showNotification('🔔 알림이 설정되었어요!', {
-                        body: '아침마다 오늘의 운세를 알려드릴게요.',
+                        body: '아침마다 오늘의 사주를 알려드릴게요.',
                         tag: 'jeom-welcome'
                     });
                 }, 1000);

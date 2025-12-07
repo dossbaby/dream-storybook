@@ -16,7 +16,8 @@ const FortuneResultView = ({
     viewerCount = 0,
     similarCount = 0,
     isPremium = false,
-    onOpenPremium
+    onOpenPremium,
+    onKeywordClick
 }) => {
     const [whisperText, setWhisperText] = useState('');
     // 섹션 공개 상태
@@ -130,7 +131,7 @@ const FortuneResultView = ({
                         {/* 핵심 메시지 */}
                         <p className="reading-verdict">"{fortuneResult.verdict}"</p>
 
-                        {/* 운세 점수 */}
+                        {/* 사주 점수 */}
                         <div className="fortune-score-display">
                             <div className="score-circle">
                                 <span className="score-number">{fortuneResult.overallScore}</span>
@@ -144,10 +145,10 @@ const FortuneResultView = ({
                 <div className="sticky-card-bar fortune-time-bar">
                     <p className="card-bar-instruction">
                         {revealedSections.length === 0
-                            ? "운세를 탭해서 사주풀이를 확인하세요"
+                            ? "카테고리를 탭해서 사주풀이를 확인하세요"
                             : !allSectionsRevealed
-                                ? "다음 운세를 탭하세요"
-                                : "모든 사주 운세 공개됨"}
+                                ? "다음 카테고리를 탭하세요"
+                                : "모든 사주 풀이 공개됨"}
                     </p>
                     <div className="card-bar-cards time-bar-items">
                         {sections.map((section, i) => {
@@ -193,7 +194,7 @@ const FortuneResultView = ({
                     </div>
                 )}
 
-                {/* 본문 - 카테고리별 사주 운세 */}
+                {/* 본문 - 카테고리별 사주 풀이 */}
                 <div className="reading-body">
                     {/* 사주팔자 정보 (있을 경우) */}
                     {sajuInfo.yearPillar && revealedSections.length > 0 && (
@@ -255,7 +256,7 @@ const FortuneResultView = ({
                                     {section.title && <span className="section-subtitle"> - {section.title}</span>}
                                 </h2>
 
-                                {/* 운세 내용 */}
+                                {/* 사주 풀이 내용 */}
                                 <div className="section-analysis">
                                     {section.content?.split('\n').map((para, idx) => (
                                         <p key={idx} className="reading-paragraph">{para}</p>
@@ -384,13 +385,19 @@ const FortuneResultView = ({
                                 </div>
                             )}
 
-                            {/* 키워드 */}
+                            {/* 키워드 - 클릭 시 피드 필터링 */}
                             {fortuneResult.keywords?.length > 0 && (
                                 <div className="reading-keywords">
                                     <span className="keywords-label">오늘의 키워드</span>
                                     <div className="keywords-tags">
                                         {fortuneResult.keywords.map((kw, i) => (
-                                            <span key={i} className="keyword-tag">#{kw.word || kw}</span>
+                                            <span
+                                                key={i}
+                                                className="keyword-tag clickable"
+                                                onClick={() => onKeywordClick?.(kw.word || kw)}
+                                            >
+                                                #{kw.word || kw}
+                                            </span>
                                         ))}
                                     </div>
                                 </div>

@@ -20,7 +20,8 @@ const TarotResultView = ({
     similarCount = 0,
     isPremium = false,
     onOpenPremium,
-    onKeywordClick
+    onKeywordClick,
+    onUpdateVisibility // (visibility: 'private' | 'unlisted' | 'public') => void
 }) => {
     // Visual Novel 인트로 단계 (클릭 기반 진행)
     // 0: 시작 대기 (fade in)
@@ -208,6 +209,9 @@ const TarotResultView = ({
 
     return (
         <div className={`tarot-result-page ${pageRevealed ? 'revealed' : ''}`}>
+            {/* 별 효과 배경 */}
+            <div className="stars-layer" aria-hidden="true"></div>
+
             {/* Visual Novel 인트로 오버레이 */}
             {introPhase < 5 && (
                 <div className="vn-intro-overlay" onClick={handleIntroClick}>
@@ -349,6 +353,7 @@ const TarotResultView = ({
                                                 )}
                                                 <div className="persona-card-overlay">
                                                     <span className="persona-card-name">{card.nameKo}</span>
+                                                    <span className="persona-card-en">{card.name}</span>
                                                 </div>
                                             </>
                                         ) : (
@@ -541,7 +546,7 @@ const TarotResultView = ({
                     {/* 키워드 - 클릭 시 피드 필터링 */}
                     {allCardsFlipped && tarotResult.keywords?.length > 0 && (
                         <div className="reading-keywords fade-in-up">
-                            <span className="keywords-label">관련 상징</span>
+                            <span className="keywords-label">타로 리딩 키워드</span>
                             <div className="keywords-tags">
                                 {tarotResult.keywords.map((kw, i) => (
                                     <span
@@ -552,6 +557,29 @@ const TarotResultView = ({
                                         #{kw.word}
                                     </span>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 공개 설정 토글 */}
+                    {allCardsFlipped && tarotResult.id && onUpdateVisibility && (
+                        <div className="visibility-toggle-section fade-in-up">
+                            <span className="visibility-label">공개 설정</span>
+                            <div className="visibility-options">
+                                <button
+                                    className={`visibility-btn ${tarotResult.visibility === 'private' || (!tarotResult.visibility && !tarotResult.isPublic) ? 'active' : ''}`}
+                                    onClick={() => onUpdateVisibility('private')}
+                                >
+                                    <span className="visibility-icon">🔒</span>
+                                    <span>비공개</span>
+                                </button>
+                                <button
+                                    className={`visibility-btn ${tarotResult.visibility === 'public' || (!tarotResult.visibility && tarotResult.isPublic) ? 'active' : ''}`}
+                                    onClick={() => onUpdateVisibility('public')}
+                                >
+                                    <span className="visibility-icon">🌐</span>
+                                    <span>전체 공개</span>
+                                </button>
                             </div>
                         </div>
                     )}

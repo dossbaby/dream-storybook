@@ -47,14 +47,7 @@ const ToastNotifications = memo(({
                 </div>
             )}
 
-            {/* 도파민 팝업 (분석 중 기대감 자극) */}
-            {dopaminePopup && dopaminePopup.emoji && dopaminePopup.text && (
-                <div className="dopamine-popup">
-                    <div className="dopamine-icon">{dopaminePopup.emoji}</div>
-                    <div className="dopamine-text">{dopaminePopup.text}</div>
-                    <div className="dopamine-glow"></div>
-                </div>
-            )}
+            {/* 도파민 팝업은 AnalysisOverlay로 통합됨 */}
 
             {/* 뱃지 획득 토스트 */}
             {toasts.badge && (

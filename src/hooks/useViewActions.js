@@ -28,11 +28,15 @@ export const useViewActions = ({
         setCurrentCard(0);
     };
 
-    // 타로 결과 열기
+    // 타로 결과 열기 (hero image 중복 방지를 위해 깨끗한 상태로 설정)
     const handleOpenTarotResult = (t) => {
-        setTarotField('result', t);
-        setView('tarot-result');
-        setCurrentCard(0);
+        // 기존 결과 초기화 후 새 결과 설정 (중복 방지)
+        setTarotField('result', null);
+        setTimeout(() => {
+            setTarotField('result', t);
+            setView('tarot-result');
+            setCurrentCard(0);
+        }, 0);
     };
 
     // 운세 결과 열기
@@ -80,9 +84,9 @@ export const useViewActions = ({
         setSelectedDream(null);
     };
 
-    // 타로 결과 뒤로가기
+    // 타로 결과 뒤로가기 → 내 타로 피드로 이동
     const handleTarotResultBack = () => {
-        setView('feed');
+        setView('my', { myCategory: 'tarot' });
         resetTarot();
     };
 

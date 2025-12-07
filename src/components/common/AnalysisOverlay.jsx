@@ -4,43 +4,61 @@ import './AnalysisOverlay.css';
 /**
  * AnalysisOverlay - 전체 화면 분석 오버레이
  *
- * 도파민 메시지 시스템:
- * - 질문 기반 메시지가 타이프라이터 효과로 표시
- * - 페이드 인/아웃 전환
- * - 감정 구문 상단 표시
- * - 진행률 표시
+ * VN Intro 스타일과 통일:
+ * - 상단: 도파민 메시지 (리디바탕, 금색/보라 번갈아가며)
+ * - 중앙: Pulsing circle + 단계별 이모지 (glacial blue/purple)
+ * - 하단: 단계 circle + 안내 텍스트
  */
+
+// 단계별 이모지와 색상
+const PHASE_CONFIG = [
+    { emoji: '🌙', colors: ['#9b59b6', '#6c5ce7'], label: '질문을 읽고 있어요' },
+    { emoji: '🔮', colors: ['#667eea', '#764ba2'], label: '카드를 해석하고 있어요' },
+    { emoji: '✨', colors: ['#00d9ff', '#9b59b6'], label: '통찰을 찾고 있어요' },
+    { emoji: '🌌', colors: ['#a29bfe', '#6c5ce7'], label: '메시지를 정리하고 있어요' },
+    { emoji: '💫', colors: ['#ffd700', '#9b59b6'], label: '결과를 준비하고 있어요' },
+];
+
 const AnalysisOverlay = memo(({
     isVisible,
     mode = 'tarot', // 'dream' | 'tarot' | 'fortune'
-    emotionPhrase = '',
     currentMessage = '',
-    messageIndex = 0,
-    totalMessages = 0,
     isComplete = false,
-    progress = 0
+    phase = 1 // 1: Hook, 2: 순환, 3: 완료
 }) => {
     const [displayText, setDisplayText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isFading, setIsFading] = useState(false);
-    const [particles, setParticles] = useState([]);
+    const [stars, setStars] = useState([]);
+    const [textColorIndex, setTextColorIndex] = useState(0); // 0: gold, 1: purple 번갈아
+    const [currentStage, setCurrentStage] = useState(0); // 0-4 단계
     const prevMessageRef = useRef('');
 
-    // 파티클 생성
+    // 별 생성 (카드 선택 화면과 유사)
     useEffect(() => {
         if (!isVisible) return;
 
-        const newParticles = Array.from({ length: 30 }, (_, i) => ({
+        const newStars = Array.from({ length: 30 }, (_, i) => ({
             id: i,
             left: Math.random() * 100,
             top: Math.random() * 100,
-            delay: Math.random() * 5,
-            duration: 4 + Math.random() * 3,
-            size: 2 + Math.random() * 4,
-            opacity: 0.3 + Math.random() * 0.5
+            delay: Math.random() * 4,
+            duration: 2 + Math.random() * 3,
+            size: 1 + Math.random() * 3
         }));
-        setParticles(newParticles);
+        setStars(newStars);
     }, [isVisible]);
+
+    // 단계 자동 진행 (8초마다)
+    useEffect(() => {
+        if (!isVisible || isComplete) return;
+
+        const stageInterval = setInterval(() => {
+            setCurrentStage(prev => (prev + 1) % PHASE_CONFIG.length);
+        }, 8000);
+
+        return () => clearInterval(stageInterval);
+    }, [isVisible, isComplete]);
 
     // 타이프라이터 효과
     useEffect(() => {
@@ -48,6 +66,8 @@ const AnalysisOverlay = memo(({
 
         // 새 메시지 시작 - 페이드 아웃 후 타이핑
         setIsFading(true);
+        // 메시지 바뀔 때마다 색상 번갈아
+        setTextColorIndex(prev => (prev + 1) % 2);
 
         const fadeTimeout = setTimeout(() => {
             prevMessageRef.current = currentMessage;
@@ -64,10 +84,10 @@ const AnalysisOverlay = memo(({
                     clearInterval(typeInterval);
                     setIsTyping(false);
                 }
-            }, 50); // 50ms per character
+            }, 45); // 45ms per character
 
             return () => clearInterval(typeInterval);
-        }, 300); // 페이드 아웃 시간
+        }, 250); // 페이드 아웃 시간
 
         return () => clearTimeout(fadeTimeout);
     }, [currentMessage]);
@@ -75,117 +95,92 @@ const AnalysisOverlay = memo(({
     // 완료 상태 처리
     useEffect(() => {
         if (isComplete) {
-            setDisplayText('분석이 완료되었어요!');
+            setDisplayText('거의 다 됐어요... 결과를 정리하고 있어요');
             setIsTyping(false);
+            setCurrentStage(PHASE_CONFIG.length - 1);
         }
     }, [isComplete]);
 
     if (!isVisible) return null;
 
-    const getModeGradient = () => {
-        switch (mode) {
-            case 'tarot':
-                return 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)';
-            case 'fortune':
-                return 'linear-gradient(135deg, #1a1a2e 0%, #0d2137 50%, #1a4a5e 100%)';
-            case 'dream':
-            default:
-                return 'linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a3e 100%)';
-        }
-    };
-
-    const getModeAccent = () => {
-        switch (mode) {
-            case 'tarot': return '#9b59b6';
-            case 'fortune': return '#1abc9c';
-            case 'dream':
-            default: return '#6c5ce7';
-        }
-    };
-
-    const getModeEmoji = () => {
-        switch (mode) {
-            case 'tarot': return '🔮';
-            case 'fortune': return '☯️';
-            case 'dream':
-            default: return '🌙';
-        }
-    };
+    const currentConfig = PHASE_CONFIG[currentStage];
+    const [primaryColor, secondaryColor] = currentConfig.colors;
 
     return (
         <div
             className="analysis-overlay"
-            style={{ '--mode-gradient': getModeGradient(), '--mode-accent': getModeAccent() }}
+            style={{
+                '--primary-color': primaryColor,
+                '--secondary-color': secondaryColor
+            }}
         >
-            {/* 배경 파티클 */}
-            <div className="analysis-particles">
-                {particles.map(p => (
+            {/* 배경 별 효과 */}
+            <div className="analysis-stars">
+                {stars.map(star => (
                     <div
-                        key={p.id}
-                        className="analysis-particle"
+                        key={star.id}
+                        className="analysis-star"
                         style={{
-                            left: `${p.left}%`,
-                            top: `${p.top}%`,
-                            animationDelay: `${p.delay}s`,
-                            animationDuration: `${p.duration}s`,
-                            width: `${p.size}px`,
-                            height: `${p.size}px`,
-                            opacity: p.opacity
+                            left: `${star.left}%`,
+                            top: `${star.top}%`,
+                            animationDelay: `${star.delay}s`,
+                            animationDuration: `${star.duration}s`,
+                            width: `${star.size}px`,
+                            height: `${star.size}px`
                         }}
                     />
                 ))}
             </div>
 
-            {/* 중앙 컨텐츠 */}
-            <div className="analysis-content">
-                {/* 상단 감정 구문 */}
-                {emotionPhrase && (
-                    <div className="analysis-emotion">
-                        <span className="emotion-emoji">{getModeEmoji()}</span>
-                        <span className="emotion-text">{emotionPhrase}</span>
-                    </div>
-                )}
+            {/* 플로팅 버블 효과 */}
+            <div className="analysis-bubbles">
+                <div className="bubble bubble-1" />
+                <div className="bubble bubble-2" />
+                <div className="bubble bubble-3" />
+                <div className="bubble bubble-4" />
+                <div className="bubble bubble-5" />
+            </div>
 
-                {/* 메인 메시지 영역 */}
-                <div className={`analysis-message-container ${isFading ? 'fading' : ''}`}>
-                    <div className="analysis-message">
-                        <span className="message-text">{displayText}</span>
-                        {isTyping && <span className="typing-cursor">|</span>}
-                    </div>
+            {/* 상단 도파민 메시지 - VN Intro 스타일 */}
+            <div className="analysis-top-message">
+                {/* 상단 장식 - VN 스타일 */}
+                <div className="vn-ornament-analysis">~ ✦ ~</div>
+
+                <div className={`dopamine-text ${isFading ? 'fading' : ''} ${textColorIndex === 0 ? 'gold-text' : 'purple-text'}`}>
+                    <span className="message-content">{displayText}</span>
+                    {isTyping && <span className="typing-cursor">|</span>}
                 </div>
 
-                {/* 진행률 표시 */}
-                <div className="analysis-progress-container">
-                    <div className="analysis-progress-bar">
-                        <div
-                            className="analysis-progress-fill"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-                    <div className="analysis-progress-text">
-                        {isComplete ? (
-                            <span className="complete-text">분석 완료!</span>
-                        ) : (
-                            <span>{messageIndex + 1} / {totalMessages}</span>
-                        )}
-                    </div>
-                </div>
+                {/* 하단 장식 - VN 스타일 */}
+                <div className="vn-ornament-analysis bottom">~ ✦ ~</div>
+            </div>
 
-                {/* 하단 안내 */}
-                <div className="analysis-hint">
-                    {isComplete ? (
-                        <span>결과를 준비하고 있어요...</span>
-                    ) : (
-                        <span>당신의 질문을 깊이 분석하고 있어요</span>
-                    )}
+            {/* 중앙 Pulsing Circle - Glacial Blue/Purple */}
+            <div className="analysis-center">
+                <div className="pulsing-orb">
+                    <div className="orb-ring ring-1" />
+                    <div className="orb-ring ring-2" />
+                    <div className="orb-ring ring-3" />
+                    <div className="orb-core">
+                        <span className="orb-emoji" key={currentStage}>{currentConfig.emoji}</span>
+                    </div>
                 </div>
             </div>
 
-            {/* 장식 요소들 */}
-            <div className="analysis-decoration top-left" />
-            <div className="analysis-decoration top-right" />
-            <div className="analysis-decoration bottom-left" />
-            <div className="analysis-decoration bottom-right" />
+            {/* 단계 Circle들 */}
+            <div className="analysis-stages">
+                {PHASE_CONFIG.map((config, i) => (
+                    <div
+                        key={i}
+                        className={`stage-dot ${i === currentStage ? 'active' : ''} ${i < currentStage ? 'completed' : ''}`}
+                    />
+                ))}
+            </div>
+
+            {/* 하단 안내 텍스트 - VN 스타일 opacity */}
+            <div className="analysis-bottom-hint">
+                <span>{isComplete ? '결과를 준비하고 있어요...' : currentConfig.label}</span>
+            </div>
         </div>
     );
 });

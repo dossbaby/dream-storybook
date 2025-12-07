@@ -348,25 +348,7 @@ const TarotInput = ({
                 </div>
             )}
 
-            {(tarotPhase === 'revealing' || tarotPhase === 'reading') && loading && (
-                <div className="analysis-animation">
-                    <div
-                        className="analysis-circle tarot-circle"
-                        style={{ '--phase-color': currentPhase.color }}
-                    >
-                        <div className={`analysis-ring ${analysisPhase >= 1 ? 'active' : ''}`}></div>
-                        <div className={`analysis-ring ring-2 ${analysisPhase >= 2 ? 'active' : ''}`}></div>
-                        <div className={`analysis-ring ring-3 ${analysisPhase >= 3 ? 'active' : ''}`}></div>
-                        <div className="analysis-core">{currentPhase.emoji}</div>
-                    </div>
-                    <div className="analysis-text">{progress}</div>
-                    <div className="analysis-phases">
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map(p => (
-                            <div key={p} className={`phase-dot ${analysisPhase >= p ? 'active' : ''} ${analysisPhase === p ? 'current' : ''}`} />
-                        ))}
-                    </div>
-                </div>
-            )}
+{/* 분석 UI는 AnalysisOverlay로 통합됨 - App.jsx에서 렌더링 */}
         </div>
     );
 };
