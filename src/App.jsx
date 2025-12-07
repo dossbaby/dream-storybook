@@ -24,6 +24,7 @@ import { useReadingActions } from './hooks/useReadingActions';
 import { useViewActions } from './hooks/useViewActions';
 import { useUsageLimit } from './hooks/useUsageLimit';
 import { useFeedback } from './hooks/useFeedback';
+import { useDopamineMessages } from './hooks/useDopamineMessages';
 
 // 항상 필요한 컴포넌트 (정적 import)
 import ToastNotifications from './components/common/ToastNotifications';
@@ -56,6 +57,7 @@ const FeedView = lazy(() => import('./components/feed/FeedView'));
 const FloatingActionButton = lazy(() => import('./components/common/FloatingActionButton'));
 const InstallPrompt = lazy(() => import('./components/common/InstallPrompt'));
 const MobileSidebarSheet = lazy(() => import('./components/layout/MobileSidebarSheet'));
+const AnalysisOverlay = lazy(() => import('./components/common/AnalysisOverlay'));
 
 function App() {
     // 로딩 상태 (그룹화)
@@ -162,8 +164,11 @@ function App() {
         setFilter, setMode
     });
 
+    // 도파민 메시지 시스템
+    const dopamineHook = useDopamineMessages();
+
     const { triggerCardReveal, startTarotSelection, toggleTarotCard, generateTarotReading } = useTarotActions({
-        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook
+        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, setSavedDreamField, user, generateTarotReadingHook, dopamineHook
     });
     const setShareTarget = (target) => setModals(prev => ({ ...prev, shareTarget: target }));
     const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
@@ -380,22 +385,37 @@ function App() {
 
                     {/* 타로 생성 뷰 */}
                     {view === 'create' && !tarot.result && mode === 'tarot' && (
-                        <TarotInput
-                            tarotPhase={tarot.phase}
-                            tarotQuestion={tarot.question}
-                            setTarotQuestion={(q) => setTarotField('question', q)}
-                            tarotDeck={tarot.deck}
-                            tarotSelectedCards={tarot.selectedCards}
-                            loading={readingLoading}
-                            analysisPhase={analysisPhase}
-                            progress={progress}
-                            error={error}
-                            onBack={handleTarotBack}
-                            onCancel={handleTarotCancel}
-                            onStartSelection={startTarotSelection}
-                            onToggleCard={toggleTarotCard}
-                            onGenerateReading={generateTarotReading}
-                        />
+                        <>
+                            <TarotInput
+                                tarotPhase={tarot.phase}
+                                tarotQuestion={tarot.question}
+                                setTarotQuestion={(q) => setTarotField('question', q)}
+                                tarotDeck={tarot.deck}
+                                tarotSelectedCards={tarot.selectedCards}
+                                loading={readingLoading}
+                                analysisPhase={analysisPhase}
+                                progress={progress}
+                                error={error}
+                                onBack={handleTarotBack}
+                                onCancel={handleTarotCancel}
+                                onStartSelection={startTarotSelection}
+                                onToggleCard={toggleTarotCard}
+                                onGenerateReading={generateTarotReading}
+                            />
+                            {/* 도파민 분석 오버레이 */}
+                            {readingLoading && dopamineHook.isActive && (
+                                <AnalysisOverlay
+                                    isVisible={true}
+                                    mode="tarot"
+                                    emotionPhrase={dopamineHook.emotionPhrase}
+                                    currentMessage={dopamineHook.currentMessage}
+                                    messageIndex={dopamineHook.currentIndex}
+                                    totalMessages={dopamineHook.totalMessages}
+                                    isComplete={dopamineHook.isComplete}
+                                    progress={dopamineHook.progress}
+                                />
+                            )}
+                        </>
                     )}
 
                     {/* 운세 생성 뷰 */}

@@ -22,6 +22,9 @@ export const AI_MODELS = {
     // 키워드 생성 (Sonnet 고정 - SEO 품질 보장)
     keywords: 'claude-sonnet-4-5',
 
+    // 도파민 메시지 (Haiku - 가장 빠른 모델로 분석 중 메시지 선생성)
+    dopamine: 'claude-3-5-haiku-20241022',
+
     // 이미지 생성 (티어별 차등)
     image: {
         free: 'gemini-2.5-flash-image',           // 무료 - Gemini 2.5 Flash Image

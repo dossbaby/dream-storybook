@@ -1,4 +1,5 @@
 import { TAROT_DECK } from '../utils/constants';
+import { getApiKeys } from '../utils/analysisHelpers';
 
 /**
  * 타로 관련 액션 훅
@@ -12,7 +13,9 @@ export const useTarotActions = ({
     setView,
     setSavedDreamField,
     user,
-    generateTarotReadingHook
+    generateTarotReadingHook,
+    // 도파민 메시지 시스템
+    dopamineHook
 }) => {
     // 레어카드 효과 트리거
     const triggerCardReveal = () => {
@@ -66,11 +69,37 @@ export const useTarotActions = ({
             setSavedDreamField('isPublic', true); // 기본값 공개로 변경 (pSEO)
         }
 
+        // 도파민 메시지 시스템: Haiku로 메시지 선생성 후 큐 시작
+        if (dopamineHook) {
+            const apiKeys = getApiKeys();
+            if (apiKeys?.claudeApiKey) {
+                // 비동기로 도파민 메시지 생성 (메인 API와 병렬)
+                dopamineHook.generateDopamineMessages(tarot.question, 'tarot', apiKeys.claudeApiKey)
+                    .then(result => {
+                        if (result?.messages) {
+                            dopamineHook.startQueue(result.messages, result.emotionPhrase, 4000);
+                        }
+                    })
+                    .catch(err => console.error('Dopamine generation failed:', err));
+            }
+        }
+
         const resultData = await generateTarotReadingHook(tarot.question, tarot.selectedCards);
+
+        // 도파민 큐 정지
+        if (dopamineHook) {
+            dopamineHook.stopQueue();
+        }
+
         if (resultData) {
             setTarotField('result', resultData);
             setView('tarot-result');  // 바로 TarotResultView로 이동 (모달 없이 full reading)
             // 저장은 useReading.js에서 자동으로 처리됨
+        }
+
+        // 도파민 훅 리셋 (다음 사용 위해)
+        if (dopamineHook) {
+            setTimeout(() => dopamineHook.reset(), 1000);
         }
     };
 
