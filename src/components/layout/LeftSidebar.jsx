@@ -14,32 +14,6 @@ const LeftSidebar = ({
 }) => {
     return (
         <aside className="left-sidebar">
-            {/* 실시간 통합 상태 */}
-            <div className="live-status-card">
-                <div className="live-status-header">
-                    <span className="live-dot"></span>
-                    <span className="live-label">LIVE</span>
-                </div>
-                <div className="live-stats">
-                    <div className="live-stat-row">
-                        <span className="live-stat-label">접속 중</span>
-                        <span className="live-stat-value">{onlineCount}명</span>
-                    </div>
-                    <div className="live-stat-row">
-                        <span className="live-stat-label">오늘 활동</span>
-                        <span className="live-stat-value highlight">{todayStats.total}개</span>
-                    </div>
-                    {todayStats.topType && dreamTypes[todayStats.topType] && (
-                        <div className="live-stat-row">
-                            <span className="live-stat-label">인기 유형</span>
-                            <span className="live-stat-value">
-                                {dreamTypes[todayStats.topType]?.emoji} {dreamTypes[todayStats.topType]?.name}
-                            </span>
-                        </div>
-                    )}
-                </div>
-            </div>
-
             {/* 모드별 추가 정보 */}
             {mode === 'dream' && (
                 <>
@@ -137,25 +111,6 @@ const LeftSidebar = ({
                             ))}
                         </div>
                     </div>
-
-                    {/* 인기 키워드 */}
-                    {tarotKeywords.length > 0 && (
-                        <div className="tarot-keywords-box">
-                            <div className="tarot-keywords-header">인기 키워드</div>
-                            <div className="tarot-keywords-tags">
-                                {tarotKeywords.slice(0, 8).map((kw, i) => (
-                                    <span
-                                        key={i}
-                                        className="tarot-keyword-tag"
-                                        onClick={() => onFilterBySymbol(kw.word || kw, 'tarot')}
-                                    >
-                                        #{kw.word || kw}
-                                        {kw.count && <span className="keyword-count">{kw.count}</span>}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </>
             )}
 

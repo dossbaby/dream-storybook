@@ -173,7 +173,7 @@ const FeedView = ({
             dream: {
                 emoji: '🌙',
                 title: '아직 공유된 꿈이 없어요',
-                subtitle: '첫 번째로 꿈을 공유해보세요!',
+                subtitle: '어젯밤 꿈을 풀어보세요!',
                 btnText: '꿈 풀이 보기',
                 btnEmoji: '🌙',
                 btnClass: 'dream-btn'
@@ -231,9 +231,6 @@ const FeedView = ({
     if (mode === 'dream') {
         return (
             <div className="feed-view dream-feed">
-                {/* 트렌딩 섹션 */}
-                {trendingKeywords.length > 0 && renderTrending()}
-
                 {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
@@ -380,9 +377,6 @@ const FeedView = ({
     if (mode === 'fortune') {
         return (
             <div className="feed-view fortune-feed">
-                {/* 트렌딩 섹션 */}
-                {trendingKeywords.length > 0 && renderTrending()}
-
                 {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">

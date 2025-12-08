@@ -1,244 +1,461 @@
 /* ========== 마이페이지 ========== */
+
 .my-page-content {
     width: 100%;
-    max-width: 800px;
-}
-
-.my-profile {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 2rem;
-    padding: 2rem;
-    background: linear-gradient(165deg,
-        rgba(8, 5, 15, 0.98) 0%,
-        rgba(15, 10, 25, 0.97) 40%,
-        rgba(5, 3, 10, 0.99) 100%);
-    border-radius: 20px;
-    margin-bottom: 1.5rem;
-    border: 3px solid transparent;
-    background-clip: padding-box;
-    position: relative;
-}
-
-/* 프로필 카드 그라디언트 보더 */
-.my-profile::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    background: linear-gradient(135deg, #ff0055, #ffd700, #ff0055);
-    border-radius: 22px;
-    z-index: -1;
-    opacity: 0.6;
-}
-
-/* 프로필 카드 글로우 효과 */
-.my-profile::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150%;
-    height: 150%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(ellipse at center,
-        rgba(255, 0, 85, 0.08) 0%,
-        transparent 50%);
-    pointer-events: none;
-    z-index: -2;
-}
-
-.my-profile-left {
+    max-width: 640px;
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+}
+
+/* ========== 섹션 ========== */
+.my-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-left: 0.25rem;
+}
+
+/* ========== 프로필 카드 ========== */
+.my-profile-card {
+    display: flex;
     align-items: center;
     gap: 1rem;
-    min-width: 120px;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
 }
 
-.my-profile-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.my-profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.my-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .my-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.my-profile-info h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.15rem 0;
+    color: rgba(255, 255, 255, 0.95);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.my-profile-info p {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-edit-btn {
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.25);
+    border-radius: 8px;
+    color: #00d4ff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.profile-edit-btn:hover {
+    background: rgba(0, 212, 255, 0.18);
+    border-color: rgba(0, 212, 255, 0.4);
+}
+
+/* 프로필 액션 버튼 그룹 */
+.profile-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.logout-btn {
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ========== 프로필 상세 정보 ========== */
+.profile-details-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+}
+
+.profile-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.profile-detail-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.profile-detail-row:first-child {
+    padding-top: 0;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.detail-value {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+/* ========== 프로필 설정 유도 배너 ========== */
+.profile-setup-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.08), rgba(0, 212, 255, 0.05));
+    border: 1px dashed rgba(155, 89, 182, 0.25);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.profile-setup-banner:hover {
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.12), rgba(0, 212, 255, 0.08));
+    border-color: rgba(155, 89, 182, 0.4);
+}
+
+.banner-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
 }
 
-.my-profile-info h3 {
-    font-size: 1.5rem;
-    margin: 0;
-    color: #fff;
+.banner-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffd080;
 }
 
-.my-profile-info p {
-    font-size: 0.85rem;
-    color: var(--light-gray);
-    margin: 0;
+.banner-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.4;
 }
 
-@media (max-width: 600px) {
-    .my-profile {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .my-profile-header {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-    }
-}
-
-.my-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-    border: 3px solid #ff0055;
-    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
-    object-fit: cover;
-}
-
-.my-profile h3 {
+.banner-arrow {
     font-size: 1.25rem;
-    margin-bottom: 0.25rem;
+    color: rgba(155, 89, 182, 0.5);
 }
 
-.my-profile p {
-    font-size: 0.85rem;
-    color: var(--light-gray);
-    margin-bottom: 1rem;
+/* ========== 빠른 링크 ========== */
+.my-quick-links {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
 }
 
-.logout-btn {
-    padding: 0.5rem 1rem;
+.my-quick-links button {
+    flex: 1;
+    padding: 0.6rem 0.75rem;
     background: transparent;
-    border: 1px solid #333;
-    border-radius: 20px;
-    color: var(--accent);
-    font-size: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.2s;
-    height: 36px;
+}
+
+.my-quick-links button:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.my-quick-links .logout-link {
+    flex: 0.6;
+    color: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.my-quick-links .logout-link:hover {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* ========== Admin 패널 ========== */
+.admin-tier-panel {
+    padding: 1.25rem;
+    background: rgba(138, 43, 226, 0.05);
+    border: 1px solid rgba(138, 43, 226, 0.15);
+    border-radius: 12px;
+}
+
+.admin-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.admin-badge {
+    background: linear-gradient(135deg, #8a2be2, #00d4ff);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+.admin-title {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.admin-tier-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.admin-tier-buttons .tier-btn {
+    flex: 1;
+    padding: 0.55rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-tier-buttons .tier-btn.active {
+    background: rgba(138, 43, 226, 0.15);
+    border-color: rgba(138, 43, 226, 0.35);
+    color: #00d4ff;
+}
+
+.admin-tier-buttons .tier-btn.premium.active {
+    border-color: rgba(255, 208, 128, 0.35);
+    color: #ffd080;
+}
+
+.admin-tier-buttons .tier-btn.ultra.active {
+    border-color: rgba(0, 212, 255, 0.35);
+    color: #00d4ff;
+}
+
+.admin-tier-info {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-align: center;
+}
+
+.admin-tier-info strong {
+    color: #00d4ff;
+}
+
+/* ========== 무료 리딩 바 ========== */
+.usage-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+}
+
+.usage-bar .usage-title {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: auto;
+    font-weight: 500;
+}
+
+.usage-chip {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.3rem 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+}
+
+.usage-chip.depleted {
+    opacity: 0.4;
+    color: rgba(231, 76, 60, 0.8);
+}
+
+.upgrade-chip {
+    font-size: 0.7rem;
+    color: #ffd080;
+    padding: 0.3rem 0.6rem;
+    background: rgba(255, 208, 128, 0.1);
+    border: 1px solid rgba(255, 208, 128, 0.2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upgrade-chip:hover {
+    background: rgba(255, 208, 128, 0.18);
+    border-color: rgba(255, 208, 128, 0.35);
+}
+
+/* ========== 카테고리 탭 ========== */
+.my-category-tabs {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+}
+
+.category-tab {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 0.35rem;
+    padding: 0.65rem 0.5rem;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.logout-btn:hover {
-    background: rgba(255, 51, 102, 0.1);
-    border-color: var(--accent);
+.category-tab:hover {
+    color: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.03);
 }
 
+.category-tab.active {
+    color: #00d4ff;
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.category-tab .tab-emoji {
+    font-size: 1rem;
+}
+
+.category-tab .tab-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.category-tab .tab-count {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+}
+
+.category-tab.active .tab-count {
+    background: rgba(0, 212, 255, 0.15);
+    color: #00d4ff;
+}
+
+/* ========== 뷰 토글 ========== */
+.view-toggle {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+}
+
+.view-toggle button {
+    padding: 0.45rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-toggle button:hover {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.view-toggle button.active {
+    background: rgba(155, 89, 182, 0.12);
+    color: #9b59b6;
+}
+
+/* ========== 기록 목록 ========== */
 .my-dreams {
-    padding: 1rem;
-    background: var(--dark);
-    border-radius: 16px;
+    background: transparent;
 }
 
 .my-dreams h4 {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
-    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* ========== 마이페이지 추가 스타일 ========== */
-.nickname-btn {
-    padding: 0.5rem 1.25rem;
-    background: linear-gradient(135deg, rgba(255, 0, 85, 0.8), rgba(255, 150, 50, 0.7));
-    border: none;
-    border-radius: 20px;
-    color: #fff;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
-}
-
-.nickname-btn:hover {
-    background: linear-gradient(135deg, rgba(255, 0, 85, 1), rgba(255, 150, 50, 0.9));
-    transform: translateY(-2px);
-    box-shadow:
-        0 0 30px rgba(255, 0, 85, 0.5),
-        0 5px 20px rgba(255, 0, 85, 0.3);
-}
-
-/* 피드백 버튼 */
-.feedback-btn {
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-}
-
-.feedback-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    color: #fff;
-}
-
-/* 친구 초대 버튼 */
-.referral-btn {
-    padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-}
-
-.referral-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    color: #fff;
+.no-comments {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.85rem;
 }
 
 .my-dreams-list {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .my-dream-item {
@@ -246,26 +463,40 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
     transition: all 0.2s;
+    border-left: 2px solid transparent;
 }
 
 .my-dream-item:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.my-dream-item.tarot-item {
+    border-left-color: rgba(155, 89, 182, 0.4);
+}
+
+.my-dream-item.fortune-item {
+    border-left-color: rgba(0, 212, 255, 0.4);
+}
+
+.my-dream-item.locked {
+    opacity: 0.5;
 }
 
 .my-dream-thumb {
-    width: 50px;
-    height: 70px;
-    border-radius: 8px;
+    width: 44px;
+    height: 60px;
+    border-radius: 6px;
     overflow: hidden;
     flex-shrink: 0;
     cursor: pointer;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    background: rgba(255, 255, 255, 0.03);
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .my-dream-thumb img {
@@ -275,689 +506,96 @@
 }
 
 .my-dream-thumb span {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+}
+
+.thumb-lock {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
 }
 
 .my-dream-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.15rem;
     cursor: pointer;
     min-width: 0;
 }
 
 .my-dream-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .my-dream-date {
-    font-size: 0.7rem;
-    color: var(--gold);
+    font-size: 0.65rem;
+    color: rgba(255, 208, 128, 0.65);
 }
 
 .my-dream-type {
-    font-size: 0.65rem;
-    color: var(--light-gray);
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.35);
 }
 
 .my-dream-actions {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.4rem;
+    gap: 0.3rem;
 }
 
-.visibility-badge {
-    font-size: 0.6rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 10px;
-}
-
-.visibility-badge.public {
-    background: rgba(26, 188, 156, 0.2);
-    color: var(--teal);
-}
-
-.visibility-badge.private {
-    background: rgba(102, 102, 102, 0.2);
-    color: var(--light-gray);
-}
-
-.delete-btn {
-    padding: 0.3rem 0.6rem;
-    background: transparent;
-    border: 1px solid rgba(255, 51, 102, 0.3);
-    border-radius: 8px;
-    color: var(--accent);
+.unlock-btn {
+    padding: 0.35rem 0.6rem;
+    background: rgba(255, 208, 128, 0.08);
+    border: 1px solid rgba(255, 208, 128, 0.2);
+    border-radius: 6px;
+    color: #ffd080;
     font-size: 0.65rem;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.delete-btn:hover {
-    background: rgba(255, 51, 102, 0.1);
-    border-color: var(--accent);
+.unlock-btn:hover {
+    background: rgba(255, 208, 128, 0.15);
 }
 
-/* ========== 마이페이지 통계 ========== */
-.my-stats {
-    padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 16px;
-    margin-bottom: 1.5rem;
-}
-
-.my-stats h4 {
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0.85rem 0.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #ffd700;
-}
-
-.stat-label {
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 0.25rem;
-}
-
-.stat-highlight {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 3px solid #ff0055;
-    border-radius: 0 12px 12px 0;
-    margin-bottom: 0.75rem;
-}
-
-.stat-highlight-icon {
-    font-size: 1.75rem;
-}
-
-.stat-highlight-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
-.stat-highlight-label {
-    font-size: 0.65rem;
-    color: var(--light-gray);
-}
-
-.stat-highlight-value {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--white);
-}
-
-.stat-keywords {
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-}
-
-.stat-keywords-label {
-    display: block;
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 0.5rem;
-}
-
-.stat-keywords-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-}
-
-.stat-keyword {
-    padding: 0.3rem 0.6rem;
-    background: rgba(255, 215, 0, 0.1);
-    border-radius: 15px;
-    font-size: 0.7rem;
-    color: #ffd700;
-}
-
-/* ========== 카테고리 탭 ========== */
-.my-category-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0.25rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-}
-
-.category-tab {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.75rem 0.5rem;
-    background: transparent;
-    border: none;
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.category-tab:hover {
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.category-tab.active {
-    color: #fff;
-    background: #ff0055;
-}
-
-.category-tab .tab-emoji {
-    font-size: 1.1rem;
-}
-
-.category-tab .tab-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-}
-
-.category-tab .tab-count {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.4rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-}
-
-.category-tab.active .tab-count {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-/* 타로 아이템 스타일 */
-.my-dream-item.tarot-item {
-    border-left: 3px solid #9b59b6;
-}
-
-.my-dream-item.tarot-item:hover {
-    border-left-color: #e056fd;
-}
-
-/* 사주 아이템 스타일 */
-.my-dream-item.fortune-item {
-    border-left: 3px solid #e84393;
-}
-
-.my-dream-item.fortune-item:hover {
-    border-left-color: #fd79a8;
-}
-
-/* 통계 그리드 4열로 확장 */
-.stats-grid {
-    grid-template-columns: repeat(4, 1fr);
-}
-
-@media (max-width: 400px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* ========== 프로필 설정 섹션 - VN 스타일 ========== */
-.profile-details {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-}
-
-@media (max-width: 600px) {
-    .profile-details {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.profile-detail-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 0.85rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 12px;
-    transition: all 0.2s ease;
-}
-
-.profile-detail-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.profile-detail-label {
-    font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.4);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-}
-
-.profile-detail-value {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-}
-
-/* 프로필 설정 유도 배너 */
-.profile-setup-hint {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(255, 215, 0, 0.1));
-    border: 1px dashed rgba(155, 89, 182, 0.4);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.profile-setup-hint:hover {
-    background: linear-gradient(135deg, rgba(155, 89, 182, 0.25), rgba(255, 215, 0, 0.15));
-    border-color: rgba(155, 89, 182, 0.6);
-    transform: translateY(-2px);
-}
-
-.profile-setup-hint .hint-icon {
-    font-size: 2rem;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-}
-
-.profile-setup-hint .hint-content {
-    flex: 1;
-}
-
-.profile-setup-hint .hint-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--gold);
-    margin-bottom: 0.25rem;
-}
-
-.profile-setup-hint .hint-desc {
-    font-size: 0.8rem;
-    color: var(--light-gray);
-    line-height: 1.4;
-}
-
-.profile-setup-hint .hint-arrow {
-    font-size: 1.25rem;
-    color: var(--purple);
-}
-
-/* 프로필 완성도 배지 */
-.profile-completion-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.8rem;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    font-size: 0.75rem;
-}
-
-.profile-completion-badge .completion-bar {
-    width: 60px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.profile-completion-badge .completion-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ff0055, #ffd700);
-    border-radius: 3px;
-    transition: width 0.5s;
-}
-
-.profile-completion-badge .completion-text {
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 500;
-}
-
-/* 프로필 설정 모달 - VN 인트로 스타일 */
-.profile-settings-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+/* 히스토리 업그레이드 힌트 */
+.history-upgrade-hint {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-    overflow: hidden;
-}
-
-/* 배경 글로우 - 프로필 페이지와 동일 */
-.profile-settings-modal::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150%;
-    height: 150%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(ellipse at center,
-        rgba(255, 0, 85, 0.06) 0%,
-        transparent 50%);
-    pointer-events: none;
-}
-
-.profile-settings-content {
-    width: 100%;
-    max-width: 500px;
-    max-height: 90vh;
-    background:
-        linear-gradient(165deg, rgba(8, 5, 15, 1) 0%, rgba(15, 10, 25, 1) 40%, rgba(5, 3, 10, 1) 100%) padding-box,
-        linear-gradient(135deg, #ff0055, #ffd700, #ff0055) border-box;
-    border-radius: 20px;
-    border: 2px solid transparent;
-    overflow-y: auto;
-    animation: modalSlideUp 0.3s ease-out;
-    position: relative;
-    box-shadow: 0 0 40px rgba(255, 0, 85, 0.15), 0 0 60px rgba(255, 215, 0, 0.1);
-}
-
-.profile-settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.profile-settings-header h3 {
-    font-size: 1.25rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
     gap: 0.5rem;
-    color: #fff;
-}
-
-.profile-settings-close {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 1.25rem;
+    padding: 0.75rem;
+    background: rgba(255, 208, 128, 0.05);
+    border: 1px dashed rgba(255, 208, 128, 0.15);
+    border-radius: 8px;
+    margin-top: 0.5rem;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.profile-settings-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+.history-upgrade-hint:hover {
+    background: rgba(255, 208, 128, 0.1);
+    border-color: rgba(255, 208, 128, 0.3);
 }
 
-.profile-settings-body {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-.profile-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.profile-field label {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.profile-field label .field-emoji {
+.history-upgrade-hint .hint-icon {
     font-size: 1rem;
 }
 
-.profile-field input,
-.profile-field select {
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: none;
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.95rem;
-    transition: all 0.2s;
-}
-
-.profile-field input:focus,
-.profile-field select:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.06);
-}
-
-/* 날짜 입력 기본 스타일링 */
-.profile-field input[type="date"],
-.profile-field input[type="time"] {
-    color-scheme: dark;
-}
-
-.profile-field input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-}
-
-.profile-field .field-hint {
+.history-upgrade-hint .hint-text {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-    margin-top: 0.25rem;
-}
-
-/* MBTI 선택 그리드 */
-.mbti-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-}
-
-.mbti-option {
-    padding: 0.6rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: none;
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-}
-
-.mbti-option:hover {
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.mbti-option.selected {
-    background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
-    color: #1a1000;
-    border: none;
-    font-weight: 700;
-}
-
-/* 성별 선택 */
-.gender-options {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.gender-option {
-    flex: 1;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: none;
-    border-radius: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.gender-option:hover {
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.gender-option.selected {
-    background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
-    color: #1a1000;
-    border: none;
-    font-weight: 700;
-}
-
-.gender-option .gender-emoji {
-    font-size: 1.5rem;
-}
-
-/* 프로필 저장 버튼 */
-.profile-settings-footer {
-    padding: 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    gap: 0.75rem;
-}
-
-.profile-save-btn {
-    flex: 1;
-    padding: 0.9rem;
-    background: linear-gradient(135deg, #ff0055, #ffd700);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
-}
-
-.profile-save-btn:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 0 30px rgba(255, 0, 85, 0.5),
-        0 5px 20px rgba(255, 0, 85, 0.3);
-}
-
-.profile-cancel-btn {
-    padding: 0.9rem 1.5rem;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.profile-cancel-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.25);
-    color: #fff;
-}
-
-/* 프로필 혜택 안내 */
-.profile-benefits {
-    padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 16px;
-    border-left: 3px solid #ff0055;
-}
-
-.profile-benefits-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #ffd700;
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.profile-benefits-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.profile-benefits-list li {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.7);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.profile-benefits-list li::before {
-    content: '✦';
-    color: #ff0055;
-    font-size: 0.7rem;
-}
-
-/* 프로필 액션 버튼 (설정 + 로그아웃) */
-.my-profile-actions {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: nowrap;
-}
-
-.my-profile-actions button {
-    white-space: nowrap;
-    flex-shrink: 0;
+    color: #ffd080;
 }
 
 /* ========== Visibility 드롭다운 ========== */
@@ -968,37 +606,32 @@
 .visibility-btn {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem 0.6rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.7rem;
+    gap: 0.25rem;
+    padding: 0.35rem 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.65rem;
     cursor: pointer;
     transition: all 0.2s;
-    white-space: nowrap;
 }
 
 .visibility-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.visibility-btn.private {
-    border-color: rgba(102, 102, 102, 0.4);
-}
-
-.visibility-btn.unlisted {
-    border-color: rgba(52, 152, 219, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .visibility-btn.public {
-    border-color: rgba(26, 188, 156, 0.4);
+    border-color: rgba(26, 188, 156, 0.25);
+}
+
+.visibility-btn.unlisted {
+    border-color: rgba(52, 152, 219, 0.25);
 }
 
 .visibility-btn .visibility-icon {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
 }
 
 .visibility-btn .visibility-text {
@@ -1006,62 +639,55 @@
 }
 
 .visibility-btn .visibility-arrow {
-    font-size: 0.5rem;
-    margin-left: 0.1rem;
-    opacity: 0.6;
+    font-size: 0.4rem;
+    opacity: 0.5;
 }
 
 .visibility-menu {
     position: absolute;
     top: calc(100% + 4px);
     right: 0;
-    background: rgba(20, 15, 35, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
+    background: rgba(12, 10, 20, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
     overflow: hidden;
     z-index: 100;
-    min-width: 140px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    min-width: 120px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
     animation: dropdownFadeIn 0.15s ease-out;
 }
 
 @keyframes dropdownFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .visibility-menu-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     width: 100%;
-    padding: 0.65rem 0.85rem;
+    padding: 0.55rem 0.7rem;
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.7rem;
     text-align: left;
     cursor: pointer;
     transition: all 0.15s;
 }
 
 .visibility-menu-item:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .visibility-menu-item.active {
-    background: rgba(255, 0, 85, 0.15);
-    color: #ff0055;
+    background: rgba(0, 212, 255, 0.1);
+    color: #00d4ff;
 }
 
 .visibility-menu-item .menu-icon {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
 }
 
 .visibility-menu-item .menu-label {
@@ -1069,77 +695,171 @@
 }
 
 .visibility-menu-item .menu-check {
-    font-size: 0.7rem;
-    color: #ff0055;
+    font-size: 0.6rem;
+    color: #00d4ff;
 }
 
-/* 삭제 옵션 구분선 */
 .visibility-menu-divider {
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 0.3rem 0;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 0.25rem 0;
 }
 
-/* 삭제 메뉴 아이템 */
 .visibility-menu-item.delete-item {
-    color: #ff4757;
+    color: rgba(231, 76, 60, 0.85);
 }
 
 .visibility-menu-item.delete-item:hover {
-    background: rgba(255, 71, 87, 0.15);
+    background: rgba(231, 76, 60, 0.1);
 }
 
-/* 삭제 확인 행 */
 .delete-confirm-row {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.6rem;
+    gap: 0.3rem;
+    padding: 0.4rem 0.5rem;
 }
 
 .delete-confirm-text {
     flex: 1;
-    font-size: 0.75rem;
-    color: #ff4757;
+    font-size: 0.7rem;
+    color: rgba(231, 76, 60, 0.85);
 }
 
 .delete-confirm-btn {
-    padding: 0.25rem 0.5rem;
+    padding: 0.2rem 0.4rem;
     border: none;
     border-radius: 4px;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
 }
 
 .delete-confirm-btn.yes {
-    background: #ff4757;
+    background: rgba(231, 76, 60, 0.85);
     color: #fff;
 }
 
-.delete-confirm-btn.yes:hover {
-    background: #ff6b7a;
-}
-
 .delete-confirm-btn.no {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.5);
 }
 
-.delete-confirm-btn.no:hover {
-    background: rgba(255, 255, 255, 0.15);
+/* ========== 캘린더 ========== */
+.dream-calendar {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1rem;
 }
 
-/* ========== 로그인 프롬프트 (비로그인 마이페이지) ========== */
-.login-prompt {
-    width: 100%;
-    max-width: 400px;
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.calendar-header span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-header button {
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.calendar-header button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    padding: 0.3rem 0;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.2rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 60vh;
+    gap: 0.1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    cursor: default;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.calendar-day.empty {
+    background: transparent;
+}
+
+.calendar-day.has-dream {
+    cursor: pointer;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+}
+
+.calendar-day.has-dream:hover {
+    background: rgba(155, 89, 182, 0.18);
+}
+
+.calendar-day .day-number {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.calendar-day .day-emoji {
+    font-size: 0.85rem;
+}
+
+.calendar-day .dream-count-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.45rem;
+    padding: 0.1rem 0.2rem;
+    background: rgba(0, 212, 255, 0.75);
+    color: #fff;
+    border-radius: 3px;
+}
+
+/* ========== 로그인 프롬프트 ========== */
+.login-prompt {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
     padding: 2rem;
 }
 
@@ -1148,278 +868,387 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 2.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
+    gap: 0.75rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
 }
 
 .login-prompt-icon {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .login-prompt-content h3 {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.95);
     margin: 0;
 }
 
 .login-prompt-content p {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-}
-
-.login-prompt-btn {
-    width: 100%;
-    padding: 0.9rem 1.5rem;
-    background: linear-gradient(135deg, #ff0055, #ffd700);
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 0.5rem;
-}
-
-.login-prompt-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(255, 0, 85, 0.3);
-}
-
-.login-prompt-back {
-    padding: 0.6rem 1rem;
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.5);
     font-size: 0.85rem;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.login-prompt-back:hover {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0;
 }
 
 .login-prompt-benefits {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: rgba(155, 89, 182, 0.1);
-    border: 1px solid rgba(155, 89, 182, 0.2);
-    border-radius: 12px;
+    gap: 0.35rem;
+    padding: 0.75rem;
+    background: rgba(155, 89, 182, 0.06);
+    border: 1px solid rgba(155, 89, 182, 0.12);
+    border-radius: 10px;
     width: 100%;
 }
 
 .login-prompt-benefits span {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.65);
 }
 
-/* ========== 무료 리딩 사용량 카드 ========== */
-.usage-summary-card {
-    background: linear-gradient(145deg, rgba(155, 89, 182, 0.1), rgba(108, 92, 231, 0.05));
-    border: 1px solid rgba(155, 89, 182, 0.2);
-    border-radius: 16px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-}
-
-.usage-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.usage-icon {
-    font-size: 1.3rem;
-}
-
-.usage-header h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    margin: 0;
-    flex: 1;
-}
-
-.usage-reset {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.5);
-    background: rgba(255, 255, 255, 0.05);
-    padding: 0.3rem 0.6rem;
+.login-prompt-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: rgba(0, 212, 255, 0.12);
+    border: 1px solid rgba(0, 212, 255, 0.25);
     border-radius: 10px;
+    color: #00d4ff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.25rem;
 }
 
-.usage-items {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+.login-prompt-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: rgba(0, 212, 255, 0.4);
 }
 
-.usage-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    transition: all 0.2s ease;
+.login-prompt-back {
+    padding: 0.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.8rem;
+    cursor: pointer;
 }
 
-.usage-item.depleted {
-    opacity: 0.5;
-    background: rgba(231, 76, 60, 0.1);
-    border-color: rgba(231, 76, 60, 0.2);
-}
-
-.usage-emoji {
-    font-size: 1.5rem;
-}
-
-.usage-label {
-    font-size: 0.75rem;
+.login-prompt-back:hover {
     color: rgba(255, 255, 255, 0.6);
 }
 
-.usage-count {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #fff;
-}
-
-.usage-item.depleted .usage-count {
-    color: #e74c3c;
-}
-
-.upgrade-btn {
-    width: 100%;
+/* ========== 프로필 설정 모달 ========== */
+.profile-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.85rem;
-    background: linear-gradient(135deg, #ffd080, #ff9020);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: #1a0030;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 0 25px rgba(255, 180, 80, 0.35);
+    z-index: 1000;
+    padding: 1rem;
 }
 
-.upgrade-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 35px rgba(255, 180, 80, 0.5);
-}
-
-/* ========== Admin 티어 전환 패널 ========== */
-.admin-tier-panel {
-    background: linear-gradient(165deg,
-        rgba(20, 10, 35, 0.95) 0%,
-        rgba(30, 15, 50, 0.9) 50%,
-        rgba(15, 8, 25, 0.95) 100%);
-    border: 1px solid rgba(138, 43, 226, 0.3);
+.profile-modal {
+    width: 100%;
+    max-width: 420px;
+    max-height: 85vh;
+    background: #0d0b12;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-    position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: profileModalIn 0.2s ease-out;
 }
 
-.admin-tier-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #8a2be2, #00d4ff, #8a2be2);
+@keyframes profileModalIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
 }
 
-.admin-panel-header {
+.profile-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.profile-modal-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.profile-modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.15s;
     display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.profile-modal-close:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* 프로필 그룹 */
+.profile-group {
+    display: flex;
+    flex-direction: column;
     gap: 0.75rem;
-    margin-bottom: 1rem;
 }
 
-.admin-badge {
-    background: linear-gradient(135deg, #8a2be2, #00d4ff);
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    letter-spacing: 0.5px;
+.profile-group-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
 }
 
-.admin-title {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
+.profile-group-title .optional {
+    font-weight: 400;
+    text-transform: none;
+    color: rgba(255, 255, 255, 0.25);
 }
 
-.admin-tier-buttons {
+/* 필드 행 */
+.profile-field-row {
     display: flex;
     gap: 0.75rem;
-    margin-bottom: 1rem;
 }
 
-.admin-tier-buttons .tier-btn {
+.profile-field-row .profile-field {
     flex: 1;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
 }
 
-.admin-tier-buttons .tier-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+.profile-field-row .profile-field.flex-2 {
+    flex: 2;
 }
 
-.admin-tier-buttons .tier-btn.active {
-    background: rgba(138, 43, 226, 0.3);
-    border-color: #8a2be2;
-    color: #fff;
+.profile-field-row .profile-field.flex-1 {
+    flex: 1;
 }
 
-.admin-tier-buttons .tier-btn.premium.active {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 140, 0, 0.2));
-    border-color: #ffd700;
-    color: #ffd700;
+/* 프로필 필드 */
+.profile-modal .profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
 }
 
-.admin-tier-buttons .tier-btn.ultra.active {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(0, 212, 255, 0.2));
-    border-color: #00d4ff;
-    color: #00d4ff;
-}
-
-.admin-tier-info {
+.profile-modal .profile-field label {
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.5);
-    text-align: center;
 }
 
-.admin-tier-info strong {
+.profile-modal .profile-field label .optional {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 0.65rem;
+}
+
+.profile-modal .profile-field input {
+    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    transition: all 0.15s;
+}
+
+.profile-modal .profile-field input:focus {
+    outline: none;
+    border-color: rgba(0, 212, 255, 0.35);
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.profile-modal .profile-field input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.profile-modal .profile-field input[type="date"],
+.profile-modal .profile-field input[type="time"] {
+    color-scheme: dark;
+}
+
+.profile-hint {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+/* 성별 토글 */
+.gender-toggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.gender-toggle button {
+    flex: 1;
+    padding: 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.gender-toggle button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.gender-toggle button.active {
+    background: rgba(155, 89, 182, 0.15);
+    border-color: rgba(155, 89, 182, 0.35);
+    color: #c792ea;
+}
+
+/* MBTI 셀렉터 */
+.mbti-selector {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+}
+
+.mbti-selector button {
+    padding: 0.5rem 0.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.mbti-selector button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.mbti-selector button.active {
+    background: rgba(0, 212, 255, 0.12);
+    border-color: rgba(0, 212, 255, 0.35);
     color: #00d4ff;
+}
+
+/* 모달 푸터 */
+.profile-modal-footer {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.profile-modal-footer .btn-cancel {
+    padding: 0.7rem 1.25rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.profile-modal-footer .btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-modal-footer .btn-save {
+    flex: 1;
+    padding: 0.7rem;
+    background: rgba(0, 212, 255, 0.12);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    color: #00d4ff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.profile-modal-footer .btn-save:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: rgba(0, 212, 255, 0.45);
+}
+
+/* ========== 반응형 ========== */
+@media (max-width: 480px) {
+    .my-profile-card {
+        flex-wrap: wrap;
+    }
+
+    .my-profile-info {
+        flex: 1 1 calc(100% - 72px);
+    }
+
+    .profile-actions {
+        flex: 1 1 100%;
+        margin-top: 0.5rem;
+    }
+
+    .profile-actions .profile-edit-btn,
+    .profile-actions .logout-btn {
+        flex: 1;
+    }
+
+    .my-quick-links {
+        flex-wrap: wrap;
+    }
+
+    .my-quick-links button {
+        flex: 1 1 45%;
+    }
+
+    .usage-bar {
+        flex-wrap: wrap;
+    }
+
+    .usage-bar .usage-title {
+        flex: 1 1 100%;
+        margin-bottom: 0.25rem;
+    }
+
+    .category-tab {
+        flex-direction: column;
+        gap: 0.15rem;
+        padding: 0.55rem 0.3rem;
+    }
+
+    .category-tab .tab-label {
+        font-size: 0.65rem;
+    }
 }

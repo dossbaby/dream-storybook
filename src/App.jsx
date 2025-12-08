@@ -320,8 +320,8 @@ function App() {
 
                 {/* 중앙 - 메인 콘텐츠 */}
                 <main className="center-main">
-                    {/* 공통 뒤로가기 버튼 - feed 외의 뷰에서만 표시 (타로 결과 페이지는 자체 버튼 사용) */}
-                    {view !== 'feed' && !(mode === 'tarot' && view === 'result') && (
+                    {/* 공통 뒤로가기 버튼 - feed 외의 뷰에서만 표시 (타로/꿈/사주 결과 페이지는 자체 버튼 사용) */}
+                    {view !== 'feed' && view !== 'tarot-result' && view !== 'fortune-result' && view !== 'detail' && (
                         <button
                             className="global-back-btn"
                             onClick={() => {
@@ -578,6 +578,8 @@ function App() {
                             onUpdateVisibility={(visibility) => {
                                 if (tarot.result?.id) {
                                     updateVisibility('tarot', tarot.result.id, visibility);
+                                    // 로컬 tarot.result도 즉시 업데이트
+                                    setTarotField('result', { ...tarot.result, visibility, isPublic: visibility === 'public' });
                                 }
                             }}
                             onOpenReferral={() => openModal('referral')}
@@ -610,30 +612,6 @@ function App() {
                                 setView('feed');
                             }}
                         />
-                    )}
-
-                    {/* 포인트 모달 삭제됨 */}
-
-                    {/* 마이페이지 - 비로그인 시 로그인 유도 */}
-                    {view === 'my' && !user && (
-                        <div className="login-prompt">
-                            <div className="login-prompt-content">
-                                <span className="login-prompt-icon">🔮</span>
-                                <h3>로그인하고 시작하세요</h3>
-                                <p>무료로 주 3회 리딩을 받을 수 있어요</p>
-                                <div className="login-prompt-benefits">
-                                    <span>🎁 무료 리딩 주 3회</span>
-                                    <span>💾 내 리딩 기록 저장</span>
-                                    <span>🌐 커뮤니티 공유</span>
-                                </div>
-                                <button className="login-prompt-btn" onClick={openAuthModal}>
-                                    로그인 / 가입하기
-                                </button>
-                                <button className="login-prompt-back" onClick={() => setView('feed')}>
-                                    홈으로 돌아가기
-                                </button>
-                            </div>
-                        </div>
                     )}
 
                     {/* 마이페이지 */}

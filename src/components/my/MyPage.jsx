@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { HISTORY_LIMITS } from '../../utils/aiConfig';
-import PatternAnalysis from '../common/PatternAnalysis';
 
 // visibility 옵션 정의
 const VISIBILITY_OPTIONS = [
@@ -251,114 +250,86 @@ const MyPage = ({
     return (
         <>
             <div className="my-page-content">
-                <div className="my-profile">
-                    {/* 왼쪽: 아바타 + 뱃지 */}
-                    <div className="my-profile-left">
+                {/* 프로필 섹션 */}
+                <section className="my-section">
+                    <div className="section-label">프로필</div>
+                    <div className="my-profile-card">
                         <img src={user.photoURL || '/default-avatar.png'} alt="" className="my-avatar" />
-                        {/* 뱃지 표시 */}
-                        {userBadges.length > 0 && (
-                            <div className="my-badges">
-                                {userBadges.map(badgeId => (
-                                    <span key={badgeId} className="badge-item" title={BADGES[badgeId]?.desc}>
-                                        {BADGES[badgeId]?.emoji}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
+                        <div className="my-profile-info">
+                            <h3>{userProfile.name || userNickname || user.displayName}</h3>
+                            <p>{user.email}</p>
+                        </div>
+                        <div className="profile-actions">
+                            <button className="profile-edit-btn" onClick={onOpenProfileModal || onOpenNicknameModal}>
+                                설정
+                            </button>
+                            <button className="logout-btn" onClick={onLogout}>로그아웃</button>
+                        </div>
                     </div>
-
-                    {/* 오른쪽: 정보 + 프로필 */}
-                    <div className="my-profile-right">
-                        {/* 헤더: 이름 + 버튼들 */}
-                        <div className="my-profile-header">
-                            <div className="my-profile-info">
-                                <h3>{userProfile.name || userNickname || user.displayName}</h3>
-                                <p>{user.email}</p>
-                                {/* 프로필 완성도 배지 */}
-                                {hasProfile && (
-                                    <div className="profile-completion-badge">
-                                        <div className="completion-bar">
-                                            <div className="completion-fill" style={{ width: `${profileCompletion}%` }}></div>
-                                        </div>
-                                        <span className="completion-text">프로필 {profileCompletion}%</span>
-                                    </div>
-                                )}
+                    {hasProfile ? (
+                        <div className="profile-details-card">
+                            <div className="profile-detail-row">
+                                <span className="detail-label">생년월일</span>
+                                <span className="detail-value">
+                                    {userProfile.birthDate ? userProfile.birthDate.replace(/-/g, '.') : '—'}
+                                    {age ? ` (${age}세)` : ''}
+                                </span>
                             </div>
-                            <div className="my-profile-actions">
-                                <button className="nickname-btn" onClick={onOpenProfileModal || onOpenNicknameModal}>
-                                    프로필 설정
-                                </button>
-                                <button className="referral-btn" onClick={onOpenReferral}>
-                                    🎁 친구 초대
-                                </button>
-                                <button className="feedback-btn" onClick={onOpenFeedback}>
-                                    💬 의견 보내기
-                                </button>
-                                <button className="logout-btn" onClick={onLogout}>로그아웃</button>
+                            <div className="profile-detail-row">
+                                <span className="detail-label">태어난 시간</span>
+                                <span className="detail-value">{userProfile.birthTime || '—'}</span>
+                            </div>
+                            <div className="profile-detail-row">
+                                <span className="detail-label">별자리</span>
+                                <span className="detail-value">{zodiac ? `${zodiac.emoji} ${zodiac.name}` : '—'}</span>
+                            </div>
+                            <div className="profile-detail-row">
+                                <span className="detail-label">성별</span>
+                                <span className="detail-value">
+                                    {userProfile.gender === 'female' ? '여성' : userProfile.gender === 'male' ? '남성' : '—'}
+                                </span>
+                            </div>
+                            <div className="profile-detail-row">
+                                <span className="detail-label">MBTI</span>
+                                <span className="detail-value">{userProfile.mbti || '—'}</span>
                             </div>
                         </div>
+                    ) : (
+                        <div className="profile-setup-banner" onClick={onOpenProfileModal || onOpenNicknameModal}>
+                            <div className="banner-content">
+                                <span className="banner-title">✨ 맞춤 리딩을 받아보세요</span>
+                                <span className="banner-desc">프로필 설정 시 더 정확한 타로, 꿈해몽, 사주를 경험할 수 있어요</span>
+                            </div>
+                            <span className="banner-arrow">→</span>
+                        </div>
+                    )}
+                </section>
 
-                        {/* 프로필 정보가 있으면 표시 */}
-                        {hasProfile ? (
-                            <div className="profile-details">
-                                {/* 이름 / 닉네임 */}
-                                <div className="profile-detail-item">
-                                    <span className="profile-detail-label">이름 / 닉네임</span>
-                                    <span className="profile-detail-value">
-                                        {userProfile.name || '—'} / {userNickname || '—'}
-                                    </span>
-                                </div>
-                                {/* 생년월일 / 나이 */}
-                                <div className="profile-detail-item">
-                                    <span className="profile-detail-label">생년월일</span>
-                                    <span className="profile-detail-value">
-                                        {userProfile.birthDate ? `${userProfile.birthDate.replace(/-/g, '.')}` : '—'}
-                                        {age ? ` (${age}세)` : ''}
-                                    </span>
-                                </div>
-                                {/* 태어난 시간 */}
-                                <div className="profile-detail-item">
-                                    <span className="profile-detail-label">태어난 시간</span>
-                                    <span className="profile-detail-value">
-                                        {userProfile.birthTime || '—'}
-                                    </span>
-                                </div>
-                                {/* 별자리 */}
-                                <div className="profile-detail-item">
-                                    <span className="profile-detail-label">별자리</span>
-                                    <span className="profile-detail-value">
-                                        {zodiac ? `${zodiac.emoji} ${zodiac.name}` : '—'}
-                                    </span>
-                                </div>
-                                {/* 성별 */}
-                                <div className="profile-detail-item">
-                                    <span className="profile-detail-label">성별</span>
-                                    <span className="profile-detail-value">
-                                        {userProfile.gender === 'female' ? '👧🏻 여성' : userProfile.gender === 'male' ? '🧒🏻 남성' : '—'}
-                                    </span>
-                                </div>
-                                {/* MBTI */}
-                                <div className="profile-detail-item">
-                                    <span className="profile-detail-label">MBTI</span>
-                                    <span className="profile-detail-value">{userProfile.mbti || '—'}</span>
-                                </div>
-                            </div>
-                        ) : (
-                            /* 프로필 설정 유도 배너 */
-                            <div className="profile-setup-hint" onClick={onOpenProfileModal || onOpenNicknameModal}>
-                                <span className="hint-icon">✨</span>
-                                <div className="hint-content">
-                                    <div className="hint-title">맞춤 리딩을 받아보세요!</div>
-                                    <div className="hint-desc">
-                                        프로필을 설정하면 타로, 꿈해몽, 사주가 당신에게 맞춤으로 제공됩니다.
-                                        이미지에 당신의 모습이 반영돼요!
-                                    </div>
-                                </div>
-                                <span className="hint-arrow">→</span>
-                            </div>
-                        )}
+                {/* 계정 섹션 */}
+                <section className="my-section">
+                    <div className="section-label">계정</div>
+                    {!isPremium && usageSummary && (
+                        <div className="usage-bar">
+                            <span className="usage-title">무료 리딩</span>
+                            <span className={`usage-chip ${!usageSummary.tarot.canUse ? 'depleted' : ''}`}>
+                                🃏 {usageSummary.tarot.remaining}/{usageSummary.tarot.limit}
+                            </span>
+                            <span className={`usage-chip ${!usageSummary.dream.canUse ? 'depleted' : ''}`}>
+                                🌙 {usageSummary.dream.remaining}/{usageSummary.dream.limit}
+                            </span>
+                            <span className={`usage-chip ${!usageSummary.saju.canUse ? 'depleted' : ''}`}>
+                                🔮 {usageSummary.saju.remaining}/{usageSummary.saju.limit}
+                            </span>
+                            <button className="upgrade-chip" onClick={() => onOpenPremium?.('usage')}>
+                                👑 무제한
+                            </button>
+                        </div>
+                    )}
+                    <div className="my-quick-links">
+                        <button onClick={onOpenReferral}>🎁 친구 초대</button>
+                        <button onClick={onOpenFeedback}>💬 의견 보내기</button>
                     </div>
-                </div>
+                </section>
 
                 {/* Admin 티어 전환 패널 */}
                 {ADMIN_EMAILS.includes(user?.email) && onSetTier && (
@@ -393,91 +364,6 @@ const MyPage = ({
                         </div>
                     </div>
                 )}
-
-                {/* 무료 리딩 남은 횟수 (비프리미엄 사용자만) */}
-                {!isPremium && usageSummary && (
-                    <div className="usage-summary-card">
-                        <div className="usage-header">
-                            <span className="usage-icon">🎁</span>
-                            <h4>무료 리딩</h4>
-                            <span className="usage-reset">{usageSummary.resetIn}</span>
-                        </div>
-                        <div className="usage-items">
-                            <div className={`usage-item ${!usageSummary.tarot.canUse ? 'depleted' : ''}`}>
-                                <span className="usage-emoji">🃏</span>
-                                <span className="usage-label">타로</span>
-                                <span className="usage-count">{usageSummary.tarot.remaining}/{usageSummary.tarot.limit}</span>
-                            </div>
-                            <div className={`usage-item ${!usageSummary.dream.canUse ? 'depleted' : ''}`}>
-                                <span className="usage-emoji">🌙</span>
-                                <span className="usage-label">꿈</span>
-                                <span className="usage-count">{usageSummary.dream.remaining}/{usageSummary.dream.limit}</span>
-                            </div>
-                            <div className={`usage-item ${!usageSummary.saju.canUse ? 'depleted' : ''}`}>
-                                <span className="usage-emoji">🔮</span>
-                                <span className="usage-label">사주</span>
-                                <span className="usage-count">{usageSummary.saju.remaining}/{usageSummary.saju.limit}</span>
-                            </div>
-                        </div>
-                        <button className="upgrade-btn" onClick={() => onOpenPremium?.('usage')}>
-                            <span>👑</span> 무제한으로 업그레이드
-                        </button>
-                    </div>
-                )}
-
-                {/* 통계 섹션 */}
-                {myStats && myStats.totalDreams > 0 && (
-                    <div className="my-stats">
-                        <h4>📊 타로, 꿈, 사주</h4>
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <span className="stat-value">{myTarots.length}</span>
-                                <span className="stat-label">🃏 타로</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-value">{myDreams.length}</span>
-                                <span className="stat-label">🌙 꿈</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-value">{myFortunes.length}</span>
-                                <span className="stat-label">🔮 사주</span>
-                            </div>
-                            <div className="stat-item">
-                                <span className="stat-value">{myStats.totalLikes}</span>
-                                <span className="stat-label">❤️ 좋아요</span>
-                            </div>
-                        </div>
-                        {myStats.topType && (
-                            <div className="stat-highlight">
-                                <span className="stat-highlight-icon">{dreamTypes[myStats.topType]?.emoji}</span>
-                                <div className="stat-highlight-info">
-                                    <span className="stat-highlight-label">가장 많이 꾸는 꿈</span>
-                                    <span className="stat-highlight-value">{dreamTypes[myStats.topType]?.name} ({myStats.topTypeCount}회)</span>
-                                </div>
-                            </div>
-                        )}
-                        {myStats.topKeywords?.length > 0 && (
-                            <div className="stat-keywords">
-                                <span className="stat-keywords-label">자주 등장하는 상징</span>
-                                <div className="stat-keywords-list">
-                                    {myStats.topKeywords.map((kw, i) => (
-                                        <span key={i} className="stat-keyword">{kw}</span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* 패턴 분석 (카테고리별) */}
-                <PatternAnalysis
-                    type={category}
-                    data={category === 'dream' ? myDreams : category === 'tarot' ? myTarots : myFortunes}
-                    dreamTypes={dreamTypes}
-                    isPremium={isPremium}
-                    onOpenPremium={onOpenPremium}
-                    onGenerateAiInsight={onGenerateAiReport}
-                />
 
                 {/* 카테고리 탭 */}
                 <div className="my-category-tabs">

@@ -55,7 +55,6 @@
     justify-content: flex-start;
     padding: var(--spacing-xl);
     padding-top: 3rem;
-    padding-bottom: 6rem;
     min-height: calc(100vh - var(--nav-height));
 }
 

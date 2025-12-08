@@ -2105,6 +2105,17 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.visibility-hint {
+    margin: 0.5rem 0 0;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+}
+
+.visibility-hint strong {
+    color: rgba(200, 160, 255, 0.9);
+}
+
 .visibility-tab {
     flex: 1;
     display: flex;
@@ -2475,6 +2486,14 @@
 
 .visibility-toggle-section .visibility-btn:hover .visibility-icon {
     transform: scale(1.1);
+}
+
+.visibility-toggle-section .visibility-btn:active {
+    transform: scale(0.95);
+}
+
+.visibility-toggle-section .visibility-btn:active .visibility-icon {
+    transform: scale(0.9);
 }
 
 /* Active 상태 */
@@ -7643,6 +7662,16 @@
     transform: scale(1) translateY(0);
 }
 
+/* 하단 뒤로가기 버튼도 revealed 상태에서 표시 */
+.tarot-result-page .bottom-back-section {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.tarot-result-page.revealed .bottom-back-section {
+    opacity: 1;
+}
+
 /* ========================================
    질문 → 답변 흐름 컨테이너
    ======================================== */
@@ -9217,7 +9246,8 @@
     display: flex;
     justify-content: center;
     padding: 3rem 0;
-    margin-bottom: 3rem;
+    position: relative;
+    z-index: 10;
 }
 
 .bottom-back-btn {

@@ -703,6 +703,7 @@ const TarotResultView = ({
                                             <span className="tab-bonus">+1 리딩</span>
                                         </button>
                                     </div>
+                                    <p className="visibility-hint">🎭 공개해도 <strong>닉네임</strong>으로 표시되어 익명이 보장돼요</p>
                                 </div>
                             )}
                         </div>

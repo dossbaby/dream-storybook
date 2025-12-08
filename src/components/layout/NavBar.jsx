@@ -42,12 +42,6 @@ const NavBar = ({
             <div className="nav-brand" onClick={handleBrandClick}>
                 <span className="brand-logo">🔮</span>
                 <span className="brand-name">점AI</span>
-                {onlineCount > 0 && (
-                    <div className="online-badge">
-                        <span className="online-dot"></span>
-                        <span className="online-count">{onlineCount}</span>
-                    </div>
-                )}
             </div>
 
             {/* 모드 탭 - 메인 네비게이션 */}

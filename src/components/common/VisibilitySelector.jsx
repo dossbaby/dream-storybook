@@ -121,7 +121,7 @@ const VisibilitySelector = ({ value, onChange, showAnonymous = true, shareUrl = 
                     <p>🔗 링크를 공유하면 다른 사람도 볼 수 있어요. 검색에는 노출되지 않아요.</p>
                 )}
                 {value === 'public' && (
-                    <p>🌐 피드와 태그 페이지에 노출되고, 검색엔진에서도 찾을 수 있어요.</p>
+                    <p>🎭 <strong>닉네임으로 표시</strong>되어 익명이 보장돼요. 다른 사람들과 공유하고 반응도 받아보세요!</p>
                 )}
             </div>
         </div>
