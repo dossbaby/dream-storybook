@@ -9878,3 +9878,103 @@
         padding: 0.75rem 0;
     }
 }
+
+/* ========== 노트북/저높이 화면 (세로 900px 이하) ========== */
+@media (max-height: 900px) {
+    .tarot-table {
+        padding: 0.5rem 1rem;
+    }
+
+    .table-mat {
+        top: 12%;
+    }
+
+    .card-spread {
+        height: 280px;
+        max-width: 85vw;
+        overflow: visible;
+    }
+
+    .tarot-intro-text {
+        top: 1%;
+    }
+
+    .tarot-intro-text .intro-line {
+        font-size: 1.1rem;
+        margin: 0.3rem 0;
+    }
+
+    .selected-cards-area {
+        bottom: 18%;
+    }
+
+    .selected-slot {
+        width: 80px;
+        height: 115px;
+    }
+
+    .table-footer {
+        bottom: 2%;
+        padding-bottom: 1rem;
+    }
+
+    .table-footer .guide-text {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .table-footer .read-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ========== 매우 낮은 화면 (세로 768px 이하) ========== */
+@media (max-height: 768px) {
+    .table-mat {
+        top: 10%;
+    }
+
+    .card-spread {
+        height: 160px;
+        max-width: 70vw;
+    }
+
+    .tarot-intro-text {
+        top: 6%;
+    }
+
+    .tarot-intro-text .intro-line {
+        font-size: 0.95rem;
+        margin: 0.15rem 0;
+    }
+
+    .selected-cards-area {
+        bottom: 20%;
+    }
+
+    .selected-cards-row {
+        gap: 0.8rem;
+    }
+
+    .selected-slot {
+        width: 50px;
+        height: 73px;
+    }
+
+    .table-footer {
+        bottom: 4%;
+        padding-bottom: 0.5rem;
+    }
+
+    .table-footer .guide-text {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .table-footer .read-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+

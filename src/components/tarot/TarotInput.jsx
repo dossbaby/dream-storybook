@@ -55,6 +55,8 @@ const TarotInput = ({
     // 화면 크기에 따른 카드 크기 - 55% 확대 (40% + 15%)
     const [cardSize, setCardSize] = useState({ width: 116, height: 174 });
     const [containerWidth, setContainerWidth] = useState(1440);
+    const [ellipseHeight, setEllipseHeight] = useState(180);
+    const [ellipseWidthRatio, setEllipseWidthRatio] = useState(0.5);
 
     // 인트로 상태 (fade in 방식)
     const [introPhase, setIntroPhase] = useState(0); // 0: 대기, 1: 첫번째 표시, 2: 두번째 표시, 3: fade out
@@ -95,8 +97,10 @@ const TarotInput = ({
     useEffect(() => {
         const updateSize = () => {
             const width = window.innerWidth;
+            const height = window.innerHeight;
             setContainerWidth(Math.min(width - 60, 1440));
 
+            // 카드 크기 - 너비 기반
             if (width <= 480) {
                 setCardSize({ width: 67, height: 99 }); // 55% 확대
             } else if (width <= 768) {
@@ -105,6 +109,18 @@ const TarotInput = ({
                 setCardSize({ width: 99, height: 148 }); // 55% 확대
             } else {
                 setCardSize({ width: 116, height: 174 }); // 55% 확대
+            }
+
+            // ellipse 크기 - 화면 높이 기반 (노트북 대응)
+            if (height <= 768) {
+                setEllipseHeight(90);
+                setEllipseWidthRatio(0.35);
+            } else if (height <= 900) {
+                setEllipseHeight(100);
+                setEllipseWidthRatio(0.4);
+            } else {
+                setEllipseHeight(180);
+                setEllipseWidthRatio(0.5);
             }
         };
         updateSize();
@@ -245,8 +261,8 @@ const TarotInput = ({
                                 const t = (index - centerIndex) / centerIndex; // -1 ~ 1
 
                                 // 자연스러운 ellipse curve
-                                const ellipseWidth = containerWidth * 0.5;
-                                const ellipseHeight = 180;
+                                const ellipseWidth = containerWidth * ellipseWidthRatio;
+                                // ellipseHeight, ellipseWidthRatio는 상태에서 가져옴 (화면 높이 기반)
 
                                 // ellipse 공식: x = a * t, y = b * sqrt(1 - t^2) 변형
                                 // 위가 평평하고 아래로 curve되는 형태
