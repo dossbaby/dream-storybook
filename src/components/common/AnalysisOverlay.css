@@ -129,7 +129,7 @@
 /* 상단 도파민 메시지 - VN Intro 스타일 */
 .analysis-top-message {
     position: absolute;
-    top: 18%;
+    top: 10%;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -378,6 +378,71 @@
     50% { opacity: 0.8; }
 }
 
+/* 알림 받고 둘러보기 버튼 */
+.browse-while-waiting-btn {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, rgba(30, 25, 45, 0.95), rgba(20, 15, 35, 0.98));
+    border: 1px solid rgba(155, 89, 182, 0.4);
+    border-radius: 30px;
+    color: var(--light, #f0f0f0);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(155, 89, 182, 0.15);
+    animation: btnFadeIn 0.5s ease-out 1s both;
+}
+
+@keyframes btnFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.browse-while-waiting-btn:hover {
+    border-color: rgba(155, 89, 182, 0.7);
+    box-shadow:
+        0 6px 30px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(155, 89, 182, 0.25);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.browse-while-waiting-btn:active {
+    transform: translateX(-50%) scale(0.98);
+}
+
+.browse-while-waiting-btn .btn-icon {
+    font-size: 1.3rem;
+}
+
+.browse-while-waiting-btn .btn-text {
+    font-family: 'RIDIBatang', serif;
+}
+
+.browse-while-waiting-btn .btn-hint {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(155, 89, 182, 0.3);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 0.25rem;
+}
+
 /* 반응형 */
 @media (max-width: 480px) {
     .analysis-top-message {
@@ -416,7 +481,22 @@
     }
 
     .analysis-bottom-hint {
-        bottom: 8%;
+        bottom: 12%;
         font-size: 0.8rem;
+    }
+
+    .browse-while-waiting-btn {
+        bottom: 4%;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.85rem;
+        gap: 0.5rem;
+    }
+
+    .browse-while-waiting-btn .btn-icon {
+        font-size: 1.1rem;
+    }
+
+    .browse-while-waiting-btn .btn-hint {
+        display: none;
     }
 }

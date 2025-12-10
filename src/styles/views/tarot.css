@@ -2020,7 +2020,7 @@
 @media (max-width: 480px) {
     .result-footer-grid {
         grid-template-columns: 1fr;
-        margin: 0 1.5rem 2rem;
+        margin: 0 1.5rem 1rem;
     }
 }
 
@@ -4534,7 +4534,8 @@
 .keywords-section,
 .sealed-insight-section,
 .share-section {
-    margin-top: 2rem;
+    margin: 2rem 0;
+    padding: 0 1rem;
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -4852,6 +4853,72 @@
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) scale(1);
+}
+
+/* 리딩 공개 토글 - 심플 스위치 */
+.reading-visibility-toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    margin: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.visibility-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.visibility-switch input {
+    display: none;
+}
+
+.switch-slider {
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.switch-slider::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.visibility-switch input:checked + .switch-slider {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.visibility-switch input:checked + .switch-slider::after {
+    left: 22px;
+}
+
+.switch-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+.visibility-note {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    text-align: center;
 }
 
 /* 봉인 해제된 인사이트 - 양옆 3rem + 하단 그라데이션 border */
@@ -5459,6 +5526,31 @@
     gap: 0.75rem;
 }
 
+/* Hero 키워드 태그 */
+.hero-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.hero-keyword-tag {
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hero-keyword-tag:hover {
+    background: rgba(139, 92, 246, 0.3);
+    border-color: rgba(139, 92, 246, 0.5);
+    color: #fff;
+}
+
 .tarot-result-content .reading-type-badge {
     display: inline-flex;
     align-items: center;
@@ -5746,8 +5838,29 @@
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
+    /* 모바일에서 fullwidth - colorful border 제거 */
+    .tarot-result-content {
+        width: 100vw;
+        max-width: none;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        left: 50%;
+        right: 50%;
+        position: relative;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        background: linear-gradient(165deg, #050a12 0%, #0c1628 30%, #080d18 70%, #030508 100%);
+    }
+
+    /* 모바일에서 X 닫기 버튼 숨김 */
+    .tarot-result-content .modal-close-btn {
+        display: none;
+    }
+
     .tarot-result-content .reading-hero {
         height: 300px;
+        border-radius: 0;
     }
 
     .tarot-result-content .reading-title {
@@ -5790,7 +5903,129 @@
     }
 
     .vn-foreshadow .vn-typing-text {
-        font-size: 1rem;
+        font-size: 1.1rem; /* 금색과 동일하게 */
+    }
+
+    /* 모바일에서 하단 돌아가기 버튼 및 섹션 숨김 */
+    .bottom-back-btn,
+    .bottom-back-section {
+        display: none !important;
+    }
+
+    /* 모바일 tarot-result-page full width */
+    .tarot-result-page {
+        width: 100vw !important;
+        margin-left: calc(-1 * (100vw - 100%) / 2) !important;
+    }
+
+    /* 모바일 sticky 카드바 - navbar 바로 아래 (52px) */
+    .tarot-result-content .sticky-card-bar {
+        top: 52px !important;
+        margin-top: 0;
+        background: #0a0015;
+    }
+
+    /* 결과 콘텐츠 하단 패딩 제거 */
+    .tarot-result-page > .tarot-result-content {
+        padding-bottom: 0 !important;
+    }
+
+    /* 엔게이지먼트 패널 상단 마진 제거 */
+    .engagement-panel {
+        margin-top: 0 !important;
+    }
+
+    /* 모바일 persona-card-bar 위치 조정 */
+    .persona-card-bar {
+        top: 52px !important;
+    }
+
+    /* 모바일 synthesis-section 패딩 */
+    .synthesis-section,
+    .tarot-result-content .synthesis-section {
+        padding: 1.5rem !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* 모바일 sealed-message 패딩 */
+    .sealed-message {
+        padding: 1.5rem !important;
+        margin: 0 !important;
+    }
+
+    /* 모바일 sealed-insight-section 마진 */
+    .sealed-insight-section {
+        padding: 0 !important;
+        padding-bottom: 1.5rem !important;
+    }
+
+    /* 모바일 advice-grid 마진/패딩 */
+    .advice-grid {
+        margin: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 1.5rem !important;
+        padding-top: 0 !important;
+    }
+
+    /* 모바일 reading-keywords 패딩 */
+    .reading-keywords {
+        padding: 1.5rem !important;
+        background: #272727;
+        margin: 1.5rem !important;
+        margin-top: 0 !important;
+    }
+
+    /* 모바일 keyword-tag 높이 수정 */
+    .keyword-tag {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.85rem !important;
+        line-height: 1.2 !important;
+        height: auto !important;
+        min-height: unset !important;
+    }
+
+    .keywords-tags {
+        gap: 0.5rem !important;
+    }
+
+    /* 모바일 unsealed-insight 패딩 */
+    .unsealed-insight {
+        padding: 1.5rem !important;
+        /* padding-bottom: 2rem !important; */
+        margin-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* 모바일 insight-text.reading-text 패딩 */
+    p.insight-text.reading-text {
+        padding: 0 !important;
+    }
+
+    /* 모바일 reading-paragraph 패딩 */
+    .reading-paragraph {
+        padding: 0 !important;
+    }
+
+    /* 모바일 engagement-panel full width */
+    .engagement-panel {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .engagement-panel-inner {
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-top: 1.5rem !important;
     }
 }
 
@@ -7917,7 +8152,7 @@
     }
 
     .vn-foreshadow .vn-typing-text {
-        font-size: 1rem;
+        font-size: 1.2rem; /* 금색과 동일하게 */
     }
 
     .vn-ornament {
@@ -8423,6 +8658,21 @@
 
 /* 모바일에서 패딩 축소 */
 @media (max-width: 768px) {
+    .synthesis-section,
+    .tarot-result-content .synthesis-section {
+        padding: 1.5rem !important;
+        padding-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    .sealed-insight-section {
+        margin-bottom: 0rem !important;
+    }
+
+    .sealed-message {
+        margin: 0 1.5rem !important;
+    }
+
     .synthesis-section,
     .sealed-insight-section,
     .advice-grid,
@@ -9117,98 +9367,256 @@
     box-shadow: 0 2px 12px rgba(120, 100, 180, 0.25);
 }
 
-/* 반응형 */
+/* 반응형 - 모바일 */
 @media (max-width: 768px) {
     .tarot-table {
-        padding: 1rem 0.5rem;
+        padding: 0.5rem;
     }
 
+    /* 덱 스택 - 모바일에서 숨김 */
+    .card-deck-stack {
+        display: none !important;
+    }
+
+    /* table-mat - left 43%로 중앙 보정 */
+    .table-mat {
+        top: 25% !important;
+        left: 43% !important;
+        transform: translateX(-50%) !important;
+    }
+
+    /* 카드 스프레드 - 충분한 높이 */
+    .card-spread {
+        height: 380px !important;
+        margin-left: 0 !important;
+    }
+
+    /* 인트로 텍스트 - 15% */
+    .tarot-intro-text {
+        top: 15% !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        padding: 0 1rem !important;
+        transform: none !important;
+    }
+
+    .tarot-intro-text .intro-line {
+        font-size: 1rem !important;
+        margin: 0.2rem 0 !important;
+    }
+
+    /* 선택된 카드 슬롯 영역 - 15% from bottom */
     .selected-cards-area {
-        bottom: 160px;
+        bottom: 15% !important;
     }
 
-    .slot-card, .slot-empty {
-        width: 65px;
-        height: 97px;
+    .selected-cards-row {
+        gap: 0.6rem !important;
+    }
+
+    /* 카드 슬롯 - 2:3 비율 유지 */
+    .tarot-table .selected-slot {
+        width: 58px !important;
+        height: 87px !important;
+    }
+
+    .tarot-table .selected-cards-area .selected-slot .slot-empty {
+        width: 58px !important;
+        height: 87px !important;
+        border-radius: 8px !important;
+    }
+
+    .slot-card {
+        width: 58px !important;
+        height: 87px !important;
+        border-radius: 8px;
     }
 
     .slot-label {
-        font-size: 0.65rem;
+        font-size: 0.5rem !important;
     }
 
-    .table-mat {
-        top: 15%;
+    .slot-art-symbol {
+        font-size: 1.2rem !important;
     }
 
-    .card-spread {
-        height: 380px;
-    }
-
+    /* 하단 푸터 - 5% from bottom */
     .table-footer {
-        bottom: 40px;
+        bottom: 5% !important;
     }
 
+    /* 가이드 텍스트 - 인트로와 동일 크기 */
     .guide-text {
-        font-size: 1rem;
+        font-size: 1rem !important;
+        white-space: nowrap !important;
     }
 
     .read-btn {
-        padding: 0.85rem 1.8rem;
-        min-width: 180px;
-        font-size: 0.9rem;
+        padding: 0.7rem 1.4rem;
+        min-width: 150px;
+        font-size: 0.85rem;
     }
 }
 
 @media (max-width: 480px) {
+    /* table-mat 위치 */
+    .table-mat {
+        top: 25% !important;
+    }
+
+    /* 카드 스프레드 - 자동 중앙 정렬 유지 */
+    .card-spread {
+        height: 280px !important;
+    }
+
+    /* 인트로 텍스트 */
+    .tarot-intro-text {
+        top: 8% !important;
+    }
+
+    .tarot-intro-text .intro-line {
+        font-size: 0.9rem !important;
+        margin: 0.15rem 0 !important;
+    }
+
+    /* 선택된 카드 슬롯 영역 - 더 위로 */
     .selected-cards-area {
-        bottom: 130px;
+        bottom: 135px !important;
     }
 
     .selected-cards-row {
-        gap: 0.6rem;
+        gap: 0.5rem !important;
     }
 
-    .slot-card, .slot-empty {
-        width: 52px;
-        height: 78px;
+    /* 카드 슬롯 - 2:3 비율 유지 */
+    .tarot-table .selected-slot {
+        width: 50px !important;
+        height: 75px !important;
+    }
+
+    .tarot-table .selected-cards-area .selected-slot .slot-empty {
+        width: 50px !important;
+        height: 75px !important;
+        border-radius: 6px !important;
+    }
+
+    .slot-card {
+        width: 50px !important;
+        height: 75px !important;
+        border-radius: 6px;
     }
 
     .slot-label {
-        font-size: 0.55rem;
+        font-size: 0.45rem !important;
     }
 
     .slot-art-symbol {
-        width: 16px;
-        height: 16px;
+        font-size: 1rem !important;
     }
 
-    .table-mat {
-        top: 12%;
-    }
-
-    .card-spread {
-        height: 320px;
-    }
-
+    /* 하단 푸터 - 더 위로 */
     .table-footer {
-        bottom: 30px;
-        gap: 0.8rem;
+        bottom: 30px !important;
+        gap: 0.4rem;
     }
 
+    /* 가이드 텍스트 - 인트로와 동일 크기 */
     .guide-text {
-        font-size: 0.85rem;
+        font-size: 0.9rem !important;
     }
 
     .read-btn {
-        padding: 0.75rem 1.25rem;
-        font-size: 0.85rem;
-        min-width: 150px;
+        padding: 0.6rem 1.1rem;
+        font-size: 0.8rem;
+        min-width: 130px;
     }
 
     .spread-card .selection-number {
-        width: 20px;
-        height: 20px;
-        font-size: 0.65rem;
+        width: 16px;
+        height: 16px;
+        font-size: 0.55rem;
+    }
+}
+
+/* 매우 작은 모바일 (360px 이하) */
+@media (max-width: 360px) {
+    /* table-mat 위치 */
+    .table-mat {
+        top: 22% !important;
+    }
+
+    /* 카드 스프레드 - 자동 중앙 정렬 유지 */
+    .card-spread {
+        height: 240px !important;
+    }
+
+    /* 인트로 텍스트 */
+    .tarot-intro-text {
+        top: 6% !important;
+    }
+
+    .tarot-intro-text .intro-line {
+        font-size: 0.8rem !important;
+        margin: 0.1rem 0 !important;
+    }
+
+    /* 선택된 카드 슬롯 영역 - 더 위로 */
+    .selected-cards-area {
+        bottom: 120px !important;
+    }
+
+    .selected-cards-row {
+        gap: 0.4rem !important;
+    }
+
+    /* 카드 슬롯 - 2:3 비율 유지 */
+    .tarot-table .selected-slot {
+        width: 44px !important;
+        height: 66px !important;
+    }
+
+    .tarot-table .selected-cards-area .selected-slot .slot-empty {
+        width: 44px !important;
+        height: 66px !important;
+        border-radius: 5px !important;
+    }
+
+    .slot-card {
+        width: 44px !important;
+        height: 66px !important;
+        border-radius: 5px;
+    }
+
+    .slot-label {
+        font-size: 0.4rem !important;
+    }
+
+    .slot-art-symbol {
+        font-size: 0.85rem !important;
+    }
+
+    /* 하단 푸터 - 더 위로 */
+    .table-footer {
+        bottom: 25px !important;
+        gap: 0.3rem;
+    }
+
+    /* 가이드 텍스트 - 인트로와 동일 크기 */
+    .guide-text {
+        font-size: 0.8rem !important;
+    }
+
+    .read-btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.7rem;
+        min-width: 110px;
+    }
+
+    .spread-card .selection-number {
+        width: 14px;
+        height: 14px;
+        font-size: 0.5rem;
     }
 }
 
@@ -9273,6 +9681,103 @@
 
 .bottom-back-btn:active {
     transform: translateY(0);
+}
+
+/* ========== 리딩 공개 설정 패널 (별도) ========== */
+.visibility-panel {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    width: 280px;
+    z-index: 110;
+}
+
+.visibility-panel-inner {
+    background: rgba(15, 10, 30, 0.92);
+    backdrop-filter: blur(16px);
+    border-radius: 14px;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.85rem 1rem;
+}
+
+.visibility-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.35rem;
+}
+
+.visibility-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* iOS 스타일 토글 스위치 */
+.visibility-switch {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.visibility-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.switch-track {
+    display: block;
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.25s ease;
+}
+
+.switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.visibility-switch input:checked + .switch-track {
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+}
+
+.visibility-switch input:checked + .switch-track .switch-thumb {
+    transform: translateX(20px);
+}
+
+.visibility-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+    line-height: 1.3;
+}
+
+/* 모바일 visibility-panel */
+@media (max-width: 768px) {
+    .visibility-panel {
+        top: auto;
+        bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 12px);
+        right: 12px;
+        left: 12px;
+        width: auto;
+    }
+
+    .visibility-panel-inner {
+        padding: 0.75rem 1rem;
+    }
 }
 
 /* ========== 엔게이지먼트 사이드 패널 (Desktop: 오른쪽 / Mobile: 하단) ========== */
@@ -9440,38 +9945,30 @@
     color: rgba(255, 255, 255, 0.25);
 }
 
-/* 댓글 헤더 */
+/* 댓글 헤더 - 미니멀 */
 .comments-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1rem 1.25rem;
-}
-
-.comments-icon {
-    font-size: 1.1rem;
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
 }
 
 .comments-title {
-    flex: 1;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .comments-count-badge {
-    padding: 0.2rem 0.6rem;
-    background: rgba(139, 92, 246, 0.2);
-    border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #c4b5fd;
+    color: rgba(255, 255, 255, 0.5);
 }
 
-/* 댓글 입력 영역 */
+/* 댓글 입력 영역 - 미니멀 */
 .comment-input-area {
-    padding: 1.25rem;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .comment-form {
@@ -9481,36 +9978,26 @@
 .comment-input-wrapper {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: border-color 0.2s;
-}
-
-.comment-input-wrapper:focus-within {
-    border-color: rgba(139, 92, 246, 0.4);
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+    gap: 0.5rem;
 }
 
 .comment-avatar {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
 }
 
 .comment-avatar-placeholder {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: white;
     flex-shrink: 0;
@@ -9520,165 +10007,159 @@
     flex: 1;
     background: transparent;
     border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.9);
-    font-size: 0.9rem;
-    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
     outline: none;
+    transition: border-color 0.2s;
+}
+
+.comment-input:focus {
+    border-color: rgba(139, 92, 246, 0.5);
 }
 
 .comment-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.3);
 }
 
 .comment-submit-btn {
-    padding: 0.6rem 1.25rem;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    padding: 0.35rem 0.6rem;
+    background: transparent;
     border: none;
-    border-radius: 20px;
-    color: white;
+    color: rgba(139, 92, 246, 0.8);
     font-size: 0.85rem;
-    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
+    transition: all 0.15s;
+    opacity: 0.6;
 }
 
 .comment-submit-btn:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    opacity: 1;
+    color: #a78bfa;
 }
 
 .comment-submit-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.2;
     cursor: not-allowed;
 }
 
-/* 로그인 프롬프트 */
+/* 로그인 프롬프트 - 미니멀 */
 .comment-login-prompt {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 15px;
-    color: rgba(255, 255, 255, 0.6);
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.15s;
 }
 
 .comment-login-prompt:hover {
-    background: rgba(139, 92, 246, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .login-icon {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
 }
 
-/* 댓글 리스트 */
+/* 댓글 리스트 컨테이너 */
 .comments-list {
     flex: 1;
     min-height: 0;
     max-height: none;
     overflow-y: auto;
-    padding: 1rem 1.25rem;
+    padding: 0.5rem 1rem;
 }
 
 .comments-list::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 
 .comments-list::-webkit-scrollbar-thumb {
-    background: rgba(139, 92, 246, 0.3);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 2px;
 }
 
-/* 빈 댓글 상태 */
-.comments-empty {
-    text-align: center;
-    padding: 2rem 1rem;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.comments-empty .empty-icon {
-    font-size: 2rem;
-    display: block;
-    margin-bottom: 0.75rem;
-    opacity: 0.6;
-}
-
-.comments-empty p {
-    margin: 0.25rem 0;
-}
-
-.comments-empty .empty-hint {
-    font-size: 0.85rem;
-    opacity: 0.7;
-}
-
-/* 개별 댓글 아이템 */
-.comment-item {
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.comment-item:last-child {
-    border-bottom: none;
-}
-
-.comment-header {
+/* 댓글 리스트 - 인스타그램 스타일 */
+.comments-list-compact {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.5rem 1rem;
+}
+
+.comments-empty-text {
+    margin: 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
+.comment-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.comment-inline {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.85);
+    word-break: break-word;
+}
+
+.comment-name {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    margin-right: 0.4rem;
+}
+
+.comment-body {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .comment-meta {
-    flex: 1;
     display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
+    align-items: center;
+    gap: 0.6rem;
 }
 
-.comment-author {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
+.comment-ago {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
 }
 
-.comment-time {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.comment-delete-btn {
-    padding: 0.4rem;
+.comment-del {
+    padding: 0;
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.7rem;
     cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s;
-    border-radius: 50%;
+    transition: color 0.15s;
 }
 
-.comment-item:hover .comment-delete-btn {
-    opacity: 1;
-}
-
-.comment-delete-btn:hover {
+.comment-del:hover {
     color: #ef4444;
-    background: rgba(239, 68, 68, 0.1);
 }
 
-.comment-text {
-    margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
-    padding-left: calc(36px + 0.75rem);
+.comments-toggle {
+    padding: 0.25rem 0;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.15s;
+}
+
+.comments-toggle:hover {
+    color: rgba(255, 255, 255, 0.6);
 }
 
 /* 댓글 더보기/접기 버튼 */
@@ -9719,6 +10200,266 @@
     border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* ========== Visibility 토글 (작성자용) ========== */
+.visibility-toggle-section {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.visibility-toggle-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.visibility-toggle-inline input {
+    display: none;
+}
+
+.toggle-slider-mini {
+    width: 36px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.toggle-slider-mini::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.visibility-toggle-inline input:checked + .toggle-slider-mini {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.visibility-toggle-inline input:checked + .toggle-slider-mini::after {
+    transform: translateX(16px);
+}
+
+.toggle-label-mini {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ========== Blind 스타일 댓글 ========== */
+.comments-list-blind {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0.5rem 1rem;
+}
+
+.blind-comment {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.blind-comment:last-child {
+    border-bottom: none;
+}
+
+.blind-comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+
+.blind-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.blind-avatar.placeholder {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: white;
+}
+
+.blind-nickname {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.blind-comment-body {
+    padding-left: calc(24px + 0.5rem);
+}
+
+.blind-text {
+    margin: 0 0 0.4rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.9);
+    word-break: break-word;
+}
+
+.blind-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.blind-time {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.blind-like-btn,
+.blind-reply-btn,
+.blind-del-btn {
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.blind-like-btn:hover,
+.blind-reply-btn:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.blind-like-btn.liked {
+    color: #ec4899;
+}
+
+.blind-del-btn:hover {
+    color: #ef4444;
+}
+
+/* 대댓글 입력창 */
+.blind-reply-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+}
+
+.blind-reply-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8rem;
+    outline: none;
+}
+
+.blind-reply-input input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.blind-reply-input button {
+    padding: 0.3rem 0.6rem;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.blind-reply-input button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* 대댓글 목록 */
+.blind-replies {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(139, 92, 246, 0.2);
+}
+
+.blind-reply-item {
+    padding: 0.5rem 0;
+}
+
+.blind-reply-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.25rem;
+}
+
+.blind-avatar-sm {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.blind-avatar-sm.placeholder {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: white;
+}
+
+.blind-nickname-sm {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.blind-reply-text {
+    margin: 0 0 0.25rem;
+    padding-left: calc(18px + 0.4rem);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.blind-reply-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-left: calc(18px + 0.4rem);
+}
+
+.blind-time-sm {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.blind-del-btn-sm {
+    padding: 0;
+    background: none;
+    border: none;
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+.blind-del-btn-sm:hover {
+    color: #ef4444;
+}
+
 /* ========== 태블릿 (1024px 이하) - 사이드 패널 폭 축소 ========== */
 @media (max-width: 1024px) {
     .engagement-panel {
@@ -9736,25 +10477,33 @@
     }
 }
 
-/* ========== 모바일 (768px 이하) - 하단 고정 레이아웃 ========== */
+/* ========== 모바일 (768px 이하) - 인라인 레이아웃 (콘텐츠 흐름) ========== */
 @media (max-width: 768px) {
-    /* 사이드 패널 → 하단 고정 */
+    /* 사이드 패널 → 인라인 (fixed 제거, 콘텐츠 하단에 자연스럽게 배치) */
     .engagement-panel {
-        top: auto;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: auto;
-        max-height: 70vh;
-        z-index: 1000;
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        z-index: 1;
+        opacity: 1;
+        margin: 0 !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+        padding-bottom: 1.5rem !important;
     }
 
     .engagement-panel-inner {
-        height: auto;
-        max-height: 70vh;
-        border-radius: 24px 24px 0 0;
-        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+        height: auto !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 100% !important;
     }
 
     /* 좋아요 섹션 - 가로 배치 */
@@ -9795,58 +10544,36 @@
         font-size: 0.65rem;
     }
 
-    /* 댓글 헤더 */
+    /* 댓글 헤더 - 모바일 */
     .comments-header {
-        padding: 0.75rem 1rem;
+        padding: 0.5rem 1rem;
     }
 
-    /* 댓글 리스트 높이 제한 */
-    .comments-list {
-        max-height: 300px;
-        padding: 0.75rem 1rem;
-    }
-
-    /* 댓글 입력 영역 */
+    /* 댓글 입력 영역 - 모바일 */
     .comment-input-area {
-        padding: 0.75rem 1rem;
-        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-    }
-
-    .comment-input-wrapper {
-        gap: 0.5rem;
+        padding: 0.5rem 1rem;
     }
 
     .comment-avatar,
     .comment-avatar-placeholder {
-        width: 32px;
-        height: 32px;
+        width: 26px;
+        height: 26px;
+        font-size: 0.65rem;
+    }
+
+    /* 댓글 리스트 - 모바일 */
+    .comments-list-compact {
+        padding: 0.5rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .comment-inline {
         font-size: 0.8rem;
     }
 
-    .comment-submit-btn {
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .comment-submit-btn span {
-        font-size: 1.1rem;
-    }
-
-    .comment-text {
-        padding-left: calc(32px + 0.5rem);
-        font-size: 0.85rem;
-    }
-
-    /* 더보기 버튼 */
-    .comments-show-more,
-    .comments-show-less {
-        padding: 0.75rem;
-        font-size: 0.8rem;
+    .comment-ago,
+    .comment-del {
+        font-size: 0.65rem;
     }
 
     /* 메인 콘텐츠 하단 패딩 (패널 공간 확보) */
@@ -9858,7 +10585,7 @@
 /* ========== 작은 모바일 (480px 이하) ========== */
 @media (max-width: 480px) {
     .engagement-panel-inner {
-        border-radius: 20px 20px 0 0;
+        border-radius: 0 !important;
     }
 
     .engagement-like-section {
@@ -9870,17 +10597,17 @@
         height: 44px;
     }
 
-    .comments-list {
-        max-height: 250px;
+    .comment-name {
+        font-size: 0.75rem;
     }
 
-    .comment-item {
-        padding: 0.75rem 0;
+    .comment-body {
+        font-size: 0.75rem;
     }
 }
 
-/* ========== 노트북/저높이 화면 (세로 900px 이하) ========== */
-@media (max-height: 900px) {
+/* ========== 노트북/저높이 화면 (세로 900px 이하, 데스크톱만) ========== */
+@media (max-height: 900px) and (min-width: 769px) {
     .tarot-table {
         padding: 0.5rem 1rem;
     }
@@ -9929,8 +10656,8 @@
     }
 }
 
-/* ========== 매우 낮은 화면 (세로 768px 이하) ========== */
-@media (max-height: 768px) {
+/* ========== 매우 낮은 화면 (세로 800px 이하, 데스크톱만) ========== */
+@media (max-height: 800px) and (min-width: 769px) {
     .table-mat {
         top: 10%;
     }

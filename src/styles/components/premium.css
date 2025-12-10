@@ -2238,3 +2238,10 @@
         width: calc(100% - 2rem);
     }
 }
+
+/* 모바일 NavBar에서 프리미엄 배지 숨김 */
+@media (max-width: 768px) {
+    .nav-actions .premium-badge {
+        display: none !important;
+    }
+}

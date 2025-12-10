@@ -10,29 +10,43 @@ import './AnalysisOverlay.css';
  * - 하단: 단계 circle + 안내 텍스트
  */
 
-// 단계별 이모지와 색상
+// 단계별 이모지와 색상 (analysisPhase 1-8에 매핑)
+// 1: 시작, 2-5: 분석, 6: API완료, 7: 이미지생성, 8: 완료
 const PHASE_CONFIG = [
-    { emoji: '🌙', colors: ['#9b59b6', '#6c5ce7'], label: '질문을 읽고 있어요' },
-    { emoji: '🔮', colors: ['#667eea', '#764ba2'], label: '카드를 해석하고 있어요' },
-    { emoji: '✨', colors: ['#00d9ff', '#9b59b6'], label: '통찰을 찾고 있어요' },
-    { emoji: '🌌', colors: ['#a29bfe', '#6c5ce7'], label: '메시지를 정리하고 있어요' },
-    { emoji: '💫', colors: ['#ffd700', '#9b59b6'], label: '결과를 준비하고 있어요' },
+    { emoji: '🌙', colors: ['#9b59b6', '#6c5ce7'], label: '질문을 읽고 있어요' },           // analysisPhase 1-2
+    { emoji: '🔮', colors: ['#667eea', '#764ba2'], label: '카드를 해석하고 있어요' },       // analysisPhase 3-5
+    { emoji: '✨', colors: ['#00d9ff', '#9b59b6'], label: '통찰을 정리하고 있어요' },       // analysisPhase 6
+    { emoji: '🎨', colors: ['#a29bfe', '#6c5ce7'], label: '이미지를 그리고 있어요' },       // analysisPhase 7
+    { emoji: '💫', colors: ['#ffd700', '#9b59b6'], label: '결과를 준비하고 있어요' },       // analysisPhase 8
 ];
+
+// analysisPhase(1-8)를 circle stage(0-4)로 매핑
+const mapPhaseToStage = (analysisPhase) => {
+    if (analysisPhase <= 2) return 0;  // 질문 읽기
+    if (analysisPhase <= 5) return 1;  // 카드 해석
+    if (analysisPhase === 6) return 2; // 통찰 정리
+    if (analysisPhase === 7) return 3; // 이미지 생성
+    return 4; // 완료
+};
 
 const AnalysisOverlay = memo(({
     isVisible,
     mode = 'tarot', // 'dream' | 'tarot' | 'fortune'
     currentMessage = '',
     isComplete = false,
-    phase = 1 // 1: Hook, 2: 순환, 3: 완료
+    phase = 1, // 1: Hook, 2: 순환, 3: 완료
+    analysisPhase = 1, // 실제 분석 단계 (1-8)
+    onBrowseWhileWaiting // "알림 받고 둘러보기" 콜백
 }) => {
     const [displayText, setDisplayText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [isFading, setIsFading] = useState(false);
     const [stars, setStars] = useState([]);
     const [textColorIndex, setTextColorIndex] = useState(0); // 0: gold, 1: purple 번갈아
-    const [currentStage, setCurrentStage] = useState(0); // 0-4 단계
     const prevMessageRef = useRef('');
+
+    // analysisPhase를 기반으로 currentStage 계산
+    const currentStage = mapPhaseToStage(analysisPhase);
 
     // 별 생성 (카드 선택 화면과 유사)
     useEffect(() => {
@@ -49,22 +63,8 @@ const AnalysisOverlay = memo(({
         setStars(newStars);
     }, [isVisible]);
 
-    // 단계 자동 진행 (8초마다) - 마지막 단계에서 멈춤 (반복 X)
-    useEffect(() => {
-        if (!isVisible || isComplete) return;
-
-        const stageInterval = setInterval(() => {
-            setCurrentStage(prev => {
-                // 마지막 단계에 도달하면 더 이상 진행하지 않음
-                if (prev >= PHASE_CONFIG.length - 1) {
-                    return prev; // 마지막에서 멈춤
-                }
-                return prev + 1;
-            });
-        }, 10000); // 10초로 늘려서 더 천천히 진행
-
-        return () => clearInterval(stageInterval);
-    }, [isVisible, isComplete]);
+    // 단계는 analysisPhase prop에 의해 자동 계산됨 (mapPhaseToStage)
+    // 자동 진행 로직 제거 - 실제 분석 단계와 연동
 
     // 타이프라이터 효과
     useEffect(() => {
@@ -103,7 +103,6 @@ const AnalysisOverlay = memo(({
         if (isComplete) {
             setDisplayText('거의 다 됐어요... 결과를 정리하고 있어요');
             setIsTyping(false);
-            setCurrentStage(PHASE_CONFIG.length - 1);
         }
     }, [isComplete]);
 
@@ -187,6 +186,15 @@ const AnalysisOverlay = memo(({
             <div className="analysis-bottom-hint">
                 <span>{isComplete ? '결과를 준비하고 있어요...' : currentConfig.label}</span>
             </div>
+
+            {/* 알림 받고 둘러보기 버튼 */}
+            {onBrowseWhileWaiting && !isComplete && (
+                <button className="browse-while-waiting-btn" onClick={onBrowseWhileWaiting}>
+                    <span className="btn-icon">📰</span>
+                    <span className="btn-text">알림 받고 둘러보기</span>
+                    <span className="btn-hint">피드 구경하기</span>
+                </button>
+            )}
         </div>
     );
 });

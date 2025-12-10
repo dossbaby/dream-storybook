@@ -447,8 +447,10 @@
         padding: 0 1rem;
     }
 
+    /* 모바일에서도 점AI 텍스트 표시 */
     .brand-name {
-        display: none;
+        display: inline;
+        font-size: 0.95rem;
     }
 
     .online-badge {
@@ -490,18 +492,9 @@
         display: none !important;
     }
 
-    /* 프리미엄 배지 컴팩트하게 */
+    /* 모바일에서 프리미엄 배지 숨김 */
     .premium-badge {
-        padding: 0.35rem 0.6rem !important;
-        font-size: 0.75rem !important;
-    }
-
-    .premium-badge .badge-label {
-        display: none;
-    }
-
-    .premium-badge .badge-icon {
-        font-size: 1rem;
+        display: none !important;
     }
 
     /* 포인트 버튼 컴팩트하게 */

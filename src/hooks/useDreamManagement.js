@@ -1,4 +1,4 @@
-import { updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { updateDoc, doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 /**
@@ -131,11 +131,11 @@ export const useDreamManagement = ({
         const isPublic = visibility === 'public';
 
         try {
-            await updateDoc(doc(db, collection, id), {
+            await setDoc(doc(db, collection, id), {
                 visibility,
                 isPublic,
                 isAnonymous: isPublic ? isAnonymous : false
-            });
+            }, { merge: true });
 
             // 로컬 상태 업데이트
             const updateItem = (item) =>

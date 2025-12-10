@@ -257,7 +257,27 @@ function App() {
     const currentDreamData = result || selectedDream;
     const dreamTypeInfo = currentDreamData?.dreamType ? dreamTypes[currentDreamData.dreamType] : null;
 
-    if (loading.auth) return <div className="app loading-screen"><div className="loading-text">夢</div></div>;
+    if (loading.auth) return (
+        <div className="app loading-screen">
+            <div className="loading-particles">
+                <div className="loading-particle"></div>
+                <div className="loading-particle"></div>
+                <div className="loading-particle"></div>
+                <div className="loading-particle"></div>
+                <div className="loading-particle"></div>
+                <div className="loading-particle"></div>
+            </div>
+            <div className="loading-orb">
+                <div className="loading-ring loading-ring-1"></div>
+                <div className="loading-ring loading-ring-2"></div>
+                <div className="loading-ring loading-ring-3"></div>
+                <div className="loading-core">
+                    <div className="loading-text">🔮</div>
+                </div>
+            </div>
+            <div className="loading-brand">점AI</div>
+        </div>
+    );
 
     const renderCard = (card, i) => (
         <StoryCard key={i} card={card} index={i} dreamTypeInfo={dreamTypeInfo} onDetailedReading={() => generateDetailedReading(result || selectedDream)} isPremium={isPremium} onOpenPremium={openPremiumModal} />
@@ -300,7 +320,7 @@ function App() {
             <ToastNotifications toasts={toasts} dopaminePopup={toasts.dopamine} />
 
             {/* 메인 3단 레이아웃 - Suspense로 lazy 컴포넌트 감싸기 */}
-            <Suspense fallback={<div className="loading-spinner">로딩중...</div>}>
+            <Suspense fallback={null}>
             <div className={`main-layout ${mode === 'tarot' && view === 'create' && !tarot.result ? 'tarot-bg' : ''} ${view === 'tarot-result' || view === 'fortune-result' || view === 'detail' ? 'full-view' : ''}`}>
                 {/* 왼쪽 사이드바 - 실시간 정보 */}
                 <LeftSidebar
@@ -442,6 +462,12 @@ function App() {
                                     mode="tarot"
                                     currentMessage={dopamineHook.currentMessage}
                                     isComplete={dopamineHook.isComplete}
+                                    analysisPhase={analysisPhase}
+                                    onBrowseWhileWaiting={() => {
+                                        // 피드로 이동 (분석은 백그라운드에서 계속)
+                                        setView('feed');
+                                        setDopaminePopup({ type: 'info', message: '분석 완료 시 하단바에서 알려드릴게요!' });
+                                    }}
                                 />
                             )}
                         </>
@@ -560,7 +586,7 @@ function App() {
                     {/* 타로 결과 뷰 - 4장 카드 시스템 */}
                     {view === 'tarot-result' && tarot.result && (
                         <TarotResultView
-                            tarotResult={tarot.result}
+                            tarotResult={{ ...tarot.result, id: tarot.result.id || savedDream.id }}
                             onBack={handleTarotResultBack}
                             onRestart={handleTarotResultRestart}
                             whispers={[]}
@@ -576,10 +602,11 @@ function App() {
                                 setView('feed');
                             }}
                             onUpdateVisibility={(visibility) => {
-                                if (tarot.result?.id) {
-                                    updateVisibility('tarot', tarot.result.id, visibility);
+                                const docId = tarot.result?.id || savedDream.id;
+                                if (docId) {
+                                    updateVisibility('tarot', docId, visibility);
                                     // 로컬 tarot.result도 즉시 업데이트
-                                    setTarotField('result', { ...tarot.result, visibility, isPublic: visibility === 'public' });
+                                    setTarotField('result', { ...tarot.result, id: docId, visibility, isPublic: visibility === 'public' });
                                 }
                             }}
                             onOpenReferral={() => openModal('referral')}
@@ -811,6 +838,10 @@ function App() {
                     setSavedDream({ id: null, isPublic: false });
                 }}
                 onOpenExplore={() => setMobileSheet(prev => ({ ...prev, explore: true }))}
+                // 분석 상태 전달
+                isAnalyzing={readingLoading}
+                analysisPhase={analysisPhase}
+                analysisMode={mode}
             />
 
             {/* 모바일 탐색 바텀시트 */}

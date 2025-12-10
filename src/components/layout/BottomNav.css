@@ -124,6 +124,85 @@
     color: var(--purple);
 }
 
+/* ========== 분석 중 상태 ========== */
+.bottom-nav-item.center-btn.analyzing .center-icon {
+    position: relative;
+    animation: analyzing-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes analyzing-pulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5); }
+    50% { box-shadow: 0 4px 25px rgba(155, 89, 182, 0.8), 0 0 40px rgba(155, 89, 182, 0.4); }
+}
+
+.bottom-nav-item.center-btn.analyzing .analyzing-icon {
+    animation: analyzing-spin 2s linear infinite;
+}
+
+@keyframes analyzing-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 진행률 링 */
+.progress-ring {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 56px;
+    height: 56px;
+    transform: rotate(-90deg);
+    pointer-events: none;
+}
+
+.progress-ring-bg {
+    stroke: rgba(255, 255, 255, 0.15);
+}
+
+.progress-ring-fill {
+    stroke: #ffd700;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+}
+
+/* 완료 뱃지 */
+.complete-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.5);
+    animation: badge-pop 0.3s ease-out;
+}
+
+@keyframes badge-pop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* 분석 완료 상태 */
+.bottom-nav-item.center-btn.complete .center-icon {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    box-shadow: 0 4px 20px rgba(39, 174, 96, 0.6);
+}
+
+/* 분석 중 라벨 스타일 */
+.bottom-nav-item.center-btn.analyzing .bottom-nav-label {
+    color: #ffd700;
+    font-weight: 600;
+}
+
 /* 가로 모드 대응 */
 @media (max-width: 768px) and (orientation: landscape) {
     .bottom-nav {

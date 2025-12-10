@@ -1,36 +1,36 @@
 /**
  * AI Model Configuration
- * Dream Storybook AI Tier System (v4 - 3티어 시스템)
+ * Dream Storybook AI - 커뮤니티 우선 전략 (v5)
  *
- * 무료: Sonnet 4.5 (고품질) + 제한
- * 프리미엄: Sonnet 4.5 + 모든 기능 해금
- * 울트라: Opus 4.5 (소름돋는 통찰) + 최고급 경험
+ * 핵심 원칙: 모든 사용자에게 최고 품질 리딩 제공
+ * - AI 품질 차별화 X (무료도 최고 품질)
+ * - 편의성으로만 차별화 (동시 분석, 알림, 통계 등)
  *
- * 차별화 포인트:
- * - 무료 → 프리미엄: 기능 해금 (Hidden Insight, 심층분석, 무제한)
- * - 프리미엄 → 울트라: AI 품질 업그레이드 (더 깊고 소름돋는 통찰)
+ * 참고: docs/jeom-ai-content-strategy.md
+ * "하지 말아야 할 것: 기능 차별화"
+ * ❌ 무료: GPT-3.5 / 유료: GPT-4
+ * ✅ 무료: 핵심 기능 전부 (리딩, 스레드 참여, 평가)
  */
 
 export const AI_MODELS = {
-    // 텍스트 분석 모델 (3티어!)
+    // 텍스트 분석 모델 - 모든 티어 동일 (Sonnet 4.5)
     text: {
-        free: 'claude-sonnet-4-5',       // 고품질
-        premium: 'claude-sonnet-4-5',    // 고품질 (기능 해금)
-        ultra: 'claude-opus-4-5'         // 소름돋는 통찰!
+        free: 'claude-sonnet-4-5',
+        premium: 'claude-sonnet-4-5',
+        ultra: 'claude-sonnet-4-5'
     },
 
     // 키워드 생성 (Sonnet 고정 - SEO 품질 보장)
     keywords: 'claude-sonnet-4-5',
 
     // 도파민 메시지 (Haiku - 가장 빠른 모델로 분석 중 메시지 선생성)
-    // Alias 사용: 자동으로 최신 스냅샷으로 업데이트됨
     dopamine: 'claude-haiku-4-5',
 
-    // 이미지 생성 (티어별 차등)
+    // 이미지 생성 - 모든 티어 동일 (Gemini 3 Pro)
     image: {
-        free: 'gemini-2.5-flash-image',           // 무료 - Gemini 2.5 Flash Image
-        premium: 'gemini-3-pro-image-preview',    // 프리미엄 - Gemini 3 Pro Image (4K)
-        ultra: 'gemini-3-pro-image-preview'       // 울트라 - Gemini 3 Pro Image (4K)
+        free: 'gemini-3-pro-image-preview',
+        premium: 'gemini-3-pro-image-preview',
+        ultra: 'gemini-3-pro-image-preview'
     }
 };
 
@@ -139,135 +139,138 @@ export const getContentLength = (mode, field, tier = 'free', lang = 'ko') => {
 };
 
 /**
- * 티어별 모델 설정 가져오기
- * @param {string} tier - 티어 ('free' | 'premium' | 'ultra')
+ * 모델 설정 가져오기 (커뮤니티 우선 전략)
+ * - 모든 사용자에게 동일한 최고 품질 AI 제공
+ * - 티어는 편의성 차별화만 (동시 분석 수, 알림 등)
+ *
+ * @param {string} tier - 티어 ('free' | 'premium' | 'ultra') - 레거시 호환용
  * @returns {Object} 모델 설정 객체
  */
 export const getModelConfig = (tier = 'free') => {
-    const isPremium = tier === 'premium' || tier === 'ultra';
-    const isUltra = tier === 'ultra';
-
     return {
-        // 텍스트 분석 모델 (3티어!)
-        textModel: AI_MODELS.text[tier] || AI_MODELS.text.free,
+        // 텍스트 분석 모델 - 모든 티어 동일
+        textModel: AI_MODELS.text.free,
 
         // 키워드 모델 (Sonnet 고정 - SEO 품질 보장)
         keywordModel: AI_MODELS.keywords,
 
-        // 이미지 모델 (티어별)
-        imageModel: AI_MODELS.image[tier] || AI_MODELS.image.free,
+        // 이미지 모델 - 모든 티어 동일 (Gemini 3 Pro)
+        imageModel: AI_MODELS.image.free,
 
         // 프롬프트 스타일 (MrBeast 도파민)
         promptStyle: 'mrBeastDopamine',
 
-        // 분석 깊이
-        analysisDepth: isUltra ? 'ultra' : (isPremium ? 'deep' : 'basic'),
-        maxTokens: isUltra ? 8000 : (isPremium ? 6000 : 4000),
+        // 분석 깊이 - 모든 티어 최고 품질
+        analysisDepth: 'deep',
+        maxTokens: 6000,
 
-        // 콘텐츠 접근 권한
-        hasHiddenInsight: isPremium,      // 프리미엄+ Hidden Insight 해금
-        hasDetailedAnalysis: isPremium,   // 프리미엄+ 심층 분석 해금
-        hasUltraInsight: isUltra,         // 울트라만 소름돋는 통찰
+        // 콘텐츠 접근 권한 - 모든 기능 해금
+        hasHiddenInsight: true,
+        hasDetailedAnalysis: true,
+        hasUltraInsight: true,
 
-        // 티어 정보
+        // 티어 정보 (레거시 호환)
         tier,
-        isPremium,
-        isUltra
+        isPremium: true,  // 모든 사용자 프리미엄 취급
+        isUltra: true     // 모든 사용자 울트라 취급
     };
 };
 
 /**
- * 티어별 사용 제한
- * - 무료: 주 3회 (하루 1회 → 주 3회로 변경: 리텐션 개선)
- * - 프리미엄/울트라: 무제한
+ * 사용 제한 (커뮤니티 우선 전략)
+ * - 모든 사용자 무제한 (단, 동시 분석 1개)
+ * - 편의성 차별화: 프리미엄은 동시 분석 3개
+ *
+ * 참고: docs/jeom-ai-content-strategy.md
+ * "무료: 리딩 무제한 (단, 동시 분석 1개)"
  */
 export const TIER_LIMITS = {
     free: {
-        dream: { weekly: 3 },       // 주 3회
-        tarot: { weekly: 3 },       // 주 3회
-        saju: { weekly: 3 }         // 주 3회
+        dream: { weekly: Infinity },
+        tarot: { weekly: Infinity },
+        saju: { weekly: Infinity },
+        concurrent: 1  // 동시 분석 1개
     },
     premium: {
         dream: { weekly: Infinity },
         tarot: { weekly: Infinity },
-        saju: { weekly: Infinity }
+        saju: { weekly: Infinity },
+        concurrent: 3  // 동시 분석 3개
     },
     ultra: {
         dream: { weekly: Infinity },
         tarot: { weekly: Infinity },
-        saju: { weekly: Infinity }
+        saju: { weekly: Infinity },
+        concurrent: 3  // 동시 분석 3개
     }
 };
 
 /**
  * 티어별 히스토리 표시 제한
- * - 무료: 최근 3개만 (나머지 블러 + 프리미엄 유도)
- * - 프리미엄/울트라: 무제한
+ * - 커뮤니티 우선 전략: 모든 티어 무제한
+ * - 프리미엄 차별화는 편의 기능으로 (AI 품질 X)
  */
 export const HISTORY_LIMITS = {
-    free: 3,
+    free: Infinity,
     premium: Infinity,
     ultra: Infinity
 };
 
 /**
- * 비용 분석 (참고용)
- * Free/Premium: Sonnet 4.5 (고품질)
- * Ultra: Opus 4.5 (소름돋는 통찰) - 약 9배 비용
+ * 비용 분석 (참고용) - 커뮤니티 우선 전략
+ * 모든 사용자: Sonnet 4.5 + Gemini 3 Pro
  */
 export const COST_ESTIMATES = {
-    free: {
+    perReading: {
         sonnet: 0.008,
-        geminiFlash: 0.002,
-        total: 0.010  // ~14원
-    },
-    premium: {
-        sonnet: 0.008,
-        geminiPro: 0.005,  // Pro Preview
-        total: 0.013  // ~18원 (이미지만 업그레이드)
-    },
-    ultra: {
-        opus: 0.075,      // Opus는 Sonnet 대비 약 9배
-        sonnetKeyword: 0.003,
-        geminiPro: 0.005,  // Pro Preview 예상
-        total: 0.083  // ~115원
+        geminiPro: 0.005,
+        total: 0.013  // ~18원/리딩
     }
 };
 
 /**
- * 티어 비교 정보 (UI용) - 감성적 문구 사용
+ * 서비스 정보 (UI용) - 커뮤니티 우선 전략
+ * 모든 사용자에게 동일한 최고 품질 제공
+ *
+ * 편의성 차별화만 적용:
+ * - 무료: 동시 분석 1개
+ * - 프리미엄: 동시 분석 3개, 실시간 알림, 통계 분석
  */
 export const TIER_COMPARISON = {
     free: {
         name: '무료',
-        aiLabel: '정확한 해석',
-        hasHiddenInsight: false,    // 블러 처리
-        hasDetailedAnalysis: false, // 잠금
-        imageQuality: 'HD',
-        hasAds: false,              // 초반 광고 없음
-        usageLimit: '주 3회',
-        description: '기본적인 해석으로 시작하기'
+        aiLabel: '최고 품질 AI 리딩',
+        hasHiddenInsight: true,
+        hasDetailedAnalysis: true,
+        imageQuality: 'HD (Gemini 3 Pro)',
+        hasAds: false,
+        usageLimit: '무제한',
+        concurrent: 1,
+        description: '모든 기능 무료로 즐기세요'
     },
     premium: {
         name: '프리미엄',
-        aiLabel: '깊이 있는 해석',
-        hasHiddenInsight: true,     // 해금
-        hasDetailedAnalysis: true,  // 해금
-        imageQuality: 'HD',         // Gemini 3 Pro
+        aiLabel: '최고 품질 AI 리딩',
+        hasHiddenInsight: true,
+        hasDetailedAnalysis: true,
+        imageQuality: 'HD (Gemini 3 Pro)',
         hasAds: false,
         usageLimit: '무제한',
-        description: '숨겨진 메시지까지 모두 확인'
+        concurrent: 3,
+        features: ['동시 분석 3개', '실시간 알림', '통계 분석'],
+        description: '더 편리하게 여러 리딩을 동시에'
     },
     ultra: {
         name: '울트라',
-        aiLabel: '소름돋는 통찰',
-        hasHiddenInsight: true,     // 해금
-        hasDetailedAnalysis: true,  // 해금
-        hasUltraInsight: true,      // 울트라만의 깊은 통찰
-        imageQuality: 'HD',         // Gemini 3 Pro
+        aiLabel: '최고 품질 AI 리딩',
+        hasHiddenInsight: true,
+        hasDetailedAnalysis: true,
+        imageQuality: 'HD (Gemini 3 Pro)',
         hasAds: false,
         usageLimit: '무제한',
-        description: '당신만 몰랐던 이야기를 들려드려요'
+        concurrent: 3,
+        features: ['동시 분석 3개', '실시간 알림', '통계 분석', 'VIP 배지'],
+        description: '커뮤니티 서포터'
     }
 };
 
@@ -304,14 +307,14 @@ export const CUSTOM_QUESTION_CONFIG = {
 };
 
 /**
- * 티어별 맞춤 질문 권한
+ * 맞춤 질문 권한 (커뮤니티 우선 전략)
+ * 모든 사용자에게 모든 기능 제공
  */
 export const getCustomQuestionAccess = (tier = 'free') => {
-    const isPremium = tier === 'premium' || tier === 'ultra';
     return {
-        canUsePreset: true,           // 모든 티어 사전 정의 질문 가능
-        canUseCustom: isPremium,      // 프리미엄+ 자유 질문 가능
-        maxCustomLength: isPremium ? 200 : 0  // 자유 질문 최대 글자수
+        canUsePreset: true,
+        canUseCustom: true,      // 모든 사용자 자유 질문 가능
+        maxCustomLength: 200
     };
 };
 

@@ -24,6 +24,11 @@ const FeedView = ({
 }) => {
     const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState(null);
+    // 모바일에서는 자동으로 컴팩트, 데스크톱에서는 선택 가능
+    const [viewMode, setViewMode] = useState(() => {
+        return window.innerWidth <= 768 ? 'compact' : 'grid';
+    });
+    const isMobile = window.innerWidth <= 768;
 
     // 외부 symbolFilter가 변경되면 activeFilter도 업데이트
     useEffect(() => {
@@ -228,9 +233,364 @@ const FeedView = ({
         );
     };
 
+    // 뷰 모드 토글 (데스크톱만)
+    const renderViewToggle = () => {
+        if (isMobile) return null;
+        return (
+            <div className="feed-view-toggle">
+                <button
+                    className={viewMode === 'compact' ? 'active' : ''}
+                    onClick={() => setViewMode('compact')}
+                >
+                    ☰ 리스트
+                </button>
+                <button
+                    className={viewMode === 'grid' ? 'active' : ''}
+                    onClick={() => setViewMode('grid')}
+                >
+                    ▦ 카드
+                </button>
+            </div>
+        );
+    };
+
+    // 컴팩트 카드 렌더링 (타로) - Q&A 형식: 질문 + 공감형 답변
+    const renderCompactTarotCard = (tarot) => {
+        const topics = tarot.topics || (tarot.topic ? [tarot.topic] : []);
+        // 질문 표시 (피드 메인)
+        const question = tarot.question || '질문';
+        // 답변 표시 (title이 이제 공감형 답변)
+        const answer = tarot.title;
+        // 썸네일 = heroImage 또는 pastImage
+        const thumbImage = tarot.heroImage || tarot.pastImage;
+
+        return (
+            <div
+                key={tarot.id}
+                className="feed-card-compact tarot-card"
+                onClick={() => onOpenTarotResult(tarot)}
+            >
+                {/* 썸네일 */}
+                <div className="compact-thumb">
+                    {thumbImage ? (
+                        <img src={thumbImage} alt="" loading="lazy" />
+                    ) : (
+                        <div className="compact-thumb-placeholder">🃏</div>
+                    )}
+                </div>
+
+                {/* 콘텐츠 - Q&A 형식 */}
+                <div className="compact-content">
+                    <div className="compact-header">
+                        <div className="compact-meta">
+                            <span className="compact-topic">{topics[0] || '타로'}</span>
+                            <span className="compact-author">• {tarot.userName || '익명'}</span>
+                            <span className="compact-time">• {formatTime(tarot.createdAt)}</span>
+                        </div>
+                        <div className="compact-stats">
+                            <span className="compact-stat">❤️ {tarot.likeCount || 0}</span>
+                            {tarot.cards?.length > 0 && (
+                                <div className="compact-cards">
+                                    {tarot.cards.slice(0, 3).map((c, i) => (
+                                        <span key={i}>{c.emoji}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    {/* 질문 */}
+                    <h3 className="compact-title compact-question">{question}</h3>
+                    {/* 답변 */}
+                    {answer && <p className="compact-answer">{answer}</p>}
+                    <div className="compact-footer">
+                        <div className="compact-tags">
+                            {topics.slice(0, 2).map((topic, i) => (
+                                <span
+                                    key={`topic-${i}`}
+                                    className="compact-tag"
+                                    onClick={(e) => { e.stopPropagation(); navigateToTagPage(topic, e); }}
+                                >
+                                    {topic}
+                                </span>
+                            ))}
+                            {tarot.keywords?.filter(k => !topics.includes(k.word)).slice(0, 2).map((k, i) => (
+                                <span
+                                    key={i}
+                                    className="compact-tag"
+                                    onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
+                                >
+                                    {k.word}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // 컴팩트 카드 렌더링 (꿈) - 썸네일 + 제목 중심
+    const renderCompactDreamCard = (dream) => {
+        const thumbImage = dream.dreamImage;
+
+        return (
+            <div
+                key={dream.id}
+                className="feed-card-compact dream-card"
+                onClick={() => onOpenDreamDetail(dream)}
+            >
+                {/* 썸네일 */}
+                <div className="compact-thumb">
+                    {thumbImage ? (
+                        <img src={thumbImage} alt="" loading="lazy" />
+                    ) : (
+                        <div className="compact-thumb-placeholder">
+                            {dreamTypes?.[dream.dreamType]?.emoji || '🌙'}
+                        </div>
+                    )}
+                </div>
+
+                {/* 콘텐츠 */}
+                <div className="compact-content">
+                    <div className="compact-header">
+                        <div className="compact-meta">
+                            <span className="compact-topic">{dreamTypes?.[dream.dreamType]?.name || '꿈'}</span>
+                            <span className="compact-author">• {dream.userName || '익명'}</span>
+                            <span className="compact-time">• {formatTime(dream.createdAt)}</span>
+                        </div>
+                        <div className="compact-stats">
+                            <span className="compact-stat">❤️ {dream.likeCount || 0}</span>
+                        </div>
+                    </div>
+                    <h3 className="compact-title">{dream.title}</h3>
+                    {dream.keywords?.length > 0 && (
+                        <div className="compact-footer">
+                            <div className="compact-tags">
+                                {dream.keywords.slice(0, 3).map((k, i) => (
+                                    <span
+                                        key={i}
+                                        className="compact-tag"
+                                        onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
+                                    >
+                                        {k.word}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    // 컴팩트 카드 렌더링 (사주) - 썸네일 + 제목 중심
+    const renderCompactFortuneCard = (fortune) => {
+        const thumbImage = fortune.morningImage;
+
+        return (
+            <div
+                key={fortune.id}
+                className="feed-card-compact fortune-card"
+                onClick={() => onOpenFortuneResult(fortune)}
+            >
+                {/* 썸네일 */}
+                <div className="compact-thumb">
+                    {thumbImage ? (
+                        <img src={thumbImage} alt="" loading="lazy" />
+                    ) : (
+                        <div className="compact-thumb-placeholder">✴️</div>
+                    )}
+                </div>
+
+                {/* 콘텐츠 */}
+                <div className="compact-content">
+                    <div className="compact-header">
+                        <div className="compact-meta">
+                            <span className="compact-topic">사주</span>
+                            <span className="compact-author">• {fortune.userName || '익명'}</span>
+                            <span className="compact-time">• {formatTime(fortune.createdAt)}</span>
+                        </div>
+                        <div className="compact-stats">
+                            <span className="compact-stat">❤️ {fortune.likeCount || 0}</span>
+                        </div>
+                    </div>
+                    <h3 className="compact-title">{fortune.title}</h3>
+                    {fortune.keywords?.length > 0 && (
+                        <div className="compact-footer">
+                            <div className="compact-tags">
+                                {fortune.keywords.slice(0, 3).map((k, i) => (
+                                    <span
+                                        key={i}
+                                        className="compact-tag"
+                                        onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
+                                    >
+                                        {k.word}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    // 기존 그리드 카드 렌더링 (꿈)
+    const renderGridDreamCard = (dream) => (
+        <div
+            key={dream.id}
+            className="feed-card"
+            onClick={() => onOpenDreamDetail(dream)}
+        >
+            <div className="feed-card-thumb">
+                {dream.dreamImage ? (
+                    <img src={dream.dreamImage} alt="" />
+                ) : (
+                    <div className="feed-card-emoji">
+                        {dreamTypes?.[dream.dreamType]?.emoji || '🌙'}
+                    </div>
+                )}
+                <div className="feed-card-overlay">
+                    <span className="feed-card-type">
+                        {dreamTypes?.[dream.dreamType]?.emoji} {dreamTypes?.[dream.dreamType]?.name}
+                    </span>
+                </div>
+            </div>
+            <div className="feed-card-info">
+                <h3 className="feed-card-title">{dream.title}</h3>
+                <p className="feed-card-verdict">{dream.verdict}</p>
+                <div className="feed-card-meta">
+                    <span className="feed-card-author">{dream.userName || '익명'}</span>
+                    <span className="feed-card-time">{formatTime(dream.createdAt)}</span>
+                </div>
+                {dream.keywords?.length > 0 && (
+                    <div className="feed-card-tags">
+                        {dream.keywords.slice(0, 3).map((k, i) => (
+                            <span
+                                key={i}
+                                className="feed-card-tag"
+                                onClick={(e) => navigateToTagPage(k.word, e)}
+                            >
+                                #{k.word}
+                            </span>
+                        ))}
+                    </div>
+                )}
+                <div className="feed-card-stats">
+                    <span>❤️ {dream.likeCount || 0}</span>
+                    <span>💬 {dream.commentCount || 0}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // 기존 그리드 카드 렌더링 (타로)
+    const renderGridTarotCard = (tarot) => (
+        <div
+            key={tarot.id}
+            className="feed-card"
+            onClick={() => onOpenTarotResult(tarot)}
+        >
+            <div className="feed-card-thumb">
+                {tarot.pastImage ? (
+                    <img src={tarot.pastImage} alt="" />
+                ) : (
+                    <div className="feed-card-emoji">🃏</div>
+                )}
+                <div className="feed-card-overlay tarot-overlay">
+                    <div className="feed-card-cards">
+                        {tarot.cards?.map((c, i) => (
+                            <span key={i} className="mini-card">{c.emoji}</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className="feed-card-info">
+                <h3 className="feed-card-title">{tarot.title}</h3>
+                <p className="feed-card-verdict">{tarot.verdict}</p>
+                <div className="feed-card-meta">
+                    <span className="feed-card-author">{tarot.userName || '익명'}</span>
+                    <span className="feed-card-time">{formatTime(tarot.createdAt)}</span>
+                </div>
+                <div className="feed-card-tags">
+                    {(tarot.topics || (tarot.topic ? [tarot.topic] : [])).map((topic, i) => (
+                        <span
+                            key={`topic-${i}`}
+                            className="feed-card-tag topic-tag"
+                            onClick={(e) => navigateToTagPage(topic, e)}
+                        >
+                            #{topic}
+                        </span>
+                    ))}
+                    {tarot.keywords?.filter(k => !(tarot.topics || [tarot.topic]).includes(k.word)).slice(0, 2).map((k, i) => (
+                        <span
+                            key={i}
+                            className="feed-card-tag"
+                            onClick={(e) => navigateToTagPage(k.word, e)}
+                        >
+                            #{k.word}
+                        </span>
+                    ))}
+                </div>
+                <div className="feed-card-stats">
+                    <span>❤️ {tarot.likeCount || 0}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // 기존 그리드 카드 렌더링 (사주)
+    const renderGridFortuneCard = (fortune) => (
+        <div
+            key={fortune.id}
+            className="feed-card"
+            onClick={() => onOpenFortuneResult(fortune)}
+        >
+            <div className="feed-card-thumb">
+                {fortune.morningImage ? (
+                    <img src={fortune.morningImage} alt="" />
+                ) : (
+                    <div className="feed-card-emoji">🔮</div>
+                )}
+                <div className="feed-card-overlay fortune-overlay">
+                    <span className="fortune-score">점수 {fortune.score}점</span>
+                </div>
+            </div>
+            <div className="feed-card-info">
+                <h3 className="feed-card-title">{fortune.title}</h3>
+                <p className="feed-card-verdict">{fortune.verdict}</p>
+                <div className="feed-card-meta">
+                    <span className="feed-card-author">{fortune.userName || '익명'}</span>
+                    <span className="feed-card-time">{formatTime(fortune.createdAt)}</span>
+                </div>
+                {fortune.keywords?.length > 0 && (
+                    <div className="feed-card-tags">
+                        {fortune.keywords.slice(0, 3).map((k, i) => (
+                            <span
+                                key={i}
+                                className="feed-card-tag"
+                                onClick={(e) => navigateToTagPage(k.word, e)}
+                            >
+                                #{k.word}
+                            </span>
+                        ))}
+                    </div>
+                )}
+                <div className="feed-card-stats">
+                    <span>❤️ {fortune.likeCount || 0}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // 실제 뷰 모드 결정 (모바일은 항상 컴팩트)
+    const effectiveViewMode = isMobile ? 'compact' : viewMode;
+
     if (mode === 'dream') {
         return (
             <div className="feed-view dream-feed">
+                {renderViewToggle()}
+
                 {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
@@ -239,58 +599,16 @@ const FeedView = ({
                     </div>
                 )}
 
-                {/* 꿈 그리드 */}
+                {/* 꿈 피드 */}
                 {filteredDreams.length === 0 ? (
                     renderEmptyState('dream')
+                ) : effectiveViewMode === 'compact' ? (
+                    <div className="feed-compact">
+                        {filteredDreams.map(renderCompactDreamCard)}
+                    </div>
                 ) : (
                     <div className="feed-grid">
-                        {filteredDreams.map(dream => (
-                            <div
-                                key={dream.id}
-                                className="feed-card"
-                                onClick={() => onOpenDreamDetail(dream)}
-                            >
-                                <div className="feed-card-thumb">
-                                    {dream.dreamImage ? (
-                                        <img src={dream.dreamImage} alt="" />
-                                    ) : (
-                                        <div className="feed-card-emoji">
-                                            {dreamTypes?.[dream.dreamType]?.emoji || '🌙'}
-                                        </div>
-                                    )}
-                                    <div className="feed-card-overlay">
-                                        <span className="feed-card-type">
-                                            {dreamTypes?.[dream.dreamType]?.emoji} {dreamTypes?.[dream.dreamType]?.name}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="feed-card-info">
-                                    <h3 className="feed-card-title">{dream.title}</h3>
-                                    <p className="feed-card-verdict">{dream.verdict}</p>
-                                    <div className="feed-card-meta">
-                                        <span className="feed-card-author">{dream.userName || '익명'}</span>
-                                        <span className="feed-card-time">{formatTime(dream.createdAt)}</span>
-                                    </div>
-                                    {dream.keywords?.length > 0 && (
-                                        <div className="feed-card-tags">
-                                            {dream.keywords.slice(0, 3).map((k, i) => (
-                                                <span
-                                                    key={i}
-                                                    className="feed-card-tag"
-                                                    onClick={(e) => navigateToTagPage(k.word, e)}
-                                                >
-                                                    #{k.word}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                    <div className="feed-card-stats">
-                                        <span>❤️ {dream.likeCount || 0}</span>
-                                        <span>💬 {dream.commentCount || 0}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                        {filteredDreams.map(renderGridDreamCard)}
                     </div>
                 )}
             </div>
@@ -300,6 +618,8 @@ const FeedView = ({
     if (mode === 'tarot') {
         return (
             <div className="feed-view tarot-feed">
+                {renderViewToggle()}
+
                 {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
@@ -308,66 +628,16 @@ const FeedView = ({
                     </div>
                 )}
 
-                {/* 타로 그리드 */}
+                {/* 타로 피드 */}
                 {filteredTarots.length === 0 ? (
                     renderEmptyState('tarot')
+                ) : effectiveViewMode === 'compact' ? (
+                    <div className="feed-compact">
+                        {filteredTarots.map(renderCompactTarotCard)}
+                    </div>
                 ) : (
                     <div className="feed-grid">
-                        {filteredTarots.map(tarot => (
-                            <div
-                                key={tarot.id}
-                                className="feed-card"
-                                onClick={() => onOpenTarotResult(tarot)}
-                            >
-                                <div className="feed-card-thumb">
-                                    {tarot.pastImage ? (
-                                        <img src={tarot.pastImage} alt="" />
-                                    ) : (
-                                        <div className="feed-card-emoji">🃏</div>
-                                    )}
-                                    <div className="feed-card-overlay tarot-overlay">
-                                        <div className="feed-card-cards">
-                                            {tarot.cards?.map((c, i) => (
-                                                <span key={i} className="mini-card">{c.emoji}</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="feed-card-info">
-                                    <h3 className="feed-card-title">{tarot.title}</h3>
-                                    <p className="feed-card-verdict">{tarot.verdict}</p>
-                                    <div className="feed-card-meta">
-                                        <span className="feed-card-author">{tarot.userName || '익명'}</span>
-                                        <span className="feed-card-time">{formatTime(tarot.createdAt)}</span>
-                                    </div>
-                                    <div className="feed-card-tags">
-                                        {/* 주제 태그들 (topics 배열 또는 기존 topic 호환) */}
-                                        {(tarot.topics || (tarot.topic ? [tarot.topic] : [])).map((topic, i) => (
-                                            <span
-                                                key={`topic-${i}`}
-                                                className="feed-card-tag topic-tag"
-                                                onClick={(e) => navigateToTagPage(topic, e)}
-                                            >
-                                                #{topic}
-                                            </span>
-                                        ))}
-                                        {/* 키워드 태그 (주제 제외) */}
-                                        {tarot.keywords?.filter(k => !(tarot.topics || [tarot.topic]).includes(k.word)).slice(0, 2).map((k, i) => (
-                                            <span
-                                                key={i}
-                                                className="feed-card-tag"
-                                                onClick={(e) => navigateToTagPage(k.word, e)}
-                                            >
-                                                #{k.word}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="feed-card-stats">
-                                        <span>❤️ {tarot.likeCount || 0}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                        {filteredTarots.map(renderGridTarotCard)}
                     </div>
                 )}
             </div>
@@ -377,6 +647,8 @@ const FeedView = ({
     if (mode === 'fortune') {
         return (
             <div className="feed-view fortune-feed">
+                {renderViewToggle()}
+
                 {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
                 {currentFilter && (
                     <div className="filter-status">
@@ -385,53 +657,16 @@ const FeedView = ({
                     </div>
                 )}
 
-                {/* 운세 그리드 */}
+                {/* 운세 피드 */}
                 {filteredFortunes.length === 0 ? (
                     renderEmptyState('fortune')
+                ) : effectiveViewMode === 'compact' ? (
+                    <div className="feed-compact">
+                        {filteredFortunes.map(renderCompactFortuneCard)}
+                    </div>
                 ) : (
                     <div className="feed-grid">
-                        {filteredFortunes.map(fortune => (
-                            <div
-                                key={fortune.id}
-                                className="feed-card"
-                                onClick={() => onOpenFortuneResult(fortune)}
-                            >
-                                <div className="feed-card-thumb">
-                                    {fortune.morningImage ? (
-                                        <img src={fortune.morningImage} alt="" />
-                                    ) : (
-                                        <div className="feed-card-emoji">🔮</div>
-                                    )}
-                                    <div className="feed-card-overlay fortune-overlay">
-                                        <span className="fortune-score">점수 {fortune.score}점</span>
-                                    </div>
-                                </div>
-                                <div className="feed-card-info">
-                                    <h3 className="feed-card-title">{fortune.title}</h3>
-                                    <p className="feed-card-verdict">{fortune.verdict}</p>
-                                    <div className="feed-card-meta">
-                                        <span className="feed-card-author">{fortune.userName || '익명'}</span>
-                                        <span className="feed-card-time">{formatTime(fortune.createdAt)}</span>
-                                    </div>
-                                    {fortune.keywords?.length > 0 && (
-                                        <div className="feed-card-tags">
-                                            {fortune.keywords.slice(0, 3).map((k, i) => (
-                                                <span
-                                                    key={i}
-                                                    className="feed-card-tag"
-                                                    onClick={(e) => navigateToTagPage(k.word, e)}
-                                                >
-                                                    #{k.word}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                    <div className="feed-card-stats">
-                                        <span>❤️ {fortune.likeCount || 0}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+                        {filteredFortunes.map(renderGridFortuneCard)}
                     </div>
                 )}
             </div>

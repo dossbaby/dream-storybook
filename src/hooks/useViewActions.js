@@ -1,4 +1,4 @@
-import { doc, updateDoc, increment } from 'firebase/firestore';
+import { doc, setDoc, increment } from 'firebase/firestore';
 import { db } from '../firebase';
 
 /**
@@ -25,9 +25,9 @@ export const useViewActions = ({
         if (sessionStorage.getItem(viewedKey)) return;
 
         try {
-            await updateDoc(doc(db, collectionName, itemId), {
+            await setDoc(doc(db, collectionName, itemId), {
                 viewCount: increment(1)
-            });
+            }, { merge: true });
             sessionStorage.setItem(viewedKey, 'true');
         } catch (err) {
             console.error('View count error:', err);
@@ -60,7 +60,7 @@ export const useViewActions = ({
             setCurrentCard(0);
         }, 0);
         // 조회수 증가
-        incrementViewCount('tarotReadings', t?.id);
+        incrementViewCount('tarots', t?.id);
     };
 
     // 운세 결과 열기
@@ -69,7 +69,7 @@ export const useViewActions = ({
         setView('fortune-result');
         setCurrentCard(0);
         // 조회수 증가
-        incrementViewCount('fortuneReadings', f?.id);
+        incrementViewCount('sajus', f?.id);
     };
 
     // 결과 뷰에서 뒤로가기

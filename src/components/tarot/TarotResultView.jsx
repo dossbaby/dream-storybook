@@ -47,14 +47,18 @@ const TarotResultView = ({
     userNickname,
     onLoginRequired
 }) => {
-    // Visual Novel 인트로 단계 (클릭 기반 진행)
+    // 작성자인지 확인 (VN 인트로는 작성자만 보여줌)
+    const isAuthor = user?.uid && tarotResult.userId && user.uid === tarotResult.userId;
+
+    // Visual Novel 인트로 단계 (클릭 기반 진행) - 작성자만 보여줌
     // 0: 시작 대기 (fade in)
     // 1: Hook 타이핑 중 (클릭하면 즉시 완료)
     // 2: Hook 완료, 클릭 대기
     // 3: Foreshadow 타이핑 중 (클릭하면 즉시 완료)
     // 4: Foreshadow 완료, 클릭 대기
     // 5: 인트로 종료, 결과 페이지 표시
-    const [introPhase, setIntroPhase] = useState(0);
+    // 비작성자는 바로 5로 시작
+    const [introPhase, setIntroPhase] = useState(isAuthor ? 0 : 5);
     const [hookTyped, setHookTyped] = useState('');
     const [foreshadowTyped, setForeshadowTyped] = useState('');
     const [pageRevealed, setPageRevealed] = useState(false);
@@ -77,12 +81,23 @@ const TarotResultView = ({
         newComment,
         setNewComment,
         addComment,
-        deleteComment
-    } = useComments('tarotReadings', user, tarotResult, userNickname);
+        deleteComment,
+        toggleCommentLike,
+        isCommentLiked,
+        addReply,
+        loadReplies,
+        deleteReply
+    } = useComments('tarots', user, tarotResult, userNickname);
 
     // 댓글 더보기 상태 (기본 3개 표시, 더보기 클릭 시 전체)
     const [showAllComments, setShowAllComments] = useState(false);
     const commentInputRef = useRef(null);
+
+    // 대댓글 관련 상태
+    const [replyingTo, setReplyingTo] = useState(null); // 대댓글 입력 중인 댓글 ID
+    const [replyText, setReplyText] = useState('');
+    const [repliesMap, setRepliesMap] = useState({}); // { commentId: replies[] }
+    const [expandedReplies, setExpandedReplies] = useState([]); // 펼쳐진 대댓글 목록
 
     // 표시할 댓글 (기본 3개, 더보기 시 전체)
     const displayedComments = showAllComments ? comments : comments.slice(0, 3);
@@ -153,15 +168,22 @@ const TarotResultView = ({
     // 모든 카드가 뒤집혔는지 확인
     const allCardsFlipped = flippedCards.length >= cardCount;
 
-    // Visual Novel 인트로 시퀀스 - 클릭 기반 진행
+    // Visual Novel 인트로 시퀀스 - 클릭 기반 진행 (작성자만)
     useEffect(() => {
+        // 작성자가 아니면 바로 페이지 표시
+        if (!isAuthor) {
+            setIntroPhase(5);
+            setPageRevealed(true);
+            return;
+        }
+
         // Phase 0 → 1: 0.8초 후 Hook 타이핑 시작
         const startTimer = setTimeout(() => {
             setIntroPhase(1);
         }, 800);
 
         return () => clearTimeout(startTimer);
-    }, []);
+    }, [isAuthor]);
 
     // Hook 타이핑 효과 (85ms per char)
     useEffect(() => {
@@ -365,6 +387,20 @@ const TarotResultView = ({
                         <span className="reading-type-badge">🔮 타로 리딩</span>
                         <h1 className="reading-title">{tarotResult.title}</h1>
                         <p className="reading-verdict">"{tarotResult.verdict}"</p>
+                        {/* 키워드 태그 - hero 안에 배치 */}
+                        {tarotResult.keywords?.length > 0 && (
+                            <div className="hero-keywords">
+                                {tarotResult.keywords.slice(0, 3).map((kw, i) => (
+                                    <span
+                                        key={i}
+                                        className="hero-keyword-tag"
+                                        onClick={() => onKeywordClick?.(kw.word)}
+                                    >
+                                        #{kw.word}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
                 {/* 히어로 하단 divider */}
@@ -543,19 +579,13 @@ const TarotResultView = ({
                         </div>
                     )}
 
-                    {/* Hidden Insight - 봉인된 메시지 (프리미엄 전용) */}
+                    {/* Hidden Insight - 봉인된 메시지 (무료 공개) */}
                     {allCardsFlipped && (
                         <div className="sealed-insight-section fade-in-up">
                             {!insightUnsealed ? (
                                 <div
                                     className="sealed-message"
-                                    onClick={() => {
-                                        if (isPremium) {
-                                            setInsightUnsealed(true);
-                                        } else {
-                                            onOpenPremium?.('hidden_insight');
-                                        }
-                                    }}
+                                    onClick={() => setInsightUnsealed(true)}
                                 >
                                     <div className="seal-visual">
                                         <span className="seal-icon">🌌</span>
@@ -563,13 +593,10 @@ const TarotResultView = ({
                                     </div>
                                     <div className="seal-text">차원의 틈</div>
                                     <div className="seal-hint">
-                                        {isPremium ? '잠깐, 뭔가 더 있어요!!!' : '숨겨진 메시지가 있어요'}
+                                        잠깐, 뭔가 더 있어요!!!
                                     </div>
-                                    <button
-                                        className={`unseal-btn ${!isPremium ? 'locked' : ''}`}
-                                        data-tooltip={!isPremium ? '✨ 프리미엄으로 차원의 틈 너머를 엿보세요' : undefined}
-                                    >
-                                        {isPremium ? '✦ 틈새 엿보기' : '🔒 프리미엄으로 확인'}
+                                    <button className="unseal-btn">
+                                        ✦ 틈새 엿보기
                                     </button>
                                 </div>
                             ) : (
@@ -627,88 +654,6 @@ const TarotResultView = ({
                         </div>
                     )}
 
-                    {/* 키워드 - 클릭 시 피드 필터링 */}
-                    {allCardsFlipped && tarotResult.keywords?.length > 0 && (
-                        <div className="reading-keywords fade-in-up">
-                            <span className="keywords-label">타로 리딩 키워드</span>
-                            <div className="keywords-tags">
-                                {tarotResult.keywords.map((kw, i) => (
-                                    <span
-                                        key={i}
-                                        className="keyword-tag clickable"
-                                        onClick={() => onKeywordClick?.(kw.word)}
-                                    >
-                                        #{kw.word}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 공개 설정 + 친구 초대/피드백 - Advice Card Style Grid */}
-                    {allCardsFlipped && tarotResult.id && (
-                        <div className="result-footer-grid fade-in-up">
-                            {/* 왼쪽 카드 - 친구 초대 & 의견 보내기 */}
-                            <div className="footer-card invite-card">
-                                <div className="footer-card-header">
-                                    <span className="footer-card-icon">💝</span>
-                                    <span className="footer-card-title">함께하기</span>
-                                </div>
-                                <div className="footer-card-actions">
-                                    <button className="footer-action-btn" onClick={onOpenReferral} data-tooltip="친구를 초대하면 리딩 2회가 충전돼요">
-                                        <span>🎁</span> 친구 초대
-                                        <span className="footer-badge">+2 리딩</span>
-                                    </button>
-                                    <button className="footer-action-btn" onClick={onOpenFeedback} data-tooltip="의견을 보내면 리딩 1회가 충전돼요">
-                                        <span>💬</span> 의견 보내기
-                                        <span className="footer-badge">+1 리딩</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* 오른쪽 카드 - 공개 설정 토글 */}
-                            {onUpdateVisibility && (
-                                <div className="footer-card visibility-card">
-                                    <div className="footer-card-header">
-                                        <span className="footer-card-icon">🔐</span>
-                                        <span className="footer-card-title">공개 설정</span>
-                                    </div>
-                                    {/* Premium/Ultra 토글 스타일 */}
-                                    <div className="visibility-toggle-tabs">
-                                        <button
-                                            className={`visibility-tab ${tarotResult.visibility === 'private' ? 'active' : ''}`}
-                                            onClick={() => onUpdateVisibility('private')}
-                                            data-tooltip="나만 볼 수 있어요"
-                                        >
-                                            <span className="tab-icon">🔒</span>
-                                            <span className="tab-label">비공개</span>
-                                            <span className="tab-badge-small">나만</span>
-                                        </button>
-                                        <button
-                                            className={`visibility-tab ${tarotResult.visibility === 'unlisted' || !tarotResult.visibility ? 'active' : ''}`}
-                                            onClick={handleLinkShare}
-                                            data-tooltip="링크를 아는 사람만 볼 수 있어요"
-                                        >
-                                            <span className="tab-icon">🔗</span>
-                                            <span className="tab-label">링크 공유</span>
-                                            <span className="tab-badge-small">친구만</span>
-                                        </button>
-                                        <button
-                                            className={`visibility-tab ${tarotResult.visibility === 'public' ? 'active' : ''}`}
-                                            onClick={() => onUpdateVisibility('public')}
-                                            data-tooltip="전체 공개하면 리딩 1회가 충전돼요"
-                                        >
-                                            <span className="tab-icon">🌐</span>
-                                            <span className="tab-label">전체 공개</span>
-                                            <span className="tab-bonus">+1 리딩</span>
-                                        </button>
-                                    </div>
-                                    <p className="visibility-hint">🎭 공개해도 <strong>닉네임</strong>으로 표시되어 익명이 보장돼요</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
                 </div>
                 )}
 
@@ -721,6 +666,32 @@ const TarotResultView = ({
                         <span>←</span>
                         <span>돌아가기</span>
                     </button>
+                </div>
+            )}
+
+            {/* 리딩 공개 설정 패널 - 작성자에게만 표시 (별도 패널) */}
+            {tarotResult.id && introPhase >= 5 && isAuthor && onUpdateVisibility && (
+                <div className="visibility-panel">
+                    <div className="visibility-panel-inner">
+                        <div className="visibility-header">
+                            <span className="visibility-title">리딩 공개</span>
+                            <label className="visibility-switch">
+                                <input
+                                    type="checkbox"
+                                    checked={tarotResult.visibility === 'public'}
+                                    onChange={(e) => onUpdateVisibility(e.target.checked ? 'public' : 'private')}
+                                />
+                                <span className="switch-track">
+                                    <span className="switch-thumb"></span>
+                                </span>
+                            </label>
+                        </div>
+                        <p className="visibility-desc">
+                            {tarotResult.visibility === 'public'
+                                ? '리딩 결과를 공유합니다'
+                                : '리딩 결과가 공개되지 않습니다'}
+                        </p>
+                    </div>
                 </div>
             )}
 
@@ -798,7 +769,7 @@ const TarotResultView = ({
                                             ref={commentInputRef}
                                             type="text"
                                             className="comment-input"
-                                            placeholder="생각을 남겨보세요..."
+                                            placeholder="댓글을 남겨보세요"
                                             value={newComment}
                                             onChange={(e) => setNewComment(e.target.value)}
                                             maxLength={500}
@@ -808,7 +779,7 @@ const TarotResultView = ({
                                             className="comment-submit-btn"
                                             disabled={!newComment.trim()}
                                         >
-                                            <span>↑</span>
+                                            <span>💬</span>
                                         </button>
                                     </div>
                                 </form>
@@ -823,62 +794,136 @@ const TarotResultView = ({
                             )}
                         </div>
 
-                        {/* 댓글 리스트 */}
-                        <div className="comments-list">
+                        {/* 댓글 리스트 - Blind 스타일 */}
+                        <div className="comments-list-blind">
                             {comments.length === 0 ? (
-                                <div className="comments-empty">
-                                    <span className="empty-icon">💭</span>
-                                    <p>아직 댓글이 없어요</p>
-                                    <p className="empty-hint">첫 번째 댓글을 남겨보세요!</p>
-                                </div>
+                                <p className="comments-empty-text">첫 댓글을 남겨보세요</p>
                             ) : (
                                 <>
                                     {displayedComments.map((comment) => (
-                                        <div key={comment.id} className="comment-item">
-                                            <div className="comment-header">
+                                        <div key={comment.id} className="blind-comment">
+                                            {/* 댓글 헤더: 프로필 + 닉네임 */}
+                                            <div className="blind-comment-header">
                                                 {comment.userPhoto ? (
-                                                    <img src={comment.userPhoto} alt="" className="comment-avatar" />
+                                                    <img src={comment.userPhoto} alt="" className="blind-avatar" />
                                                 ) : (
-                                                    <div className="comment-avatar-placeholder">
+                                                    <div className="blind-avatar placeholder">
                                                         {(comment.userName || '?').charAt(0)}
                                                     </div>
                                                 )}
-                                                <div className="comment-meta">
-                                                    <span className="comment-author">{comment.userName}</span>
-                                                    <span className="comment-time">
+                                                <span className="blind-nickname">{comment.userName}</span>
+                                            </div>
+
+                                            {/* 댓글 본문 - 프로필 아래 정렬 */}
+                                            <div className="blind-comment-body">
+                                                <p className="blind-text">{comment.text}</p>
+
+                                                {/* 액션 row: 시간, 좋아요, 대댓글 */}
+                                                <div className="blind-actions">
+                                                    <span className="blind-time">
                                                         {comment.createdAt?.toDate ? formatTimeAgo(comment.createdAt.toDate()) : ''}
                                                     </span>
-                                                </div>
-                                                {user?.uid === comment.userId && (
                                                     <button
-                                                        className="comment-delete-btn"
-                                                        onClick={() => deleteComment(comment.id, comment.userId)}
+                                                        className={`blind-like-btn ${isCommentLiked(comment.id) ? 'liked' : ''}`}
+                                                        onClick={() => toggleCommentLike(comment.id)}
                                                     >
-                                                        ✕
+                                                        ♡ {comment.likeCount || 0}
                                                     </button>
+                                                    <button
+                                                        className="blind-reply-btn"
+                                                        onClick={() => {
+                                                            if (!user) { onLoginRequired?.(); return; }
+                                                            setReplyingTo(replyingTo === comment.id ? null : comment.id);
+                                                            setReplyText('');
+                                                        }}
+                                                    >
+                                                        대댓글
+                                                    </button>
+                                                    {user?.uid === comment.userId && (
+                                                        <button
+                                                            className="blind-del-btn"
+                                                            onClick={() => deleteComment(comment.id, comment.userId)}
+                                                        >
+                                                            삭제
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                {/* 대댓글 입력창 */}
+                                                {replyingTo === comment.id && user && (
+                                                    <div className="blind-reply-input">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="대댓글을 입력하세요"
+                                                            value={replyText}
+                                                            onChange={(e) => setReplyText(e.target.value)}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter' && replyText.trim()) {
+                                                                    addReply(comment.id, replyText);
+                                                                    setReplyText('');
+                                                                    setReplyingTo(null);
+                                                                }
+                                                            }}
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                if (replyText.trim()) {
+                                                                    addReply(comment.id, replyText);
+                                                                    setReplyText('');
+                                                                    setReplyingTo(null);
+                                                                }
+                                                            }}
+                                                            disabled={!replyText.trim()}
+                                                        >
+                                                            등록
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                {/* 대댓글 목록 (있으면 표시) */}
+                                                {repliesMap[comment.id]?.length > 0 && (
+                                                    <div className="blind-replies">
+                                                        {repliesMap[comment.id].map((reply) => (
+                                                            <div key={reply.id} className="blind-reply-item">
+                                                                <div className="blind-reply-header">
+                                                                    {reply.userPhoto ? (
+                                                                        <img src={reply.userPhoto} alt="" className="blind-avatar-sm" />
+                                                                    ) : (
+                                                                        <div className="blind-avatar-sm placeholder">
+                                                                            {(reply.userName || '?').charAt(0)}
+                                                                        </div>
+                                                                    )}
+                                                                    <span className="blind-nickname-sm">{reply.userName}</span>
+                                                                </div>
+                                                                <p className="blind-reply-text">{reply.text}</p>
+                                                                <div className="blind-reply-actions">
+                                                                    <span className="blind-time-sm">
+                                                                        {reply.createdAt?.toDate ? formatTimeAgo(reply.createdAt.toDate()) : ''}
+                                                                    </span>
+                                                                    {user?.uid === reply.userId && (
+                                                                        <button
+                                                                            className="blind-del-btn-sm"
+                                                                            onClick={() => deleteReply(comment.id, reply.id, reply.userId)}
+                                                                        >
+                                                                            삭제
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
                                                 )}
                                             </div>
-                                            <p className="comment-text">{comment.text}</p>
                                         </div>
                                     ))}
 
-                                    {/* 더보기 버튼 */}
-                                    {hasMoreComments && !showAllComments && (
+                                    {/* 더보기/접기 */}
+                                    {hasMoreComments && (
                                         <button
-                                            className="comments-show-more"
-                                            onClick={() => setShowAllComments(true)}
+                                            className="comments-toggle"
+                                            onClick={() => setShowAllComments(!showAllComments)}
                                         >
-                                            <span>+ {comments.length - 3}개 더보기</span>
-                                        </button>
-                                    )}
-
-                                    {/* 접기 버튼 */}
-                                    {showAllComments && hasMoreComments && (
-                                        <button
-                                            className="comments-show-less"
-                                            onClick={() => setShowAllComments(false)}
-                                        >
-                                            <span>↑ 접기</span>
+                                            {showAllComments ? '접기' : `댓글 ${comments.length - 3}개 더 보기`}
                                         </button>
                                     )}
                                 </>

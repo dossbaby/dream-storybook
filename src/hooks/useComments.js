@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
     collection, addDoc, getDocs, query, orderBy,
-    updateDoc, doc, deleteDoc, Timestamp, getDoc, increment
+    updateDoc, doc, deleteDoc, Timestamp, getDoc, increment, setDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -66,6 +66,25 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
         };
     }, [selectedItem?.id, loadComments]);
 
+    // Firestore에서 최신 좋아요 카운트 가져오기
+    const fetchLikeCount = useCallback(async () => {
+        if (!selectedItem?.id) return;
+        try {
+            const docSnap = await getDoc(doc(db, collectionName, selectedItem.id));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setLikeCount(data.likeCount || 0);
+            }
+        } catch (err) {
+            console.error('Fetch like count error:', err);
+        }
+    }, [selectedItem?.id, collectionName]);
+
+    // 컴포넌트 마운트 시 Firestore에서 최신 카운트 가져오기
+    useEffect(() => {
+        fetchLikeCount();
+    }, [fetchLikeCount]);
+
     // 좋아요 토글
     const toggleLike = async () => {
         if (!selectedItem?.id) return;
@@ -75,15 +94,15 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
 
         try {
             if (isLiked) {
-                // 좋아요 취소
-                await updateDoc(itemRef, { likeCount: increment(-1) });
+                // 좋아요 취소 - setDoc with merge로 문서 없어도 안전
+                await setDoc(itemRef, { likeCount: increment(-1) }, { merge: true });
                 const newLiked = likedItems.filter(id => id !== selectedItem.id);
                 localStorage.setItem(`liked_${collectionName}`, JSON.stringify(newLiked));
                 setIsLiked(false);
                 setLikeCount(prev => Math.max(0, prev - 1));
             } else {
-                // 좋아요 추가
-                await updateDoc(itemRef, { likeCount: increment(1) });
+                // 좋아요 추가 - setDoc with merge로 문서 없어도 생성
+                await setDoc(itemRef, { likeCount: increment(1) }, { merge: true });
                 likedItems.push(selectedItem.id);
                 localStorage.setItem(`liked_${collectionName}`, JSON.stringify(likedItems));
                 setIsLiked(true);
@@ -104,9 +123,10 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
                 userId: user.uid, userName: displayName, userPhoto: user.photoURL,
                 text: commentText.trim(), createdAt: Timestamp.now()
             });
-            await updateDoc(doc(db, collectionName, selectedItem.id), {
+            // setDoc with merge - 문서가 없어도 생성
+            await setDoc(doc(db, collectionName, selectedItem.id), {
                 commentCount: increment(1)
-            });
+            }, { merge: true });
             setNewComment('');
             // 즉시 댓글 리로드
             loadComments(selectedItem.id);
@@ -146,11 +166,91 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
         if (!confirm('댓글을 삭제할까요?')) return;
         try {
             await deleteDoc(doc(db, collectionName, selectedItem.id, 'comments', commentId));
-            await updateDoc(doc(db, collectionName, selectedItem.id), {
+            await setDoc(doc(db, collectionName, selectedItem.id), {
                 commentCount: increment(-1)
-            });
+            }, { merge: true });
             loadComments(selectedItem.id);
         } catch (err) { console.error('Comment delete error:', err); }
+    };
+
+    // 댓글 좋아요 토글
+    const toggleCommentLike = async (commentId) => {
+        if (!selectedItem?.id || !commentId) return;
+
+        const likedKey = `liked_comments_${collectionName}_${selectedItem.id}`;
+        const likedComments = JSON.parse(localStorage.getItem(likedKey) || '[]');
+        const isCommentLiked = likedComments.includes(commentId);
+        const commentRef = doc(db, collectionName, selectedItem.id, 'comments', commentId);
+
+        try {
+            if (isCommentLiked) {
+                await updateDoc(commentRef, { likeCount: increment(-1) });
+                const newLiked = likedComments.filter(id => id !== commentId);
+                localStorage.setItem(likedKey, JSON.stringify(newLiked));
+            } else {
+                await updateDoc(commentRef, { likeCount: increment(1) });
+                likedComments.push(commentId);
+                localStorage.setItem(likedKey, JSON.stringify(likedComments));
+            }
+            loadComments(selectedItem.id);
+        } catch (err) {
+            console.error('Comment like toggle error:', err);
+        }
+    };
+
+    // 댓글 좋아요 여부 확인
+    const isCommentLiked = (commentId) => {
+        if (!selectedItem?.id || !commentId) return false;
+        const likedKey = `liked_comments_${collectionName}_${selectedItem.id}`;
+        const likedComments = JSON.parse(localStorage.getItem(likedKey) || '[]');
+        return likedComments.includes(commentId);
+    };
+
+    // 대댓글 추가
+    const addReply = async (parentCommentId, replyText) => {
+        if (!user || !replyText?.trim() || !selectedItem?.id || !parentCommentId) return false;
+        const displayName = userNickname || user.displayName || '익명';
+        try {
+            await addDoc(collection(db, collectionName, selectedItem.id, 'comments', parentCommentId, 'replies'), {
+                userId: user.uid,
+                userName: displayName,
+                userPhoto: user.photoURL,
+                text: replyText.trim(),
+                createdAt: Timestamp.now(),
+                likeCount: 0
+            });
+            loadComments(selectedItem.id);
+            return true;
+        } catch (err) {
+            console.error('Add reply error:', err);
+            return false;
+        }
+    };
+
+    // 대댓글 로드 (개별 댓글용)
+    const loadReplies = async (commentId) => {
+        if (!selectedItem?.id || !commentId) return [];
+        try {
+            const q = query(
+                collection(db, collectionName, selectedItem.id, 'comments', commentId, 'replies'),
+                orderBy('createdAt', 'asc')
+            );
+            const snapshot = await getDocs(q);
+            return snapshot.docs.map(doc => ({ id: doc.id, parentId: commentId, ...doc.data() }));
+        } catch (err) {
+            console.error('Load replies error:', err);
+            return [];
+        }
+    };
+
+    // 대댓글 삭제
+    const deleteReply = async (commentId, replyId, replyUserId) => {
+        if (!user || user.uid !== replyUserId) return;
+        if (!confirm('대댓글을 삭제할까요?')) return;
+        try {
+            await deleteDoc(doc(db, collectionName, selectedItem.id, 'comments', commentId, 'replies', replyId));
+            loadComments(selectedItem.id);
+        } catch (err) { console.error('Reply delete error:', err); }
     };
 
     // 해석 로드 (꿈 해몽 전용)
@@ -222,6 +322,13 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
         cancelEditComment,
         deleteComment,
         loadComments,
+        // 댓글 좋아요
+        toggleCommentLike,
+        isCommentLiked,
+        // 대댓글
+        addReply,
+        loadReplies,
+        deleteReply,
         // 해석 (꿈 해몽 전용)
         interpretations,
         newInterpretation,

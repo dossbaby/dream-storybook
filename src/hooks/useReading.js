@@ -404,7 +404,7 @@ JSON만 반환:
 
   "shareText": "공유용 한 줄 (30자) - 구체적 디테일로 공유하고 싶게",
 
-  "imageStyle": "꿈 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙-악몽/공포), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), webtoon(클린/디지털/에픽), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 무서운/악몽은 mappa_dark, 평화로운 꿈은 ghibli/kyoani, 신비로운 꿈은 sciencesaru/cgi_gem 추천",
+  "imageStyle": "꿈 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙-악몽/공포), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 무서운/악몽은 mappa_dark, 평화로운 꿈은 ghibli/kyoani, 신비로운 꿈은 sciencesaru/cgi_gem 추천",
 
   "images": {
     "hero": "꿈을 꾼 사람의 심리와 감정을 시각화한 신비로운 장면. 꿈 내용에서 느껴지는 핵심 감정(두려움, 희망, 혼란, 그리움 등)을 추상적이고 감성적으로 표현. (스타일 prefix 없이 장면만 영어 50단어)",
@@ -659,8 +659,8 @@ conclusionCard는 반드시:
 
 ## JSON 형식으로만 반환:
 {
-  "title": "제목 (4-8글자)",
-  "verdict": "핵심 메시지 (20자 이내)",
+  "title": "질문에 대한 한줄 답변 (15-25자). 피드에서 질문과 함께 보여질 공감형 답변. 예: 질문 '그 사람 마음?' → 답변 '마음은 있어요, 근데 타이밍이...' / 질문 '이직해도 될까?' → 답변 '지금은 아닌데, 3개월 뒤엔 달라요' / 질문 '시험 붙을까요?' → 답변 '붙어요, 근데 방식이 중요해요' 형식으로 직접적 답변 + 궁금증 유발",
+  "verdict": "답변 뒤에 붙는 감성 한마디 (15자 이내). 공감/위로/응원 느낌. 예: '믿어도 돼요', '기다려봐요', '괜찮아질 거예요'",
   "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
   "topics": ["질문에 가장 맞는 주제 1-2개 선택 (사랑/관계/돈/성장/건강/선택/운세 중). 최대 2개까지. 예: 연애질문→['사랑'], 취업고민→['돈','선택'], 시험→['성장'], 애매하면→['운세']"],
 
@@ -704,14 +704,13 @@ conclusionCard는 반드시:
   "shortReading": "요약 (50자) - 못 보면 잠 못 잘 정도로 궁금하게. 구체적 디테일 포함.",
   "shareText": "공유용 (30자) - 구체적 디테일로 공유하고 싶게",
 
-  "imageStyle": "질문 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), webtoon(클린/디지털/에픽), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 연애/감성 질문은 shinkai/kyoani/shojo, 어두운/불안한 질문은 mappa_dark/trigger, 도전/변화 질문은 mappa_action/ufotable/webtoon, 신비/환상 질문은 ghibli/sciencesaru/cgi_gem 추천",
+  "imageStyle": "질문 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 연애/감성 질문은 shinkai/kyoani/shojo, 어두운/불안한 질문은 mappa_dark/trigger, 도전/변화 질문은 mappa_action/ufotable/persona5, 신비/환상 질문은 ghibli/sciencesaru/cgi_gem 추천",
 
   "images": {
     "hero": "질문자의 질문 '${question}'에서 느껴지는 감정과 심리를 시각화한 신비로운 장면. 질문의 본질적인 감정(기다림, 불안, 희망, 갈등 등)을 표현. (스타일 prefix 없이 장면만 영어 50단어)",
     "card1": "${card1.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
     "card2": "${card2.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
-    "card3": "${card3.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
-    "conclusion": "${conclusionCard.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)"
+    "card3": "${card3.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)"
   },
 
   "luckyElements": {
@@ -769,12 +768,8 @@ conclusionCard는 반드시:
 
             setProgress('✨ 세 번째 카드가 빛나고 있어요...');
             const card3Image = await generateSingleImage(data.images.card3, imageStyle, '', 'tarot');
-            await new Promise(r => setTimeout(r, 400));
 
-            setProgress('🌟 결론 카드가 운명처럼 나타나요...');
-            const conclusionImage = await generateSingleImage(data.images.conclusion, imageStyle, '', 'tarot');
-
-            // 이미지 생성 완료 - interval 정리
+            // 이미지 생성 완료 - interval 정리 (4장: hero + card1 + card2 + card3)
             clearInterval(imageInterval);
 
             // 8단계: 완료
@@ -788,7 +783,6 @@ conclusionCard는 반드시:
                 card1Image,
                 card2Image,
                 card3Image,
-                conclusionImage,
                 // 호환성을 위한 기존 필드
                 pastImage: card1Image,
                 presentImage: card2Image,
@@ -1017,7 +1011,7 @@ JSON만 반환:
   "shortReading": "요약 (50자) - 못 보면 잠 못 잘 정도로 궁금하게. 구체적 디테일 포함.",
   "shareText": "공유용 (30자) - 구체적 디테일로 공유하고 싶게",
 
-  "imageStyle": "사주 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), webtoon(클린/디지털/에픽), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 사주/운세는 주로 ghibli/shinkai/cgi_gem 추천, 강한 에너지 운세는 mappa_action/ufotable",
+  "imageStyle": "사주 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 사주/운세는 주로 ghibli/shinkai/cgi_gem 추천, 강한 에너지 운세는 mappa_action/ufotable",
 
   "images": {
     "hero": "사주 유형의 본질적 에너지를 시각화한 신비로운 장면. 동양적 사주/운명의 이미지 (스타일 prefix 없이 장면만 영어 50단어)",

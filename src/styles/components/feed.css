@@ -618,7 +618,13 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 0.5rem 0.25rem; /* 모바일 최적화 - 좁은 패딩 */
+}
+
+@media (min-width: 769px) {
+    .feed-view {
+        padding: 1rem;
+    }
 }
 
 /* 상단 CTA 영역 */
@@ -1340,6 +1346,235 @@
     100% { background-position: -200% 0; }
 }
 
+/* ========== 컴팩트 피드 (Reddit/Blind 스타일) - 최적화 ========== */
+.feed-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* 최소 간격 */
+}
+
+.feed-card-compact {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* divider 더 진하게 */
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.feed-card-compact:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.feed-card-compact:active {
+    background: rgba(155, 89, 182, 0.08);
+}
+
+/* 컴팩트 썸네일 */
+.compact-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(30, 25, 50, 0.8), rgba(20, 15, 40, 0.9));
+}
+
+.compact-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.compact-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    opacity: 0.6;
+}
+
+/* 컴팩트 콘텐츠 영역 */
+.compact-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* 컴팩트 카드 헤더 - 메타 정보 최소화 */
+.compact-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.compact-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    color: rgba(150, 150, 160, 0.6);
+}
+
+.compact-type-icon {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.compact-topic {
+    color: rgba(180, 160, 200, 0.5); /* 매우 연하게 */
+    font-weight: 400;
+}
+
+.compact-author {
+    opacity: 0.5;
+}
+
+.compact-time {
+    opacity: 0.4;
+}
+
+.compact-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    color: rgba(150, 150, 160, 0.5);
+}
+
+.compact-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.compact-cards {
+    display: flex;
+    gap: 0.1rem;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* 컴팩트 카드 제목(질문) - 가장 강조 */
+.compact-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--light);
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* Q&A 형식 - 질문 스타일 */
+.compact-question {
+    -webkit-line-clamp: 1;
+}
+
+/* Q&A 형식 - 답변 스타일 (심플하게) */
+.compact-answer {
+    font-size: 0.8rem;
+    color: rgba(180, 160, 220, 0.7);
+    line-height: 1.35;
+    margin: 0.1rem 0 0 0;
+    padding: 0;
+    background: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 컴팩트 카드 푸터 - 태그 덜 부각 */
+.compact-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.1rem;
+}
+
+.compact-tags {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+    overflow: hidden;
+}
+
+.compact-tag {
+    font-size: 0.65rem;
+    color: rgba(180, 160, 200, 0.45); /* 매우 연하게 */
+    padding: 0;
+    background: none;
+    white-space: nowrap;
+}
+
+.compact-tag::before {
+    content: '#';
+    opacity: 0.6;
+}
+
+.compact-tag:hover {
+    color: rgba(212, 165, 255, 0.7);
+}
+
+/* 컴팩트 카드 - 타입별 미세 차이 (덜 부각) */
+.feed-card-compact.tarot-card .compact-topic {
+    color: rgba(212, 165, 255, 0.45);
+}
+
+.feed-card-compact.dream-card .compact-topic {
+    color: rgba(162, 155, 254, 0.45);
+}
+
+.feed-card-compact.fortune-card .compact-topic {
+    color: rgba(255, 234, 167, 0.4);
+}
+
+.feed-card-compact.fortune-card .compact-tag {
+    color: rgba(255, 234, 167, 0.4);
+}
+
+/* 피드 뷰 모드 토글 */
+.feed-view-toggle {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.feed-view-toggle button {
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.feed-view-toggle button.active {
+    background: rgba(155, 89, 182, 0.2);
+    color: var(--light);
+}
+
+.feed-view-toggle button:hover:not(.active) {
+    color: var(--light);
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .feed-cta {
@@ -1362,6 +1597,35 @@
 
     .skeleton-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* 모바일에서 컴팩트 뷰 기본 */
+    .feed-view-toggle {
+        display: none;
+    }
+
+    /* 모바일 컴팩트 최적화 - 더 조밀하게 */
+    .feed-compact .feed-card-compact {
+        padding: 0.65rem 0.75rem;
+        gap: 0.6rem;
+    }
+
+    .compact-thumb {
+        width: 48px;
+        height: 48px;
+    }
+
+    .compact-title {
+        font-size: 0.88rem;
+        -webkit-line-clamp: 2;
+    }
+
+    .compact-meta {
+        font-size: 0.62rem;
+    }
+
+    .compact-tag {
+        font-size: 0.6rem;
     }
 }
 

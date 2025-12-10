@@ -320,9 +320,6 @@ const MyPage = ({
                             <span className={`usage-chip ${!usageSummary.saju.canUse ? 'depleted' : ''}`}>
                                 🔮 {usageSummary.saju.remaining}/{usageSummary.saju.limit}
                             </span>
-                            <button className="upgrade-chip" onClick={() => onOpenPremium?.('usage')}>
-                                👑 무제한
-                            </button>
                         </div>
                     )}
                     <div className="my-quick-links">

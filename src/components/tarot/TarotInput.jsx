@@ -112,7 +112,7 @@ const TarotInput = ({
             }
 
             // ellipse 크기 - 화면 높이 기반 (노트북 대응)
-            if (height <= 768) {
+            if (height <= 800) {
                 setEllipseHeight(90);
                 setEllipseWidthRatio(0.35);
             } else if (height <= 900) {
