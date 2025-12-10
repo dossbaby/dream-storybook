@@ -5,15 +5,18 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: var(--bottom-nav-height);
+    height: 64px; /* 고정 높이 - iOS 스크롤 시 squish 방지 */
+    min-height: 64px;
+    max-height: 64px;
     background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-bottom: var(--safe-area-bottom);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: var(--z-sticky);
     justify-content: space-around;
     align-items: center;
+    flex-shrink: 0;
 }
 
 /* 모바일에서만 표시 */
@@ -35,7 +38,8 @@
     justify-content: center;
     gap: 2px;
     flex: 1;
-    height: 100%;
+    height: 64px;
+    min-height: 64px;
     background: transparent;
     border: none;
     color: var(--light-gray);
@@ -43,8 +47,8 @@
     transition: var(--transition-fast);
     -webkit-tap-highlight-color: transparent;
     min-width: var(--touch-target-min);
-    min-height: var(--touch-target-min);
     padding: 8px 0;
+    flex-shrink: 0;
 }
 
 .bottom-nav-item:active {
@@ -188,6 +192,10 @@
     justify-content: center;
     width: 48px;
     height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    aspect-ratio: 1;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #9b59b6 0%, #e056fd 100%);
     border-radius: 50%;
     font-size: 1.3rem;
@@ -356,6 +364,13 @@
 @media (max-width: 768px) and (orientation: landscape) {
     .bottom-nav {
         height: 52px;
+        min-height: 52px;
+        max-height: 52px;
+    }
+
+    .bottom-nav-item {
+        height: 52px;
+        min-height: 52px;
     }
 
     .bottom-nav-icon {
