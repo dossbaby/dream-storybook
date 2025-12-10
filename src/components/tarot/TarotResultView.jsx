@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useComments } from '../../hooks/useComments';
+import Reactions from '../common/Reactions';
 
 // 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
@@ -10,6 +11,38 @@ const FALLBACK_INSIGHTS = [
 
 // 카드 위치별 라벨 (간결하게)
 const CARD_LABELS = ['첫 번째', '두 번째', '세 번째'];
+
+// 주제별 이모지 매핑
+const TOPIC_EMOJIS = {
+    '사랑': '💕',
+    '관계': '🙌',
+    '돈': '💰',
+    '성장': '🌱',
+    '건강': '💪',
+    '선택': '⚖️',
+    '일반': '💬'
+};
+
+// **bold** 마크다운을 무지개 그라디언트 span으로 변환하는 헬퍼
+const parseBoldText = (text) => {
+    if (!text) return null;
+
+    // **text** 패턴을 찾아서 분리
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+
+    return parts.map((part, index) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            // bold 텍스트 - 무지개 그라디언트 적용
+            const boldText = part.slice(2, -2);
+            return (
+                <span key={index} className="reading-highlight">
+                    {boldText}
+                </span>
+            );
+        }
+        return part;
+    });
+};
 
 // 시간 포맷팅 헬퍼
 const formatTimeAgo = (date) => {
@@ -72,11 +105,14 @@ const TarotResultView = ({
     const sectionRefs = useRef([]);
     const cardBarRef = useRef(null);
 
-    // 엔게이지먼트 시스템 (좋아요/댓글)
+    // 엔게이지먼트 시스템 (좋아요/댓글/리액션)
     const {
         isLiked,
         likeCount,
         toggleLike,
+        reactions,
+        userReactions,
+        toggleReaction,
         comments,
         newComment,
         setNewComment,
@@ -387,20 +423,32 @@ const TarotResultView = ({
                         <span className="reading-type-badge">🔮 타로 리딩</span>
                         <h1 className="reading-title">{tarotResult.title}</h1>
                         <p className="reading-verdict">"{tarotResult.verdict}"</p>
-                        {/* 키워드 태그 - hero 안에 배치 */}
-                        {tarotResult.keywords?.length > 0 && (
-                            <div className="hero-keywords">
-                                {tarotResult.keywords.slice(0, 3).map((kw, i) => (
+                        {/* 주제 + 키워드 태그 - hero 안에 배치 */}
+                        <div className="hero-tags-row">
+                            {/* 주제 태그 (왼쪽) */}
+                            {(() => {
+                                const topic = (tarotResult.topics || [tarotResult.topic])[0];
+                                if (!topic) return null;
+                                return (
                                     <span
-                                        key={i}
-                                        className="hero-keyword-tag"
-                                        onClick={() => onKeywordClick?.(kw.word)}
+                                        className="hero-topic-tag"
+                                        onClick={() => onKeywordClick?.(topic)}
                                     >
-                                        #{kw.word}
+                                        {TOPIC_EMOJIS[topic] || '💬'} {topic}
                                     </span>
-                                ))}
-                            </div>
-                        )}
+                                );
+                            })()}
+                            {/* 키워드 태그들 */}
+                            {tarotResult.keywords?.length > 0 && tarotResult.keywords.slice(0, 3).map((kw, i) => (
+                                <span
+                                    key={i}
+                                    className="hero-keyword-tag"
+                                    onClick={() => onKeywordClick?.(kw.word)}
+                                >
+                                    #{kw.word}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 {/* 히어로 하단 divider */}
@@ -538,9 +586,9 @@ const TarotResultView = ({
                                         {isConclusion ? '운명이 전하는 메시지' : `${CARD_LABELS[i]} 카드가 말하는 것`}
                                     </h2>
 
-                                    <div className="chapter-text">
+                                    <div className="chapter-text reading-text">
                                         {analyses[i]?.split('\n').map((line, j) => (
-                                            <p key={j}>{line}</p>
+                                            <p key={j} className="reading-paragraph">{parseBoldText(line)}</p>
                                         ))}
                                     </div>
 
@@ -556,7 +604,7 @@ const TarotResultView = ({
                                     {isConclusion && jenny.definitiveAnswer && (
                                         <div className="chapter-answer">
                                             <span className="answer-badge">✨ 최종 답변</span>
-                                            <p className="answer-text">{jenny.definitiveAnswer}</p>
+                                            <p className="answer-text reading-paragraph">{parseBoldText(jenny.definitiveAnswer)}</p>
                                         </div>
                                     )}
                                 </div>
@@ -573,7 +621,7 @@ const TarotResultView = ({
                             </h2>
                             <div className="synthesis-text reading-text">
                                 {storyReading.synthesis.split('\n').map((line, i) => (
-                                    <p key={i} className="reading-paragraph">{line}</p>
+                                    <p key={i} className="reading-paragraph">{parseBoldText(line)}</p>
                                 ))}
                             </div>
                         </div>
@@ -605,10 +653,10 @@ const TarotResultView = ({
                                         <span className="section-icon">🌌</span>
                                         평행우주가 보낸 신호
                                     </h2>
-                                    <div className="insight-content">
-                                        <p className="insight-text reading-text">{hiddenInsight}</p>
+                                    <div className="insight-content reading-text">
+                                        <p className="insight-text reading-paragraph">{parseBoldText(hiddenInsight)}</p>
                                         {jenny.hiddenInsightDetail && (
-                                            <p className="insight-detail">{jenny.hiddenInsightDetail}</p>
+                                            <p className="insight-detail reading-paragraph">{parseBoldText(jenny.hiddenInsightDetail)}</p>
                                         )}
                                     </div>
                                 </div>
@@ -719,6 +767,24 @@ const TarotResultView = ({
                                 <span className="like-ripple"></span>
                             </button>
                             <span className="like-count">{likeCount}</span>
+                        </div>
+
+                        {/* 구분선 */}
+                        <div className="engagement-divider"></div>
+
+                        {/* 이모지 리액션 */}
+                        <div className="engagement-reactions-section">
+                            <Reactions
+                                reactions={reactions}
+                                userReactions={userReactions}
+                                onReact={(reactionId) => {
+                                    if (!user) {
+                                        onLoginRequired?.();
+                                        return;
+                                    }
+                                    toggleReaction(reactionId);
+                                }}
+                            />
                         </div>
 
                         {/* 구분선 */}

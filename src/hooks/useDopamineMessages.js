@@ -116,10 +116,46 @@ JSON만 반환 (messages는 25개):
                 .replace(/```\n?/g, "")
                 .trim();
 
-            const result = JSON.parse(cleanText);
-            console.log('✅ Dopamine messages generated:', result.messages?.length);
-
-            return result;
+            // JSON 파싱 시도 - 실패 시 기본 메시지 반환
+            try {
+                const result = JSON.parse(cleanText);
+                console.log('✅ Dopamine messages generated:', result.messages?.length);
+                return result;
+            } catch (parseError) {
+                console.warn('JSON 파싱 실패, 기본 메시지 사용:', parseError.message);
+                // 기본 도파민 메시지 반환
+                return {
+                    emotionPhrase: '당신의 질문을 읽고 있어요...',
+                    keywords: [],
+                    messages: [
+                        '질문을 받았어요... 흥미로운 느낌이 들어요',
+                        '음... 뭔가 보이기 시작하는데요',
+                        '카드가 반응하고 있어요',
+                        '당신의 마음이 느껴져요',
+                        '잠시만요, 뭔가 특별한 게 있어요',
+                        '카드가 천천히 열리고 있어요...',
+                        '숨겨진 메시지가 보이기 시작해요',
+                        '이건... 예상 밖이에요',
+                        '흥미로운 패턴이 나타나고 있어요',
+                        '당신의 상황이 점점 선명해져요',
+                        '카드가 더 많은 걸 말해주고 있어요',
+                        '잠깐, 여기 중요한 게 있어요',
+                        '깊이 들어가볼게요...',
+                        '이 부분은 주의 깊게 봐야 해요',
+                        '연결고리가 보이기 시작해요',
+                        '뭔가 의미 있는 게 나오고 있어요',
+                        '흥미롭네요... 이건 좀 특별해요',
+                        '패턴이 완성되어 가고 있어요',
+                        '전체 그림이 맞춰지고 있어요',
+                        '거의 다 봤어요...',
+                        '마지막 조각을 맞추는 중이에요',
+                        '중요한 메시지를 정리하고 있어요',
+                        '곧 다 보여드릴게요',
+                        '마무리하고 있어요...',
+                        '결과가 거의 완성됐어요!'
+                    ]
+                };
+            }
         } catch (err) {
             console.error('도파민 메시지 생성 실패:', err);
             return null;

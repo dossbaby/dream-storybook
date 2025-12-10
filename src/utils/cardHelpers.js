@@ -95,7 +95,7 @@ export const generateShareText = (target, dreamTypes = {}) => {
 
     if (target.type === 'tarot') {
         const cardEmojis = target.cards?.map(c => c.emoji).join(' ') || '';
-        return `🃏 ${target.title}\n"${target.verdict}"\n\n${cardEmojis}\n\n행운의 색: ${target.luckyElements?.color || ''}\n행운의 숫자: ${target.luckyElements?.number || ''}\n\n#타로 #타로리딩 #운명`;
+        return `🔮 ${target.title}\n"${target.verdict}"\n\n${cardEmojis}\n\n행운의 색: ${target.luckyElements?.color || ''}\n행운의 숫자: ${target.luckyElements?.number || ''}\n\n#타로 #타로리딩 #운명`;
     }
 
     if (target.type === 'fortune') {

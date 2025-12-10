@@ -7,17 +7,17 @@ import './AnalysisOverlay.css';
  * VN Intro 스타일과 통일:
  * - 상단: 도파민 메시지 (리디바탕, 금색/보라 번갈아가며)
  * - 중앙: Pulsing circle + 단계별 이모지 (glacial blue/purple)
- * - 하단: 단계 circle + 안내 텍스트
+ * - 하단: 실시간 진행률 + 단계 circle + 안내 텍스트
  */
 
-// 단계별 이모지와 색상 (analysisPhase 1-8에 매핑)
+// 단계별 이모지와 색상 (analysisPhase 1-8에 매핑) - 더 신비로운 메시지
 // 1: 시작, 2-5: 분석, 6: API완료, 7: 이미지생성, 8: 완료
 const PHASE_CONFIG = [
-    { emoji: '🌙', colors: ['#9b59b6', '#6c5ce7'], label: '질문을 읽고 있어요' },           // analysisPhase 1-2
-    { emoji: '🔮', colors: ['#667eea', '#764ba2'], label: '카드를 해석하고 있어요' },       // analysisPhase 3-5
-    { emoji: '✨', colors: ['#00d9ff', '#9b59b6'], label: '통찰을 정리하고 있어요' },       // analysisPhase 6
-    { emoji: '🎨', colors: ['#a29bfe', '#6c5ce7'], label: '이미지를 그리고 있어요' },       // analysisPhase 7
-    { emoji: '💫', colors: ['#ffd700', '#9b59b6'], label: '결과를 준비하고 있어요' },       // analysisPhase 8
+    { emoji: '🌙', colors: ['#9b59b6', '#6c5ce7'], label: '운명의 실이 엮이고 있어요' },           // analysisPhase 1-2
+    { emoji: '🔮', colors: ['#667eea', '#764ba2'], label: '카드가 당신의 이야기를 읽고 있어요' },  // analysisPhase 3-5
+    { emoji: '✨', colors: ['#00d9ff', '#9b59b6'], label: '우주가 답을 속삭이고 있어요' },         // analysisPhase 6
+    { emoji: '🎨', colors: ['#a29bfe', '#6c5ce7'], label: '당신의 운명이 그림으로 피어나요' },     // analysisPhase 7
+    { emoji: '💫', colors: ['#ffd700', '#9b59b6'], label: '별들이 마지막 축복을 내려요' },         // analysisPhase 8
 ];
 
 // analysisPhase(1-8)를 circle stage(0-4)로 매핑
@@ -36,7 +36,9 @@ const AnalysisOverlay = memo(({
     isComplete = false,
     phase = 1, // 1: Hook, 2: 순환, 3: 완료
     analysisPhase = 1, // 실제 분석 단계 (1-8)
-    onBrowseWhileWaiting // "알림 받고 둘러보기" 콜백
+    smoothProgress = 0, // 부드러운 진행률 (0-100)
+    isProgressComplete = false, // 진행 완료 여부
+    onBrowseWhileWaiting // "분석이 끝나면 알림받기" 콜백
 }) => {
     const [displayText, setDisplayText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -182,17 +184,31 @@ const AnalysisOverlay = memo(({
                 ))}
             </div>
 
-            {/* 하단 안내 텍스트 - VN 스타일 opacity */}
+            {/* 하단 안내 텍스트 - 실시간 진행률 표시 */}
             <div className="analysis-bottom-hint">
-                <span>{isComplete ? '결과를 준비하고 있어요...' : currentConfig.label}</span>
+                <span className="hint-label">
+                    {isProgressComplete ? '✨ 분석 완료' : currentConfig.label}
+                </span>
+                {/* 진행률 % 표시 - 100% 완료 시 숨김 */}
+                {!isProgressComplete && smoothProgress < 100 && (
+                    <span className="hint-progress">
+                        {smoothProgress}%
+                    </span>
+                )}
             </div>
 
-            {/* 알림 받고 둘러보기 버튼 */}
+            {/* 소요 시간 안내 서브타이틀 */}
+            {!isProgressComplete && (
+                <div className="analysis-subtitle">
+                    AI가 정밀하게 해석 중이에요 · 최대 3분 소요
+                </div>
+            )}
+
+            {/* 분석이 끝나면 알림받기 버튼 */}
             {onBrowseWhileWaiting && !isComplete && (
                 <button className="browse-while-waiting-btn" onClick={onBrowseWhileWaiting}>
-                    <span className="btn-icon">📰</span>
-                    <span className="btn-text">알림 받고 둘러보기</span>
-                    <span className="btn-hint">피드 구경하기</span>
+                    <span className="btn-icon">🔔</span>
+                    <span className="btn-text">분석이 끝나면 알림받기</span>
                 </button>
             )}
         </div>

@@ -49,8 +49,8 @@ const getZodiacSign = (birthDate) => {
     return null;
 };
 
-// 나이 계산 함수
-const calculateAge = (birthDate) => {
+// 나이 계산 함수 - AI가 해석에 참고하되 리딩에서 직접 언급하지 않음
+const getAge = (birthDate) => {
     if (!birthDate) return null;
     const today = new Date();
     const birth = new Date(birthDate);
@@ -74,25 +74,29 @@ const getFirstName = (fullName) => {
 };
 
 // 공통 프로필 정보 블록 생성 (꿈/타로/사주 공통)
-const buildProfileBlock = (userProfile, readingType) => {
-    if (!userProfile || Object.keys(userProfile).length === 0) {
+// nickname을 우선 사용, 없으면 name에서 성 제외한 이름 사용
+const buildProfileBlock = (userProfile, readingType, userNickname = null) => {
+    // 닉네임이 있으면 우선 사용
+    const displayName = userNickname || getFirstName(userProfile?.name) || null;
+
+    if ((!userProfile || Object.keys(userProfile).length === 0) && !displayName) {
         return `
 ## 호칭 규칙
 - 프로필 정보 없음 → "당신" 사용
 `;
     }
 
-    const fullName = userProfile.name || null;
-    const firstName = getFirstName(fullName);  // 성 제외한 이름
-    const birthDate = userProfile.birthDate || null;
-    const birthTime = userProfile.birthTime || null;
-    const gender = userProfile.gender || null;
-    const mbti = userProfile.mbti || null;
+    const fullName = userProfile?.name || null;
+    const firstName = displayName;  // 닉네임 우선, 없으면 성 제외한 이름
+    const birthDate = userProfile?.birthDate || null;
+    const birthTime = userProfile?.birthTime || null;
+    const gender = userProfile?.gender || null;
+    const mbti = userProfile?.mbti || null;
     const zodiac = getZodiacSign(birthDate);
-    const age = calculateAge(birthDate);
+    const age = getAge(birthDate);
 
-    // 프로필 정보가 하나도 없으면 기본 호칭
-    if (!fullName && !birthDate && !gender && !mbti) {
+    // 프로필 정보가 하나도 없고 닉네임도 없으면 기본 호칭
+    if (!firstName && !birthDate && !gender && !mbti) {
         return `
 ## 호칭 규칙
 - 프로필 정보 없음 → "당신" 사용
@@ -120,7 +124,8 @@ const buildProfileBlock = (userProfile, readingType) => {
     profileBlock += `
 ⚠️ 프로필 활용 규칙:
 - 이름이 있으면 "${firstName || 'OO'}님"으로 호칭 ("당신" 대신)
-- 별자리/MBTI/나이는 전체 리딩에서 1-2번만 자연스럽게 언급 (매 카드마다 반복 금지!)
+- 별자리/MBTI는 전체 리딩에서 1-2번만 자연스럽게 언급 (매 카드마다 반복 금지!)
+- 나이는 해석에 참고하되 "OO세", "OO대" 등 직접 언급 금지 (프라이버시 보호)
 - 억지로 끼워넣지 말고, 맥락에 맞을 때만 활용`;
 
     if (readingType === 'fortune') {
@@ -150,6 +155,7 @@ const buildProfileBlock = (userProfile, readingType) => {
 export const useReading = ({
     user,
     userProfile = {},
+    userNickname = null,  // 닉네임 (리딩 호칭에 우선 사용)
     tier = 'free',  // 'free' | 'premium' | 'ultra'
     dreamTypes,
     onSaveDream,
@@ -164,6 +170,7 @@ export const useReading = ({
     const [error, setError] = useState('');
     const [progress, setProgress] = useState('');
     const [analysisPhase, setAnalysisPhase] = useState(0);
+    const [imageProgress, setImageProgress] = useState({ current: 0, total: 5 }); // 이미지 생성 진행률
 
     const { generateSingleImage } = useImageGeneration(tier);
 
@@ -300,7 +307,7 @@ export const useReading = ({
             const existingTypesList = Object.entries(dreamTypes).map(([key, val]) => `${key}(${val.name})`).join(', ');
 
             // 프로필 정보 블록 생성
-            const profileBlock = buildProfileBlock(userProfile, 'dream');
+            const profileBlock = buildProfileBlock(userProfile, 'dream', userNickname);
 
             // 티어별 글자 수 설정
             const dreamSummaryLen = getContentLength('dream', 'summary', tier);
@@ -406,6 +413,8 @@ JSON만 반환:
 
   "imageStyle": "꿈 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙-악몽/공포), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 무서운/악몽은 mappa_dark, 평화로운 꿈은 ghibli/kyoani, 신비로운 꿈은 sciencesaru/cgi_gem 추천",
 
+  "colorPalette": "🎨 이 꿈만의 고유한 2색 그라디언트를 영어로 작성. 꿈의 내용, 해석, 숨겨진 감정의 뉘앙스(두려움과 희망의 비율, 긴장감, 평온함의 정도 등)를 분석하여 이 꿈에만 어울리는 창의적 색상 조합 선택. '무서운 꿈=빨강' 같은 공식 금지! 매번 완전히 다른 조합 필수. 형식: 'color1 and color2' (예: 'dusty lavender and warm amber')",
+
   "images": {
     "hero": "꿈을 꾼 사람의 심리와 감정을 시각화한 신비로운 장면. 꿈 내용에서 느껴지는 핵심 감정(두려움, 희망, 혼란, 그리움 등)을 추상적이고 감성적으로 표현. (스타일 prefix 없이 장면만 영어 50단어)",
     "character": "캐릭터 외모 (영어 40단어)",
@@ -454,9 +463,10 @@ JSON만 반환:
             const detailedAnalysisPromise = generateDetailedAnalysis(data, dreamDescription);
             const characterDesc = data.images.character;
 
-            // Claude가 선택한 이미지 스타일 (없으면 기본값)
+            // Claude가 선택한 이미지 스타일과 색상 팔레트 (없으면 기본값)
             const imageStyle = data.imageStyle || 'shinkai';
-            console.log(`🎨 Dream Image Style: ${imageStyle}`);
+            const colorPalette = data.colorPalette || '';
+            console.log(`🎨 Dream Image Style: ${imageStyle}, Colors: ${colorPalette || 'default'}`);
 
             // 프로필 기반 인물 설명 생성 (꿈)
             const getDreamPersonDesc = () => {
@@ -466,24 +476,25 @@ JSON만 반환:
             };
             const dreamPersonDesc = getDreamPersonDesc();
 
-            // 히어로 이미지 (프로필이 있으면 인물 중심, 없으면 기존 프롬프트) - dreamImage와 별도
-            // dreamPersonDesc는 프로필 정보 유지, 색상은 Claude가 자유롭게 결정
+            // 히어로 이미지 - Claude 생성 프롬프트 그대로 사용 (스타일 일관성 유지)
+            // 성별 정보는 프롬프트 뒤에 추가하여 스타일 prefix가 우선 적용되도록 함
+            const dreamHeroBasePrompt = data.images.hero || 'surreal dreamscape, surrounded by symbolic dream imagery. Ethereal mist and soft moonlight. Subconscious emotions visualized as floating elements. Mystical atmosphere, cinematic composition';
             const dreamHeroPrompt = userProfile?.gender
-                ? `${dreamPersonDesc} in a surreal dreamscape, surrounded by symbolic dream imagery. Ethereal mist and soft moonlight. Subconscious emotions visualized as floating elements around them. Mystical atmosphere, cinematic composition`
-                : data.images.hero;
-            const heroImage = await generateSingleImage(dreamHeroPrompt, imageStyle, characterDesc, 'dream');
+                ? `${dreamHeroBasePrompt}. The dreamer is ${dreamPersonDesc}.`
+                : dreamHeroBasePrompt;
+            const heroImage = await generateSingleImage(dreamHeroPrompt, imageStyle, characterDesc, 'dream', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('🎨 당신의 꿈이 그림으로 피어나고 있어요...');
-            const dreamImage = await generateSingleImage(data.images.dream, imageStyle, characterDesc, 'dream');
+            const dreamImage = await generateSingleImage(data.images.dream, imageStyle, characterDesc, 'dream', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('🃏 우주의 카드가 펼쳐지고 있어요...');
-            const tarotImage = await generateSingleImage(data.images.tarot, imageStyle, characterDesc, 'dream');
+            const tarotImage = await generateSingleImage(data.images.tarot, imageStyle, characterDesc, 'dream', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('✨ 꿈 속 비밀이 드러나고 있어요...');
-            const meaningImage = await generateSingleImage(data.images.meaning, imageStyle, characterDesc, 'dream');
+            const meaningImage = await generateSingleImage(data.images.meaning, imageStyle, characterDesc, 'dream', colorPalette);
 
             const detailedAnalysis = await detailedAnalysisPromise;
 
@@ -572,16 +583,30 @@ JSON만 반환:
             const conclusionCard = remainingCards[Math.floor(Math.random() * remainingCards.length)];
 
             // 프로필 정보 블록 생성
-            const profileBlock = buildProfileBlock(userProfile, 'tarot');
+            const profileBlock = buildProfileBlock(userProfile, 'tarot', userNickname);
 
             // 티어별 글자 수 설정
             const tarotCardLen = getContentLength('tarot', 'cardAnalysis', tier);
             const tarotConclusionLen = getContentLength('tarot', 'conclusion', tier);
             const tarotHiddenLen = getContentLength('tarot', 'hiddenInsight', tier);
 
+            // 현재 날짜/시간 컨텍스트 생성
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth() + 1;
+            const currentDay = now.getDate();
+            const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+            const dateContext = `📅 오늘 날짜: ${currentYear}년 ${currentMonth}월 ${currentDay}일 (${dayOfWeek}요일)
+- 이 질문은 오늘 이 시점에서 물어본 것입니다
+- 시기를 언급할 때 반드시 오늘 날짜 기준으로 과거/현재/미래를 구분하세요
+- 예: 오늘이 12월이면 "8월"은 과거이므로 "그때는 ~했을 거예요" / "내년 2월"은 미래이므로 "~할 거예요"
+- 올해가 거의 끝나가는 시점이면 "올해" 관련 질문에 대해 남은 기간을 고려하세요`;
+
             // MrBeast + Jenny Hoyos 텍스트 도파민 기반 프롬프트 (dopamine-prompt-guide.md 완전 반영)
             const tarotPrompt = `너는 30년 경력의 신비로운 타로 마스터다. 카드 리딩을 할 때 단순한 해석이 아니라 그 사람의 인생 이야기를 들려주듯이 깊고 감동적으로 풀어낸다.
 ${profileBlock}
+
+${dateContext}
 
 ###### 🚨🚨🚨 최우선 규칙: 카드 분석 길이 🚨🚨🚨
 각 카드 분석(card1Analysis, card2Analysis, card3Analysis)은 반드시:
@@ -662,7 +687,7 @@ conclusionCard는 반드시:
   "title": "질문에 대한 한줄 답변 (15-25자). 피드에서 질문과 함께 보여질 공감형 답변. 예: 질문 '그 사람 마음?' → 답변 '마음은 있어요, 근데 타이밍이...' / 질문 '이직해도 될까?' → 답변 '지금은 아닌데, 3개월 뒤엔 달라요' / 질문 '시험 붙을까요?' → 답변 '붙어요, 근데 방식이 중요해요' 형식으로 직접적 답변 + 궁금증 유발",
   "verdict": "답변 뒤에 붙는 감성 한마디 (15자 이내). 공감/위로/응원 느낌. 예: '믿어도 돼요', '기다려봐요', '괜찮아질 거예요'",
   "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
-  "topics": ["질문에 가장 맞는 주제 1-2개 선택 (사랑/관계/돈/성장/건강/선택/운세 중). 최대 2개까지. 예: 연애질문→['사랑'], 취업고민→['돈','선택'], 시험→['성장'], 애매하면→['운세']"],
+  "topics": ["질문에 가장 맞는 주제 딱 1개만 선택 (사랑/관계/돈/성장/건강/선택/일반 중). 반드시 1개! 예: 연애→'사랑', 대인관계→'관계', 취업/돈→'돈', 시험/자기계발→'성장', 건강→'건강', 결정/선택→'선택', 그 외 모든 것→'일반'"],
 
   "jenny": {
     "hook": "⚠️질문자가 '뭐야 이거?' 하고 멈출 수밖에 없는 첫 마디. 답 먼저 + 반전 구조. 군더더기 없이. ❌금지: 희귀도/카드조합/숫자 절대 금지! 🚨매번 완전히 다른 시작 필수! 예시는 참고만, 그대로 복사 금지! 느낌만 살려서 창의적으로: 연애→답/결과 먼저 + '근데' 반전 / 금전→방향 제시 + 예상 밖 루트 / 직장→결정 방향 + 숨은 이유 / 결정→답 + 의외의 전개. 시작어도 매번 다르게(OO님~/잠깐요~/먼저요~/글쎄요~ 등 다양하게)",
@@ -673,7 +698,7 @@ conclusionCard는 반드시:
       "title": "숨겨진 진실",
       "message": "반전 메시지 (80자) - 결론 카드에서 발견한 예상치 못한 인사이트. 문장 끝 반전 필수. 구체적 디테일 포함. 매번 새로운 통찰!"
     },
-    "hiddenInsight": "🚨반드시 \${tarotHiddenLen}자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가정보/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/감정) 3)예상 못한 추가 4-5문장(질문 외 정보) 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수!",
+    "hiddenInsight": "🚨반드시 \${tarotHiddenLen}자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가정보/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/감정) 3)예상 못한 추가 4-5문장(질문 외 정보) 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수! ⭐가장 놀라운 인사이트/이름힌트/시기 등 핵심 3-4개는 **bold** 처리!",
     "shareHook": "공유 유도 - 매번 다르게! (느낌: 드문 조합/신기하면/대박이면 공유 등)"
   },
 
@@ -690,27 +715,30 @@ conclusionCard는 반드시:
   ],
 
   "storyReading": {
-    "opening": "도입부 (200자 이상) - jenny.hook을 자연스럽게 녹여서 시작. 질문 뒤 숨은 심리 짚기. 🚨매번 완전히 다른 도입! 예시 복사 금지! 느낌: 질문자 심리 읽기 + 공감 + 답을 알려주겠다는 암시. 창의적으로!",
-    "card1Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! 이것보다 짧으면 실패! 구조: 1)현재 상황/배경 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용. 문장마다 줄바꿈 없이 이어서 작성.",
-    "card2Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전/디테일 2-3문장. 말투 친근하게.",
-    "card3Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드/반전 2-3문장. 말투 친근하게.",
-    "conclusionCard": "🚨반드시 \${tarotConclusionLen}자 이상 작성! 결론 카드는 가장 길고 감동적이어야 함! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. 말투 친근하게.",
-    "synthesis": "🚨종합 메시지 (500자 이상) - 4장의 카드가 함께 말하는 것. EXCEED expectations! 확정 답 3-4문장 + Twist 4-5문장 + 핵심 조언 3-4문장 + 구체적 타이밍/행동 2-3문장. 질문에 대한 답을 넘어서 기대 이상의 가치를 주세요.",
+    "opening": "도입부 (200자 이상) - jenny.hook을 자연스럽게 녹여서 시작. 질문 뒤 숨은 심리 짚기. 🚨매번 완전히 다른 도입! 예시 복사 금지! 느낌: 질문자 심리 읽기 + 공감 + 답을 알려주겠다는 암시. 창의적으로! ⭐핵심 인사이트 1-2개는 **bold** 처리!",
+    "card1Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! 이것보다 짧으면 실패! 구조: 1)현재 상황/배경 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용. 문장마다 줄바꿈 없이 이어서 작성. ⭐가장 중요한 핵심 메시지 2-3개는 **bold** 처리! (예: **지금 기다리고 있는 건 확신이에요**, **이미 답을 알고 계시잖아요**)",
+    "card2Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전/디테일 2-3문장. 말투 친근하게. ⭐핵심 반전/인사이트 2-3개는 **bold** 처리!",
+    "card3Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드/반전 2-3문장. 말투 친근하게. ⭐미래 예측/시기 힌트 등 핵심 2-3개는 **bold** 처리!",
+    "conclusionCard": "🚨반드시 \${tarotConclusionLen}자 이상 작성! 결론 카드는 가장 길고 감동적이어야 함! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. 말투 친근하게. ⭐결론/답변/감동적인 문장 3-4개는 **bold** 처리!",
+    "synthesis": "🚨종합 메시지 (500자 이상) - 4장의 카드가 함께 말하는 것. EXCEED expectations! 확정 답 3-4문장 + Twist 4-5문장 + 핵심 조언 3-4문장 + 구체적 타이밍/행동 2-3문장. 질문에 대한 답을 넘어서 기대 이상의 가치를 주세요. ⭐최종 결론/핵심 조언 2-3개는 **bold** 처리!",
     "actionAdvice": "구체적 행동 조언 (150자 이상) - 오늘/이번 주에 실제로 할 수 있는 것. 구체적인 시간, 장소, 행동 포함.",
-    "warning": "주의할 점 (100자) - 반드시 피해야 할 것",
-    "timing": "행운의 타이밍 (80자) - 구체적 시기/상황/조건"
+    "warning": "주의할 점 (100자) - 반드시 피해야 할 것.",
+    "timing": "행운의 타이밍 (80자) - 구체적 시기/상황/조건."
   },
 
   "shortReading": "요약 (50자) - 못 보면 잠 못 잘 정도로 궁금하게. 구체적 디테일 포함.",
   "shareText": "공유용 (30자) - 구체적 디테일로 공유하고 싶게",
 
-  "imageStyle": "질문 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 연애/감성 질문은 shinkai/kyoani/shojo, 어두운/불안한 질문은 mappa_dark/trigger, 도전/변화 질문은 mappa_action/ufotable/persona5, 신비/환상 질문은 ghibli/sciencesaru/cgi_gem 추천",
+  "imageStyle": "🎨 질문 분위기에 맞는 스타일 키를 아래 12개 중에서 **반드시 1개만** 선택 (매번 다른 스타일을 선택하세요! 다양성 중요!): shinkai / kyoani / ghibli / mappa_dark / mappa_action / ufotable / trigger / sciencesaru / shojo / persona5 / cgi_gem / minimalist. 🎯선택 가이드: 연애/설렘→kyoani,shojo / 기다림/그리움→shinkai / 불안/두려움→mappa_dark,trigger / 도전/변화→mappa_action,ufotable,persona5 / 신비/미지→ghibli,cgi_gem,sciencesaru / 정리/결단→minimalist",
+
+  "colorPalette": "🎨 이 질문과 리딩만의 고유한 2색 그라디언트를 영어로 작성. 질문의 맥락, 카드 해석 내용, 질문자의 숨겨진 감정 뉘앙스(간절함의 정도, 불안과 희망의 비율, 긴장감 등)를 분석하여 이 리딩에만 어울리는 창의적 색상 조합 선택. '연애=핑크' 같은 단순 공식 금지! 매번 완전히 다른 조합 필수. 형식: 'color1 and color2' (예: 'soft coral and midnight blue')",
 
   "images": {
-    "hero": "질문자의 질문 '${question}'에서 느껴지는 감정과 심리를 시각화한 신비로운 장면. 질문의 본질적인 감정(기다림, 불안, 희망, 갈등 등)을 표현. (스타일 prefix 없이 장면만 영어 50단어)",
-    "card1": "${card1.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
-    "card2": "${card2.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
-    "card3": "${card3.name} 카드의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)"
+    "hero": "애니메이션 영화 포스터 스타일. 반드시 한 명의 젊은 인물(20대 남성 또는 여성)이 화면 정중앙에 정면을 바라보며 서 있어야 함. 카메라를 똑바로 응시하는 강렬한 눈빛. 질문의 감정(기다림/불안/희망/갈등)을 표정으로 표현. 배경은 몽환적이고 신비로운 우주/타로 분위기. 상반신 클로즈업~미디엄샷, 인물이 프레임의 중심. (영어 50단어, 스타일 prefix 없이 장면만)",
+    "card1": "${card1.name} 카드를 형상화. 반드시 한 명의 인물이 이 카드의 상징적 의미를 체현하는 포즈/표정으로 등장. 인물이 카드 메시지를 전달하는 느낌. 미디엄샷~풀샷. (영어 45단어, 스타일 prefix 없이 장면만)",
+    "card2": "${card2.name} 카드를 형상화. 반드시 한 명의 인물이 이 카드의 감정/상황을 보여주는 장면. 표정과 분위기로 카드 의미 전달. 미디엄샷 구도. (영어 45단어, 스타일 prefix 없이 장면만)",
+    "card3": "${card3.name} 카드를 형상화. 반드시 한 명의 인물이 미래/가능성을 바라보는 장면. 희망적이거나 결정적인 순간. 미디엄샷~롱샷. (영어 45단어, 스타일 prefix 없이 장면만)",
+    "conclusion": "${conclusionCard.name} 카드를 형상화. 반드시 한 명의 인물이 운명의 선물을 받는 듯한 장면. 가장 감동적이고 신비로운 순간. 황금빛이나 마법적 이펙트와 함께. 미디엄샷~클로즈업. (영어 45단어, 스타일 prefix 없이 장면만)"
   },
 
   "luckyElements": {
@@ -746,30 +774,45 @@ conclusionCard는 반드시:
                 showRandomDopamine();
             }, 6000); // 6초마다 새로운 힌트
 
-            // Claude가 선택한 이미지 스타일 (없으면 기본값)
+            // Claude가 선택한 이미지 스타일과 색상 팔레트 (없으면 기본값)
             const imageStyle = data.imageStyle || 'shinkai';
-            console.log(`🎨 Tarot Image Style: ${imageStyle}`);
+            const colorPalette = data.colorPalette || '';
+            console.log(`🎨 Tarot Image Style: ${imageStyle}, Colors: ${colorPalette || 'default'}`);
 
-            // heroImage에 인물 정보 추가 (별도 프롬프트로 card1과 구분)
-            // personDesc는 프로필 정보 유지, 색상은 Claude가 자유롭게 결정
+            // heroImage - Claude 생성 프롬프트 그대로 사용 (스타일 일관성 유지)
+            // 성별 정보는 프롬프트 뒤에 추가하여 스타일 prefix가 우선 적용되도록 함
+            setImageProgress({ current: 0, total: 5 });
+            const heroBasePrompt = data.images.hero || 'mystical tarot scene with emotional expression, cosmic energy surrounding, medium shot portrait composition';
             const heroPrompt = userProfile?.gender
-                ? `${personDesc} standing in a mystical tarot reading scene, surrounded by cosmic energy and floating tarot cards. Cinematic composition, mystical atmosphere`
-                : data.images.hero;
-            const heroImage = await generateSingleImage(heroPrompt, imageStyle, '', 'tarot');
+                ? `${heroBasePrompt}. The main character is ${personDesc}.`
+                : heroBasePrompt;
+            const heroImage = await generateSingleImage(heroPrompt, imageStyle, '', 'tarot', colorPalette);
+            setImageProgress({ current: 1, total: 5 });
             await new Promise(r => setTimeout(r, 400));
 
             setProgress('🎨 첫 번째 카드가 그림으로 피어나고 있어요...');
-            const card1Image = await generateSingleImage(data.images.card1, imageStyle, '', 'tarot');
+            const card1Image = await generateSingleImage(data.images.card1, imageStyle, '', 'tarot', colorPalette);
+            setImageProgress({ current: 2, total: 5 });
             await new Promise(r => setTimeout(r, 400));
 
             setProgress('🃏 두 번째 카드가 모습을 드러내요...');
-            const card2Image = await generateSingleImage(data.images.card2, imageStyle, '', 'tarot');
+            const card2Image = await generateSingleImage(data.images.card2, imageStyle, '', 'tarot', colorPalette);
+            setImageProgress({ current: 3, total: 5 });
             await new Promise(r => setTimeout(r, 400));
 
             setProgress('✨ 세 번째 카드가 빛나고 있어요...');
-            const card3Image = await generateSingleImage(data.images.card3, imageStyle, '', 'tarot');
+            const card3Image = await generateSingleImage(data.images.card3, imageStyle, '', 'tarot', colorPalette);
+            setImageProgress({ current: 4, total: 5 });
+            await new Promise(r => setTimeout(r, 400));
 
-            // 이미지 생성 완료 - interval 정리 (4장: hero + card1 + card2 + card3)
+            // 결론 카드 이미지 생성 (4번째 카드)
+            setProgress('🎁 운명의 선물 카드가 나타나고 있어요...');
+            const conclusionImage = data.images.conclusion
+                ? await generateSingleImage(data.images.conclusion, imageStyle, '', 'tarot', colorPalette)
+                : null;
+            setImageProgress({ current: 5, total: 5 });
+
+            // 이미지 생성 완료 - interval 정리 (5장: hero + card1 + card2 + card3 + conclusion)
             clearInterval(imageInterval);
 
             // 8단계: 완료
@@ -783,6 +826,7 @@ conclusionCard는 반드시:
                 card1Image,
                 card2Image,
                 card3Image,
+                conclusionImage,
                 // 호환성을 위한 기존 필드
                 pastImage: card1Image,
                 presentImage: card2Image,
@@ -853,7 +897,7 @@ conclusionCard는 반드시:
             setProgress('사주를 해석하는 중...');
 
             // 프로필 정보 블록 생성 (사주에서는 생년월일+시간으로 사주팔자 계산)
-            const profileBlock = buildProfileBlock(userProfile, 'fortune');
+            const profileBlock = buildProfileBlock(userProfile, 'fortune', userNickname);
 
             // 현재 연도 동적 계산 (만세력 계산용)
             const currentYear = new Date().getFullYear();
@@ -1013,6 +1057,8 @@ JSON만 반환:
 
   "imageStyle": "사주 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 사주/운세는 주로 ghibli/shinkai/cgi_gem 추천, 강한 에너지 운세는 mappa_action/ufotable",
 
+  "colorPalette": "🎨 이 운세만의 고유한 2색 그라디언트를 영어로 작성. 오늘의 운세 내용, 핵심 에너지, 각 섹션의 뉘앙스(긍정과 주의의 비율, 에너지의 강도, 전체적인 흐름)를 분석하여 이 리딩에만 어울리는 창의적 색상 조합 선택. '금전운=금색' 같은 단순 공식 금지! 매번 완전히 다른 조합 필수. 형식: 'color1 and color2' (예: 'warm terracotta and sage green')",
+
   "images": {
     "hero": "사주 유형의 본질적 에너지를 시각화한 신비로운 장면. 동양적 사주/운명의 이미지 (스타일 prefix 없이 장면만 영어 50단어)",
     "section1": "첫 번째 카테고리 테마의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
@@ -1042,36 +1088,38 @@ JSON만 반환:
             };
             const fortunePersonDesc = getFortunePersonDesc();
 
-            // Claude가 선택한 이미지 스타일 (없으면 기본값)
+            // Claude가 선택한 이미지 스타일과 색상 팔레트 (없으면 기본값)
             const imageStyle = data.imageStyle || 'shinkai';
-            console.log(`🎨 Fortune Image Style: ${imageStyle}`);
+            const colorPalette = data.colorPalette || '';
+            console.log(`🎨 Fortune Image Style: ${imageStyle}, Colors: ${colorPalette || 'default'}`);
 
             // 이미지 생성
             setAnalysisPhase(5);
             setProgress('🌌 오늘의 사주가 그려지고 있어요...');
 
-            // 사주 heroImage 프롬프트 (프로필 있으면 인물 중심) - section1과 별도
-            // fortunePersonDesc는 프로필 정보 유지, 색상은 Claude가 자유롭게 결정
+            // 사주 heroImage - Claude 생성 프롬프트 그대로 사용 (스타일 일관성 유지)
+            // 성별 정보는 프롬프트 뒤에 추가하여 스타일 prefix가 우선 적용되도록 함
+            const fortuneHeroBasePrompt = data.images.hero || 'gazing at the stars and cosmic energy, surrounded by zodiac symbols and mystical light. Fortune-telling atmosphere, cinematic composition';
             const fortuneHeroPrompt = userProfile?.gender
-                ? `${fortunePersonDesc} gazing at the stars and cosmic energy, surrounded by zodiac symbols and mystical light. Fortune-telling atmosphere, cinematic composition`
-                : data.images.hero;
-            const heroImage = await generateSingleImage(fortuneHeroPrompt, imageStyle, '', 'fortune');
+                ? `${fortuneHeroBasePrompt}. The person is ${fortunePersonDesc}.`
+                : fortuneHeroBasePrompt;
+            const heroImage = await generateSingleImage(fortuneHeroPrompt, imageStyle, '', 'fortune', colorPalette);
             await new Promise(r => setTimeout(r, 400));
 
             // 섹션별 이미지 생성 (section1/2/3 구조)
             const section1Category = data.sections?.section1?.category || '첫 번째 운';
             setProgress(`${data.sections?.section1?.icon || '✨'} ${section1Category} 이미지 생성 중...`);
-            const section1Image = await generateSingleImage(data.images.section1, imageStyle, '', 'fortune');
+            const section1Image = await generateSingleImage(data.images.section1, imageStyle, '', 'fortune', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             const section2Category = data.sections?.section2?.category || '두 번째 운';
             setProgress(`${data.sections?.section2?.icon || '💫'} ${section2Category} 이미지 생성 중...`);
-            const section2Image = await generateSingleImage(data.images.section2, imageStyle, '', 'fortune');
+            const section2Image = await generateSingleImage(data.images.section2, imageStyle, '', 'fortune', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             const section3Category = data.sections?.section3?.category || '세 번째 운';
             setProgress(`${data.sections?.section3?.icon || '🌟'} ${section3Category} 이미지 생성 중...`);
-            const section3Image = await generateSingleImage(data.images.section3, imageStyle, '', 'fortune');
+            const section3Image = await generateSingleImage(data.images.section3, imageStyle, '', 'fortune', colorPalette);
 
             setProgress('✨ 오늘의 사주가 완성되었어요');
 
@@ -1120,6 +1168,7 @@ JSON만 반환:
         error,
         progress,
         analysisPhase,
+        imageProgress, // 이미지 생성 진행률 { current, total }
         // 티어 정보
         isPremium,
         modelConfig,

@@ -148,7 +148,7 @@ body {
 
 /* 브랜드 텍스트 - NavBar 스타일과 동일 */
 .loading-brand {
-    margin-top: 3.5rem;
+    margin-top: 4rem;
     font-size: 1.5rem;
     font-weight: 700;
     background: linear-gradient(135deg, #fff, #d4a5ff);
@@ -162,6 +162,47 @@ body {
 @keyframes brandFadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* 태그라인 - 귀엽게 */
+.loading-tagline {
+    margin-top: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(212, 165, 255, 0.7);
+    letter-spacing: 0.05em;
+    animation: taglineFadeIn 1s ease-out 0.5s both;
+    position: relative;
+}
+
+.loading-tagline::before,
+.loading-tagline::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.5rem;
+    color: rgba(212, 165, 255, 0.5);
+    animation: taglineSparkle 2s ease-in-out infinite;
+}
+
+.loading-tagline::before {
+    left: -1rem;
+}
+
+.loading-tagline::after {
+    right: -1rem;
+    animation-delay: 0.5s;
+}
+
+@keyframes taglineFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes taglineSparkle {
+    0%, 100% { opacity: 0.3; transform: translateY(-50%) scale(0.8); }
+    50% { opacity: 0.8; transform: translateY(-50%) scale(1.2); }
 }
 
 /* 로딩 힌트 */

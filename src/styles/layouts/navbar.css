@@ -13,6 +13,12 @@
     justify-content: space-between;
     padding: 0 1.5rem;
     z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+/* 모바일 스크롤 시 헤더 숨김 */
+.nav-bar.nav-hidden {
+    transform: translateY(-100%);
 }
 
 /* 브랜드 영역 */

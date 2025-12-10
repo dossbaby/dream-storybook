@@ -312,7 +312,7 @@ const MyPage = ({
                         <div className="usage-bar">
                             <span className="usage-title">무료 리딩</span>
                             <span className={`usage-chip ${!usageSummary.tarot.canUse ? 'depleted' : ''}`}>
-                                🃏 {usageSummary.tarot.remaining}/{usageSummary.tarot.limit}
+                                🔮 {usageSummary.tarot.remaining}/{usageSummary.tarot.limit}
                             </span>
                             <span className={`usage-chip ${!usageSummary.dream.canUse ? 'depleted' : ''}`}>
                                 🌙 {usageSummary.dream.remaining}/{usageSummary.dream.limit}
@@ -368,7 +368,7 @@ const MyPage = ({
                         className={`category-tab ${category === 'tarot' ? 'active' : ''}`}
                         onClick={() => setCategory('tarot')}
                     >
-                        <span className="tab-emoji">🃏</span>
+                        <span className="tab-emoji">🔮</span>
                         <span className="tab-label">타로</span>
                         <span className="tab-count">{myTarots.length}</span>
                     </button>
@@ -521,7 +521,7 @@ const MyPage = ({
                                                     {tarot.pastImage || tarot.card1Image ? (
                                                         <img src={tarot.pastImage || tarot.card1Image} alt="" />
                                                     ) : (
-                                                        <span>🃏</span>
+                                                        <span>🔮</span>
                                                     )}
                                                     {isLocked && <div className="thumb-lock">🔒</div>}
                                                 </div>

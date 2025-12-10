@@ -76,16 +76,104 @@
     transform: scale(0.9);
 }
 
-/* Active indicator dot */
-.bottom-nav-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: 4px;
-    width: 4px;
-    height: 4px;
-    background: var(--purple);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--purple);
+/* Active indicator dot - 제거됨 */
+
+/* ========== 모드 토글 패널 ========== */
+.mode-toggle-panel {
+    display: none; /* 기본 숨김 (데스크탑) */
+    position: fixed;
+    bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: calc(var(--z-sticky) + 1);
+    animation: togglePanelSlideUp 0.2s ease-out;
+}
+
+@keyframes togglePanelSlideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .mode-toggle-panel {
+        display: block;
+    }
+}
+
+.mode-toggle-tabs {
+    display: flex;
+    gap: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.mode-toggle-tab {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.7rem 1.1rem;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.mode-toggle-tab:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* 타로 탭 활성화 - 파스텔 라벤더 그라디언트 */
+.mode-toggle-tab.active[data-mode="tarot"] {
+    color: #1a1625;
+    background: linear-gradient(135deg, #7c8dff 0%, #a78bfa 50%, #c4b5fd 100%);
+    border: 1px solid rgba(196, 181, 253, 0.4);
+    box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3);
+}
+
+/* 꿈 탭 활성화 - 파스텔 민트 그라디언트 */
+.mode-toggle-tab.active[data-mode="dream"] {
+    color: #0a1f1a;
+    background: linear-gradient(135deg, #6ee7b7 0%, #a7f3d0 50%, #d1fae5 100%);
+    border: 1px solid rgba(167, 243, 208, 0.4);
+    box-shadow: 0 4px 15px rgba(110, 231, 183, 0.25);
+}
+
+/* 운세 탭 활성화 - 파스텔 피치 그라디언트 */
+.mode-toggle-tab.active[data-mode="fortune"] {
+    color: #1f0a0a;
+    background: linear-gradient(135deg, #fca5a5 0%, #fcd5ce 50%, #ffecd2 100%);
+    border: 1px solid rgba(252, 213, 206, 0.4);
+    box-shadow: 0 4px 15px rgba(252, 165, 165, 0.25);
+}
+
+.mode-toggle-emoji {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.mode-toggle-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    line-height: 1;
 }
 
 /* 중앙 시작 버튼 (플로팅 스타일) */
@@ -105,34 +193,108 @@
     font-size: 1.3rem;
     margin-top: -20px;
     box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5);
-    transition: all 0.2s ease;
+    transition: box-shadow 0.25s ease, background 0.25s ease;
+}
+
+/* 시작 버튼 이모지 틸트 애니메이션 (수정 구슬처럼) */
+.bottom-nav-item.center-btn .center-icon .start-emoji {
+    display: inline-block;
+    animation: emojiTilt 4s ease-in-out infinite;
+}
+
+@keyframes emojiTilt {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-10deg); }
+}
+
+/* ========== 모드별 시작 버튼 그라디언트 (Vivid 버전) ========== */
+/* 타로 - 비비드 블루/바이올렛 */
+.bottom-nav-item.center-btn.mode-tarot .center-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.5);
+}
+
+.bottom-nav-item.center-btn.mode-tarot .bottom-nav-label {
+    color: #818cf8;
+}
+
+/* 꿈 - 비비드 틸/시안 */
+.bottom-nav-item.center-btn.mode-dream .center-icon {
+    background: linear-gradient(135deg, #0891b2 0%, #0d9488 50%, #14b8a6 100%);
+    box-shadow: 0 4px 18px rgba(20, 184, 166, 0.5);
+}
+
+.bottom-nav-item.center-btn.mode-dream .bottom-nav-label {
+    color: #2dd4bf;
+}
+
+/* 사주 - 비비드 앰버/오렌지 */
+.bottom-nav-item.center-btn.mode-fortune .center-icon {
+    background: linear-gradient(135deg, #ea580c 0%, #f59e0b 50%, #fbbf24 100%);
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.5);
+}
+
+.bottom-nav-item.center-btn.mode-fortune .bottom-nav-label {
+    color: #fbbf24;
 }
 
 .bottom-nav-item.center-btn:active .center-icon {
     transform: scale(0.92);
-    box-shadow: 0 2px 10px rgba(155, 89, 182, 0.4);
 }
 
-.bottom-nav-item.center-btn.active .center-icon {
-    background: linear-gradient(135deg, #e056fd 0%, #9b59b6 100%);
-    box-shadow: 0 4px 20px rgba(224, 86, 253, 0.6);
+/* 모드별 active 버튼 glow */
+.bottom-nav-item.center-btn.active.mode-tarot .center-icon {
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.6);
+}
+
+.bottom-nav-item.center-btn.active.mode-dream .center-icon {
+    box-shadow: 0 4px 20px rgba(20, 184, 166, 0.6);
+}
+
+.bottom-nav-item.center-btn.active.mode-fortune .center-icon {
+    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6);
 }
 
 .bottom-nav-item.center-btn .bottom-nav-label {
     margin-top: 4px;
     font-weight: 600;
-    color: var(--purple);
 }
 
 /* ========== 분석 중 상태 ========== */
 .bottom-nav-item.center-btn.analyzing .center-icon {
     position: relative;
-    animation: analyzing-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes analyzing-pulse {
-    0%, 100% { box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5); }
-    50% { box-shadow: 0 4px 25px rgba(155, 89, 182, 0.8), 0 0 40px rgba(155, 89, 182, 0.4); }
+/* 타로 분석 중 - 블루/바이올렛 펄스 */
+.bottom-nav-item.center-btn.analyzing.mode-tarot .center-icon {
+    animation: analyzing-pulse-tarot 1.5s ease-in-out infinite;
+}
+
+@keyframes analyzing-pulse-tarot {
+    0%, 100% { box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5); }
+    50% { box-shadow: 0 4px 25px rgba(99, 102, 241, 0.8), 0 0 40px rgba(139, 92, 246, 0.4); }
+}
+
+/* 꿈 분석 중 - 틸 펄스 */
+.bottom-nav-item.center-btn.analyzing.mode-dream .center-icon {
+    animation: analyzing-pulse-dream 1.5s ease-in-out infinite;
+}
+
+@keyframes analyzing-pulse-dream {
+    0%, 100% { box-shadow: 0 4px 15px rgba(20, 184, 166, 0.5); }
+    50% { box-shadow: 0 4px 25px rgba(20, 184, 166, 0.8), 0 0 40px rgba(45, 212, 191, 0.4); }
+}
+
+/* 사주 분석 중 - 앰버 펄스 */
+.bottom-nav-item.center-btn.analyzing.mode-fortune .center-icon {
+    animation: analyzing-pulse-fortune 1.5s ease-in-out infinite;
+}
+
+@keyframes analyzing-pulse-fortune {
+    0%, 100% { box-shadow: 0 4px 15px rgba(251, 191, 36, 0.5); }
+    50% { box-shadow: 0 4px 25px rgba(251, 191, 36, 0.8), 0 0 40px rgba(252, 211, 77, 0.4); }
 }
 
 .bottom-nav-item.center-btn.analyzing .analyzing-icon {
@@ -160,41 +322,28 @@
 }
 
 .progress-ring-fill {
-    stroke: #ffd700;
     stroke-linecap: round;
     transition: stroke-dashoffset 0.3s ease;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+    filter: drop-shadow(0 0 6px rgba(255, 0, 85, 0.5))
+            drop-shadow(0 0 8px rgba(255, 215, 0, 0.4))
+            drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
 }
 
-/* 완료 뱃지 */
-.complete-badge {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 18px;
-    height: 18px;
-    background: linear-gradient(135deg, #27ae60, #2ecc71);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.5);
-    animation: badge-pop 0.3s ease-out;
-}
-
-@keyframes badge-pop {
-    0% { transform: scale(0); }
-    70% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-/* 분석 완료 상태 */
+/* 분석 완료 상태 - blue/purple gradient with glow */
 .bottom-nav-item.center-btn.complete .center-icon {
-    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-    box-shadow: 0 4px 20px rgba(39, 174, 96, 0.6);
+    background: linear-gradient(135deg, #00d9ff 0%, #9b59b6 50%, #667eea 100%);
+    box-shadow:
+        0 4px 20px rgba(0, 217, 255, 0.5),
+        0 0 30px rgba(155, 89, 182, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(0, 217, 255, 0.5);
+}
+
+/* 완료 상태 라벨 - 밝은 색상 */
+.bottom-nav-item.center-btn.complete .bottom-nav-label {
+    color: #00d9ff;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
 }
 
 /* 분석 중 라벨 스타일 */

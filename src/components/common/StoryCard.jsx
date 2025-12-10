@@ -97,7 +97,7 @@ const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading, isPremium = 
                         </div>
                     </div>
                     <div className="card-content">
-                        <span className="card-label">🃏 {card.label}</span>
+                        <span className="card-label">🔮 {card.label}</span>
                         {/* 사용자 질문 표시 */}
                         {card.question && (
                             <div className="user-question-badge">
@@ -126,7 +126,7 @@ const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading, isPremium = 
                         <div className="card-overlay tarot-overlay" />
                     </div>
                     <div className="card-content">
-                        <span className="card-label">🃏 {card.label}</span>
+                        <span className="card-label">🔮 {card.label}</span>
                         <div className="tarot-card-badge">
                             <span className="tarot-card-emoji">{card.card?.emoji}</span>
                             <span className="tarot-card-name">{card.card?.nameKo}</span>
@@ -151,7 +151,7 @@ const StoryCard = ({ card, index, dreamTypeInfo, onDetailedReading, isPremium = 
                         <div className="card-overlay tarot-overlay" />
                     </div>
                     <div className="card-content meaning-content">
-                        <span className="card-label">🃏 {card.label}</span>
+                        <span className="card-label">🔮 {card.label}</span>
                         <div className="tarot-card-badge">
                             <span className="tarot-card-emoji">{card.card?.emoji}</span>
                             <span className="tarot-card-name">{card.card?.nameKo}</span>

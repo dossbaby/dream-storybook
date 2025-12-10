@@ -64,6 +64,18 @@
     padding-top: 0;
 }
 
+/* 꿈 모드 - 수직 중앙 정렬 */
+.dream-bg .center-main {
+    justify-content: center;
+    padding-top: 0;
+}
+
+/* 사주 모드 - 수직 중앙 정렬 */
+.fortune-bg .center-main {
+    justify-content: center;
+    padding-top: 0;
+}
+
 /* 오른쪽 사이드바 - 피드 */
 .right-sidebar {
     width: 320px;
@@ -166,8 +178,15 @@
     .center-main {
         padding: var(--spacing-md);
         padding-bottom: var(--spacing-lg);
-        min-height: auto;
+        min-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height) - var(--safe-area-bottom));
         justify-content: flex-start;
+    }
+
+    /* 모바일에서도 입력 화면 수직 중앙 정렬 */
+    .tarot-bg .center-main,
+    .dream-bg .center-main,
+    .fortune-bg .center-main {
+        justify-content: center;
     }
 
     /* 오른쪽 사이드바 숨김 - 피드는 메인에 통합 */

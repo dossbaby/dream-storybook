@@ -4,6 +4,52 @@ import Reactions from '../common/Reactions';
 import InlineComments from '../common/InlineComments';
 import { getTagUrl } from '../../utils/tagUtils';
 
+// 리액션 합계 계산 (피드 좋아요 표시용)
+const getReactionTotal = (item) => {
+    if (!item?.reactions) return item?.likeCount || 0;
+    const reactionSum = Object.values(item.reactions).reduce((a, b) => a + b, 0);
+    // 리액션이 있으면 리액션 합계, 없으면 likeCount (하위 호환)
+    return reactionSum > 0 ? reactionSum : (item.likeCount || 0);
+};
+
+// 카테고리 매핑 (기존 카테고리 → 새 7개 카테고리)
+const CATEGORY_MAP = {
+    // 기존 → 새 카테고리
+    '금전': '돈',
+    '재물': '돈',
+    '직장': '성장',
+    '커리어': '성장',
+    '취업': '성장',
+    '시험': '성장',
+    '연애': '사랑',
+    '이별': '사랑',
+    '결혼': '사랑',
+    '가족': '관계',
+    '친구': '관계',
+    '대인관계': '관계',
+    '운세': '일반',
+    '기타': '일반',
+};
+
+// 카테고리 정규화 (새 7개 중 하나로 변환)
+const VALID_TOPICS = ['사랑', '관계', '돈', '성장', '건강', '선택', '일반'];
+const normalizeCategory = (topic) => {
+    if (!topic) return '일반';
+    if (VALID_TOPICS.includes(topic)) return topic;
+    return CATEGORY_MAP[topic] || '일반';
+};
+
+// 카테고리별 이모지
+const TOPIC_EMOJI = {
+    '사랑': '💕',
+    '관계': '🙌',
+    '돈': '💰',
+    '성장': '🌱',
+    '건강': '💪',
+    '선택': '⚖️',
+    '일반': '💬',
+};
+
 const FeedView = ({
     mode,
     dreams,
@@ -91,6 +137,19 @@ const FeedView = ({
         e?.stopPropagation();
         navigate(getTagUrl(keyword));
     };
+
+    // 인기 타로 (반응 많은 순, 최대 6개)
+    const popularTarots = [...tarotReadings]
+        .sort((a, b) => getReactionTotal(b) - getReactionTotal(a))
+        .slice(0, 6);
+
+    // 카테고리별 타로 그룹화 (최신 3개씩)
+    const tarotsByCategory = VALID_TOPICS.reduce((acc, topic) => {
+        acc[topic] = tarotReadings
+            .filter(t => normalizeCategory((t.topics || [t.topic])[0]) === topic)
+            .slice(0, 3);
+        return acc;
+    }, {});
 
     // 공통 태그 바
     const renderTagBar = (keywords) => (
@@ -184,11 +243,11 @@ const FeedView = ({
                 btnClass: 'dream-btn'
             },
             tarot: {
-                emoji: '🃏',
+                emoji: '🔮',
                 title: '아직 타로 리딩이 없어요',
                 subtitle: '카드가 당신을 기다리고 있어요',
                 btnText: '타로 보기',
-                btnEmoji: '🃏',
+                btnEmoji: '🔮',
                 btnClass: 'tarot-btn'
             },
             fortune: {
@@ -196,7 +255,7 @@ const FeedView = ({
                 title: '아직 사주가 없어요',
                 subtitle: '오늘의 사주를 확인해보세요',
                 btnText: '사주 보기',
-                btnEmoji: '✴️',
+                btnEmoji: '☀️',
                 btnClass: 'fortune-btn'
             },
             filtered: {
@@ -211,10 +270,10 @@ const FeedView = ({
         const state = currentFilter ? emptyStates.filtered : emptyStates[type];
 
         return (
-            <div className="feed-empty-state">
+            <div className={`feed-empty-state ${type}-mode`}>
                 <div className="empty-illustration">
                     <span className="empty-emoji">{state.emoji}</span>
-                    <div className="empty-sparkles">
+                    <div className={`empty-sparkles ${type}-sparkles`}>
                         <span>✦</span>
                         <span>✧</span>
                         <span>✦</span>
@@ -256,7 +315,10 @@ const FeedView = ({
 
     // 컴팩트 카드 렌더링 (타로) - Q&A 형식: 질문 + 공감형 답변
     const renderCompactTarotCard = (tarot) => {
-        const topics = tarot.topics || (tarot.topic ? [tarot.topic] : []);
+        const rawTopics = tarot.topics || (tarot.topic ? [tarot.topic] : []);
+        // 카테고리 정규화 (7개 중 하나로)
+        const mainTopic = normalizeCategory(rawTopics[0]);
+        const topicEmoji = TOPIC_EMOJI[mainTopic] || '💬';
         // 질문 표시 (피드 메인)
         const question = tarot.question || '질문';
         // 답변 표시 (title이 이제 공감형 답변)
@@ -275,7 +337,7 @@ const FeedView = ({
                     {thumbImage ? (
                         <img src={thumbImage} alt="" loading="lazy" />
                     ) : (
-                        <div className="compact-thumb-placeholder">🃏</div>
+                        <div className="compact-thumb-placeholder">🔮</div>
                     )}
                 </div>
 
@@ -283,47 +345,33 @@ const FeedView = ({
                 <div className="compact-content">
                     <div className="compact-header">
                         <div className="compact-meta">
-                            <span className="compact-topic">{topics[0] || '타로'}</span>
+                            <span className="compact-topic">{topicEmoji} {mainTopic}</span>
                             <span className="compact-author">• {tarot.userName || '익명'}</span>
                             <span className="compact-time">• {formatTime(tarot.createdAt)}</span>
                         </div>
                         <div className="compact-stats">
-                            <span className="compact-stat">❤️ {tarot.likeCount || 0}</span>
-                            {tarot.cards?.length > 0 && (
-                                <div className="compact-cards">
-                                    {tarot.cards.slice(0, 3).map((c, i) => (
-                                        <span key={i}>{c.emoji}</span>
-                                    ))}
-                                </div>
-                            )}
+                            <span className="compact-stat">❤️ {getReactionTotal(tarot)}</span>
                         </div>
                     </div>
                     {/* 질문 */}
                     <h3 className="compact-title compact-question">{question}</h3>
                     {/* 답변 */}
                     {answer && <p className="compact-answer">{answer}</p>}
-                    <div className="compact-footer">
-                        <div className="compact-tags">
-                            {topics.slice(0, 2).map((topic, i) => (
-                                <span
-                                    key={`topic-${i}`}
-                                    className="compact-tag"
-                                    onClick={(e) => { e.stopPropagation(); navigateToTagPage(topic, e); }}
-                                >
-                                    {topic}
-                                </span>
-                            ))}
-                            {tarot.keywords?.filter(k => !topics.includes(k.word)).slice(0, 2).map((k, i) => (
-                                <span
-                                    key={i}
-                                    className="compact-tag"
-                                    onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
-                                >
-                                    {k.word}
-                                </span>
-                            ))}
+                    {tarot.keywords?.length > 0 && (
+                        <div className="compact-footer">
+                            <div className="compact-tags">
+                                {tarot.keywords.slice(0, 3).map((k, i) => (
+                                    <span
+                                        key={i}
+                                        className="compact-tag"
+                                        onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
+                                    >
+                                        #{k.word}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         );
@@ -359,7 +407,7 @@ const FeedView = ({
                             <span className="compact-time">• {formatTime(dream.createdAt)}</span>
                         </div>
                         <div className="compact-stats">
-                            <span className="compact-stat">❤️ {dream.likeCount || 0}</span>
+                            <span className="compact-stat">❤️ {getReactionTotal(dream)}</span>
                         </div>
                     </div>
                     <h3 className="compact-title">{dream.title}</h3>
@@ -398,7 +446,7 @@ const FeedView = ({
                     {thumbImage ? (
                         <img src={thumbImage} alt="" loading="lazy" />
                     ) : (
-                        <div className="compact-thumb-placeholder">✴️</div>
+                        <div className="compact-thumb-placeholder">☀️</div>
                     )}
                 </div>
 
@@ -411,7 +459,7 @@ const FeedView = ({
                             <span className="compact-time">• {formatTime(fortune.createdAt)}</span>
                         </div>
                         <div className="compact-stats">
-                            <span className="compact-stat">❤️ {fortune.likeCount || 0}</span>
+                            <span className="compact-stat">❤️ {getReactionTotal(fortune)}</span>
                         </div>
                     </div>
                     <h3 className="compact-title">{fortune.title}</h3>
@@ -477,7 +525,7 @@ const FeedView = ({
                     </div>
                 )}
                 <div className="feed-card-stats">
-                    <span>❤️ {dream.likeCount || 0}</span>
+                    <span>❤️ {getReactionTotal(dream)}</span>
                     <span>💬 {dream.commentCount || 0}</span>
                 </div>
             </div>
@@ -495,7 +543,7 @@ const FeedView = ({
                 {tarot.pastImage ? (
                     <img src={tarot.pastImage} alt="" />
                 ) : (
-                    <div className="feed-card-emoji">🃏</div>
+                    <div className="feed-card-emoji">🔮</div>
                 )}
                 <div className="feed-card-overlay tarot-overlay">
                     <div className="feed-card-cards">
@@ -533,7 +581,7 @@ const FeedView = ({
                     ))}
                 </div>
                 <div className="feed-card-stats">
-                    <span>❤️ {tarot.likeCount || 0}</span>
+                    <span>❤️ {getReactionTotal(tarot)}</span>
                 </div>
             </div>
         </div>
@@ -577,7 +625,7 @@ const FeedView = ({
                     </div>
                 )}
                 <div className="feed-card-stats">
-                    <span>❤️ {fortune.likeCount || 0}</span>
+                    <span>❤️ {getReactionTotal(fortune)}</span>
                 </div>
             </div>
         </div>
@@ -616,30 +664,98 @@ const FeedView = ({
     }
 
     if (mode === 'tarot') {
-        return (
-            <div className="feed-view tarot-feed">
-                {renderViewToggle()}
+        // 인기 필터 - 반응순 정렬
+        if (currentFilter === '인기') {
+            const sortedByPopular = [...tarotReadings].sort((a, b) => getReactionTotal(b) - getReactionTotal(a));
+            return (
+                <div className="feed-view tarot-feed tarot-home">
+                    {renderViewToggle()}
+                    <div className="filter-status">
+                        <span>🔥 인기순 {sortedByPopular.length}개</span>
+                        <button onClick={clearFilter}>✕ 필터 해제</button>
+                    </div>
+                    <section className="feed-section filtered-section">
+                        <div className="feed-compact">
+                            {sortedByPopular.map(renderCompactTarotCard)}
+                        </div>
+                    </section>
+                </div>
+            );
+        }
 
-                {/* 필터 상태 표시 (사이드바에서 필터링 시) */}
-                {currentFilter && (
+        // 카테고리 필터
+        if (currentFilter) {
+            return (
+                <div className="feed-view tarot-feed tarot-home">
+                    {renderViewToggle()}
                     <div className="filter-status">
                         <span>"{currentFilter}" 관련 타로 {filteredTarots.length}개</span>
                         <button onClick={clearFilter}>✕ 필터 해제</button>
                     </div>
+                    {filteredTarots.length === 0 ? (
+                        renderEmptyState('tarot')
+                    ) : (
+                        <section className="feed-section filtered-section">
+                            {effectiveViewMode === 'compact' ? (
+                                <div className="feed-compact">
+                                    {filteredTarots.map(renderCompactTarotCard)}
+                                </div>
+                            ) : (
+                                <div className="feed-grid">
+                                    {filteredTarots.map(renderGridTarotCard)}
+                                </div>
+                            )}
+                        </section>
+                    )}
+                </div>
+            );
+        }
+
+        // 홈 구조: 인기 + 카테고리별
+        return (
+            <div className="feed-view tarot-feed tarot-home">
+                {/* 인기 주제 섹션 */}
+                {popularTarots.length > 0 && (
+                    <section className="feed-section popular-section">
+                        <h2 className="section-title">
+                            🔥 인기
+                            <button
+                                className="section-more"
+                                onClick={() => setActiveFilter('인기')}
+                            >
+                                더보기 →
+                            </button>
+                        </h2>
+                        <div className="feed-compact">
+                            {popularTarots.map(renderCompactTarotCard)}
+                        </div>
+                    </section>
                 )}
 
-                {/* 타로 피드 */}
-                {filteredTarots.length === 0 ? (
-                    renderEmptyState('tarot')
-                ) : effectiveViewMode === 'compact' ? (
-                    <div className="feed-compact">
-                        {filteredTarots.map(renderCompactTarotCard)}
-                    </div>
-                ) : (
-                    <div className="feed-grid">
-                        {filteredTarots.map(renderGridTarotCard)}
-                    </div>
-                )}
+                {/* 카테고리별 섹션 */}
+                {VALID_TOPICS.map(topic => {
+                    const items = tarotsByCategory[topic];
+                    if (!items || items.length === 0) return null;
+                    return (
+                        <section key={topic} className="feed-section category-section">
+                            <h2 className="section-title">
+                                {TOPIC_EMOJI[topic]} {topic}
+                                <button
+                                    className="section-more"
+                                    onClick={() => setActiveFilter(topic)}
+                                >
+                                    더보기 →
+                                </button>
+                            </h2>
+                            <div className="feed-compact">
+                                {items.map(renderCompactTarotCard)}
+                            </div>
+                        </section>
+                    );
+                })}
+
+                {/* 아무것도 없을 때 */}
+                {tarotReadings.length === 0 && renderEmptyState('tarot')}
             </div>
         );
     }

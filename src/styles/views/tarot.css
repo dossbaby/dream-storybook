@@ -2880,17 +2880,54 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem !important;
 }
 
 .mystical-orb {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto;
+}
+
+/* 스파클 애니메이션 */
+.orb-sparkles {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    transform: translateY(-13%);
+}
+
+.orb-sparkles span {
+    font-size: 1.2rem;
+    color: rgba(139, 92, 246, 0.5);
+    animation: sparkleFloat 2s ease-in-out infinite;
+}
+
+.orb-sparkles span:nth-child(1) { animation-delay: 0s; left: -5px; }
+.orb-sparkles span:nth-child(2) { animation-delay: 0.5s; transform: translateY(35px); }
+.orb-sparkles span:nth-child(3) { animation-delay: 1s; right: -5px; }
+
+/* Dream Sparkles - Teal */
+.orb-sparkles.dream-sparkles span {
+    color: rgba(20, 184, 166, 0.5);
+}
+
+/* Fortune Sparkles - Bright Yellow/Orange */
+.orb-sparkles.fortune-sparkles span {
+    color: rgba(251, 191, 36, 0.6);
+}
+
+@keyframes sparkleFloat {
+    0%, 100% { opacity: 0.3; transform: translateY(0) scale(1); }
+    50% { opacity: 1; transform: translateY(-5px) scale(1.2); }
 }
 
 .orb-core {
@@ -3220,9 +3257,9 @@
 
 .mystical-orb {
     position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 1rem;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1.25rem auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3230,20 +3267,31 @@
 }
 
 .orb-emoji {
-    font-size: 3rem;
+    font-size: 4.5rem;
     z-index: 2;
     filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.6));
+    animation: orbEmojiFloat 3s ease-in-out infinite;
 }
 
-.tarot-title {
+@keyframes orbEmojiFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Tarot Title - toggle button 활성 그라디언트 (파스텔 라벤더) */
+.tarot-title,
+.create-title.tarot-title {
     font-size: 1.4rem;
-    color: var(--white);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #7c8dff 0%, #a78bfa 50%, #c4b5fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .tarot-subtitle {
-    font-size: 0.9rem;
-    color: var(--light-gray);
+    font-size: 0.85rem;
+    color: rgba(165, 180, 252, 0.5);
     margin-bottom: 0;
 }
 
@@ -3627,6 +3675,44 @@
     cursor: not-allowed;
     transform: none;
     background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(155, 89, 182, 0.3) 100%) !important;
+}
+
+/* 타로 모드 버튼 - 블루/바이올렛 */
+.tarot-input-card .mystical-btn,
+.mystical-btn.tarot-submit {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%) !important;
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+}
+
+.tarot-input-card .mystical-btn:hover,
+.mystical-btn.tarot-submit:hover {
+    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5), 0 0 30px rgba(139, 92, 246, 0.3);
+}
+
+/* 꿈 모드 버튼 - 틸/민트 */
+.dream-input-card .mystical-btn,
+.mystical-btn.dream-submit {
+    background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%) !important;
+    box-shadow: 0 8px 30px rgba(20, 184, 166, 0.4);
+    border-radius: 10px !important;
+}
+
+.dream-input-card .mystical-btn:hover,
+.mystical-btn.dream-submit:hover {
+    box-shadow: 0 12px 40px rgba(20, 184, 166, 0.5), 0 0 30px rgba(45, 212, 191, 0.3);
+}
+
+/* 사주 모드 버튼 - 앰버/오렌지 */
+.fortune-input-card .mystical-btn,
+.mystical-btn.fortune-submit {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%) !important;
+    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.4);
+    color: #1a1a1a !important;
+}
+
+.fortune-input-card .mystical-btn:hover,
+.mystical-btn.fortune-submit:hover {
+    box-shadow: 0 12px 40px rgba(251, 191, 36, 0.5), 0 0 30px rgba(252, 211, 77, 0.3);
 }
 
 /* 마이너 카드 스타일 */
@@ -4932,7 +5018,61 @@
     border-image: linear-gradient(90deg, #ff0055, #ffd700) 1;
     border-radius: 0;
     animation: unsealReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: visible;
+    overflow: hidden;
+}
+
+/* 신비로운 swirl 우주 배경 */
+.unsealed-insight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        /* 작은 반짝이는 별들 */
+        radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 30% 70%, rgba(255, 215, 0, 0.7), transparent),
+        radial-gradient(1.5px 1.5px at 50% 30%, rgba(200, 180, 255, 0.9), transparent),
+        radial-gradient(1px 1px at 70% 80%, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 85% 15%, rgba(255, 200, 150, 0.8), transparent),
+        radial-gradient(1.5px 1.5px at 15% 85%, rgba(180, 200, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 90% 50%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 40% 10%, rgba(255, 220, 180, 0.6), transparent),
+        radial-gradient(1px 1px at 60% 90%, rgba(200, 150, 255, 0.7), transparent),
+        radial-gradient(1px 1px at 25% 45%, rgba(255, 255, 255, 0.5), transparent),
+        /* swirl 은하 느낌 */
+        radial-gradient(ellipse 120% 80% at 30% 50%, rgba(100, 50, 150, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse 80% 120% at 70% 60%, rgba(50, 100, 150, 0.12) 0%, transparent 50%);
+    animation: starsTwinkle 4s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 느린 swirl 오버레이 */
+.unsealed-insight::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+        radial-gradient(ellipse 50% 30% at 40% 40%, rgba(155, 89, 182, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 60% 70%, rgba(100, 150, 200, 0.06) 0%, transparent 60%);
+    animation: cosmicSwirl 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes starsTwinkle {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes cosmicSwirl {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes unsealReveal {
@@ -5526,14 +5666,34 @@
     gap: 0.75rem;
 }
 
-/* Hero 키워드 태그 */
-.hero-keywords {
+/* Hero 주제 + 키워드 태그 */
+.hero-tags-row {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.5rem;
+    align-items: center;
 }
 
+/* 주제 태그 - 구분되게 스타일링 */
+.hero-topic-tag {
+    padding: 0.35rem 0.85rem;
+    background: rgba(155, 89, 182, 0.25);
+    border: 1px solid rgba(155, 89, 182, 0.5);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #d4a5ff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hero-topic-tag:hover {
+    background: rgba(155, 89, 182, 0.4);
+    border-color: rgba(155, 89, 182, 0.7);
+}
+
+/* 키워드 태그 */
 .hero-keyword-tag {
     padding: 0.35rem 0.75rem;
     background: rgba(255, 255, 255, 0.1);
@@ -5549,6 +5709,14 @@
     background: rgba(139, 92, 246, 0.3);
     border-color: rgba(139, 92, 246, 0.5);
     color: #fff;
+}
+
+/* 하위호환 - 기존 hero-keywords */
+.hero-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .tarot-result-content .reading-type-badge {
@@ -7107,6 +7275,40 @@
 @keyframes revealedShimmer {
     0% { background-position: 200% center; }
     100% { background-position: -200% center; }
+}
+
+/* ========================================
+   리딩 텍스트 Bold 강조 - 무지개 그라디언트
+   ======================================== */
+.reading-highlight {
+    font-weight: 700;
+    background: linear-gradient(
+        90deg,
+        #00d9ff 0%,
+        #9b59b6 25%,
+        #ff0055 50%,
+        #ffd080 75%,
+        #00d9ff 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: readingHighlightShimmer 12s linear infinite;
+    filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.3)) drop-shadow(0 0 8px rgba(155, 89, 182, 0.2));
+}
+
+@keyframes readingHighlightShimmer {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+/* 모바일에서는 애니메이션 속도 동일 */
+@media (max-width: 480px) {
+    .reading-highlight {
+        animation: readingHighlightShimmer 12s linear infinite;
+        filter: drop-shadow(0 0 3px rgba(0, 212, 255, 0.25));
+    }
 }
 
 /* 카드 row - 간격 있는 그리드 */
@@ -8856,7 +9058,7 @@
     letter-spacing: 0.05em;
     line-height: 1.6;
     opacity: 0;
-    transition: opacity 0.8s ease;
+    transition: opacity 1.5s ease;
 }
 
 .tarot-intro-text .intro-line.visible {
@@ -9378,10 +9580,10 @@
         display: none !important;
     }
 
-    /* table-mat - left 43%로 중앙 보정 */
+    /* table-mat - left 41%로 중앙 보정, top 9%로 위치 조정 */
     .table-mat {
-        top: 25% !important;
-        left: 43% !important;
+        top: 9% !important;
+        left: 41% !important;
         transform: translateX(-50%) !important;
     }
 
@@ -9391,9 +9593,9 @@
         margin-left: 0 !important;
     }
 
-    /* 인트로 텍스트 - 15% */
+    /* 인트로 텍스트 - 더 아래로 (20%) */
     .tarot-intro-text {
-        top: 15% !important;
+        top: 20% !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
@@ -9406,9 +9608,9 @@
         margin: 0.2rem 0 !important;
     }
 
-    /* 선택된 카드 슬롯 영역 - 15% from bottom */
+    /* 선택된 카드 슬롯 영역 - 더 위로 (20% from bottom) */
     .selected-cards-area {
-        bottom: 15% !important;
+        bottom: 20% !important;
     }
 
     .selected-cards-row {
@@ -9460,9 +9662,10 @@
 }
 
 @media (max-width: 480px) {
-    /* table-mat 위치 */
+    /* table-mat 위치 - 768px 기준 비례 조정 */
     .table-mat {
-        top: 25% !important;
+        top: 7% !important;
+        left: 40% !important;
     }
 
     /* 카드 스프레드 - 자동 중앙 정렬 유지 */
@@ -9470,9 +9673,9 @@
         height: 280px !important;
     }
 
-    /* 인트로 텍스트 */
+    /* 인트로 텍스트 - 약간 내려서 */
     .tarot-intro-text {
-        top: 8% !important;
+        top: 10% !important;
     }
 
     .tarot-intro-text .intro-line {
@@ -9482,7 +9685,7 @@
 
     /* 선택된 카드 슬롯 영역 - 더 위로 */
     .selected-cards-area {
-        bottom: 135px !important;
+        bottom: 200px !important;
     }
 
     .selected-cards-row {
@@ -9515,9 +9718,9 @@
         font-size: 1rem !important;
     }
 
-    /* 하단 푸터 - 더 위로 */
+    /* 하단 푸터 - 카드 placeholder 바로 아래로 */
     .table-footer {
-        bottom: 30px !important;
+        bottom: 90px !important;
         gap: 0.4rem;
     }
 
@@ -9541,9 +9744,10 @@
 
 /* 매우 작은 모바일 (360px 이하) */
 @media (max-width: 360px) {
-    /* table-mat 위치 */
+    /* table-mat 위치 - 768px 기준 비례 조정 */
     .table-mat {
-        top: 22% !important;
+        top: 5% !important;
+        left: 39% !important;
     }
 
     /* 카드 스프레드 - 자동 중앙 정렬 유지 */
@@ -9551,9 +9755,9 @@
         height: 240px !important;
     }
 
-    /* 인트로 텍스트 */
+    /* 인트로 텍스트 - 더 아래로 */
     .tarot-intro-text {
-        top: 6% !important;
+        top: 12% !important;
     }
 
     .tarot-intro-text .intro-line {
@@ -9563,7 +9767,7 @@
 
     /* 선택된 카드 슬롯 영역 - 더 위로 */
     .selected-cards-area {
-        bottom: 120px !important;
+        bottom: 145px !important;
     }
 
     .selected-cards-row {
@@ -9923,6 +10127,36 @@
     height: 1px;
     margin: 0 1.25rem;
     background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+}
+
+/* 이모지 리액션 섹션 */
+.engagement-reactions-section {
+    padding: 0.75rem 1rem;
+}
+
+.engagement-reactions-section .reactions-container {
+    justify-content: center;
+    padding: 0.5rem 0;
+    gap: 0.4rem;
+}
+
+.engagement-reactions-section .reaction-btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+}
+
+.engagement-reactions-section .reaction-btn .emoji {
+    font-size: 0.95rem;
+}
+
+.engagement-reactions-section .reaction-add-wrapper {
+    position: relative;
+}
+
+.engagement-reactions-section .reaction-add-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
 }
 
 /* 조회수 & 게시일 - 심플 텍스트 */
@@ -10703,5 +10937,234 @@
         padding: 0.5rem 1rem;
         font-size: 0.8rem;
     }
+}
+
+/* ========================================
+   Dream & Fortune Input - 통합 스타일
+   ======================================== */
+
+/* 공통 질문 헤더 스타일 */
+.dream-question-header,
+.fortune-question-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    margin-bottom: 0.25rem !important;
+}
+
+/* Dream Input Card */
+.create-card.dream-input-card .dream-question-header,
+.create-card.dream-input-card .dream-textarea,
+.create-card.dream-input-card .submit-btn,
+.create-card.dream-input-card .error {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Fortune Input Card */
+.create-card.fortune-input-card .fortune-question-header,
+.create-card.fortune-input-card .fortune-birthdate,
+.create-card.fortune-input-card .fortune-textarea,
+.create-card.fortune-input-card .submit-btn,
+.create-card.fortune-input-card .error {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Tarot Orb - Blue/Violet 테마 (비비드) - 더 subtle하게 */
+.mystical-orb.tarot-orb .orb-emoji {
+    filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.4))
+            drop-shadow(0 0 25px rgba(139, 92, 246, 0.2));
+    animation: tarotOrbFloat 3s ease-in-out infinite;
+}
+
+@keyframes tarotOrbFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Dream Orb - Teal/Cyan 테마 (비비드) - 더 subtle하게 */
+.mystical-orb.dream-orb .orb-emoji {
+    filter: drop-shadow(0 0 12px rgba(20, 184, 166, 0.4))
+            drop-shadow(0 0 25px rgba(13, 148, 136, 0.2));
+    animation: dreamOrbFloat 3s ease-in-out infinite;
+}
+
+@keyframes dreamOrbFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Fortune Orb - Bright Yellow/Orange 테마 (비비드) - 더 subtle하게 */
+.mystical-orb.fortune-orb .orb-emoji {
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.4))
+            drop-shadow(0 0 25px rgba(251, 146, 60, 0.2));
+    animation: fortuneOrbFloat 3s ease-in-out infinite;
+}
+
+@keyframes fortuneOrbFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Dream Title - toggle button 활성 그라디언트 (파스텔 민트) */
+.dream-title,
+.create-title.dream-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #6ee7b7 0%, #a7f3d0 50%, #d1fae5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Dream Subtitle */
+.dream-subtitle {
+    font-size: 0.85rem;
+    color: rgba(94, 234, 212, 0.5);
+    margin-bottom: 0;
+}
+
+/* Fortune Title - toggle button 활성 그라디언트 (파스텔 피치) */
+.fortune-title,
+.create-title.fortune-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+    background: linear-gradient(135deg, #fca5a5 0%, #fcd5ce 50%, #ffecd2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Fortune Subtitle */
+.fortune-subtitle {
+    font-size: 0.85rem;
+    color: rgba(251, 146, 60, 0.5);
+    margin-bottom: 0;
+}
+
+/* Tarot Textarea - Blue/Violet 테마 + 그라디언트 border */
+.dream-input.tarot-input {
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    background: rgba(99, 102, 241, 0.05) !important;
+    transition: all 0.3s ease !important;
+}
+
+.dream-input.tarot-input:focus {
+    border: 1px solid rgba(167, 139, 250, 0.8) !important;
+    background: rgba(99, 102, 241, 0.08) !important;
+    box-shadow:
+        0 0 0 1px rgba(124, 141, 255, 0.4),
+        0 0 15px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Dream Textarea - Teal 테마 + 그라디언트 border */
+.dream-textarea {
+    border: 1px solid rgba(20, 184, 166, 0.3) !important;
+    background: rgba(20, 184, 166, 0.05) !important;
+    transition: all 0.3s ease !important;
+}
+
+.dream-textarea:focus {
+    border: 1px solid rgba(167, 243, 208, 0.8) !important;
+    background: rgba(20, 184, 166, 0.08) !important;
+    box-shadow:
+        0 0 0 1px rgba(110, 231, 183, 0.4),
+        0 0 15px rgba(20, 184, 166, 0.25) !important;
+}
+
+/* Fortune Textarea - Yellow/Gold 테마 + 그라디언트 border */
+.fortune-textarea {
+    border: 1px solid rgba(251, 191, 36, 0.35) !important;
+    background: rgba(253, 224, 71, 0.08) !important;
+    transition: all 0.3s ease !important;
+}
+
+.fortune-textarea::placeholder {
+    color: rgba(252, 211, 77, 0.4) !important;
+}
+
+.fortune-textarea:focus {
+    border: 1px solid rgba(252, 213, 206, 0.8) !important;
+    background: rgba(253, 224, 71, 0.1) !important;
+    box-shadow:
+        0 0 0 1px rgba(252, 165, 165, 0.4),
+        0 0 15px rgba(251, 191, 36, 0.3) !important;
+}
+
+/* Fortune Birthdate Input */
+.fortune-birthdate {
+    margin-bottom: 1rem;
+}
+
+.fortune-birthdate label {
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(251, 146, 60, 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.fortune-birthdate-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    background: rgba(234, 88, 12, 0.05);
+    border-radius: 12px;
+    color: var(--white);
+    font-size: 1rem;
+    transition: all 0.25s ease;
+}
+
+.fortune-birthdate-input:focus {
+    border-color: rgba(251, 146, 60, 0.5);
+    box-shadow: 0 0 20px rgba(234, 88, 12, 0.15);
+    outline: none;
+}
+
+/* Dream Submit Button - Teal 그라디언트 */
+.submit-btn.dream-submit {
+    background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #5eead4 100%);
+    color: #0a2520;
+    box-shadow: 0 0 20px rgba(20, 184, 166, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+}
+
+.submit-btn.dream-submit:hover:not(:disabled) {
+    box-shadow: 0 0 30px rgba(20, 184, 166, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Fortune Submit Button - Red/Orange 그라디언트 */
+.submit-btn.fortune-submit {
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%);
+    color: #1a0500;
+    box-shadow: 0 0 20px rgba(234, 88, 12, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+}
+
+.submit-btn.fortune-submit:hover:not(:disabled) {
+    box-shadow: 0 0 30px rgba(234, 88, 12, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Dream Keywords 테마 */
+.dream-keyword-hints .hint-tag {
+    border-color: rgba(20, 184, 166, 0.3);
+    color: rgba(94, 234, 212, 0.8);
+}
+
+.dream-keyword-hints .hint-tag:hover {
+    border-color: rgba(20, 184, 166, 0.5);
+    background: rgba(20, 184, 166, 0.1);
+}
+
+.dream-keywords .keyword-tag {
+    color: #5eead4;
 }
 

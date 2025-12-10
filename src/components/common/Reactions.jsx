@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
 const REACTION_EMOJIS = [
-    { id: 'wow', emoji: '😮', label: '놀라워' },
-    { id: 'empathy', emoji: '🥺', label: '공감' },
-    { id: 'fire', emoji: '🔥', label: '대박' },
-    { id: 'curious', emoji: '🤔', label: '신기해' },
-    { id: 'accurate', emoji: '✨', label: '정확해' },
+    { id: 'chills', emoji: '😱', label: '소름' },
+    { id: 'agreed', emoji: '😌', label: '공감' },
+    { id: 'funny', emoji: '😂', label: '웃김' },
+    { id: 'touched', emoji: '🥹', label: '뭉클' },
+    { id: 'unexpected', emoji: '😮', label: '의외' },
 ];
 
 const Reactions = ({

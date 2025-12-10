@@ -126,20 +126,21 @@
     }
 }
 
-/* 상단 도파민 메시지 - VN Intro 스타일 */
+/* 상단 도파민 메시지 - VN Intro 스타일 (overflow 방지) */
 .analysis-top-message {
     position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 600px;
+    top: 12%;
+    left: 0;
+    right: 0;
+    width: 100%;
     text-align: center;
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
 }
 
 /* VN 장식 - 상단/하단 */
@@ -154,13 +155,21 @@
     margin-top: 0.5rem;
 }
 
-/* 도파민 텍스트 - 리디바탕, VN 스타일 */
+/* 도파민 텍스트 - 리디바탕, VN 스타일 (줄바꿈 허용, overflow 방지) */
 .dopamine-text {
     font-family: 'RIDIBatang', serif;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 400;
-    line-height: 2;
+    line-height: 1.8;
     transition: opacity 0.25s ease-out, color 0.5s ease;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 금색 텍스트 - VN Hook 스타일 */
@@ -201,14 +210,14 @@
     51%, 100% { opacity: 0; }
 }
 
-/* 중앙 Pulsing Orb - Glacial Blue/Purple */
+/* 중앙 Pulsing Orb - Glacial Blue/Purple (더 아래로) */
 .analysis-center {
     position: relative;
     z-index: 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2rem;
+    margin-top: 8vh;
 }
 
 .pulsing-orb {
@@ -314,14 +323,13 @@
     to { opacity: 1; transform: scale(1); }
 }
 
-/* 단계 Circle들 - 아래로 이동 */
+/* 단계 Circle들 - 더 아래로 이동 */
 .analysis-stages {
     display: flex;
     gap: 0.75rem;
-    margin-top: 4rem;
+    margin-top: 5rem;
     z-index: 10;
     position: relative;
-    top: 2rem;
 }
 
 .stage-dot {
@@ -358,59 +366,117 @@
     }
 }
 
-/* 하단 안내 텍스트 - VN 스타일 */
+/* 하단 안내 텍스트 - 진행률 포함 */
 .analysis-bottom-hint {
     position: absolute;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 18%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
     font-family: 'RIDIBatang', serif;
-    font-size: 0.9rem;
-    color: rgba(255, 200, 150, 0.5);
+    font-size: 0.95rem;
+    color: rgba(255, 200, 150, 0.7);
     text-align: center;
     z-index: 10;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     animation: hintPulse 2s ease-in-out infinite;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.analysis-bottom-hint .hint-label {
+    /* 기본 라벨 */
+}
+
+.analysis-bottom-hint .hint-progress {
+    color: #00d9ff;
+    font-family: 'Pretendard', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
 }
 
 @keyframes hintPulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
 }
 
-/* 알림 받고 둘러보기 버튼 */
+/* 소요 시간 안내 서브타이틀 */
+.analysis-subtitle {
+    position: absolute;
+    bottom: 13%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(180, 150, 220, 0.6);
+    text-align: center;
+    z-index: 10;
+    letter-spacing: 0.02em;
+    padding: 0 1rem;
+    box-sizing: border-box;
+    animation: subtitleFadeIn 0.5s ease-out 0.8s both;
+}
+
+@keyframes subtitleFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 분석이 끝나면 알림받기 버튼 */
 .browse-while-waiting-btn {
     position: absolute;
-    bottom: 5%;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 8%;
+    left: 0;
+    right: 0;
+    width: fit-content;
+    max-width: 320px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, rgba(30, 25, 45, 0.95), rgba(20, 15, 35, 0.98));
-    border: 1px solid rgba(155, 89, 182, 0.4);
-    border-radius: 30px;
-    color: var(--light, #f0f0f0);
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(135deg, rgba(30, 25, 45, 0.9), rgba(20, 15, 35, 0.95));
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 25px;
+    color: rgba(255, 255, 255, 0.85);
+    font-family: 'Pretendard', sans-serif;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     z-index: 100;
     transition: all 0.3s ease;
     box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.4),
-        0 0 30px rgba(155, 89, 182, 0.15);
-    animation: btnFadeIn 0.5s ease-out 1s both;
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(155, 89, 182, 0.1);
+    animation: btnFadeIn 0.5s ease-out 1.5s both;
 }
 
 @keyframes btnFadeIn {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(20px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -419,60 +485,58 @@
     box-shadow:
         0 6px 30px rgba(0, 0, 0, 0.5),
         0 0 40px rgba(155, 89, 182, 0.25);
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateY(-2px);
 }
 
 .browse-while-waiting-btn:active {
-    transform: translateX(-50%) scale(0.98);
+    transform: scale(0.98);
 }
 
 .browse-while-waiting-btn .btn-icon {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 .browse-while-waiting-btn .btn-text {
-    font-family: 'RIDIBatang', serif;
-}
-
-.browse-while-waiting-btn .btn-hint {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.5rem;
-    background: rgba(155, 89, 182, 0.3);
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-left: 0.25rem;
+    /* Pretendard는 부모에서 상속 */
 }
 
 /* 반응형 */
 @media (max-width: 480px) {
     .analysis-top-message {
-        top: 15%;
+        top: 10%;
+        padding: 0 1rem;
     }
 
     .dopamine-text {
-        font-size: 1.2rem;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        max-width: 340px;
     }
 
     .vn-ornament-analysis {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+    }
+
+    .analysis-center {
+        margin-top: 5vh;
     }
 
     .pulsing-orb {
-        width: 130px;
-        height: 130px;
+        width: 120px;
+        height: 120px;
     }
 
     .orb-core {
-        width: 70px;
-        height: 70px;
+        width: 65px;
+        height: 65px;
     }
 
     .orb-emoji {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
 
     .analysis-stages {
-        margin-top: 2rem;
+        margin-top: 3rem;
     }
 
     .stage-dot {
@@ -481,22 +545,26 @@
     }
 
     .analysis-bottom-hint {
-        bottom: 12%;
-        font-size: 0.8rem;
+        bottom: 20%;
+        font-size: 0.85rem;
+        max-width: 320px;
+    }
+
+    .analysis-subtitle {
+        bottom: 15%;
+        font-size: 0.75rem;
+        max-width: 300px;
     }
 
     .browse-while-waiting-btn {
-        bottom: 4%;
-        padding: 0.85rem 1.25rem;
+        bottom: 6%;
+        padding: 0.8rem 1.5rem;
         font-size: 0.85rem;
         gap: 0.5rem;
+        max-width: 280px;
     }
 
     .browse-while-waiting-btn .btn-icon {
-        font-size: 1.1rem;
-    }
-
-    .browse-while-waiting-btn .btn-hint {
-        display: none;
+        font-size: 1rem;
     }
 }

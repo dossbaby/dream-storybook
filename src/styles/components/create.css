@@ -7,28 +7,72 @@
     gap: 1rem;
 }
 
-/* 타로 모드 - 넓게 설정 + 은은한 glow */
+/* 타로 모드 - 넓게 설정 */
 .create-card.tarot-input-card {
     max-width: 900px;
     overflow: visible;
     position: relative;
 }
 
-/* prompt 주변 은은한 보라색 glow - 크게 (prompt 바깥으로) */
+/* prompt 주변 은은한 보라색 glow - seamless overflow */
 .create-card.tarot-input-card::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200%;
-    height: 250%;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
     background: radial-gradient(
-        ellipse 60% 50% at 50% 50%,
-        rgba(138, 43, 226, 0.18) 0%,
-        rgba(138, 43, 226, 0.08) 35%,
-        rgba(138, 43, 226, 0.02) 55%,
-        transparent 75%
+        ellipse 60% 50% at 50% 40%,
+        rgba(99, 102, 241, 0.15) 0%,
+        rgba(139, 92, 246, 0.08) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 꿈 모드 glow */
+.create-card.dream-input-card {
+    overflow: visible;
+    position: relative;
+}
+
+.create-card.dream-input-card::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: radial-gradient(
+        ellipse 60% 50% at 50% 40%,
+        rgba(20, 184, 166, 0.12) 0%,
+        rgba(13, 148, 136, 0.06) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 사주 모드 glow */
+.create-card.fortune-input-card {
+    overflow: visible;
+    position: relative;
+}
+
+.create-card.fortune-input-card::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: radial-gradient(
+        ellipse 60% 50% at 50% 40%,
+        rgba(251, 191, 36, 0.12) 0%,
+        rgba(251, 146, 60, 0.06) 40%,
+        transparent 70%
     );
     pointer-events: none;
     z-index: -1;
@@ -93,8 +137,54 @@
         linear-gradient(135deg, rgba(138, 43, 226, 0.8), rgba(100, 149, 237, 0.8)) border-box;
 }
 
+/* 꿈 모드 - 초록하늘색 그라데이션 테두리 */
+.dream-input-card .dream-input.dream-textarea {
+    border: 1px solid transparent;
+    background:
+        linear-gradient(var(--dark), var(--dark)) padding-box,
+        linear-gradient(135deg, rgba(20, 184, 166, 0.3), rgba(56, 189, 248, 0.3)) border-box;
+}
+
+.dream-input-card .dream-input.dream-textarea:focus {
+    background:
+        linear-gradient(var(--dark), var(--dark)) padding-box,
+        linear-gradient(135deg, rgba(20, 184, 166, 0.8), rgba(56, 189, 248, 0.8)) border-box;
+}
+
+/* 사주 모드 - 노랑/주황 그라데이션 테두리 */
+.fortune-input-card .dream-input.fortune-textarea,
+.fortune-input-card .birthdate-input {
+    border: 1px solid transparent;
+    background:
+        linear-gradient(var(--dark), var(--dark)) padding-box,
+        linear-gradient(135deg, rgba(251, 191, 36, 0.35), rgba(251, 146, 60, 0.35)) border-box;
+}
+
+.fortune-input-card .dream-input.fortune-textarea:focus,
+.fortune-input-card .birthdate-input:focus {
+    background:
+        linear-gradient(var(--dark), var(--dark)) padding-box,
+        linear-gradient(135deg, rgba(251, 191, 36, 0.85), rgba(251, 146, 60, 0.85)) border-box;
+}
+
+/* 기본 플레이스홀더 */
 .dream-input::placeholder {
     color: #444;
+}
+
+/* 타로 모드 플레이스홀더 - 라벤더 */
+.tarot-input-card .dream-input::placeholder {
+    color: rgba(138, 130, 238, 0.5);
+}
+
+/* 꿈 모드 플레이스홀더 - 민트 */
+.dream-input-card .dream-input::placeholder {
+    color: rgba(94, 234, 212, 0.5);
+}
+
+/* 사주 모드 플레이스홀더 - 앰버 */
+.fortune-input-card .dream-input::placeholder {
+    color: rgba(251, 191, 36, 0.5);
 }
 
 /* 로딩 중 i-beam 커서 제거 */
@@ -266,6 +356,25 @@
     box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
 }
 
+/* 타로 모드 기본 버튼 hover - 블루/바이올렛 glow */
+.tarot-input-card .submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+}
+
+/* 꿈 모드 기본 버튼 hover - 틸 glow */
+.dream-input-card .submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+    box-shadow: 0 6px 25px rgba(20, 184, 166, 0.5);
+}
+
+/* 사주 모드 기본 버튼 hover - 앰버 glow */
+.fortune-input-card .submit-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #fbbf24, #f97316);
+    color: #1a1a1a;
+    box-shadow: 0 6px 25px rgba(251, 191, 36, 0.5);
+}
+
 .submit-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -275,12 +384,12 @@
     box-shadow: none;
 }
 
-/* 타로 모드 버튼 - 초기부터 glacial theme 적용 */
+/* 타로 모드 버튼 - 비비드 블루/바이올렛 그라디언트 */
 .submit-btn.tarot-submit {
-    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ec4899 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
     color: #fff;
-    border: none;
-    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
     position: relative;
     overflow: hidden;
 }
@@ -303,13 +412,12 @@
 }
 
 .submit-btn.tarot-submit:hover:not(:disabled) {
-    background: linear-gradient(135deg, #00d4ff 0%, #9b59b6 50%, #ec4899 100%);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(0, 212, 255, 0.4), 0 0 30px rgba(155, 89, 182, 0.2);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    transform: translateY(-2px);
 }
 
 .submit-btn.tarot-submit:disabled {
-    background: linear-gradient(135deg, rgba(0, 212, 255, 0.3) 0%, rgba(155, 89, 182, 0.3) 100%);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(99, 102, 241, 0.3) 100%);
     opacity: 0.5;
     box-shadow: none;
 }

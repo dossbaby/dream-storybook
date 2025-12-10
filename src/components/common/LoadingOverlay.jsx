@@ -82,7 +82,7 @@ const LoadingOverlay = memo(({ isVisible, phase, progress, mode = 'dream' }) => 
     const currentMessage = messages[messageIndex];
 
     const getPhaseIcon = () => {
-        const icons = ['🔮', '📖', '🎨', '🃏', '✨', '🌟', '💫'];
+        const icons = ['🔮', '📖', '🎨', '✨', '🌟', '💫', '🌙'];
         return icons[Math.min(phase, icons.length - 1)] || '🔮';
     };
 

@@ -11,7 +11,7 @@ const EmptyState = ({ type = 'dream', onAction, actionLabel }) => {
             action: '꿈 해몽하기'
         },
         tarot: {
-            emoji: '🃏',
+            emoji: '🔮',
             title: '아직 타로 기록이 없어요',
             description: '78장의 카드가 당신을 기다리고 있어요\n운명의 카드를 뽑아보세요',
             action: '타로 보기'

@@ -962,6 +962,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     overflow: hidden;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     animation: profileModalIn 0.2s ease-out;
@@ -1010,6 +1011,7 @@
 .profile-modal-body {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
@@ -1038,22 +1040,25 @@
     color: rgba(255, 255, 255, 0.25);
 }
 
-/* 필드 행 */
+/* 필드 행 - 50/50 split */
 .profile-field-row {
     display: flex;
     gap: 0.75rem;
 }
 
 .profile-field-row .profile-field {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .profile-field-row .profile-field.flex-2 {
-    flex: 2;
+    flex: 2 1 0;
+    min-width: 0;
 }
 
 .profile-field-row .profile-field.flex-1 {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 /* 프로필 필드 */
@@ -1074,6 +1079,9 @@
 }
 
 .profile-modal .profile-field input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     padding: 0.65rem 0.85rem;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);

@@ -95,8 +95,8 @@ export const getPopularTags = (contents, limit = 10) => {
  */
 export const CONTENT_TYPES = {
     dream: { label: '꿈', emoji: '🌙' },
-    tarot: { label: '타로', emoji: '🃏' },
-    saju: { label: '사주', emoji: '🔮' }
+    tarot: { label: '타로', emoji: '🔮' },
+    saju: { label: '사주', emoji: '☀️' }
 };
 
 /**

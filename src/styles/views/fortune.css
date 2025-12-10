@@ -597,14 +597,67 @@
    ================================ */
 
 .fortune-theme {
-    --accent-color: #1abc9c;
+    --accent-color: #f59e0b;
 }
 
 .fortune-title {
-    background: linear-gradient(135deg, #1abc9c, #55efc4);
+    background: linear-gradient(135deg, #fbbf24, #f97316);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+/* 프로필 정보 인라인 텍스트 (subtitle 대체) */
+.fortune-profile-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0;
+}
+
+.fortune-profile-text .profile-label {
+    color: rgba(252, 211, 77, 0.5);
+    font-weight: 400;
+}
+
+.fortune-profile-text .profile-info {
+    color: #fcd34d;
+    font-weight: 500;
+}
+
+.fortune-profile-text .profile-edit-btn {
+    font-size: 0.85rem;
+    color: rgba(252, 211, 77, 0.6);
+    margin-left: 0.15rem;
+    transition: color 0.2s ease;
+    /* Reset any button styling */
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.fortune-profile-text:hover .profile-info {
+    color: #fde68a;
+}
+
+.fortune-profile-text:hover .profile-edit-btn {
+    color: #fde68a;
+}
+
+.fortune-profile-text.empty .profile-label {
+    color: rgba(251, 191, 36, 0.4);
+}
+
+.fortune-profile-text.empty .profile-info {
+    color: rgba(252, 211, 77, 0.5);
+    font-style: italic;
+}
+
+.fortune-profile-text.empty .profile-edit-btn {
+    color: rgba(252, 211, 77, 0.4);
 }
 
 /* 운세 타입 선택 버튼 */
@@ -618,7 +671,7 @@
 .fortune-type-btn {
     padding: 1rem;
     background: linear-gradient(135deg, rgba(10, 0, 20, 0.95), rgba(20, 10, 40, 0.9));
-    border: 2px solid rgba(26, 188, 156, 0.3);
+    border: 2px solid rgba(251, 191, 36, 0.3);
     border-radius: 0;
     clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
     color: rgba(255, 255, 255, 0.7);
@@ -631,21 +684,127 @@
 
 .fortune-type-btn:hover {
     color: rgba(255, 255, 255, 0.95);
-    background: linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(0, 206, 201, 0.15));
-    border-color: rgba(26, 188, 156, 0.5);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 146, 60, 0.15));
+    border-color: rgba(251, 191, 36, 0.5);
     transform: translateY(-2px);
 }
 
 .fortune-type-btn.active {
     color: #fff;
-    background: linear-gradient(135deg, #1abc9c, #00cec9);
-    border-color: #55efc4;
+    background: linear-gradient(135deg, #fbbf24, #f97316);
+    border-color: #fcd34d;
     box-shadow:
-        0 0 20px rgba(26, 188, 156, 0.5),
+        0 0 20px rgba(251, 191, 36, 0.5),
         inset 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-/* 생년월일 입력 */
+/* ================================
+   질문 선택 드롭다운
+   ================================ */
+
+/* 50/50 스플릿 레이아웃 */
+.fortune-split-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.fortune-split-row .fortune-profile-section,
+.fortune-split-row .fortune-question-dropdown {
+    flex: 1;
+}
+
+.fortune-question-dropdown {
+    margin: 0;
+}
+
+.fortune-select {
+    width: 100%;
+    height: 100%;
+    padding: 0.55rem 0.75rem;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 8px;
+    color: #fcd34d;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fcd34d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+}
+
+.fortune-select:hover {
+    border-color: rgba(251, 191, 36, 0.6);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(249, 115, 22, 0.15));
+}
+
+.fortune-select:focus {
+    outline: none;
+    border-color: #fbbf24;
+    box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.25);
+}
+
+.fortune-select option {
+    background: #1a1a1a;
+    color: #fde68a;
+    padding: 0.5rem;
+}
+
+/* ================================
+   프로필 정보 섹션 (간결한 인라인)
+   ================================ */
+
+.fortune-profile-section {
+    margin: 0;
+}
+
+.fortune-profile-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0.55rem 0.75rem;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.fortune-profile-inline:hover {
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.4);
+}
+
+.fortune-profile-inline .profile-summary {
+    font-size: 0.8rem;
+    color: #fcd34d;
+    font-weight: 500;
+}
+
+.fortune-profile-inline .profile-edit-icon {
+    font-size: 0.75rem;
+    color: rgba(251, 191, 36, 0.7);
+}
+
+.fortune-profile-inline.empty {
+    border-style: dashed;
+    background: rgba(251, 191, 36, 0.05);
+}
+
+.fortune-profile-inline.empty .profile-summary {
+    color: rgba(252, 211, 77, 0.6);
+    font-size: 0.75rem;
+}
+
+.fortune-profile-inline.empty .profile-edit-icon {
+    font-size: 0.9rem;
+    color: rgba(251, 191, 36, 0.6);
+}
+
+/* 생년월일 입력 (레거시 지원) */
 .fortune-birthdate {
     margin: 1.5rem 0;
     text-align: center;
@@ -660,8 +819,8 @@
 
 .birthdate-input {
     padding: 0.75rem 1.25rem;
-    background: rgba(26, 188, 156, 0.1);
-    border: 2px solid rgba(26, 188, 156, 0.3);
+    background: rgba(251, 191, 36, 0.1);
+    border: 2px solid rgba(251, 191, 36, 0.3);
     border-radius: 0;
     clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
     color: var(--light);
@@ -672,8 +831,8 @@
 
 .birthdate-input:focus {
     outline: none;
-    border-color: #1abc9c;
-    box-shadow: 0 0 15px rgba(26, 188, 156, 0.3);
+    border-color: #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
 }
 
 .birthdate-input::-webkit-calendar-picker-indicator {
@@ -681,32 +840,37 @@
     cursor: pointer;
 }
 
-/* 운세 제출 버튼 */
+/* 운세 제출 버튼 - 타로/꿈과 동일한 둥근 스타일 */
 .fortune-submit {
-    background: linear-gradient(135deg, #1abc9c, #00cec9) !important;
-    border-radius: 0 !important;
-    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px) !important;
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%) !important;
+    border-radius: 12px !important;
+    clip-path: none !important;
+    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.4);
+    color: #1a1a1a !important;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .fortune-submit:hover:not(:disabled) {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 0 30px rgba(26, 188, 156, 0.5) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 12px 40px rgba(251, 191, 36, 0.5), 0 0 30px rgba(252, 211, 77, 0.3) !important;
 }
 
 .fortune-submit:disabled {
-    opacity: 0.7;
+    opacity: 0.5;
     cursor: not-allowed;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(249, 115, 22, 0.3) 100%) !important;
+    box-shadow: none;
+    transform: none !important;
 }
 
 /* 운세 분석 원 */
 .fortune-circle {
-    background: radial-gradient(circle at center, rgba(26, 188, 156, 0.3), transparent 70%) !important;
+    background: radial-gradient(circle at center, rgba(251, 191, 36, 0.3), transparent 70%) !important;
 }
 
 .fortune-circle .analysis-ring.active {
-    border-color: var(--phase-color, #1abc9c);
-    box-shadow: 0 0 25px color-mix(in srgb, var(--phase-color, #1abc9c) 50%, transparent);
+    border-color: var(--phase-color, #fbbf24);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--phase-color, #fbbf24) 50%, transparent);
 }
 
 /* ================================
@@ -866,7 +1030,7 @@
     .fortune-theme {
         width: 100%;
         max-width: 100%;
-        padding: 0 var(--spacing-sm, 0.5rem);
+        padding: 0;
     }
 
     .fortune-title {
@@ -895,7 +1059,7 @@
     }
 
     .fortune-submit {
-        margin-top: 1rem;
+        margin-top: 0;
     }
 }
 

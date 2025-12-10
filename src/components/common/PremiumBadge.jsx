@@ -69,7 +69,7 @@ export const UsageBadge = ({
 }) => {
     const typeEmojis = {
         dream: '🌙',
-        tarot: '🃏',
+        tarot: '🔮',
         saju: '🔮'
     };
 

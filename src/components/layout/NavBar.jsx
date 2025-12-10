@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PremiumBadge from '../common/PremiumBadge';
 
 const NavBar = ({
@@ -16,6 +16,37 @@ const NavBar = ({
     onResetResults
 }) => {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
+    const [isHidden, setIsHidden] = useState(false);
+    const lastScrollY = useRef(0);
+
+    // 모바일에서 스크롤 방향에 따라 헤더 숨김/표시
+    useEffect(() => {
+        const handleScroll = () => {
+            // 모바일에서만 적용 (768px 이하)
+            if (window.innerWidth > 768) {
+                setIsHidden(false);
+                return;
+            }
+
+            const currentScrollY = window.scrollY;
+            const scrollDiff = currentScrollY - lastScrollY.current;
+
+            // 스크롤 차이가 10px 이상일 때만 반응 (민감도 조절)
+            if (Math.abs(scrollDiff) > 10) {
+                if (scrollDiff > 0 && currentScrollY > 60) {
+                    // 아래로 스크롤 - 헤더 숨김
+                    setIsHidden(true);
+                } else if (scrollDiff < 0) {
+                    // 위로 스크롤 - 헤더 표시
+                    setIsHidden(false);
+                }
+                lastScrollY.current = currentScrollY;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleBrandClick = () => {
         onResetResults();
@@ -31,13 +62,13 @@ const NavBar = ({
     const modes = [
         { id: 'tarot', emoji: '🃏', label: '타로', desc: '타로 보기', btnIcon: '🃏', color: '#9b59b6' },
         { id: 'dream', emoji: '🌙', label: '꿈', desc: '꿈 풀이 보기', btnIcon: '🌙', color: '#6c5ce7' },
-        { id: 'fortune', emoji: '🔮', label: '사주', desc: '사주 보기', btnIcon: '✴️', color: '#e84393' },
+        { id: 'fortune', emoji: '☀️', label: '사주', desc: '사주 보기', btnIcon: '☀️', color: '#f59e0b' },
     ];
 
     const currentMode = modes.find(m => m.id === mode) || modes[0];
 
     return (
-        <nav className="nav-bar community-nav">
+        <nav className={`nav-bar community-nav ${isHidden ? 'nav-hidden' : ''}`}>
             {/* 로고 & 브랜드 */}
             <div className="nav-brand" onClick={handleBrandClick}>
                 <span className="brand-logo">🔮</span>

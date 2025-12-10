@@ -21,22 +21,26 @@ export const useImageGeneration = (tier = 'free') => {
      * @param {string} styleKey - 애니메 스타일 키 (Claude가 선택, 예: 'kyoani', 'mappa_dark')
      * @param {string} characterDesc - 캐릭터 설명 (일관성용)
      * @param {string} readingType - 리딩 타입 ('dream', 'tarot', 'fortune') - fallback용
+     * @param {string} colorPalette - 감정 기반 색상 팔레트 (Claude가 생성, 예: 'soft pinks and warm rose gold tones')
      */
-    const generateSingleImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot') => {
+    const generateSingleImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '') => {
         if (!geminiApiKey) return null;
 
         // 스타일 prefix 결정: ANIME_STYLES에서 가져오거나, 기본 분위기 사용
         const stylePrefix = ANIME_STYLES[styleKey] || ANIME_STYLES.shinkai;
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
 
+        // 동적 색상 팔레트 (Claude가 질문 감정에서 추출)
+        const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
+
         // 디버깅: 실제 사용되는 모델과 스타일 확인
-        console.log(`🎨 Image Generation - Tier: ${tier}, Model: ${imageModelName}, Style: ${styleKey}`);
+        console.log(`🎨 Image Generation - Tier: ${tier}, Model: ${imageModelName}, Style: ${styleKey}, Colors: ${colorPalette || 'default'}`);
 
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });
 
-            // 프롬프트 구성: 스타일 + 분위기 + 장면 + 캐릭터
-            let fullPrompt = `${stylePrefix}. ${atmosphere}. ${prompt}`;
+            // 프롬프트 구성: 스타일 + 색상 + 분위기 + 장면 + 캐릭터
+            let fullPrompt = `${stylePrefix}. ${colorScheme} ${atmosphere}. ${prompt}`;
             if (characterDesc) {
                 fullPrompt += ` SAME CHARACTER: ${characterDesc}.`;
             }
@@ -81,12 +85,13 @@ export const useImageGeneration = (tier = 'free') => {
      * @param {string} characterDesc - 캐릭터 설명
      * @param {string} readingType - 리딩 타입
      * @param {Function} onProgress - 진행 콜백
+     * @param {string} colorPalette - 감정 기반 색상 팔레트
      */
-    const generateImages = async (prompts, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', onProgress = null) => {
+    const generateImages = async (prompts, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '') => {
         const images = [];
         for (let i = 0; i < prompts.length; i++) {
             if (onProgress) onProgress(i, prompts.length);
-            const image = await generateSingleImage(prompts[i], styleKey, characterDesc, readingType);
+            const image = await generateSingleImage(prompts[i], styleKey, characterDesc, readingType, colorPalette);
             images.push(image);
             // 이미지 생성 간 딜레이
             if (i < prompts.length - 1) {
@@ -102,20 +107,22 @@ export const useImageGeneration = (tier = 'free') => {
      * @param {string} styleKey - 애니메 스타일 키
      * @param {string} characterDesc - 캐릭터 설명
      * @param {string} readingType - 리딩 타입
+     * @param {string} colorPalette - 감정 기반 색상 팔레트
      */
-    const generateShareImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot') => {
+    const generateShareImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '') => {
         if (!geminiApiKey) return null;
 
         const stylePrefix = ANIME_STYLES[styleKey] || ANIME_STYLES.shinkai;
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
+        const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
 
-        console.log(`📱 Share Image Generation - Tier: ${tier}, Model: ${imageModelName}, Style: ${styleKey}, Ratio: 9:16`);
+        console.log(`📱 Share Image Generation - Tier: ${tier}, Model: ${imageModelName}, Style: ${styleKey}, Colors: ${colorPalette || 'default'}, Ratio: 9:16`);
 
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });
 
             // 소셜 공유용 프롬프트 (세로 구도에 최적화)
-            let fullPrompt = `${stylePrefix}. ${atmosphere}. ${prompt} Vertical composition, portrait orientation, social media optimized.`;
+            let fullPrompt = `${stylePrefix}. ${colorScheme} ${atmosphere}. ${prompt} Vertical composition, portrait orientation, social media optimized.`;
             if (characterDesc) {
                 fullPrompt += ` SAME CHARACTER: ${characterDesc}.`;
             }

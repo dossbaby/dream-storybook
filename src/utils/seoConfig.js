@@ -24,7 +24,7 @@ export const CONTENT_TYPES = {
         nameEn: 'Tarot',
         collection: 'tarots',
         urlPath: 'tarot',
-        icon: '🃏',
+        icon: '🔮',
         color: '#ffd700',
         gradientFrom: 'rgba(255, 215, 0, 0.3)',
         gradientTo: 'rgba(255, 140, 0, 0.3)',

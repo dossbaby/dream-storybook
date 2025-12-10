@@ -38,7 +38,7 @@ const ToastNotifications = memo(({
             {/* 타로 카드 공개 토스트 */}
             {toasts.tarotReveal && (
                 <div className="tarot-reveal-toast">
-                    <div className="tarot-reveal-icon">🃏</div>
+                    <div className="tarot-reveal-icon">🔮</div>
                     <div className="tarot-reveal-info">
                         <span className="tarot-reveal-label">당신의 타로 카드</span>
                         <span className="tarot-reveal-name">{toasts.tarotReveal.name}</span>

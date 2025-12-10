@@ -6,9 +6,18 @@ const INTRO_TEXTS = [
     '마음속 질문에 집중하며 세 장을 선택하세요.'
 ];
 
+// 랜덤 헤딩 (prompt 화면용)
+const RANDOM_HEADINGS = [
+    '지금 마음을 꺼내보세요.',
+    '카드에게 뭘 물어볼까요?',
+    '알고 싶은 게 있으세요?',
+    '무슨 고민이에요?',
+    '지금 가장 알고 싶은 게 뭐에요?'
+];
+
 // 타로 단계별 이모지와 색상
 const TAROT_PHASE_CONFIG = [
-    { emoji: '🃏', color: '#9b59b6' },
+    { emoji: '🔮', color: '#9b59b6' },
     { emoji: '✨', color: '#8e44ad' },
     { emoji: '🌙', color: '#6c5ce7' },
     { emoji: '☀️', color: '#a29bfe' },
@@ -28,6 +37,16 @@ const shuffleArray = (array) => {
     return shuffled;
 };
 
+// 플레이스홀더 예시들 (랜덤 로테이션)
+const PLACEHOLDER_EXAMPLES = [
+    "이번 주 면접 결과를 기다리고 있는데, 붙었을까요?",
+    "남자친구가 요즘 바쁘다며 연락이 뜸한데, 다음 주에 연락 올까요?",
+    "이번 달 안에 이직 제안을 받을 수 있을까요?",
+    "이번 주 안에 짝사랑하는 사람에게 고백해도 될까요?",
+    "다음 달에 창업하려는데 성공할 수 있을까요?",
+    "올해 안에 결혼할 수 있을까요?"
+];
+
 const TarotInput = ({
     tarotPhase,
     tarotQuestion,
@@ -46,6 +65,16 @@ const TarotInput = ({
 }) => {
     const currentPhase = TAROT_PHASE_CONFIG[Math.min(analysisPhase, TAROT_PHASE_CONFIG.length) - 1] || TAROT_PHASE_CONFIG[0];
 
+    // 랜덤 플레이스홀더 (컴포넌트 마운트 시 한 번만 선택)
+    const randomPlaceholder = useMemo(() => {
+        return PLACEHOLDER_EXAMPLES[Math.floor(Math.random() * PLACEHOLDER_EXAMPLES.length)];
+    }, []);
+
+    // 랜덤 헤딩 (컴포넌트 마운트 시 한 번만 선택)
+    const randomHeading = useMemo(() => {
+        return RANDOM_HEADINGS[Math.floor(Math.random() * RANDOM_HEADINGS.length)];
+    }, []);
+
     // 셔플된 덱
     const shuffledDeck = useMemo(() => {
         if (!tarotDeck || tarotDeck.length === 0) return [];
@@ -61,6 +90,7 @@ const TarotInput = ({
     // 인트로 상태 (fade in 방식)
     const [introPhase, setIntroPhase] = useState(0); // 0: 대기, 1: 첫번째 표시, 2: 두번째 표시, 3: fade out
     const [cardsRevealed, setCardsRevealed] = useState(false);
+    const [cardsClickable, setCardsClickable] = useState(false); // 카드 클릭 가능 여부
 
     // 인트로 시퀀스 (fade in 방식 - 타이핑 없이)
     // 카드 스프레드: 22장 × 30ms = 660ms 딜레이 + 0.8s 애니메이션 = 약 1.5초
@@ -68,29 +98,37 @@ const TarotInput = ({
         if (tarotPhase !== 'selecting') {
             setIntroPhase(0);
             setCardsRevealed(false);
+            setCardsClickable(false);
             return;
         }
 
-        // Phase 0 → 1: 0.3초 후 첫 번째 텍스트 fade in + 카드 스프레드 동시 시작
-        const timer1 = setTimeout(() => {
-            setIntroPhase(1);
-            setCardsRevealed(true); // 카드 스프레드도 동시에 시작
+        // 카드 스프레드 먼저 시작
+        const timer0 = setTimeout(() => {
+            setCardsRevealed(true);
         }, 300);
 
-        // Phase 1 → 2: 1초 후 두 번째 텍스트 fade in
+        // Phase 0 → 1: 0.5초 후 첫 번째 텍스트 fade in
+        const timer1 = setTimeout(() => {
+            setIntroPhase(1);
+        }, 500);
+
+        // 카드 스프레드 애니메이션 완료 후 클릭 가능
+        const timerClickable = setTimeout(() => {
+            setCardsClickable(true);
+        }, 1800);
+
+        // Phase 1 → 2: 1.2초 후 두 번째 텍스트 fade in
         const timer2 = setTimeout(() => {
             setIntroPhase(2);
-        }, 1300);
+        }, 1200);
 
-        // Phase 2 → 3: 카드 스프레드 완료 후 3초 더 대기 후 fade out
-        const timer3 = setTimeout(() => {
-            setIntroPhase(3);
-        }, 5800);
+        // fade out 제거 - 인트로 텍스트 항상 표시
 
         return () => {
+            clearTimeout(timer0);
             clearTimeout(timer1);
+            clearTimeout(timerClickable);
             clearTimeout(timer2);
-            clearTimeout(timer3);
         };
     }, [tarotPhase]);
 
@@ -111,15 +149,15 @@ const TarotInput = ({
                 setCardSize({ width: 116, height: 174 }); // 55% 확대
             }
 
-            // ellipse 크기 - 화면 높이 기반 (노트북 대응)
+            // ellipse 크기 - 화면 높이 기반 (노트북 대응) - 1.5배로 키워서 더 둥근 spread
             if (height <= 800) {
-                setEllipseHeight(90);
+                setEllipseHeight(135);
                 setEllipseWidthRatio(0.35);
             } else if (height <= 900) {
-                setEllipseHeight(100);
+                setEllipseHeight(150);
                 setEllipseWidthRatio(0.4);
             } else {
-                setEllipseHeight(180);
+                setEllipseHeight(270);
                 setEllipseWidthRatio(0.5);
             }
         };
@@ -140,24 +178,24 @@ const TarotInput = ({
             {tarotPhase === 'question' && (
                 <>
                     <div className="tarot-question-header">
-                        <div className="mystical-orb">
+                        <div className="mystical-orb tarot-orb">
                             <span className="orb-emoji">🔮</span>
+                            <div className="orb-sparkles">
+                                <span>✦</span>
+                                <span>✧</span>
+                                <span>✦</span>
+                            </div>
                         </div>
-                        <h2 className="create-title tarot-title">운명의 카드에게 물어보세요</h2>
-                        <p className="tarot-subtitle">당신의 질문에 78장의 카드가 답합니다</p>
+                        <h2 className="create-title tarot-title">{randomHeading}</h2>
+                        <p className="tarot-subtitle">질문을 구체적으로 적을수록 더 정확한 리딩을 받을 수 있어요</p>
                     </div>
                     <textarea
                         value={tarotQuestion}
                         onChange={(e) => setTarotQuestion(e.target.value)}
-                        placeholder={`타로에게 물어보고 싶은 것을 자유롭게 적어주세요...
-
-예시:
-• 지금 사귀는 사람과의 미래가 궁금해요
-• 이직을 해야 할지 고민이에요
-• 올해 나에게 어떤 일이 일어날까요?`}
+                        placeholder={randomPlaceholder}
                         className="dream-input tarot-input"
                         disabled={loading}
-                        rows={6}
+                        rows={4}
                     />
                     {error && <div className="error">{error}</div>}
                     <button
@@ -165,7 +203,7 @@ const TarotInput = ({
                         disabled={loading || !tarotQuestion.trim()}
                         className="submit-btn tarot-submit mystical-btn"
                     >
-                        {loading ? '준비 중...' : '✨ 카드 뽑으러 가기'}
+                        {loading ? '준비 중...' : '🃏 카드 뽑기'}
                     </button>
                 </>
             )}
@@ -177,8 +215,8 @@ const TarotInput = ({
                         리딩 취소
                     </button>
 
-                    {/* 인트로 텍스트 - fade in 방식 */}
-                    <div className={`tarot-intro-text ${introPhase >= 3 ? 'fade-out' : ''}`}>
+                    {/* 인트로 텍스트 - 항상 표시 */}
+                    <div className="tarot-intro-text">
                         <p className={`intro-line intro-line-1 ${introPhase >= 1 ? 'visible' : ''}`}>
                             {INTRO_TEXTS[0]}
                         </p>
@@ -318,7 +356,7 @@ const TarotInput = ({
                                     <div
                                         key={card.id}
                                         className={`spread-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${cardsRevealed ? 'card-revealed' : ''}`}
-                                        onClick={() => cardsRevealed && handleCardClick(card, isDisabled)}
+                                        onClick={() => cardsClickable && handleCardClick(card, isDisabled)}
                                         style={{
                                             width: cardSize.width,
                                             height: cardSize.height,

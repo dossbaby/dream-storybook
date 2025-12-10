@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import { TAROT_DECK } from '../utils/constants';
 import { getApiKeys } from '../utils/analysisHelpers';
 
@@ -11,6 +12,7 @@ export const useTarotActions = ({
     setCardRevealField,
     setCurrentCard,
     setView,
+    currentView, // 현재 view 상태
     setSavedDreamField,
     user,
     generateTarotReadingHook,
@@ -19,6 +21,11 @@ export const useTarotActions = ({
     // 로그인 필요 시 콜백
     onLoginRequired
 }) => {
+    // currentView의 최신 값을 ref로 추적 (클로저 이슈 해결)
+    const currentViewRef = useRef(currentView);
+    useEffect(() => {
+        currentViewRef.current = currentView;
+    }, [currentView]);
     // 레어카드 효과 트리거
     const triggerCardReveal = () => {
         setCardRevealField('mode', true);
@@ -102,7 +109,7 @@ export const useTarotActions = ({
 
         if (resultData) {
             setTarotField('result', resultData);
-            setView('tarot-result');  // 바로 TarotResultView로 이동 (모달 없이 full reading)
+            // 분석 완료 후 자동 이동하지 않음 - 사용자가 하단바에서 직접 클릭해서 이동
             // 저장은 useReading.js에서 자동으로 처리됨
         }
 

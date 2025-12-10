@@ -65,27 +65,27 @@ export const IMAGE_CONFIG = {
  * 사용: const stylePrefix = ANIME_STYLES[imageStyle] || ANIME_STYLES.shinkai;
  */
 export const ANIME_STYLES = {
-    // 로맨틱/몽환적 계열
-    shinkai: 'Makoto Shinkai style (Your Name, Weathering With You). Golden hour lighting, hyper-detailed backgrounds, dreamy twilight, warm oranges and cool blues',
-    kyoani: 'Kyoto Animation style (Violet Evergarden). Soft lighting, delicate detailed lines, over-saturated pastel colors, elegant and emotional',
-    ghibli: 'Studio Ghibli style (Spirited Away). Magical realism, soft vivid tones, hand-painted aesthetic, childlike wonder',
+    // 로맨틱/몽환적 계열 - 인물 중심 강조 (색상은 colorPalette에서 동적 지정)
+    shinkai: 'Makoto Shinkai style (Your Name, Weathering With You). Beautiful anime character as focal point, golden hour lighting, hyper-detailed backgrounds, dreamy twilight atmosphere, emotional expression',
+    kyoani: 'Kyoto Animation style (Violet Evergarden). Detailed anime character with soft lighting, delicate features, elegant emotional portrayal, character-focused composition',
+    ghibli: 'Studio Ghibli style (Spirited Away). Expressive anime character in magical setting, hand-painted aesthetic, warm human emotions, character-driven scene',
 
-    // 다크/액션 계열
-    mappa_dark: 'MAPPA dark style (Chainsaw Man). Edgy gritty aesthetic, bold shadows, visceral intensity, mature themes',
-    mappa_action: 'MAPPA action style (Jujutsu Kaisen). Dynamic fluid motion, intense vibrant colors, powerful fight choreography',
-    ufotable: 'Ufotable style (Demon Slayer). CGI-2D seamless blend, layered particle effects, breathtaking vibrant combat',
+    // 다크/액션 계열 - 인물 중심 강조
+    mappa_dark: 'MAPPA dark style (Chainsaw Man). Intense anime character with edgy aesthetic, bold shadows on face, visceral emotion, mature dramatic lighting, character silhouette prominent',
+    mappa_action: 'MAPPA action style (Jujutsu Kaisen). Dynamic anime character pose, powerful emotional expression, character in dramatic moment',
+    ufotable: 'Ufotable style (Demon Slayer). Beautiful anime character with CGI-2D blend, layered particle effects around person, breathtaking character portrayal, glowing aura',
 
-    // 스타일리시/아트 계열
-    trigger: 'Studio Trigger style (Cyberpunk Edgerunners, Promare). Vivid neon colors, bold geometric shapes, explosive kinetic energy',
-    sciencesaru: 'Science Saru style (Dan Da Dan, Devilman Crybaby). Heavy color washes, flash animation fluidity, experimental bold',
+    // 스타일리시/아트 계열 - 인물 중심 강조
+    trigger: 'Studio Trigger style (Cyberpunk Edgerunners). Stylish anime character, bold geometric shapes, expressive face, kinetic energy pose',
+    sciencesaru: 'Science Saru style (Dan Da Dan, Devilman Crybaby). Unique anime character design, expressive fluid animation style, bold emotional character',
 
-    // 클래식/우아한 계열
-    shojo: 'Classic shojo style (Apothecary Diaries). Breathtaking details, sparkles and flowers, elegant flowing aesthetic',
-    persona5: 'Persona 5 style. Bold red-black-white contrast, stylish UI elements, sharp angular designs, rebellious punk aesthetic, striking silhouettes',
+    // 클래식/우아한 계열 - 인물 중심 강조
+    shojo: 'Classic shojo anime style (Apothecary Diaries). Beautiful anime character with breathtaking details, sparkles and flowers around person, elegant flowing hair, romantic atmosphere',
+    persona5: 'Persona 5 style. Stylish anime character with sharp angular design, rebellious expression, striking character silhouette, dramatic pose',
 
-    // 특수 스타일
-    cgi_gem: 'CGI crystalline style (Land of the Lustrous). Gemstone characters, glittering ethereal surfaces, prismatic beauty',
-    minimalist: 'Minimalist artistic anime. Clean simple lines, strategic negative space, subtle muted color palette'
+    // 특수 스타일 - 인물 중심 강조
+    cgi_gem: 'CGI crystalline anime style (Land of the Lustrous). Beautiful character with gem-like features, glittering ethereal skin, prismatic light on person, mystical presence',
+    minimalist: 'Minimalist artistic anime. Clean elegant character design, strategic negative space, subtle expressions, character as focal point, simple but impactful'
 };
 
 /**

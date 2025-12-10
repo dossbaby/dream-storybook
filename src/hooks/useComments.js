@@ -20,6 +20,9 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
     const [newInterpretation, setNewInterpretation] = useState('');
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
+    // 이모지 리액션 상태
+    const [reactions, setReactions] = useState({}); // { chills: 5, accurate: 3, ... }
+    const [userReactions, setUserReactions] = useState([]); // ['chills', 'empathy']
     const pollingRef = useRef(null);
 
     const setCommentEditField = (key, value) => setCommentEdit(prev => ({ ...prev, [key]: value }));
@@ -31,6 +34,16 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
             // 로컬 스토리지에서 좋아요 상태 확인
             const likedItems = JSON.parse(localStorage.getItem(`liked_${collectionName}`) || '[]');
             setIsLiked(likedItems.includes(selectedItem.id));
+        }
+    }, [selectedItem, collectionName]);
+
+    // 이모지 리액션 상태 초기화
+    useEffect(() => {
+        if (selectedItem) {
+            setReactions(selectedItem.reactions || {});
+            // 로컬 스토리지에서 사용자 리액션 확인
+            const reactedItems = JSON.parse(localStorage.getItem(`reacted_${collectionName}`) || '{}');
+            setUserReactions(reactedItems[selectedItem.id] || []);
         }
     }, [selectedItem, collectionName]);
 
@@ -110,6 +123,48 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
             }
         } catch (err) {
             console.error('Like toggle error:', err);
+        }
+    };
+
+    // 이모지 리액션 토글
+    const toggleReaction = async (reactionId) => {
+        if (!selectedItem?.id) return;
+
+        const reactedItems = JSON.parse(localStorage.getItem(`reacted_${collectionName}`) || '{}');
+        const currentReactions = reactedItems[selectedItem.id] || [];
+        const hasReacted = currentReactions.includes(reactionId);
+        const itemRef = doc(db, collectionName, selectedItem.id);
+
+        try {
+            if (hasReacted) {
+                // 리액션 제거
+                await setDoc(itemRef, {
+                    reactions: { [reactionId]: increment(-1) }
+                }, { merge: true });
+                const newUserReactions = currentReactions.filter(r => r !== reactionId);
+                reactedItems[selectedItem.id] = newUserReactions;
+                localStorage.setItem(`reacted_${collectionName}`, JSON.stringify(reactedItems));
+                setUserReactions(newUserReactions);
+                setReactions(prev => ({
+                    ...prev,
+                    [reactionId]: Math.max(0, (prev[reactionId] || 0) - 1)
+                }));
+            } else {
+                // 리액션 추가
+                await setDoc(itemRef, {
+                    reactions: { [reactionId]: increment(1) }
+                }, { merge: true });
+                const newUserReactions = [...currentReactions, reactionId];
+                reactedItems[selectedItem.id] = newUserReactions;
+                localStorage.setItem(`reacted_${collectionName}`, JSON.stringify(reactedItems));
+                setUserReactions(newUserReactions);
+                setReactions(prev => ({
+                    ...prev,
+                    [reactionId]: (prev[reactionId] || 0) + 1
+                }));
+            }
+        } catch (err) {
+            console.error('Reaction toggle error:', err);
         }
     };
 
@@ -310,6 +365,10 @@ export const useComments = (collectionName = 'dreams', user, selectedItem, userN
         isLiked,
         likeCount,
         toggleLike,
+        // 이모지 리액션
+        reactions,
+        userReactions,
+        toggleReaction,
         // 댓글
         comments,
         newComment,

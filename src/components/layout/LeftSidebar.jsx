@@ -95,7 +95,7 @@ const LeftSidebar = ({
                                 { topic: '성장', emoji: '🌱' },
                                 { topic: '건강', emoji: '💪' },
                                 { topic: '선택', emoji: '⚖️' },
-                                { topic: '운세', emoji: '🔮' }
+                                { topic: '일반', emoji: '💬' }
                             ].map((item, i) => (
                                 <div
                                     key={i}

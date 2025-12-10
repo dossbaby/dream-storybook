@@ -1,32 +1,35 @@
+import { useMemo } from 'react';
 import CustomQuestionSelector from '../common/CustomQuestionSelector';
 
-// 단계별 이모지와 색상
-const PHASE_CONFIG = [
-    { emoji: '🌙', color: '#9b59b6' },  // 1: 접신 중
-    { emoji: '🔮', color: '#8e44ad' },  // 2: 영혼 연결
-    { emoji: '👁️', color: '#3498db' },  // 3: 통찰
-    { emoji: '📖', color: '#2980b9' },  // 4: 해석
-    { emoji: '🎨', color: '#e74c3c' },  // 5: 이미지 생성
-    { emoji: '✨', color: '#f39c12' },  // 6: 마무리
-    { emoji: '🌟', color: '#f1c40f' },  // 7: 완성
-    { emoji: '💫', color: '#e056fd' },  // 8: 완료
+// 랜덤 헤딩 (prompt 화면용)
+const RANDOM_HEADINGS = [
+    '어젯밤 무슨 꿈 꾸셨어요?',
+    '어떤 꿈이었나요?',
+    '꿈이 뭘 말하는지 궁금하세요?',
+    '꿈속에서 무슨 일이 있었어요?',
+    '어떤 장면이 떠올라요?'
+];
+
+// 플레이스홀더 예시들 (랜덤 로테이션)
+const PLACEHOLDER_EXAMPLES = [
+    "높은 건물에서 떨어지는 꿈을 꿨어요",
+    "돌아가신 할머니가 나오셨는데 웃고 계셨어요",
+    "이빨이 빠지는 꿈이었는데 피가 났어요",
+    "하늘을 나는 꿈을 꿨어요, 너무 자유로웠어요",
+    "물에 빠지는 꿈인데 숨을 쉴 수 있었어요",
+    "뱀이 나와서 쫓아왔는데 도망치지 못했어요"
 ];
 
 const DreamInput = ({
     dreamDescription,
     setDreamDescription,
     detectedKeywords,
-    showKeywordHints,
-    setShowKeywordHints,
-    keywordHints,
-    dreamSymbols,
     loading,
     analysisPhase,
     progress,
     error,
     onBack,
     onGenerate,
-    onAddKeywordHint,
     onFilterBySymbol,
     // 맞춤 질문 관련 props
     tier = 'free',
@@ -36,50 +39,47 @@ const DreamInput = ({
     onCustomQuestionChange,
     onOpenPremium
 }) => {
-    const currentPhase = PHASE_CONFIG[Math.min(analysisPhase, PHASE_CONFIG.length) - 1] || PHASE_CONFIG[0];
+    // 랜덤 플레이스홀더 (컴포넌트 마운트 시 한 번만 선택)
+    const randomPlaceholder = useMemo(() => {
+        return PLACEHOLDER_EXAMPLES[Math.floor(Math.random() * PLACEHOLDER_EXAMPLES.length)];
+    }, []);
+
+    // 랜덤 헤딩 (컴포넌트 마운트 시 한 번만 선택)
+    const randomHeading = useMemo(() => {
+        return RANDOM_HEADINGS[Math.floor(Math.random() * RANDOM_HEADINGS.length)];
+    }, []);
 
     return (
-        <div className="create-card dream-theme">
-            <h2 className="create-title">꿈을 말해봐</h2>
-
+        <div className="create-card dream-input-card dream-theme">
             {!loading && (
                 <>
-                    <div className="dream-input-wrapper">
-                        <textarea
-                            value={dreamDescription}
-                            onChange={(e) => setDreamDescription(e.target.value)}
-                            placeholder="어젯밤 꿈을 자세히 적어봐..."
-                            className="dream-input"
-                            disabled={loading}
-                            onFocus={() => setShowKeywordHints(true)}
-                            inputMode="text"
-                            enterKeyHint="done"
-                            autoComplete="off"
-                            autoCorrect="off"
-                            spellCheck="false"
-                        />
-                        <div className="input-footer">
-                            <span className={`char-count ${dreamDescription.length < 10 ? 'warning' : dreamDescription.length > 50 ? 'good' : ''}`}>
-                                {dreamDescription.length}자
-                                {dreamDescription.length < 10 && <span className="char-hint"> (10자 이상 권장)</span>}
-                                {dreamDescription.length >= 50 && <span className="char-hint"> ✨ 상세하게 적었네요!</span>}
-                            </span>
-                        </div>
-                    </div>
-                    {showKeywordHints && dreamDescription.length < 10 && (
-                        <div className="keyword-hints">
-                            <span className="hints-label">꿈에 이런 게 나왔어?</span>
-                            <div className="hints-list">
-                                {keywordHints.map((kw, i) => (
-                                    <button key={i} className="hint-tag" onClick={() => onAddKeywordHint(kw)}>
-                                        {dreamSymbols[kw]?.emoji} {kw}
-                                    </button>
-                                ))}
+                    <div className="dream-question-header">
+                        <div className="mystical-orb dream-orb">
+                            <span className="orb-emoji">🌙</span>
+                            <div className="orb-sparkles dream-sparkles">
+                                <span>✦</span>
+                                <span>✧</span>
+                                <span>✦</span>
                             </div>
                         </div>
-                    )}
+                        <h2 className="create-title dream-title">{randomHeading}</h2>
+                        <p className="dream-subtitle">꿈을 구체적으로 적을수록 꿈 풀이가 더 정확해요</p>
+                    </div>
+                    <textarea
+                        value={dreamDescription}
+                        onChange={(e) => setDreamDescription(e.target.value)}
+                        placeholder={randomPlaceholder}
+                        className="dream-input dream-textarea"
+                        disabled={loading}
+                        inputMode="text"
+                        enterKeyHint="done"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck="false"
+                        rows={4}
+                    />
                     {detectedKeywords.length > 0 && (
-                        <div className="keywords-detected">
+                        <div className="keywords-detected dream-keywords">
                             <span className="keywords-label">
                                 ✨ 감지된 상징 <span className="keywords-sublabel">(클릭해서 관련 꿈 보기)</span>
                             </span>
@@ -112,37 +112,15 @@ const DreamInput = ({
                     )}
 
                     {error && <div className="error">{error}</div>}
+                    <button
+                        onClick={onGenerate}
+                        disabled={loading || !dreamDescription.trim()}
+                        className="submit-btn dream-submit mystical-btn"
+                    >
+                        {loading ? '해독 중...' : '🌙 꿈 풀기'}
+                    </button>
                 </>
             )}
-
-            {/* 원형 분석 애니메이션 */}
-            {loading && (
-                <div className="analysis-animation">
-                    <div
-                        className="analysis-circle dream-circle"
-                        style={{ '--phase-color': currentPhase.color }}
-                    >
-                        <div className={`analysis-ring ${analysisPhase >= 1 ? 'active' : ''}`}></div>
-                        <div className={`analysis-ring ring-2 ${analysisPhase >= 2 ? 'active' : ''}`}></div>
-                        <div className={`analysis-ring ring-3 ${analysisPhase >= 3 ? 'active' : ''}`}></div>
-                        <div className="analysis-core">{currentPhase.emoji}</div>
-                    </div>
-                    <div className="analysis-text">{progress}</div>
-                    <div className="analysis-phases">
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map(p => (
-                            <div key={p} className={`phase-dot ${analysisPhase >= p ? 'active' : ''} ${analysisPhase === p ? 'current' : ''}`} />
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            <button
-                onClick={onGenerate}
-                disabled={loading || !dreamDescription.trim()}
-                className="submit-btn"
-            >
-                {loading ? '해독 중...' : '꿈 해독하기'}
-            </button>
         </div>
     );
 };

@@ -6,7 +6,7 @@ const FloatingActionButton = memo(({ mode, onModeChange, onCreateClick }) => {
     const actions = [
         {
             id: 'tarot',
-            emoji: '🃏',
+            emoji: '🔮',
             label: '타로 보기',
             color: '#9b59b6',
             description: '운명의 카드를 뽑아보세요'
