@@ -44,6 +44,14 @@ body {
         width: 100%;
         height: 100%;
     }
+
+    /* 모바일 피드 Empty State에서 body 스크롤 차단 */
+    body:has(.feed-empty-state) {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .app {

@@ -73,6 +73,11 @@ const BottomNav = ({
         return '시작';
     };
 
+    // 모드별 피드 라벨 (커뮤니티로 통일)
+    const getFeedLabel = () => {
+        return '커뮤니티';
+    };
+
     // 아이콘 결정 - 모드별 이모지
     const getCreateIcon = () => {
         if (isAnalyzing) return getAnalyzingIcon();
@@ -81,11 +86,11 @@ const BottomNav = ({
     };
 
     const navItems = [
-        { id: 'home', icon: '🌀', label: '피드', action: 'home' },
-        { id: 'explore', icon: '🔥', label: '인기', action: 'explore' },
+        { id: 'home', icon: getModeEmoji(currentMode), label: getFeedLabel(), action: 'home' },
+        { id: 'explore', icon: '🔥', label: '인기 리딩', action: 'explore' },
         { id: 'create', icon: getCreateIcon(), label: getCreateLabel(), action: 'create', isCenter: true },
-        { id: 'feed', icon: '📓', label: '리딩', action: 'feed' },
-        { id: 'mypage', icon: '💜', label: '정보', action: 'mypage' },
+        { id: 'feed', icon: '💜', label: '내 리딩', action: 'feed' },
+        { id: 'mypage', icon: '👤', label: '프로필', action: 'mypage' },
     ];
 
     const handleNavClick = (item) => {

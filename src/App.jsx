@@ -59,7 +59,7 @@ const DreamDetailView = lazy(() => import('./components/detail/DreamDetailView')
 const MyPage = lazy(() => import('./components/my/MyPage'));
 const FeedView = lazy(() => import('./components/feed/FeedView'));
 const FloatingActionButton = lazy(() => import('./components/common/FloatingActionButton'));
-const InstallPrompt = lazy(() => import('./components/common/InstallPrompt'));
+// InstallPrompt 삭제됨 (PWA 설치 프롬프트 제거)
 const MobileSidebarSheet = lazy(() => import('./components/layout/MobileSidebarSheet'));
 const AnalysisOverlay = lazy(() => import('./components/common/AnalysisOverlay'));
 
@@ -524,6 +524,8 @@ function App() {
                             onSelectPreset={(preset) => setFortuneQuestion(preset, '')}
                             onCustomQuestionChange={(text) => setFortuneQuestion(null, text)}
                             onOpenPremium={() => handleOpenPremiumModal('custom_question')}
+                            user={user}
+                            onLoginRequired={openAuthModal}
                         />
                     )}
 
@@ -925,10 +927,7 @@ function App() {
                 </MobileSidebarSheet>
             </Suspense>
 
-            {/* PWA 설치 프롬프트 */}
-            <Suspense fallback={null}>
-                <InstallPrompt />
-            </Suspense>
+            {/* PWA 설치 프롬프트 삭제됨 */}
         </div>
     );
 }

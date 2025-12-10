@@ -621,6 +621,14 @@
     padding: 0 0.25rem 0.5rem 0.25rem;
 }
 
+/* 모바일에서 empty state만 있을 때 스크롤 방지 */
+@media (max-width: 768px) {
+    .feed-view:has(.feed-empty-state) {
+        overflow: hidden;
+        max-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height) - var(--safe-area-bottom));
+    }
+}
+
 @media (min-width: 769px) {
     .feed-view {
         padding: 1rem;
@@ -1133,6 +1141,47 @@
 
 .empty-action-btn.fortune-btn:hover {
     box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5);
+}
+
+/* 모바일 empty state - 스크롤 방지 */
+@media (max-width: 768px) {
+    .feed-empty-state {
+        padding: 2rem 1.5rem;
+        min-height: auto;
+        max-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height) - var(--safe-area-bottom));
+        overflow: hidden;
+        /* 스크롤바 숨김 */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .feed-empty-state::-webkit-scrollbar {
+        display: none;
+    }
+
+    .empty-illustration {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 1rem;
+    }
+
+    .empty-emoji {
+        font-size: 2.5rem;
+    }
+
+    .empty-title {
+        font-size: 1.05rem;
+    }
+
+    .empty-subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-action-btn {
+        padding: 0.75rem 1.4rem;
+        font-size: 0.9rem;
+    }
 }
 
 /* ========== EmptyState 컴포넌트 ========== */

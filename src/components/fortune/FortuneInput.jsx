@@ -64,7 +64,10 @@ const FortuneInput = ({
     customQuestion,
     onSelectPreset,
     onCustomQuestionChange,
-    onOpenPremium
+    onOpenPremium,
+    // 로그인 관련
+    user,
+    onLoginRequired
 }) => {
     // 프로필에 생년월일이 있으면 자동 설정
     useEffect(() => {
@@ -88,6 +91,9 @@ const FortuneInput = ({
 
     // 프로필 요약 문자열 생성
     const getProfileSummary = () => {
+        // 비로그인 상태
+        if (!user) return '로그인해서 프로필을 불러오세요';
+        // 로그인했지만 프로필 미설정
         if (!hasRequiredProfile) return '프로필을 설정해주세요';
         const parts = [userProfile.name];
         const gender = getGenderShort(userProfile.gender);
@@ -96,6 +102,17 @@ const FortuneInput = ({
         const time = getTimeShort(userProfile.birthTime);
         if (time) parts.push(time);
         return parts.join(' · ');
+    };
+
+    // 프로필 클릭 핸들러
+    const handleProfileClick = () => {
+        if (!user) {
+            // 비로그인 → 로그인 모달
+            onLoginRequired?.('profile');
+        } else {
+            // 로그인 → 프로필 설정 모달
+            onOpenProfileModal?.();
+        }
     };
 
     // 버튼 비활성화 조건: 프로필 없음 OR 질문 없음
@@ -117,8 +134,8 @@ const FortuneInput = ({
                         <h2 className="create-title fortune-title">{randomHeading}</h2>
                         {/* 프로필 정보 인라인 (subtitle 대체) */}
                         <p
-                            className={`fortune-profile-text ${!hasRequiredProfile ? 'empty' : ''}`}
-                            onClick={onOpenProfileModal}
+                            className={`fortune-profile-text ${!user || !hasRequiredProfile ? 'empty' : ''}`}
+                            onClick={handleProfileClick}
                         >
                             <span className="profile-label">내 정보:</span>
                             <span className="profile-info">{getProfileSummary()}</span>
