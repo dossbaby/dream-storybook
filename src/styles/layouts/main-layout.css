@@ -182,11 +182,12 @@
         justify-content: flex-start;
     }
 
-    /* 모바일에서도 입력 화면 수직 중앙 정렬 */
+    /* 모바일에서도 입력 화면 수직 중앙 정렬 + 스크롤 숨김 */
     .tarot-bg .center-main,
     .dream-bg .center-main,
     .fortune-bg .center-main {
         justify-content: center;
+        overflow: hidden;
     }
 
     /* 오른쪽 사이드바 숨김 - 피드는 메인에 통합 */

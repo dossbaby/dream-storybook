@@ -5,6 +5,13 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    /* Scrollbar 숨김 - 모든 브라우저 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.create-card::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* 타로 모드 - 넓게 설정 */
@@ -670,21 +677,48 @@
     .create-title {
         font-size: 1.1rem;
         text-align: center;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         padding: 0 var(--spacing-sm, 0.5rem);
     }
 
-    /* 입력 영역 통일 */
+    /* Orb 크기 축소 - 스크롤 방지 */
+    .mystical-orb {
+        width: 80px;
+        height: 80px;
+    }
+
+    .orb-emoji {
+        font-size: 2.5rem;
+    }
+
+    .orb-sparkles span {
+        font-size: 0.9rem;
+    }
+
+    /* 질문 헤더 - gap 축소 */
+    .tarot-question-header,
+    .dream-question-header,
+    .fortune-question-header {
+        gap: 0.25rem;
+        margin-bottom: 0 !important;
+    }
+
+    /* 입력 영역 통일 - 스크롤 방지 위해 높이 축소 */
     .dream-input {
-        min-height: 150px;
-        padding: 1rem;
+        min-height: 100px;
+        padding: 0.85rem;
         font-size: 0.95rem;
         border-radius: 12px;
     }
 
+    /* create-card 간격 축소 */
+    .create-card {
+        gap: 0.75rem;
+    }
+
     /* 버튼 통일 */
     .submit-btn {
-        padding: 0.85rem;
+        padding: 0.75rem;
         font-size: 0.85rem;
         border-radius: 10px;
     }

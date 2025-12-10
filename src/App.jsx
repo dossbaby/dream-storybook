@@ -44,7 +44,7 @@ const ReportModal = lazy(() => import('./components/modals/ReportModal'));
 // PointsModal 삭제됨 (포인트 시스템 제거)
 const DetailedReadingModal = lazy(() => import('./components/modals/DetailedReadingModal'));
 const FeedbackModal = lazy(() => import('./components/modals/FeedbackModal'));
-const OnboardingModal = lazy(() => import('./components/modals/OnboardingModal'));
+// OnboardingModal 삭제됨 (첫 방문 온보딩 제거)
 const ReferralModal = lazy(() => import('./components/modals/ReferralModal'));
 const StoryCard = lazy(() => import('./components/common/StoryCard'));
 const LeftSidebar = lazy(() => import('./components/layout/LeftSidebar'));
@@ -92,7 +92,7 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, onboarding: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general', authTrigger: 'action' });
+    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general', authTrigger: 'action' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
     const openAuthModal = (trigger = 'action') => setModals(prev => ({ ...prev, auth: true, authTrigger: trigger }));
@@ -226,18 +226,7 @@ function App() {
         setDetectedKeywords(detected.slice(0, 4));
     }, [dreamDescription]);
 
-    // 첫 방문 온보딩 체크
-    useEffect(() => {
-        if (loading.auth) return;
-        const hasSeenOnboarding = localStorage.getItem('jeom_onboarding_completed');
-        if (!hasSeenOnboarding) {
-            // 약간의 딜레이 후 온보딩 표시 (앱 로딩 완료 후)
-            const timer = setTimeout(() => {
-                openModal('onboarding');
-            }, 500);
-            return () => clearTimeout(timer);
-        }
-    }, [loading.auth]);
+    // 첫 방문 온보딩 제거됨
 
     // Magic Link 콜백 처리
     useEffect(() => {
@@ -259,15 +248,7 @@ function App() {
         handleMagicLinkCallback();
     }, []);
 
-    // 온보딩 완료 핸들러
-    const handleOnboardingComplete = () => {
-        localStorage.setItem('jeom_onboarding_completed', 'true');
-        // 보너스 리딩 지급은 로그인 후 처리 (비로그인 시 localStorage에 플래그)
-        if (!user) {
-            localStorage.setItem('jeom_pending_onboarding_bonus', 'true');
-        }
-        setDopaminePopup({ type: 'welcome', message: '환영합니다! 무료 리딩 3회가 지급되었어요' });
-    };
+    // 온보딩 완료 핸들러 삭제됨
     const prevMonth = () => setCalendarField('month', getAdjacentMonth(calendar.month, -1));
     const nextMonth = () => setCalendarField('month', getAdjacentMonth(calendar.month, 1));
     const cards = getCards(result, tarot.result, fortune.result, selectedDream);
@@ -813,12 +794,7 @@ function App() {
                         }}
                     />
 
-                    {/* 온보딩 모달 */}
-                    <OnboardingModal
-                        isOpen={modals.onboarding}
-                        onClose={() => closeModal('onboarding')}
-                        onComplete={handleOnboardingComplete}
-                    />
+                    {/* 온보딩 모달 삭제됨 */}
 
                     {/* 레퍼럴 모달 */}
                     <ReferralModal
