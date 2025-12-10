@@ -182,12 +182,22 @@
         justify-content: flex-start;
     }
 
-    /* 모바일에서도 입력 화면 수직 중앙 정렬 + 스크롤 숨김 */
+    /* 모바일에서도 입력 화면 수직 중앙 정렬 + 스크롤 완전 차단 */
     .tarot-bg .center-main,
     .dream-bg .center-main,
     .fortune-bg .center-main {
         justify-content: center;
         overflow: hidden;
+        max-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height) - var(--safe-area-bottom));
+    }
+
+    /* Prompt 화면에서 전체 레이아웃 스크롤 차단 */
+    .main-layout.tarot-bg,
+    .main-layout.dream-bg,
+    .main-layout.fortune-bg {
+        overflow: hidden;
+        height: 100vh;
+        max-height: 100vh;
     }
 
     /* 오른쪽 사이드바 숨김 - 피드는 메인에 통합 */

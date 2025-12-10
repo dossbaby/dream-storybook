@@ -34,6 +34,18 @@ body {
     overflow-x: hidden;
 }
 
+/* 모바일 Prompt 화면에서 body 스크롤 완전 차단 */
+@media (max-width: 768px) {
+    body:has(.main-layout.tarot-bg),
+    body:has(.main-layout.dream-bg),
+    body:has(.main-layout.fortune-bg) {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+}
+
 .app {
     min-height: 100vh;
     min-height: 100dvh;
