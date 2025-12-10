@@ -5,9 +5,9 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px; /* 고정 높이 - iOS 스크롤 시 squish 방지 */
-    min-height: 64px;
-    max-height: 64px;
+    height: 52px; /* 컴팩트 높이 - YouTube 스타일 */
+    min-height: 52px;
+    max-height: 52px;
     background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -36,10 +36,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 1px;
     flex: 1;
-    height: 64px;
-    min-height: 64px;
+    height: 52px;
+    min-height: 52px;
+    max-height: 52px;
     background: transparent;
     border: none;
     color: var(--light-gray);
@@ -47,7 +48,7 @@
     transition: var(--transition-fast);
     -webkit-tap-highlight-color: transparent;
     min-width: var(--touch-target-min);
-    padding: 8px 0;
+    padding: 4px 0;
     flex-shrink: 0;
 }
 
@@ -64,13 +65,13 @@
 }
 
 .bottom-nav-icon {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1;
     transition: var(--transition-fast);
 }
 
 .bottom-nav-label {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 500;
     letter-spacing: -0.02em;
 }
@@ -190,16 +191,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    min-height: 48px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     aspect-ratio: 1;
     flex-shrink: 0;
     background: linear-gradient(135deg, #9b59b6 0%, #e056fd 100%);
     border-radius: 50%;
-    font-size: 1.3rem;
-    margin-top: -20px;
+    font-size: 1.1rem;
+    margin-top: -12px;
     box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5);
     transition: box-shadow 0.25s ease, background 0.25s ease;
 }
@@ -319,8 +320,8 @@
     position: absolute;
     top: -4px;
     left: -4px;
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     transform: rotate(-90deg);
     pointer-events: none;
 }
@@ -363,21 +364,31 @@
 /* 가로 모드 대응 */
 @media (max-width: 768px) and (orientation: landscape) {
     .bottom-nav {
-        height: 52px;
-        min-height: 52px;
-        max-height: 52px;
+        height: 48px;
+        min-height: 48px;
+        max-height: 48px;
     }
 
     .bottom-nav-item {
-        height: 52px;
-        min-height: 52px;
+        height: 48px;
+        min-height: 48px;
+        max-height: 48px;
     }
 
     .bottom-nav-icon {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
     }
 
     .bottom-nav-label {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
+    }
+
+    .bottom-nav-item.center-btn .center-icon {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        min-height: 36px;
+        font-size: 1rem;
+        margin-top: -8px;
     }
 }
