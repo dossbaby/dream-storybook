@@ -8,15 +8,18 @@
     height: 52px; /* 컴팩트 높이 - YouTube 스타일 */
     min-height: 52px;
     max-height: 52px;
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    /* iOS 스크롤 버그 방지: 불투명 배경 사용 */
+    background: #0a0a0a;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: var(--z-sticky);
     justify-content: space-around;
     align-items: center;
     flex-shrink: 0;
+    /* GPU 가속으로 스크롤 시 렌더링 안정화 */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
 }
 
 /* 모바일에서만 표시 */
