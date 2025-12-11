@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useComments } from '../../hooks/useComments';
 import Reactions from '../common/Reactions';
+import AnalysisOverlay from '../common/AnalysisOverlay';
 
 // 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
@@ -85,13 +86,14 @@ const TarotResultView = ({
 
     // Visual Novel 인트로 단계 (클릭 기반 진행) - 작성자만 보여줌
     // 0: 시작 대기 (fade in)
+    // VN Intro 단계 (통합 AnalysisOverlay에서 이미 hook/foreshadow 표시했으므로 작성자도 스킵)
     // 1: Hook 타이핑 중 (클릭하면 즉시 완료)
     // 2: Hook 완료, 클릭 대기
     // 3: Foreshadow 타이핑 중 (클릭하면 즉시 완료)
     // 4: Foreshadow 완료, 클릭 대기
     // 5: 인트로 종료, 결과 페이지 표시
-    // 비작성자는 바로 5로 시작
-    const [introPhase, setIntroPhase] = useState(isAuthor ? 0 : 5);
+    // 작성자/비작성자 모두 바로 5로 시작 (VN Intro 스킵)
+    const [introPhase, setIntroPhase] = useState(5);
     const [hookTyped, setHookTyped] = useState('');
     const [foreshadowTyped, setForeshadowTyped] = useState('');
     const [pageRevealed, setPageRevealed] = useState(false);
@@ -100,6 +102,10 @@ const TarotResultView = ({
     const [flippedCards, setFlippedCards] = useState([]);
     // Hidden Insight 봉인 해제 상태
     const [insightUnsealed, setInsightUnsealed] = useState(false);
+    // Insight 열림 애니메이션 상태
+    const [insightOpening, setInsightOpening] = useState(false);
+    // 인트로 재생 오버레이 상태
+    const [showIntroOverlay, setShowIntroOverlay] = useState(false);
 
     // 섹션 참조 (자동 스크롤용)
     const sectionRefs = useRef([]);
@@ -141,16 +147,15 @@ const TarotResultView = ({
 
     // AI 생성 Jenny 전략 필드 사용 (없으면 폴백)
     const jenny = tarotResult.jenny || {};
-    const rarity = tarotResult.rarity || {};
 
-    // 숨겨진 인사이트 (AI 생성 우선)
-    const hiddenInsight = jenny.hiddenInsight || FALLBACK_INSIGHTS[Math.floor(tarotResult.title?.length || 0) % FALLBACK_INSIGHTS.length];
+    // 숨겨진 인사이트 (최상위 또는 jenny 객체 내부 체크)
+    const hiddenInsight = tarotResult.hiddenInsight || jenny.hiddenInsight || FALLBACK_INSIGHTS[Math.floor(tarotResult.title?.length || 0) % FALLBACK_INSIGHTS.length];
 
-    // Hook 텍스트 (신비로운 텍스트 기반 - 숫자/희귀도 제외)
-    const hookText = jenny.hook || '당신의 질문에 카드가 응답했어요... 세 장의 카드가 이야기를 시작합니다.';
+    // Hook 텍스트 (최상위 또는 jenny 객체 내부 체크)
+    const hookText = tarotResult.hook || jenny.hook || '당신의 질문에 카드가 응답했어요... 세 장의 카드가 이야기를 시작합니다.';
 
-    // Foreshadow 텍스트
-    const foreshadowText = jenny.foreshadow || '카드가 말하고 싶은 이야기가 있어요. 함께 들어볼까요?';
+    // Foreshadow 텍스트 (최상위 또는 jenny 객체 내부 체크)
+    const foreshadowText = tarotResult.foreshadow || jenny.foreshadow || '카드가 말하고 싶은 이야기가 있어요. 함께 들어볼까요?';
 
     // 히어로 이미지 (질문 기반 생성 이미지, 없으면 카드1 이미지 폴백)
     const heroImage = tarotResult.heroImage || tarotResult.card1Image || tarotResult.pastImage;
@@ -163,17 +168,30 @@ const TarotResultView = ({
         tarotResult.conclusionImage
     ];
 
-    // 스토리 리딩 또는 기존 리딩
+    // 스토리 리딩 (flat 구조 또는 기존 storyReading 객체 지원)
     const storyReading = tarotResult.storyReading || {
-        opening: tarotResult.reading?.past || '',
-        card1Analysis: tarotResult.cardMeaning?.detail || '',
-        card2Analysis: tarotResult.reading?.present || '',
-        card3Analysis: tarotResult.reading?.future || '',
-        conclusionCard: tarotResult.reading?.action || '',
-        synthesis: tarotResult.cardMeaning?.summary || '',
-        actionAdvice: tarotResult.cardMeaning?.advice || '',
-        warning: '',
-        timing: ''
+        opening: tarotResult.opening || tarotResult.reading?.past || '',
+        card1Analysis: tarotResult.card1Analysis || tarotResult.cardMeaning?.detail || '',
+        card2Analysis: tarotResult.card2Analysis || tarotResult.reading?.present || '',
+        card3Analysis: tarotResult.card3Analysis || tarotResult.reading?.future || '',
+        conclusionCard: tarotResult.conclusionCard || tarotResult.reading?.action || '',
+        synthesis: tarotResult.synthesis || tarotResult.cardMeaning?.summary || ''
+    };
+
+    // 각 카드가 준비되었는지 확인 (분석 텍스트 + 이미지)
+    const isCardReady = (index) => {
+        if (index === 0) {
+            // 카드 1은 항상 먼저 준비됨
+            return !!(cardImages[0] && storyReading.card1Analysis);
+        } else if (index === 1) {
+            return !!(cardImages[1] && storyReading.card2Analysis);
+        } else if (index === 2) {
+            return !!(cardImages[2] && storyReading.card3Analysis);
+        } else if (index === 3) {
+            // 결과 카드: conclusion + hiddenInsight + 이미지
+            return !!(cardImages[3] && storyReading.conclusionCard && hiddenInsight);
+        }
+        return false;
     };
 
     // 카드 개수 (3장 또는 4장)
@@ -204,22 +222,23 @@ const TarotResultView = ({
     // 모든 카드가 뒤집혔는지 확인
     const allCardsFlipped = flippedCards.length >= cardCount;
 
-    // Visual Novel 인트로 시퀀스 - 클릭 기반 진행 (작성자만)
+    // Visual Novel 인트로 시퀀스 - 저장된 리딩이거나 작성자가 아니면 건너뜀
     useEffect(() => {
-        // 작성자가 아니면 바로 페이지 표시
-        if (!isAuthor) {
+        // 저장된 리딩(id가 있음) 또는 작성자가 아니면 바로 페이지 표시 (VN Intro 건너뜀)
+        if (tarotResult.id || !isAuthor) {
             setIntroPhase(5);
             setPageRevealed(true);
             return;
         }
 
+        // 새 리딩인 경우에만 VN Intro 시작
         // Phase 0 → 1: 0.8초 후 Hook 타이핑 시작
         const startTimer = setTimeout(() => {
             setIntroPhase(1);
         }, 800);
 
         return () => clearTimeout(startTimer);
-    }, [isAuthor]);
+    }, [isAuthor, tarotResult.id]);
 
     // Hook 타이핑 효과 (85ms per char)
     useEffect(() => {
@@ -462,6 +481,13 @@ const TarotResultView = ({
                             <div className="reading-quote">
                                 <span className="quote-icon">💭</span>
                                 <p>"{tarotResult.question}"</p>
+                                {/* 인트로 보기 텍스트 링크 */}
+                                <span
+                                    className="intro-replay-text"
+                                    onClick={() => setShowIntroOverlay(true)}
+                                >
+                                    인트로 보기
+                                </span>
                             </div>
                         )}
                         {/* 질문/답변 사이 divider */}
@@ -495,14 +521,17 @@ const TarotResultView = ({
                     <div className="persona-cards-row">
                         {tarotResult.cards?.slice(0, hasConclusion ? 4 : 3).map((card, i) => {
                             const isFlipped = flippedCards.includes(i);
-                            const canFlip = i === 0 || flippedCards.includes(i - 1);
+                            const prevCardFlipped = i === 0 || flippedCards.includes(i - 1);
+                            const cardReady = isCardReady(i);
+                            const canFlip = prevCardFlipped && cardReady;
+                            const isLoading = prevCardFlipped && !cardReady;
                             const isConclusion = hasConclusion && i === 3;
 
                             return (
                                 <div
                                     key={card.id}
-                                    className={`persona-card ${isFlipped ? 'revealed' : ''} ${canFlip && !isFlipped ? 'ready' : ''} ${isConclusion ? 'finale' : ''}`}
-                                    onClick={() => handleCardFlip(i)}
+                                    className={`persona-card ${isFlipped ? 'revealed' : ''} ${canFlip && !isFlipped ? 'ready' : ''} ${isLoading ? 'loading' : ''} ${isConclusion ? 'finale' : ''}`}
+                                    onClick={() => cardReady && handleCardFlip(i)}
                                     style={{ '--card-index': i }}
                                 >
                                     {/* 카드 내부 */}
@@ -519,18 +548,24 @@ const TarotResultView = ({
                                             </>
                                         ) : (
                                             <div className="persona-card-back">
-                                                {/* Pulse 링 - 텍스트 뒤에 */}
+                                                {/* Pulse 링 - 준비된 경우에만 */}
                                                 {canFlip && (
                                                     <>
                                                         <div className="pulse-ring"></div>
                                                         <div className="pulse-ring"></div>
                                                     </>
                                                 )}
+                                                {/* 로딩 스피너 */}
+                                                {isLoading && (
+                                                    <div className="card-loading-spinner"></div>
+                                                )}
                                                 <span className="persona-card-symbol">{isConclusion ? '★' : ['✦', '✶', '✧'][i] || '✦'}</span>
                                                 <span className={`persona-tap-hint ${!canFlip ? 'inactive' : ''}`}>
-                                                    {isConclusion
-                                                        ? (canFlip ? '결과 카드 오픈' : '?')
-                                                        : `카드 ${i + 1} 오픈`}
+                                                    {isLoading
+                                                        ? '운명을 읽는 중...'
+                                                        : isConclusion
+                                                            ? (canFlip ? '결과 카드 오픈' : '?')
+                                                            : (canFlip ? `카드 ${i + 1} 오픈` : `카드 ${i + 1} 오픈`)}
                                                 </span>
                                             </div>
                                         )}
@@ -633,7 +668,13 @@ const TarotResultView = ({
                             {!insightUnsealed ? (
                                 <div
                                     className="sealed-message"
-                                    onClick={() => setInsightUnsealed(true)}
+                                    onClick={() => {
+                                        setInsightOpening(true);
+                                        setTimeout(() => {
+                                            setInsightUnsealed(true);
+                                            setInsightOpening(false);
+                                        }, 800);
+                                    }}
                                 >
                                     <div className="seal-visual">
                                         <span className="seal-icon">🌌</span>
@@ -646,6 +687,15 @@ const TarotResultView = ({
                                     <button className="unseal-btn">
                                         ✦ 틈새 엿보기
                                     </button>
+                                    {/* 포탈 오픈 이펙트 */}
+                                    {insightOpening && (
+                                        <div className="insight-portal-effect">
+                                            <div className="insight-portal-ring ring-1" />
+                                            <div className="insight-portal-ring ring-2" />
+                                            <div className="insight-portal-ring ring-3" />
+                                            <div className="insight-portal-center" />
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="unsealed-insight">
@@ -661,44 +711,6 @@ const TarotResultView = ({
                                     </div>
                                 </div>
                             )}
-                        </div>
-                    )}
-
-                    {/* 조언 카드들 */}
-                    {allCardsFlipped && (
-                        <div className="advice-grid fade-in-up">
-                            {storyReading.actionAdvice && (
-                                <div className="advice-card">
-                                    <span className="advice-icon">💡</span>
-                                    <span className="advice-label">지금 할 수 있는 것</span>
-                                    <p>{storyReading.actionAdvice}</p>
-                                </div>
-                            )}
-                            {storyReading.warning && (
-                                <div className="advice-card warning">
-                                    <span className="advice-icon">⚠️</span>
-                                    <span className="advice-label">주의할 점</span>
-                                    <p>{storyReading.warning}</p>
-                                </div>
-                            )}
-                            {storyReading.timing && (
-                                <div className="advice-card timing">
-                                    <span className="advice-icon">⏰</span>
-                                    <span className="advice-label">행운의 타이밍</span>
-                                    <p>{storyReading.timing}</p>
-                                </div>
-                            )}
-                            {/* 공유 프리뷰 - 4번째 카드 */}
-                            <div className="advice-card share-preview-card">
-                                <span className="advice-icon">🔮</span>
-                                <span className="advice-label">{tarotResult.title}</span>
-                                <p className="share-preview-verdict">"{tarotResult.verdict}"</p>
-                                <div className="share-preview-cards">
-                                    {tarotResult.cards?.slice(0, 3).map((c, i) => (
-                                        <span key={i}>{c.emoji}</span>
-                                    ))}
-                                </div>
-                            </div>
                         </div>
                     )}
 
@@ -998,6 +1010,20 @@ const TarotResultView = ({
                     </div>
                 </aside>
             )}
+
+            {/* 인트로 재생 오버레이 */}
+            <AnalysisOverlay
+                isVisible={showIntroOverlay}
+                mode="tarot"
+                streamingData={{
+                    hook: hookText,
+                    foreshadow: foreshadowText,
+                    title: tarotResult.title,
+                    verdict: tarotResult.verdict
+                }}
+                isImagesReady={true}
+                onTransitionComplete={() => setShowIntroOverlay(false)}
+            />
         </div>
     );
 };

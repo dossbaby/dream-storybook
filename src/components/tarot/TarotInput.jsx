@@ -341,12 +341,12 @@ const TarotInput = ({
                                 const spreadDelay = index * 30; // 30ms씩 순차 딜레이 (더 빠르게)
 
                                 // 시작 위치: 이전 카드의 최종 위치에서 시작
-                                // index 0은 덱 위치(왼쪽 아래), 그 이후는 이전 카드 위치
+                                // index 0은 자신의 최종 위치에서 시작 (slide-in 방지)
                                 let startX, startY;
                                 if (index === 0) {
-                                    // 첫 번째 카드는 덱 위치에서 시작
-                                    startX = -ellipseWidth - 80;
-                                    startY = ellipseHeight + 30;
+                                    // 첫 번째 카드는 자신의 최종 위치에서 시작 (슬라이드 방지)
+                                    startX = finalX;
+                                    startY = finalY;
                                 } else {
                                     // 이전 카드의 최종 위치 계산
                                     const prevT = ((index - 1) - centerIndex) / centerIndex;
@@ -373,7 +373,7 @@ const TarotInput = ({
                                             height: cardSize.height,
                                             transform: cardsRevealed
                                                 ? `translate(${finalX}px, ${finalY}px) rotate(${rotation}deg)`
-                                                : `translate(${startX}px, ${startY}px) rotate(0deg)`,
+                                                : `translate(${startX}px, ${startY}px) rotate(${rotation}deg)`,
                                             zIndex: isSelected ? 200 + selectedIndex : 50 + index,
                                             transitionDelay: cardsRevealed ? `${spreadDelay}ms` : '0ms'
                                         }}

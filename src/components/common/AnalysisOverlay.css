@@ -1,570 +1,430 @@
-/* AnalysisOverlay - VN Intro 스타일과 통일 */
+/* ═══════════════════════════════════════════════════════════════ */
+/* AnalysisOverlay - vn-intro-overlay 스타일 확장 */
+/* 기본 스타일은 tarot.css의 .vn-intro-overlay 사용 */
+/* ═══════════════════════════════════════════════════════════════ */
 
-.analysis-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9999;
-    /* VN Intro와 동일한 배경 */
-    background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: overlayFadeIn 0.5s ease-out;
+/* vn-intro-overlay 추가 스타일 (fading-out, portal-transition) */
+.vn-intro-overlay.fading-out {
+    animation: overlayFadeOut 0.8s ease-out forwards;
 }
 
-@keyframes overlayFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* 별 효과 */
-.analysis-stars {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.analysis-star {
-    position: absolute;
-    background: radial-gradient(circle, rgba(255, 200, 100, 0.8) 0%, transparent 70%);
-    border-radius: 50%;
-    animation: twinkle ease-in-out infinite;
-}
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0.2; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
-}
-
-/* 플로팅 버블 효과 - glacial blue/purple */
-.analysis-bubbles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.bubble {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%,
-        rgba(0, 217, 255, 0.12) 0%,
-        rgba(155, 89, 182, 0.08) 50%,
-        transparent 70%);
-    animation: floatBubble linear infinite;
-}
-
-.bubble-1 {
-    width: 200px;
-    height: 200px;
-    left: -50px;
-    bottom: -100px;
-    animation-duration: 15s;
-}
-
-.bubble-2 {
-    width: 150px;
-    height: 150px;
-    right: -30px;
-    bottom: 20%;
-    animation-duration: 12s;
-    animation-delay: 2s;
-}
-
-.bubble-3 {
-    width: 100px;
-    height: 100px;
-    left: 20%;
-    bottom: 10%;
-    animation-duration: 10s;
-    animation-delay: 4s;
-}
-
-.bubble-4 {
-    width: 80px;
-    height: 80px;
-    right: 30%;
-    bottom: -20px;
-    animation-duration: 14s;
-    animation-delay: 1s;
-}
-
-.bubble-5 {
-    width: 120px;
-    height: 120px;
-    left: 50%;
-    bottom: 5%;
-    animation-duration: 11s;
-    animation-delay: 3s;
-}
-
-@keyframes floatBubble {
+@keyframes overlayFadeOut {
     0% {
-        transform: translateY(0) scale(1);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.6;
-    }
-    90% {
-        opacity: 0.3;
+        opacity: 1;
+        filter: blur(0);
     }
     100% {
-        transform: translateY(-100vh) scale(0.8);
         opacity: 0;
+        filter: blur(10px);
     }
 }
 
-/* 상단 도파민 메시지 - VN Intro 스타일 (overflow 방지) */
-.analysis-top-message {
-    position: absolute;
-    top: 12%;
-    left: 0;
-    right: 0;
-    width: 100%;
-    text-align: center;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0 1.5rem;
-    box-sizing: border-box;
+/* 텍스트 hidden 상태 */
+.vn-hook.hidden {
+    opacity: 0;
+    transform: translateY(15px);
 }
 
-/* VN 장식 - 상단/하단 */
-.vn-ornament-analysis {
-    font-size: 0.9rem;
-    color: rgba(255, 200, 100, 0.4);
-    letter-spacing: 0.5em;
+.vn-hook {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* ornament visible 상태 */
+.vn-ornament {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.vn-ornament.visible {
     opacity: 0.7;
 }
 
-.vn-ornament-analysis.bottom {
-    margin-top: 0.5rem;
-}
-
-/* 도파민 텍스트 - 리디바탕, VN 스타일 (줄바꿈 허용, overflow 방지) */
-.dopamine-text {
-    font-family: 'RIDIBatang', serif;
-    font-size: 1.25rem;
-    font-weight: 400;
-    line-height: 1.8;
-    transition: opacity 0.25s ease-out, color 0.5s ease;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* 금색 텍스트 - VN Hook 스타일 */
-.dopamine-text.gold-text {
-    color: #ffd080;
-    text-shadow:
-        0 0 30px rgba(255, 180, 80, 0.4),
-        0 0 60px rgba(255, 150, 50, 0.2);
-}
-
-/* 보라색 텍스트 - VN Foreshadow 스타일 */
-.dopamine-text.purple-text {
+/* purple 텍스트 */
+.vn-typing-text.purple {
     color: rgba(220, 200, 255, 0.9);
     text-shadow:
         0 0 20px rgba(180, 150, 255, 0.3),
         0 0 40px rgba(150, 100, 255, 0.15);
 }
 
-.dopamine-text.fading {
-    opacity: 0.3;
+/* ═══════════════════════════════════════════════════════════════ */
+/* 포탈 전환 효과 */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.portal-effect {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    pointer-events: none;
 }
 
-.message-content {
-    display: inline;
-}
-
-.typing-cursor {
-    display: inline-block;
-    margin-left: 2px;
-    animation: cursorBlink 0.8s ease-in-out infinite;
-    color: #ffb050;
-    text-shadow: 0 0 10px rgba(255, 180, 80, 0.8);
-    font-weight: 300;
-}
-
-@keyframes cursorBlink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-}
-
-/* 중앙 Pulsing Orb - Glacial Blue/Purple (더 아래로) */
-.analysis-center {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 8vh;
-}
-
-.pulsing-orb {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.orb-ring {
+.portal-ring {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border-radius: 50%;
     border: 2px solid;
-    animation: orbPulse ease-in-out infinite;
+    opacity: 0;
 }
 
-.orb-ring.ring-1 {
-    width: 100%;
-    height: 100%;
-    border-color: var(--primary-color, rgba(0, 217, 255, 0.4));
-    animation-duration: 2s;
-    box-shadow: 0 0 15px var(--primary-color, rgba(0, 217, 255, 0.3));
-}
-
-.orb-ring.ring-2 {
-    width: 125%;
-    height: 125%;
-    border-color: var(--secondary-color, rgba(155, 89, 182, 0.3));
-    animation-duration: 2.5s;
-    animation-delay: 0.3s;
-    box-shadow: 0 0 20px var(--secondary-color, rgba(155, 89, 182, 0.2));
-}
-
-.orb-ring.ring-3 {
-    width: 150%;
-    height: 150%;
-    border-color: rgba(0, 217, 255, 0.15);
-    animation-duration: 3s;
-    animation-delay: 0.6s;
-}
-
-@keyframes orbPulse {
-    0%, 100% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scale(1.08);
-        opacity: 1;
-    }
-}
-
-.orb-core {
-    width: 85px;
-    height: 85px;
-    border-radius: 50%;
-    /* Glacial blue/purple gradient */
-    background: radial-gradient(circle at 30% 30%,
-        rgba(0, 217, 255, 0.25) 0%,
-        rgba(155, 89, 182, 0.2) 40%,
-        rgba(30, 20, 50, 0.9) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.portal-ring-1 {
+    width: 80px;
+    height: 80px;
+    border-color: rgba(0, 217, 255, 0.8);
     box-shadow:
-        0 0 40px var(--primary-color, rgba(0, 217, 255, 0.4)),
-        0 0 80px var(--secondary-color, rgba(155, 89, 182, 0.3)),
-        inset 0 0 25px rgba(255, 255, 255, 0.08);
-    animation: coreGlow 2s ease-in-out infinite;
-    transition: background 0.8s ease, box-shadow 0.8s ease;
+        0 0 30px rgba(0, 217, 255, 0.6),
+        0 0 60px rgba(0, 217, 255, 0.4),
+        inset 0 0 30px rgba(0, 217, 255, 0.3);
+    animation: portalRing1 0.8s ease-out forwards;
 }
 
-@keyframes coreGlow {
-    0%, 100% {
-        box-shadow:
-            0 0 40px var(--primary-color, rgba(0, 217, 255, 0.4)),
-            0 0 80px var(--secondary-color, rgba(155, 89, 182, 0.3)),
-            inset 0 0 25px rgba(255, 255, 255, 0.08);
-    }
-    50% {
-        box-shadow:
-            0 0 60px var(--primary-color, rgba(0, 217, 255, 0.6)),
-            0 0 100px var(--secondary-color, rgba(155, 89, 182, 0.4)),
-            inset 0 0 35px rgba(255, 255, 255, 0.12);
-    }
+.portal-ring-2 {
+    width: 60px;
+    height: 60px;
+    border-color: rgba(155, 89, 182, 0.8);
+    box-shadow:
+        0 0 25px rgba(155, 89, 182, 0.6),
+        0 0 50px rgba(155, 89, 182, 0.4),
+        inset 0 0 25px rgba(155, 89, 182, 0.3);
+    animation: portalRing2 0.8s ease-out 0.1s forwards;
 }
 
-.orb-emoji {
-    font-size: 2.8rem;
-    animation: emojiFloat 3s ease-in-out infinite, emojiFadeIn 0.5s ease-out;
-    filter: drop-shadow(0 0 15px var(--primary-color, rgba(0, 217, 255, 0.6)));
+.portal-ring-3 {
+    width: 40px;
+    height: 40px;
+    border-color: rgba(255, 200, 100, 0.8);
+    box-shadow:
+        0 0 20px rgba(255, 200, 100, 0.6),
+        0 0 40px rgba(255, 200, 100, 0.4),
+        inset 0 0 20px rgba(255, 200, 100, 0.3);
+    animation: portalRing3 0.8s ease-out 0.2s forwards;
 }
 
-@keyframes emojiFloat {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-8px) scale(1.05); }
-}
-
-@keyframes emojiFadeIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-/* 단계 Circle들 - 더 아래로 이동 */
-.analysis-stages {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 5rem;
-    z-index: 10;
-    position: relative;
-}
-
-.stage-dot {
-    width: 10px;
-    height: 10px;
+.portal-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.4s ease;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(0, 217, 255, 0.8) 40%,
+        rgba(155, 89, 182, 0.6) 70%,
+        transparent 100%);
+    animation: portalCenter 0.6s ease-out forwards;
 }
 
-.stage-dot.completed {
-    background: linear-gradient(135deg, rgba(0, 217, 255, 0.6), rgba(155, 89, 182, 0.5));
-    border-color: rgba(0, 217, 255, 0.6);
-    box-shadow: 0 0 8px rgba(0, 217, 255, 0.4);
+@keyframes portalRing1 {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(8);
+    }
 }
 
-.stage-dot.active {
-    background: linear-gradient(135deg, #00d9ff, #9b59b6);
-    border-color: #00d9ff;
-    transform: scale(1.5);
-    box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
-    animation: stagePulse 1s ease-in-out infinite;
+@keyframes portalRing2 {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(10);
+    }
 }
 
-@keyframes stagePulse {
-    0%, 100% {
-        transform: scale(1.5);
-        box-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+@keyframes portalRing3 {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(12);
+    }
+}
+
+@keyframes portalCenter {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
     }
     50% {
-        transform: scale(1.7);
-        box-shadow: 0 0 25px rgba(0, 217, 255, 0.8);
-    }
-}
-
-/* 하단 안내 텍스트 - 진행률 포함 */
-.analysis-bottom-hint {
-    position: absolute;
-    bottom: 18%;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    font-family: 'RIDIBatang', serif;
-    font-size: 0.95rem;
-    color: rgba(255, 200, 150, 0.7);
-    text-align: center;
-    z-index: 10;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    animation: hintPulse 2s ease-in-out infinite;
-    padding: 0 1rem;
-    box-sizing: border-box;
-}
-
-.analysis-bottom-hint .hint-label {
-    /* 기본 라벨 */
-}
-
-.analysis-bottom-hint .hint-progress {
-    color: #00d9ff;
-    font-family: 'Pretendard', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
-}
-
-@keyframes hintPulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-}
-
-/* 소요 시간 안내 서브타이틀 */
-.analysis-subtitle {
-    position: absolute;
-    bottom: 13%;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    font-family: 'Pretendard', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: rgba(180, 150, 220, 0.6);
-    text-align: center;
-    z-index: 10;
-    letter-spacing: 0.02em;
-    padding: 0 1rem;
-    box-sizing: border-box;
-    animation: subtitleFadeIn 0.5s ease-out 0.8s both;
-}
-
-@keyframes subtitleFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(50);
     }
 }
 
-/* 분석이 끝나면 알림받기 버튼 */
-.browse-while-waiting-btn {
-    position: absolute;
-    bottom: 8%;
-    left: 0;
-    right: 0;
-    width: fit-content;
-    max-width: 320px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    padding: 0.9rem 2rem;
-    background: linear-gradient(135deg, rgba(30, 25, 45, 0.9), rgba(20, 15, 35, 0.95));
-    border: 1px solid rgba(155, 89, 182, 0.3);
-    border-radius: 25px;
-    color: rgba(255, 255, 255, 0.85);
-    font-family: 'Pretendard', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 500;
+.vn-intro-overlay.portal-transition {
+    animation: portalWhiteFlash 0.6s ease-out 0.4s forwards;
+}
+
+@keyframes portalWhiteFlash {
+    0% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(2);
+    }
+    100% {
+        filter: brightness(1);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* 결과 텍스트 컨테이너 - sparkle stars + gradient text */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.result-text-container {
+    position: fixed;
+    bottom: 35%;
+    left: 50%;
+    transform: translateX(-50%);
     cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-    box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(155, 89, 182, 0.1);
-    animation: btnFadeIn 0.5s ease-out 1.5s both;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: resultContainerFadeIn 0.6s ease-out;
 }
 
-@keyframes btnFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.result-text-container:hover .result-text {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 25px rgba(255, 200, 100, 0.9))
+            drop-shadow(0 0 50px rgba(155, 89, 182, 0.7))
+            drop-shadow(0 0 75px rgba(0, 217, 255, 0.6));
 }
 
-.browse-while-waiting-btn:hover {
-    border-color: rgba(155, 89, 182, 0.7);
-    box-shadow:
-        0 6px 30px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(155, 89, 182, 0.25);
-    transform: translateY(-2px);
-}
-
-.browse-while-waiting-btn:active {
+.result-text-container:active .result-text {
     transform: scale(0.98);
 }
 
-.browse-while-waiting-btn .btn-icon {
-    font-size: 1.1rem;
+.result-text {
+    font-family: 'RIDIBatang', serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    margin: 0;
+    /* gradient text */
+    background: linear-gradient(135deg,
+        #ffd700 0%,
+        #ff9f43 20%,
+        #ee5a9b 40%,
+        #9b59b6 60%,
+        #00d9ff 80%,
+        #ffd700 100%);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientTextShift 4s ease infinite;
+    /* glow effect via filter */
+    filter: drop-shadow(0 0 20px rgba(255, 200, 100, 0.7))
+            drop-shadow(0 0 40px rgba(155, 89, 182, 0.5))
+            drop-shadow(0 0 60px rgba(0, 217, 255, 0.4));
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-.browse-while-waiting-btn .btn-text {
-    /* Pretendard는 부모에서 상속 */
+/* Sparkle stars around text */
+.result-sparkles {
+    position: absolute;
+    width: 200px;
+    height: 100px;
+    pointer-events: none;
 }
 
+.result-sparkles .sparkle {
+    position: absolute;
+    font-size: 0.8rem;
+    animation: sparkleFloat 2s ease-in-out infinite;
+    opacity: 0;
+}
+
+.result-sparkles .sparkle.s1 {
+    top: -15px;
+    left: 20%;
+    color: #ffd700;
+    animation-delay: 0s;
+}
+
+.result-sparkles .sparkle.s2 {
+    top: -10px;
+    right: 15%;
+    color: #00d9ff;
+    animation-delay: 0.3s;
+}
+
+.result-sparkles .sparkle.s3 {
+    bottom: -15px;
+    left: 10%;
+    color: #9b59b6;
+    animation-delay: 0.6s;
+}
+
+.result-sparkles .sparkle.s4 {
+    bottom: -10px;
+    right: 25%;
+    color: #ff9f43;
+    animation-delay: 0.9s;
+}
+
+.result-sparkles .sparkle.s5 {
+    top: 50%;
+    left: -20px;
+    color: #ee5a9b;
+    animation-delay: 1.2s;
+}
+
+.result-sparkles .sparkle.s6 {
+    top: 50%;
+    right: -20px;
+    color: #ffd700;
+    animation-delay: 1.5s;
+}
+
+@keyframes sparkleFloat {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-8px) scale(1.2);
+    }
+}
+
+@keyframes resultContainerFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes gradientTextShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* 결과 보기 버튼 - 인라인 텍스트 스타일 (ornament 아래) */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.result-button-inline {
+    margin-top: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    font-family: 'RIDIBatang', serif;
+    font-size: 1.05rem;
+    color: rgba(255, 200, 100, 0.85);
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 20px rgba(255, 200, 100, 0.3);
+    animation: resultInlineFadeIn 0.6s ease-out;
+}
+
+.result-button-inline:hover {
+    color: rgba(255, 215, 0, 1);
+    text-shadow: 0 0 30px rgba(255, 200, 100, 0.5);
+}
+
+@keyframes resultInlineFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* 대기 힌트 - 이미지 준비 중 */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.vn-waiting-hint {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'RIDIBatang', serif;
+    font-size: 0.95rem;
+    color: rgba(255, 200, 100, 0.6);
+    letter-spacing: 0.08em;
+    animation: waitingPulse 2s ease-in-out infinite;
+}
+
+@keyframes waitingPulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
 /* 반응형 */
+/* ═══════════════════════════════════════════════════════════════ */
+
 @media (max-width: 480px) {
-    .analysis-top-message {
-        top: 10%;
-        padding: 0 1rem;
+    .portal-ring-1 {
+        width: 60px;
+        height: 60px;
     }
 
-    .dopamine-text {
-        font-size: 1.05rem;
-        line-height: 1.7;
-        max-width: 340px;
+    .portal-ring-2 {
+        width: 45px;
+        height: 45px;
     }
 
-    .vn-ornament-analysis {
-        font-size: 0.7rem;
+    .portal-ring-3 {
+        width: 30px;
+        height: 30px;
     }
 
-    .analysis-center {
-        margin-top: 5vh;
+    .portal-center {
+        width: 15px;
+        height: 15px;
     }
 
-    .pulsing-orb {
-        width: 120px;
-        height: 120px;
-    }
-
-    .orb-core {
-        width: 65px;
-        height: 65px;
-    }
-
-    .orb-emoji {
-        font-size: 2rem;
-    }
-
-    .analysis-stages {
-        margin-top: 3rem;
-    }
-
-    .stage-dot {
-        width: 8px;
-        height: 8px;
-    }
-
-    .analysis-bottom-hint {
-        bottom: 20%;
-        font-size: 0.85rem;
-        max-width: 320px;
-    }
-
-    .analysis-subtitle {
-        bottom: 15%;
-        font-size: 0.75rem;
-        max-width: 300px;
-    }
-
-    .browse-while-waiting-btn {
-        bottom: 6%;
-        padding: 0.8rem 1.5rem;
-        font-size: 0.85rem;
-        gap: 0.5rem;
-        max-width: 280px;
-    }
-
-    .browse-while-waiting-btn .btn-icon {
+    .result-button {
+        bottom: 2rem;
+        padding: 0.85rem 2rem;
         font-size: 1rem;
     }
 }

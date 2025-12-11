@@ -25,8 +25,7 @@ import { useReadingActions } from './hooks/useReadingActions';
 import { useViewActions } from './hooks/useViewActions';
 import { useUsageLimit } from './hooks/useUsageLimit';
 import { useFeedback } from './hooks/useFeedback';
-import { useDopamineMessages } from './hooks/useDopamineMessages';
-import { useSmoothProgress } from './hooks/useSmoothProgress';
+// useSmoothProgress 삭제됨 (통합 AnalysisOverlay로 대체)
 
 // 항상 필요한 컴포넌트 (정적 import)
 import ToastNotifications from './components/common/ToastNotifications';
@@ -46,7 +45,6 @@ const DetailedReadingModal = lazy(() => import('./components/modals/DetailedRead
 const FeedbackModal = lazy(() => import('./components/modals/FeedbackModal'));
 // OnboardingModal 삭제됨 (첫 방문 온보딩 제거)
 const ReferralModal = lazy(() => import('./components/modals/ReferralModal'));
-const StoryCard = lazy(() => import('./components/common/StoryCard'));
 const LeftSidebar = lazy(() => import('./components/layout/LeftSidebar'));
 const RightSidebar = lazy(() => import('./components/layout/RightSidebar'));
 const DreamInput = lazy(() => import('./components/dream/DreamInput'));
@@ -159,7 +157,7 @@ function App() {
         onTarotSaved: () => { loadTarotsRef.current?.(); user && loadMyTarots(user.uid); },
         onFortuneSaved: () => { loadFortunesRef.current?.(); user && loadMyFortunes(user.uid); }
     });
-    const { loading: readingLoading, error, progress, analysisPhase, imageProgress, modelConfig, generateDreamReading, generateTarotReading: generateTarotReadingHook, generateFortuneReading: generateFortuneReadingHook } = useReading({
+    const { loading: readingLoading, error, progress, analysisPhase, imageProgress, modelConfig, generateDreamReading, generateTarotReading: generateTarotReadingHook, generateFortuneReading: generateFortuneReadingHook, streamingData, isImagesReady, resetStreamingData } = useReading({
         user, userProfile, userNickname, tier, dreamTypes, onSaveDream: saveFirebaseDream, onSaveTarot: saveFirebaseTarot,
         onSaveFortune: saveFirebaseFortune, onNewDreamType: handleNewDreamType, setToast, setDopaminePopup, setSavedDreamField
     });
@@ -171,28 +169,6 @@ function App() {
         setFilter, setMode
     });
 
-    // 도파민 메시지 시스템
-    const dopamineHook = useDopamineMessages();
-
-    // 부드러운 진행률 시스템
-    const smoothProgress = useSmoothProgress();
-
-    // analysisPhase 변경 시 smoothProgress 업데이트
-    useEffect(() => {
-        if (readingLoading) {
-            smoothProgress.updateStage(analysisPhase);
-        } else {
-            smoothProgress.reset();
-        }
-    }, [analysisPhase, readingLoading]);
-
-    // 이미지 진행률 업데이트
-    useEffect(() => {
-        if (imageProgress.total > 0) {
-            smoothProgress.updateImageProgress(imageProgress.current, imageProgress.total);
-        }
-    }, [imageProgress.current, imageProgress.total]);
-
     // 유저 액션 (로그인 등) - 타로 액션보다 먼저 정의
     const setShareTarget = (target) => setModals(prev => ({ ...prev, shareTarget: target }));
     const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
@@ -200,7 +176,7 @@ function App() {
     });
 
     const { triggerCardReveal, startTarotSelection, toggleTarotCard, generateTarotReading } = useTarotActions({
-        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, currentView: view, setSavedDreamField, user, generateTarotReadingHook, dopamineHook, onLoginRequired: openAuthModal
+        tarot, setTarotField, setCardReveal, setCardRevealField, setCurrentCard, setView, currentView: view, setSavedDreamField, user, generateTarotReadingHook, onLoginRequired: openAuthModal
     });
     const { toggleSavedDreamVisibility, deleteDream, deleteTarot, deleteFortune, toggleDreamVisibility, updateVisibility } = useDreamManagement({
         user, result, savedDream, setSavedDreamField, selectedDream, setSelectedDream, setMyDreams, setMyTarots, setMyFortunes, setView, setToast, loadDreams, loadMyDreams
@@ -278,12 +254,8 @@ function App() {
                 </div>
             </div>
             <div className="loading-brand">점AI</div>
-            <div className="loading-tagline">맘을 모를 때</div>
+            <div className="loading-tagline">마음을 모를 때</div>
         </div>
-    );
-
-    const renderCard = (card, i) => (
-        <StoryCard key={i} card={card} index={i} dreamTypeInfo={dreamTypeInfo} onDetailedReading={() => generateDetailedReading(result || selectedDream)} isPremium={isPremium} onOpenPremium={openPremiumModal} />
     );
 
     return (
@@ -481,20 +453,18 @@ function App() {
                                 onToggleCard={toggleTarotCard}
                                 onGenerateReading={generateTarotReading}
                             />
-                            {/* 도파민 분석 오버레이 - 리딩 중일 때 표시 */}
-                            {readingLoading && (
+                            {/* 통합 분석 오버레이 - 리딩 중이거나 이미지 준비 완료 후 버튼 클릭 대기 중일 때 표시 */}
+                            {(readingLoading || (isImagesReady && tarot.result && view === 'create')) && (
                                 <AnalysisOverlay
                                     isVisible={true}
                                     mode="tarot"
-                                    currentMessage={dopamineHook.currentMessage}
-                                    isComplete={dopamineHook.isComplete}
-                                    analysisPhase={analysisPhase}
-                                    smoothProgress={smoothProgress.progress}
-                                    isProgressComplete={smoothProgress.isComplete}
-                                    onBrowseWhileWaiting={() => {
-                                        // 피드로 이동 (분석은 백그라운드에서 계속)
-                                        setView('feed');
-                                        setDopaminePopup({ type: 'info', message: '분석 완료 시 하단바에서 알려드릴게요!' });
+                                    streamingData={streamingData}
+                                    isImagesReady={isImagesReady}
+                                    onTransitionComplete={() => {
+                                        // 버튼 클릭 시 결과 페이지로 전환
+                                        setView('tarot-result');
+                                        // 오버레이 상태 리셋
+                                        resetStreamingData();
                                     }}
                                 />
                             )}
@@ -832,7 +802,22 @@ function App() {
                     resetFortune();
                     setSavedDream({ id: null, isPublic: false });
                 }}
-                onViewChange={setView}
+                onViewChange={(v) => {
+                    if (v === 'create') {
+                        // 시작 버튼 클릭 시 결과 초기화
+                        setView('create');
+                        if (mode === 'tarot') {
+                            resetTarot();
+                        } else if (mode === 'dream') {
+                            setResult(null);
+                        } else if (mode === 'fortune') {
+                            resetFortune();
+                        }
+                        setSavedDream({ id: null, isPublic: false });
+                    } else {
+                        setView(v);
+                    }
+                }}
                 onHomeClick={() => {
                     setView('feed');
                     resetTarot();
@@ -841,21 +826,6 @@ function App() {
                     setSavedDream({ id: null, isPublic: false });
                 }}
                 onOpenExplore={() => setMobileSheet(prev => ({ ...prev, explore: true }))}
-                // 분석 상태 전달
-                isAnalyzing={readingLoading}
-                smoothProgress={smoothProgress.progress}
-                isProgressComplete={smoothProgress.isComplete}
-                analysisMode={mode}
-                // 분석 완료 시 결과 페이지로 이동
-                onAnalysisComplete={() => {
-                    if (mode === 'tarot' && tarot.result) {
-                        setView('tarot-result');
-                    } else if (mode === 'fortune' && fortune.result) {
-                        setView('fortune-result');
-                    } else if (mode === 'dream' && result) {
-                        setView('detail');
-                    }
-                }}
             />
 
             {/* 모바일 탐색 바텀시트 */}

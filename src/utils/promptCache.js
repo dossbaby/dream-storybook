@@ -341,6 +341,408 @@ export const callClaudeWithCache = async (client, systemPrompt, userMessage, mod
 };
 
 /**
+ * 스트리밍 Claude API 호출 (Progressive Loading용)
+ *
+ * JSON 섹션이 완료될 때마다 콜백 호출
+ * - hook 완료 → onHook 콜백 → 결과 페이지 전환 + Hero 이미지 시작
+ * - card1 완료 → onCard1 콜백 → Card1 이미지 시작
+ * - 등등...
+ *
+ * @param {Anthropic} client - Anthropic 클라이언트
+ * @param {string} systemPrompt - 시스템 프롬프트 (캐시 대상)
+ * @param {string} userMessage - 사용자 메시지 (동적)
+ * @param {string} model - 모델 ID
+ * @param {number} maxTokens - 최대 토큰
+ * @param {Object} callbacks - 섹션 완료 콜백
+ * @param {string} mode - 모드 (tarot, dream, saju)
+ * @returns {Promise<string>} - 전체 응답 텍스트
+ */
+export const callClaudeWithCacheStreaming = async (
+    client,
+    systemPrompt,
+    userMessage,
+    model,
+    maxTokens,
+    callbacks = {},
+    mode = 'tarot'
+) => {
+    console.log('🚀 Sonnet 스트리밍 시작...');
+
+    // 스트리밍 요청 옵션 구성
+    const streamOptions = {
+        model,
+        max_tokens: maxTokens,
+        messages: [{ role: "user", content: userMessage }]
+    };
+
+    // systemPrompt가 있으면 캐싱 적용, 없으면 user message만
+    if (systemPrompt) {
+        streamOptions.system = [
+            {
+                type: "text",
+                text: systemPrompt,
+                cache_control: { type: "ephemeral" }
+            }
+        ];
+        console.log('💾 시스템 프롬프트 캐싱 적용');
+    } else {
+        console.log('📝 시스템 프롬프트 없음 (user message only)');
+    }
+
+    const stream = client.messages.stream(streamOptions);
+
+    let buffer = '';
+    const parsed = {
+        title: false,
+        verdict: false,
+        topics: false,
+        keywords: false,
+        hook: false,
+        foreshadow: false,
+        visualMode: false,
+        imageStyle: false,
+        colorPalette: false,
+        heroImagePrompt: false,
+        card1: false,
+        card1ImagePrompt: false,
+        card2: false,
+        card2ImagePrompt: false,
+        card3: false,
+        card3ImagePrompt: false,
+        conclusion: false,
+        conclusionImagePrompt: false,
+        hiddenInsight: false,
+        images: false
+    };
+
+    // JSON 값 추출 헬퍼 (이스케이프된 따옴표 처리)
+    const extractJsonValue = (key, text) => {
+        // "key": "value" 또는 "key": "value with \"escaped\" quotes"
+        const regex = new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`);
+        const match = text.match(regex);
+        if (match) {
+            const value = match[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+            // 디버깅: visualMode, imageStyle, colorPalette 값 확인
+            if (['visualMode', 'imageStyle', 'colorPalette'].includes(key)) {
+                console.log(`🔍 extractJsonValue(${key}) = "${value}"`);
+            }
+            return value;
+        }
+        return null;
+    };
+
+    // 긴 텍스트 필드 추출 (card analysis 등)
+    const extractLongValue = (key, text) => {
+        const startPattern = `"${key}"\\s*:\\s*"`;
+        const startMatch = text.match(new RegExp(startPattern));
+        if (!startMatch) return null;
+
+        const startIdx = text.indexOf(startMatch[0]) + startMatch[0].length;
+        let endIdx = startIdx;
+        let escaped = false;
+
+        for (let i = startIdx; i < text.length; i++) {
+            if (escaped) {
+                escaped = false;
+                continue;
+            }
+            if (text[i] === '\\') {
+                escaped = true;
+                continue;
+            }
+            if (text[i] === '"') {
+                endIdx = i;
+                break;
+            }
+        }
+
+        if (endIdx > startIdx) {
+            return text.slice(startIdx, endIdx).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+        }
+        return null;
+    };
+
+    // 섹션 완료 감지 및 콜백 호출
+    // ⚠️ 순서 중요: hook → foreshadow → title → verdict 먼저!
+    const checkAndTriggerCallbacks = () => {
+        // Hook 감지 (가장 먼저!)
+        if (!parsed.hook && callbacks.onHook) {
+            const hook = extractJsonValue('hook', buffer);
+            if (hook && hook.length > 10) {
+                console.log('✅ Hook 완료:', hook.slice(0, 30) + '...');
+                callbacks.onHook(hook);
+                parsed.hook = true;
+            }
+        }
+
+        // Foreshadow 감지
+        if (!parsed.foreshadow && callbacks.onForeshadow) {
+            const foreshadow = extractJsonValue('foreshadow', buffer);
+            if (foreshadow && foreshadow.length > 10) {
+                console.log('✅ Foreshadow 완료:', foreshadow.slice(0, 30) + '...');
+                callbacks.onForeshadow(foreshadow);
+                parsed.foreshadow = true;
+            }
+        }
+
+        // Title 감지
+        if (!parsed.title && callbacks.onTitle) {
+            const title = extractJsonValue('title', buffer);
+            if (title && title.length > 5) {
+                console.log('📝 Title 완료:', title.slice(0, 30) + '...');
+                callbacks.onTitle(title);
+                parsed.title = true;
+            }
+        }
+
+        // Verdict 감지
+        if (!parsed.verdict && callbacks.onVerdict) {
+            const verdict = extractJsonValue('verdict', buffer);
+            if (verdict && verdict.length > 3) {
+                console.log('📝 Verdict 완료:', verdict);
+                callbacks.onVerdict(verdict);
+                parsed.verdict = true;
+            }
+        }
+
+        // Topics 감지 (뒤로 이동)
+        if (!parsed.topics && callbacks.onTopics) {
+            const topicsMatch = buffer.match(/"topics"\s*:\s*\[([^\]]+)\]/);
+            if (topicsMatch) {
+                try {
+                    const topics = JSON.parse('[' + topicsMatch[1] + ']');
+                    console.log('📝 Topics 완료:', topics);
+                    callbacks.onTopics(topics);
+                    parsed.topics = true;
+                } catch (e) {}
+            }
+        }
+
+        // Keywords 감지 (뒤로 이동)
+        if (!parsed.keywords && callbacks.onKeywords) {
+            const keywordsMatch = buffer.match(/"keywords"\s*:\s*\[([\s\S]*?)\]/);
+            if (keywordsMatch) {
+                try {
+                    const keywords = JSON.parse('[' + keywordsMatch[1] + ']');
+                    if (keywords.length >= 3) {
+                        console.log('📝 Keywords 완료:', keywords.map(k => k.word));
+                        callbacks.onKeywords(keywords);
+                        parsed.keywords = true;
+                    }
+                } catch (e) {}
+            }
+        }
+
+        // visualMode 감지 (imageStyle 전에 파싱되어야 함)
+        if (!parsed.visualMode && callbacks.onVisualMode) {
+            const mode = extractJsonValue('visualMode', buffer);
+            if (mode) {
+                console.log('🎬 Claude 선택 비주얼 모드:', mode);
+                callbacks.onVisualMode(mode);
+                parsed.visualMode = true;
+            }
+        }
+
+        // imageStyle 감지 (heroImagePrompt 전에 파싱되어야 함)
+        if (!parsed.imageStyle && callbacks.onImageStyle) {
+            const style = extractJsonValue('imageStyle', buffer);
+            if (style) {
+                console.log('🎨 Claude 선택 스타일:', style);
+                callbacks.onImageStyle(style);
+                parsed.imageStyle = true;
+            }
+        }
+
+        // colorPalette 감지 (heroImagePrompt 전에 파싱되어야 함)
+        if (!parsed.colorPalette && callbacks.onColorPalette) {
+            const palette = extractJsonValue('colorPalette', buffer);
+            if (palette) {
+                console.log('🎨 Claude 선택 컬러:', palette);
+                callbacks.onColorPalette(palette);
+                parsed.colorPalette = true;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 이미지 프롬프트들 (Analysis보다 먼저 생성되므로 먼저 파싱)
+        // ⚠️ visualMode, imageStyle, colorPalette가 먼저 파싱된 후에만 이미지 생성
+        // ═══════════════════════════════════════════════════════════════
+
+        // Hero 이미지 프롬프트 감지 → Hero 이미지 생성 시작
+        // ⚠️ visualMode와 imageStyle이 파싱된 후에만 실행 (순서 보장)
+        if (!parsed.heroImagePrompt && callbacks.onHeroImagePrompt && parsed.imageStyle) {
+            const prompt = extractJsonValue('heroImagePrompt', buffer);
+            if (prompt && prompt.length > 20) {
+                console.log('🎨 Hero 이미지 프롬프트 완료 → 이미지 생성 시작');
+                callbacks.onHeroImagePrompt(prompt);
+                parsed.heroImagePrompt = true;
+            }
+        }
+
+        // Card 1 이미지 프롬프트 감지 → 이미지 생성 시작 (Analysis보다 먼저!)
+        // ⚠️ imageStyle이 파싱된 후에만 실행
+        if (!parsed.card1ImagePrompt && callbacks.onCard1ImagePrompt && parsed.imageStyle) {
+            const prompt = extractJsonValue('card1ImagePrompt', buffer);
+            if (prompt && prompt.length > 20) {
+                console.log('🎨 Card 1 이미지 프롬프트 완료 → 이미지 생성 시작');
+                callbacks.onCard1ImagePrompt(prompt);
+                parsed.card1ImagePrompt = true;
+            }
+        }
+
+        // Card 2 이미지 프롬프트 감지 → 이미지 생성 시작 (Analysis보다 먼저!)
+        // ⚠️ imageStyle이 파싱된 후에만 실행
+        if (!parsed.card2ImagePrompt && callbacks.onCard2ImagePrompt && parsed.imageStyle) {
+            const prompt = extractJsonValue('card2ImagePrompt', buffer);
+            if (prompt && prompt.length > 20) {
+                console.log('🎨 Card 2 이미지 프롬프트 완료 → 이미지 생성 시작');
+                callbacks.onCard2ImagePrompt(prompt);
+                parsed.card2ImagePrompt = true;
+            }
+        }
+
+        // Card 3 이미지 프롬프트 감지 → 이미지 생성 시작 (Analysis보다 먼저!)
+        // ⚠️ imageStyle이 파싱된 후에만 실행
+        if (!parsed.card3ImagePrompt && callbacks.onCard3ImagePrompt && parsed.imageStyle) {
+            const prompt = extractJsonValue('card3ImagePrompt', buffer);
+            if (prompt && prompt.length > 20) {
+                console.log('🎨 Card 3 이미지 프롬프트 완료 → 이미지 생성 시작');
+                callbacks.onCard3ImagePrompt(prompt);
+                parsed.card3ImagePrompt = true;
+            }
+        }
+
+        // Conclusion 이미지 프롬프트 감지 → 이미지 생성 시작
+        // ⚠️ imageStyle이 파싱된 후에만 실행
+        if (!parsed.conclusionImagePrompt && callbacks.onConclusionImagePrompt && parsed.imageStyle) {
+            const prompt = extractJsonValue('conclusionImagePrompt', buffer);
+            if (prompt && prompt.length > 20) {
+                console.log('🎨 Conclusion 이미지 프롬프트 완료 → 이미지 생성 시작');
+                callbacks.onConclusionImagePrompt(prompt);
+                parsed.conclusionImagePrompt = true;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // Card Analysis들 (이미지 프롬프트 이후에 생성됨)
+        // ═══════════════════════════════════════════════════════════════
+
+        // Card 1 분석 감지
+        if (!parsed.card1 && callbacks.onCard1) {
+            const card1 = extractLongValue('card1Analysis', buffer);
+            if (card1 && card1.length > 100) {
+                console.log('✅ Card 1 분석 완료');
+                callbacks.onCard1(card1);
+                parsed.card1 = true;
+            }
+        }
+
+        // Card 2 분석 감지
+        if (!parsed.card2 && callbacks.onCard2) {
+            const card2 = extractLongValue('card2Analysis', buffer);
+            if (card2 && card2.length > 100) {
+                console.log('✅ Card 2 분석 완료');
+                callbacks.onCard2(card2);
+                parsed.card2 = true;
+            }
+        }
+
+        // Card 3 분석 감지
+        if (!parsed.card3 && callbacks.onCard3) {
+            const card3 = extractLongValue('card3Analysis', buffer);
+            if (card3 && card3.length > 100) {
+                console.log('✅ Card 3 분석 완료');
+                callbacks.onCard3(card3);
+                parsed.card3 = true;
+            }
+        }
+
+        // Conclusion 분석 감지
+        if (!parsed.conclusion && callbacks.onConclusion) {
+            const detailed = extractLongValue('conclusionCard', buffer);
+            if (detailed && detailed.length > 100) {
+                console.log('✅ Conclusion 분석 완료');
+                callbacks.onConclusion(detailed);
+                parsed.conclusion = true;
+            }
+        }
+
+        // Hidden Insight 감지
+        if (!parsed.hiddenInsight && callbacks.onHiddenInsight) {
+            const hidden = extractLongValue('hiddenInsight', buffer);
+            if (hidden && hidden.length > 50) {
+                console.log('✅ Hidden Insight 완료');
+                callbacks.onHiddenInsight(hidden);
+                parsed.hiddenInsight = true;
+            }
+        }
+
+        // Images 객체 감지 (이미지 프롬프트)
+        if (!parsed.images && callbacks.onImages) {
+            // "images": { ... } 블록 완료 감지
+            const imagesMatch = buffer.match(/"images"\s*:\s*\{[^}]+\}/);
+            if (imagesMatch) {
+                try {
+                    // 이미지 객체만 추출해서 파싱
+                    const imagesStr = '{' + imagesMatch[0] + '}';
+                    const imagesObj = JSON.parse(imagesStr.replace(/,\s*$/, ''));
+                    console.log('🖼️ 이미지 프롬프트 완료');
+                    callbacks.onImages(imagesObj.images);
+                    parsed.images = true;
+                } catch (e) {
+                    // 아직 완전하지 않음
+                }
+            }
+        }
+
+        // 진행률 콜백 (버퍼 길이 기반 대략적 추정)
+        if (callbacks.onProgress) {
+            const estimatedProgress = Math.min(buffer.length / 8000, 0.95); // 대략 8000자 예상
+            callbacks.onProgress(estimatedProgress);
+        }
+    };
+
+    // 스트리밍 이벤트 처리
+    for await (const event of stream) {
+        if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+            buffer += event.delta.text;
+            checkAndTriggerCallbacks();
+        }
+    }
+
+    // 최종 결과 처리
+    const finalMessage = await stream.finalMessage();
+
+    // 캐시 통계 로깅 및 Analytics 기록
+    if (finalMessage.usage) {
+        const { input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens } = finalMessage.usage;
+        console.log(`📊 Token Usage: input=${input_tokens}, output=${output_tokens}`);
+        if (cache_creation_input_tokens) {
+            console.log(`💾 Cache Created: ${cache_creation_input_tokens} tokens`);
+        }
+        if (cache_read_input_tokens) {
+            console.log(`✅ Cache Hit: ${cache_read_input_tokens} tokens (90% savings!)`);
+        }
+
+        // Analytics 기록
+        if (typeof window !== 'undefined') {
+            import('./cacheAnalytics.js').then(({ recordCacheUsage }) => {
+                recordCacheUsage(finalMessage.usage, mode, model);
+            }).catch(() => {});
+        }
+    }
+
+    console.log('🎉 Sonnet 스트리밍 완료');
+
+    // 완료 콜백
+    if (callbacks.onComplete) {
+        callbacks.onComplete(buffer);
+    }
+
+    return buffer;
+};
+
+/**
  * 프로필 기반 동적 프롬프트 생성 (꿈 해몽용)
  * @param {string} dreamDescription - 꿈 내용
  * @param {Object} userProfile - 사용자 프로필

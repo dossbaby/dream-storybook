@@ -5088,6 +5088,135 @@
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════ */
+/* Insight 포탈 오픈 이펙트 (glacial blue + purple) */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.insight-portal-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    pointer-events: none;
+}
+
+.insight-portal-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid;
+    opacity: 0;
+}
+
+.insight-portal-ring.ring-1 {
+    width: 60px;
+    height: 60px;
+    border-color: rgba(100, 180, 235, 0.9);
+    box-shadow:
+        0 0 20px rgba(100, 180, 235, 0.7),
+        0 0 40px rgba(100, 180, 235, 0.5),
+        inset 0 0 20px rgba(100, 180, 235, 0.3);
+    animation: insightPortalRing1 0.8s ease-out forwards;
+}
+
+.insight-portal-ring.ring-2 {
+    width: 45px;
+    height: 45px;
+    border-color: rgba(155, 89, 182, 0.9);
+    box-shadow:
+        0 0 18px rgba(155, 89, 182, 0.7),
+        0 0 35px rgba(155, 89, 182, 0.5),
+        inset 0 0 18px rgba(155, 89, 182, 0.3);
+    animation: insightPortalRing2 0.8s ease-out 0.1s forwards;
+}
+
+.insight-portal-ring.ring-3 {
+    width: 30px;
+    height: 30px;
+    border-color: rgba(180, 140, 255, 0.9);
+    box-shadow:
+        0 0 15px rgba(180, 140, 255, 0.7),
+        0 0 30px rgba(180, 140, 255, 0.5),
+        inset 0 0 15px rgba(180, 140, 255, 0.3);
+    animation: insightPortalRing3 0.8s ease-out 0.2s forwards;
+}
+
+.insight-portal-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(100, 180, 235, 0.9) 40%,
+        rgba(155, 89, 182, 0.7) 70%,
+        transparent 100%);
+    animation: insightPortalCenter 0.6s ease-out forwards;
+}
+
+@keyframes insightPortalRing1 {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(6);
+    }
+}
+
+@keyframes insightPortalRing2 {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(8);
+    }
+}
+
+@keyframes insightPortalRing3 {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(10);
+    }
+}
+
+@keyframes insightPortalCenter {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(40);
+    }
+}
+
 .unsealed-insight .insight-glow {
     position: absolute;
     top: -50%;
@@ -5735,25 +5864,29 @@
 }
 
 .tarot-result-content .reading-title {
-    font-size: 2rem;
-    font-weight: 900;
+    font-family: 'RIDIBatang', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
     color: #fff;
-    line-height: 1.2;
+    line-height: 1.4;
     margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
     text-shadow:
-        0 0 20px rgba(255, 0, 85, 0.5),
-        2px 2px 0 rgba(255, 215, 0, 0.3);
+        0 2px 20px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(138, 43, 226, 0.4);
 }
 
 .tarot-result-content .reading-verdict {
-    font-size: 1.1rem;
-    color: #ffd700;
-    font-weight: 600;
+    font-family: 'RIDIBatang', serif;
+    font-size: 1rem;
+    color: rgba(255, 200, 100, 0.95);
+    font-weight: 400;
+    font-style: italic;
     margin: 0;
     padding-left: 1rem;
-    border-left: 3px solid #ff0055;
+    border-left: 2px solid rgba(255, 200, 100, 0.5);
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6);
+    line-height: 1.6;
 }
 
 /* Sticky 카드 바 - 페이지 전체에 고정 */
@@ -5835,6 +5968,23 @@
     color: rgba(255, 255, 255, 0.9);
     line-height: 1.8;
     font-style: italic;
+}
+
+/* 인트로 보기 텍스트 링크 */
+.tarot-result-content .reading-quote .intro-replay-text {
+    display: block;
+    margin-top: 0.75rem;
+    font-family: 'RIDIBatang', serif;
+    font-size: 0.85rem;
+    font-style: normal;
+    color: rgba(255, 200, 100, 0.45);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+}
+
+.tarot-result-content .reading-quote .intro-replay-text:hover {
+    color: rgba(255, 200, 100, 0.8);
 }
 
 /* 본문 - 카드 챕터용 풀 와이드 스타일 */
@@ -7601,6 +7751,62 @@
         opacity: 0;
         border-color: rgba(255, 100, 150, 0);
         box-shadow: 0 0 0 rgba(255, 100, 150, 0);
+    }
+}
+
+/* 카드 로딩 상태 */
+.persona-card.loading {
+    cursor: wait;
+}
+
+.persona-card.loading .persona-card-back {
+    background: linear-gradient(145deg,
+        rgba(25, 10, 50, 0.95) 0%,
+        rgba(35, 20, 60, 0.98) 50%,
+        rgba(20, 8, 40, 0.95) 100%);
+}
+
+/* 로딩 스피너 */
+.card-loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(155, 89, 182, 0.2);
+    border-top: 2px solid rgba(255, 200, 100, 0.8);
+    border-radius: 50%;
+    animation: cardLoadingSpin 1.2s linear infinite;
+    z-index: 1;
+}
+
+@keyframes cardLoadingSpin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* 로딩 상태 심볼 희미하게 */
+.persona-card.loading .persona-card-symbol {
+    opacity: 0.3;
+}
+
+/* 로딩 상태 힌트 텍스트 펄스 */
+.persona-card.loading .persona-tap-hint {
+    background: rgba(60, 40, 90, 0.8);
+    animation: loadingTextPulse 2s ease-in-out infinite;
+}
+
+@keyframes loadingTextPulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
     }
 }
 
@@ -9588,23 +9794,13 @@
 
 /* slot-card hover 제거 - 선택된 슬롯에는 hover 불필요 */
 
-/* 선택 슬롯 - 무지개 conic-gradient Theme */
+/* 선택 슬롯 - 민트-시안-파랑-보라 부드러운 회전 그라데이션 */
 .slot-card {
     width: 116px;
     height: 174px;
     border-radius: 10px;
-    background:
-        linear-gradient(170deg, #1a1535 0%, #15122a 25%, #100e22 50%, #0c0a1a 75%, #080612 100%) padding-box,
-        conic-gradient(
-            from 180deg at 50% 50%,
-            rgba(120, 80, 180, 0.9) 0deg,
-            rgba(80, 220, 200, 1) 72deg,
-            rgba(60, 200, 255, 1) 144deg,
-            rgba(100, 140, 255, 1) 216deg,
-            rgba(160, 80, 255, 1) 288deg,
-            rgba(120, 80, 180, 0.9) 360deg
-        ) border-box;
-    border: 2px solid transparent;
+    background: transparent;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -9616,12 +9812,48 @@
         0 0 30px rgba(100, 140, 255, 0.15),
         0 0 40px rgba(160, 80, 255, 0.1);
     position: relative;
-    animation: slotCardIn 0.25s ease-out, rainbowRotate 4s linear infinite;
+    animation: slotCardIn 0.25s ease-out;
 }
 
-@keyframes rainbowRotate {
-    from { filter: hue-rotate(0deg); }
-    to { filter: hue-rotate(360deg); }
+/* 그라데이션 보더 - shimmer 효과 (회전 없음) */
+.slot-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 12px;
+    background: linear-gradient(
+        135deg,
+        rgba(80, 220, 200, 1) 0%,
+        rgba(60, 200, 255, 1) 25%,
+        rgba(100, 140, 255, 1) 50%,
+        rgba(160, 80, 255, 1) 75%,
+        rgba(80, 220, 200, 1) 100%
+    );
+    background-size: 300% 300%;
+    animation: gradientShimmer 4s ease-in-out infinite;
+    z-index: -1;
+}
+
+/* 내부 배경 */
+.slot-card::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 8px;
+    background: linear-gradient(170deg, #1a1535 0%, #15122a 25%, #100e22 50%, #0c0a1a 75%, #080612 100%);
+    z-index: 0;
+}
+
+/* 카드 내용물이 배경 위에 표시되도록 */
+.slot-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes gradientShimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* slot-card::before 제거 - conic-gradient로 통합 */
@@ -9631,43 +9863,60 @@
     100% { transform: scale(1) rotate(0); opacity: 1; }
 }
 
-/* 3장 모두 선택 시 - 미세한 sparkle 효과 */
-.slot-card.all-ready::after {
+/* 3장 모두 선택 시 - 보더 강화 + sparkle 오버레이 */
+.slot-card.all-ready::before {
+    /* 보더 그라데이션 유지하면서 더 밝게 */
+    background: linear-gradient(
+        135deg,
+        rgba(80, 220, 200, 1) 0%,
+        rgba(60, 200, 255, 1) 25%,
+        rgba(100, 140, 255, 1) 50%,
+        rgba(160, 80, 255, 1) 75%,
+        rgba(80, 220, 200, 1) 100%
+    );
+    background-size: 300% 300%;
+    animation: gradientShimmer 3s ease-in-out infinite;
+    filter: brightness(1.2);
+}
+
+/* sparkle 효과를 별도 엘리먼트로 (::after는 배경 유지) */
+.slot-card.all-ready .slot-card-art::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 10px;
+    border-radius: 8px;
     background:
-        radial-gradient(circle at 20% 20%, rgba(160, 80, 255, 0.6) 0%, transparent 3%),
-        radial-gradient(circle at 80% 30%, rgba(80, 220, 200, 0.6) 0%, transparent 3%),
-        radial-gradient(circle at 40% 70%, rgba(60, 200, 255, 0.6) 0%, transparent 3%),
-        radial-gradient(circle at 70% 80%, rgba(100, 140, 255, 0.6) 0%, transparent 3%);
+        radial-gradient(circle at 20% 20%, rgba(160, 80, 255, 0.5) 0%, transparent 4%),
+        radial-gradient(circle at 80% 30%, rgba(80, 220, 200, 0.5) 0%, transparent 4%),
+        radial-gradient(circle at 40% 70%, rgba(60, 200, 255, 0.5) 0%, transparent 4%),
+        radial-gradient(circle at 70% 80%, rgba(100, 140, 255, 0.5) 0%, transparent 4%);
     pointer-events: none;
     animation: sparkleShimmer 2s ease-in-out infinite;
+    z-index: 2;
 }
 
 /* 각 카드별 다른 위치의 sparkle */
-.selected-slot:nth-child(1) .slot-card.all-ready::after {
+.selected-slot:nth-child(1) .slot-card.all-ready .slot-card-art::before {
     background:
-        radial-gradient(circle at 15% 25%, rgba(160, 80, 255, 0.7) 0%, transparent 4%),
-        radial-gradient(circle at 75% 20%, rgba(100, 200, 180, 0.6) 0%, transparent 3%),
-        radial-gradient(circle at 30% 75%, rgba(80, 180, 255, 0.6) 0%, transparent 3%);
+        radial-gradient(circle at 15% 25%, rgba(160, 80, 255, 0.6) 0%, transparent 5%),
+        radial-gradient(circle at 75% 20%, rgba(100, 200, 180, 0.5) 0%, transparent 4%),
+        radial-gradient(circle at 30% 75%, rgba(80, 180, 255, 0.5) 0%, transparent 4%);
     animation-delay: 0s;
 }
 
-.selected-slot:nth-child(2) .slot-card.all-ready::after {
+.selected-slot:nth-child(2) .slot-card.all-ready .slot-card-art::before {
     background:
-        radial-gradient(circle at 85% 15%, rgba(80, 220, 200, 0.7) 0%, transparent 4%),
-        radial-gradient(circle at 25% 35%, rgba(60, 200, 255, 0.6) 0%, transparent 3%),
-        radial-gradient(circle at 70% 70%, rgba(160, 80, 255, 0.6) 0%, transparent 3%);
+        radial-gradient(circle at 85% 15%, rgba(80, 220, 200, 0.6) 0%, transparent 5%),
+        radial-gradient(circle at 25% 35%, rgba(60, 200, 255, 0.5) 0%, transparent 4%),
+        radial-gradient(circle at 70% 70%, rgba(160, 80, 255, 0.5) 0%, transparent 4%);
     animation-delay: 0.3s;
 }
 
-.selected-slot:nth-child(3) .slot-card.all-ready::after {
+.selected-slot:nth-child(3) .slot-card.all-ready .slot-card-art::before {
     background:
-        radial-gradient(circle at 20% 80%, rgba(60, 200, 255, 0.7) 0%, transparent 4%),
-        radial-gradient(circle at 80% 25%, rgba(160, 80, 255, 0.6) 0%, transparent 3%),
-        radial-gradient(circle at 50% 50%, rgba(80, 220, 200, 0.6) 0%, transparent 3%);
+        radial-gradient(circle at 20% 80%, rgba(60, 200, 255, 0.6) 0%, transparent 5%),
+        radial-gradient(circle at 80% 25%, rgba(160, 80, 255, 0.5) 0%, transparent 4%),
+        radial-gradient(circle at 50% 50%, rgba(80, 220, 200, 0.5) 0%, transparent 4%);
     animation-delay: 0.6s;
 }
 
@@ -9689,13 +9938,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 무지개 glow와 어울리는 밝은 색상 */
-    color: rgba(255, 230, 200, 0.95);
+    /* 민트-시안-퍼플 그라데이션과 어울리는 밝은 색상 */
+    color: rgba(180, 240, 255, 0.95);
     text-shadow:
-        0 0 10px rgba(255, 200, 100, 0.8),
-        0 0 20px rgba(255, 100, 150, 0.6),
-        0 0 30px rgba(150, 100, 255, 0.4);
-    filter: drop-shadow(0 0 12px rgba(255, 180, 120, 0.7));
+        0 0 10px rgba(80, 220, 200, 0.8),
+        0 0 20px rgba(100, 180, 255, 0.6),
+        0 0 30px rgba(160, 120, 255, 0.4);
+    filter: drop-shadow(0 0 12px rgba(100, 200, 220, 0.7));
+}
+
+/* 각 슬롯별 다른 심볼 색상 */
+.selected-slot:nth-child(1) .slot-art-symbol {
+    color: rgba(120, 255, 220, 0.95);
+    text-shadow:
+        0 0 10px rgba(80, 220, 200, 0.9),
+        0 0 20px rgba(60, 200, 180, 0.6),
+        0 0 30px rgba(100, 255, 220, 0.4);
+    filter: drop-shadow(0 0 12px rgba(80, 220, 200, 0.8));
+}
+
+.selected-slot:nth-child(2) .slot-art-symbol {
+    color: rgba(140, 200, 255, 0.95);
+    text-shadow:
+        0 0 10px rgba(60, 180, 255, 0.9),
+        0 0 20px rgba(100, 160, 255, 0.6),
+        0 0 30px rgba(80, 200, 255, 0.4);
+    filter: drop-shadow(0 0 12px rgba(80, 180, 255, 0.8));
+}
+
+.selected-slot:nth-child(3) .slot-art-symbol {
+    color: rgba(200, 160, 255, 0.95);
+    text-shadow:
+        0 0 10px rgba(160, 120, 255, 0.9),
+        0 0 20px rgba(180, 140, 255, 0.6),
+        0 0 30px rgba(200, 160, 255, 0.4);
+    filter: drop-shadow(0 0 12px rgba(160, 120, 255, 0.8));
 }
 
 /* 빈 슬롯 - Blue-Purple Theme */
@@ -9872,15 +10149,13 @@
     border-radius: 32px;
     background: conic-gradient(
         from 180deg at 50% 50%,
-        rgba(120, 80, 180, 0.9) 0deg,
-        rgba(80, 220, 200, 1) 72deg,
-        rgba(60, 200, 255, 1) 144deg,
-        rgba(100, 140, 255, 1) 216deg,
-        rgba(160, 80, 255, 1) 288deg,
-        rgba(120, 80, 180, 0.9) 360deg
+        rgba(80, 220, 200, 1) 0deg,
+        rgba(60, 200, 255, 1) 90deg,
+        rgba(100, 140, 255, 1) 180deg,
+        rgba(160, 80, 255, 1) 270deg,
+        rgba(80, 220, 200, 1) 360deg
     );
     z-index: -1;
-    animation: rainbowRotate 4s linear infinite;
 }
 
 .read-btn.rainbow-btn {
@@ -9901,14 +10176,9 @@
     transform: translateY(-2px);
 }
 
-/* hover 시 hue-rotate 멈추고 pulse glow만 */
+/* hover 시 pulse glow */
 .read-btn.rainbow-btn:hover::before {
-    animation: rainbowPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes rainbowPulse {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
+    opacity: 1;
 }
 
 .read-btn.rainbow-btn:active {

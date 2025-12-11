@@ -2,4 +2,3 @@
 export { useImageGeneration, compressImage } from './useImageGeneration';
 export { useFirebaseSave } from './useFirebaseSave';
 export { useAnalysisAnimation } from './useAnalysisAnimation';
-export { useDopamineMessages } from './useDopamineMessages';

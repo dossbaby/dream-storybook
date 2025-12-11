@@ -1,6 +1,5 @@
 import { useRef, useEffect } from 'react';
 import { TAROT_DECK } from '../utils/constants';
-import { getApiKeys } from '../utils/analysisHelpers';
 
 /**
  * 타로 관련 액션 훅
@@ -16,8 +15,6 @@ export const useTarotActions = ({
     setSavedDreamField,
     user,
     generateTarotReadingHook,
-    // 도파민 메시지 시스템
-    dopamineHook,
     // 로그인 필요 시 콜백
     onLoginRequired
 }) => {
@@ -66,7 +63,7 @@ export const useTarotActions = ({
         }
     };
 
-    // 타로 리딩 생성
+    // 타로 리딩 생성 (스트리밍 + Progressive UI 지원)
     const generateTarotReading = async () => {
         if (tarot.selectedCards.length !== 3 || !tarot.question.trim()) return;
 
@@ -85,38 +82,38 @@ export const useTarotActions = ({
             setSavedDreamField('isPublic', true); // 기본값 공개로 변경 (pSEO)
         }
 
-        // 도파민 메시지 시스템: Haiku로 메시지 선생성 후 큐 시작
-        if (dopamineHook) {
-            const apiKeys = getApiKeys();
-            if (apiKeys?.claudeApiKey) {
-                // 비동기로 도파민 메시지 생성 (메인 API와 병렬)
-                dopamineHook.generateDopamineMessages(tarot.question, 'tarot', apiKeys.claudeApiKey)
-                    .then(result => {
-                        if (result?.messages) {
-                            dopamineHook.startQueue(result.messages, result.emotionPhrase, 4000);
-                        }
-                    })
-                    .catch(err => console.error('Dopamine generation failed:', err));
+        // 스트리밍 콜백 설정 (Progressive UI)
+        // ⚠️ 뷰 전환은 AnalysisOverlay의 onTransitionComplete에서 처리
+        let resultReady = false;
+        const streamingCallbacks = {
+            // Hook + 이미지 준비되면 결과 데이터 저장 (뷰 전환은 안 함)
+            onHookReady: (partialResult) => {
+                if (!resultReady) {
+                    console.log('🚀 Hook ready - 결과 데이터 준비 완료 (버튼 클릭 대기)');
+                    setTarotField('result', partialResult);
+                    resultReady = true;
+                }
+            },
+            // 부분 업데이트 시 결과 갱신
+            onPartialUpdate: (partialResult) => {
+                setTarotField('result', partialResult);
+            },
+            // 이미지 프롬프트 준비되면 (Phase 5에서 병렬 생성에 활용)
+            onImagesReady: (images) => {
+                console.log('🖼️ Images ready for parallel generation:', Object.keys(images));
             }
-        }
+        };
 
-        const resultData = await generateTarotReadingHook(tarot.question, tarot.selectedCards);
-
-        // 도파민 큐 정지
-        if (dopamineHook) {
-            dopamineHook.stopQueue();
-        }
+        const resultData = await generateTarotReadingHook(
+            tarot.question,
+            tarot.selectedCards,
+            streamingCallbacks
+        );
 
         if (resultData) {
+            // 최종 결과로 업데이트 (이미지 포함)
             setTarotField('result', resultData);
-            // 분석 완료 후 TarotResultView로 자동 이동
-            setView('tarot-result');
-            // 저장은 useReading.js에서 자동으로 처리됨
-        }
-
-        // 도파민 훅 리셋 (다음 사용 위해)
-        if (dopamineHook) {
-            setTimeout(() => dopamineHook.reset(), 1000);
+            // ⚠️ 뷰 전환은 AnalysisOverlay 버튼 클릭 시 onTransitionComplete에서 처리
         }
     };
 

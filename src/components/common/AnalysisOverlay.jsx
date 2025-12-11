@@ -1,216 +1,402 @@
-import { useState, useEffect, memo, useRef } from 'react';
+import { useState, useEffect, memo, useRef, useCallback } from 'react';
 import './AnalysisOverlay.css';
 
 /**
- * AnalysisOverlay - 전체 화면 분석 오버레이
+ * AnalysisOverlay - VN Intro 스타일 오버레이
  *
- * VN Intro 스타일과 통일:
- * - 상단: 도파민 메시지 (리디바탕, 금색/보라 번갈아가며)
- * - 중앙: Pulsing circle + 단계별 이모지 (glacial blue/purple)
- * - 하단: 실시간 진행률 + 단계 circle + 안내 텍스트
+ * 플로우: 인트로 → hook → foreshadow → title → verdict → "리딩을 펼쳐볼까요?" → 결과 보기
+ * 각 텍스트는 타이핑 효과로 표시됨
  */
 
-// 단계별 이모지와 색상 (analysisPhase 1-8에 매핑) - 더 신비로운 메시지
-// 1: 시작, 2-5: 분석, 6: API완료, 7: 이미지생성, 8: 완료
-const PHASE_CONFIG = [
-    { emoji: '🌙', colors: ['#9b59b6', '#6c5ce7'], label: '운명의 실이 엮이고 있어요' },           // analysisPhase 1-2
-    { emoji: '🔮', colors: ['#667eea', '#764ba2'], label: '카드가 당신의 이야기를 읽고 있어요' },  // analysisPhase 3-5
-    { emoji: '✨', colors: ['#00d9ff', '#9b59b6'], label: '우주가 답을 속삭이고 있어요' },         // analysisPhase 6
-    { emoji: '🎨', colors: ['#a29bfe', '#6c5ce7'], label: '당신의 운명이 그림으로 피어나요' },     // analysisPhase 7
-    { emoji: '💫', colors: ['#ffd700', '#9b59b6'], label: '별들이 마지막 축복을 내려요' },         // analysisPhase 8
+// 랜덤 인트로 메시지
+const INTRO_MESSAGES = [
+    "카드를 한 번 살펴볼까요?",
+    "별들이 당신의 질문을 듣고 있어요...",
+    "운명의 카드가 섞이고 있어요...",
+    "우주가 당신을 위해 준비 중이에요...",
+    "카드들이 깨어나고 있어요...",
+    "당신의 이야기가 시작될 준비를 하고 있어요...",
+    "운명의 실타래가 풀리기 시작해요...",
+    "잠시만요, 카드가 속삭이고 있어요...",
+    "마음을 열어볼까요?",
+    "당신의 질문이 카드에 닿고 있어요..."
 ];
 
-// analysisPhase(1-8)를 circle stage(0-4)로 매핑
-const mapPhaseToStage = (analysisPhase) => {
-    if (analysisPhase <= 2) return 0;  // 질문 읽기
-    if (analysisPhase <= 5) return 1;  // 카드 해석
-    if (analysisPhase === 6) return 2; // 통찰 정리
-    if (analysisPhase === 7) return 3; // 이미지 생성
-    return 4; // 완료
+// 쉬어가는 단계 context (10가지 variation)
+const BREATHE_CONTEXTS = [
+    "최종 결과를 확인하기 전에,",
+    "마지막 카드를 펼치기 전에,",
+    "운명의 답을 보기 전에,",
+    "리딩을 완성하기 전에,",
+    "당신의 이야기가 완성되기 전에,",
+    "카드가 답을 전하기 전에,",
+    "타로의 메시지를 확인하기 전에,",
+    "우주의 답을 듣기 전에,",
+    "마지막 페이지를 넘기기 전에,",
+    "결과를 마주하기 전에,"
+];
+
+// 쉬어가는 단계 본문 (10가지)
+const BREATHE_BODIES = [
+    "잠시 눈을 감고 마지막 카드에 에너지를 모아볼게요...",
+    "우주의 기운을 모아 마지막 답을 준비할게요...",
+    "카드들이 하나로 모여 이야기를 완성하고 있어요...",
+    "별들의 속삭임을 마지막 카드에 담아볼게요...",
+    "깊이 숨을 쉬고 운명의 조각을 맞춰볼게요...",
+    "모든 기운이 하나로 모이고 있어요...",
+    "카드가 전할 메시지를 준비하고 있어요...",
+    "우주가 특별한 답을 만들고 있어요...",
+    "타로의 에너지가 하나로 엮이고 있어요...",
+    "마지막 카드의 목소리에 귀 기울여 볼까요..."
+];
+
+// context + body 조합 생성
+const getRandomBreatheMessage = () => {
+    const context = BREATHE_CONTEXTS[Math.floor(Math.random() * BREATHE_CONTEXTS.length)];
+    const body = BREATHE_BODIES[Math.floor(Math.random() * BREATHE_BODIES.length)];
+    return `${context} ${body}`;
+};
+
+const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+// 단계 정의
+const PHASES = {
+    INTRO: 0,      // 인트로 메시지
+    HOOK: 1,       // hook
+    FORESHADOW: 2, // foreshadow
+    TITLE: 3,      // title
+    VERDICT: 4,    // verdict
+    BREATHE: 5,    // 쉬어가는 단계 (에너지 모으기)
+    FINAL: 6,      // "그럼 이제 리딩을 펼쳐볼까요?"
+    READY: 7       // 결과 보기 버튼
+};
+
+// 타이핑 속도 (ms per character)
+const TYPING_SPEED = {
+    INTRO: 60,
+    HOOK: 50,
+    FORESHADOW: 45,
+    TITLE: 55,
+    VERDICT: 55,
+    BREATHE: 55,
+    FINAL: 50
 };
 
 const AnalysisOverlay = memo(({
     isVisible,
-    mode = 'tarot', // 'dream' | 'tarot' | 'fortune'
-    currentMessage = '',
-    isComplete = false,
-    phase = 1, // 1: Hook, 2: 순환, 3: 완료
-    analysisPhase = 1, // 실제 분석 단계 (1-8)
-    smoothProgress = 0, // 부드러운 진행률 (0-100)
-    isProgressComplete = false, // 진행 완료 여부
-    onBrowseWhileWaiting // "분석이 끝나면 알림받기" 콜백
+    mode = 'tarot',
+    streamingData = {},
+    isImagesReady = false,
+    onTransitionComplete
 }) => {
-    const [displayText, setDisplayText] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
-    const [isFading, setIsFading] = useState(false);
-    const [stars, setStars] = useState([]);
-    const [textColorIndex, setTextColorIndex] = useState(0); // 0: gold, 1: purple 번갈아
-    const prevMessageRef = useRef('');
+    // 현재 단계
+    const [phase, setPhase] = useState(PHASES.INTRO);
+    // 전체 텍스트 (타이핑할 목표)
+    const [fullText, setFullText] = useState('');
+    // 현재까지 타이핑된 텍스트
+    const [typedText, setTypedText] = useState('');
+    // 텍스트 타입 (gold/purple)
+    const [textType, setTextType] = useState('gold');
+    // 타이핑 완료 여부
+    const [isTypingComplete, setIsTypingComplete] = useState(false);
+    // 전환 중인지
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    // 포탈 전환 중인지
+    const [isPortalTransition, setIsPortalTransition] = useState(false);
+    // 페이드 아웃 중인지
+    const [isFadingOut, setIsFadingOut] = useState(false);
+    // 장식 visible
+    const [ornamentVisible, setOrnamentVisible] = useState(false);
+    // 대기 메시지 인덱스 (0: 첫번째, 1: 두번째)
+    const [waitingMsgIndex, setWaitingMsgIndex] = useState(0);
 
-    // analysisPhase를 기반으로 currentStage 계산
-    const currentStage = mapPhaseToStage(analysisPhase);
+    // Refs
+    const introMsgRef = useRef('');
+    const waitingTimerRef = useRef(null);
+    const transitionTriggeredRef = useRef(false);
+    const typingTimerRef = useRef(null);
 
-    // 별 생성 (카드 선택 화면과 유사)
+    // 인트로 메시지 설정 및 타이핑 시작
     useEffect(() => {
-        if (!isVisible) return;
-
-        const newStars = Array.from({ length: 30 }, (_, i) => ({
-            id: i,
-            left: Math.random() * 100,
-            top: Math.random() * 100,
-            delay: Math.random() * 4,
-            duration: 2 + Math.random() * 3,
-            size: 1 + Math.random() * 3
-        }));
-        setStars(newStars);
+        if (isVisible && !introMsgRef.current) {
+            introMsgRef.current = getRandomItem(INTRO_MESSAGES);
+            setFullText(introMsgRef.current);
+            setTextType('gold');
+            setTypedText('');
+            setIsTypingComplete(false);
+            // 장식 먼저 fade in
+            setTimeout(() => setOrnamentVisible(true), 100);
+        }
     }, [isVisible]);
 
-    // 단계는 analysisPhase prop에 의해 자동 계산됨 (mapPhaseToStage)
-    // 자동 진행 로직 제거 - 실제 분석 단계와 연동
-
-    // 타이프라이터 효과
+    // 타이핑 효과
     useEffect(() => {
-        if (!currentMessage || currentMessage === prevMessageRef.current) return;
-
-        // 새 메시지 시작 - 페이드 아웃 후 타이핑
-        setIsFading(true);
-        // 메시지 바뀔 때마다 색상 번갈아
-        setTextColorIndex(prev => (prev + 1) % 2);
-
-        const fadeTimeout = setTimeout(() => {
-            prevMessageRef.current = currentMessage;
-            setDisplayText('');
-            setIsFading(false);
-            setIsTyping(true);
-
-            let charIndex = 0;
-            const typeInterval = setInterval(() => {
-                if (charIndex < currentMessage.length) {
-                    setDisplayText(currentMessage.slice(0, charIndex + 1));
-                    charIndex++;
-                } else {
-                    clearInterval(typeInterval);
-                    setIsTyping(false);
-                }
-            }, 45); // 45ms per character
-
-            return () => clearInterval(typeInterval);
-        }, 250); // 페이드 아웃 시간
-
-        return () => clearTimeout(fadeTimeout);
-    }, [currentMessage]);
-
-    // 완료 상태 처리
-    useEffect(() => {
-        if (isComplete) {
-            setDisplayText('거의 다 됐어요... 결과를 정리하고 있어요');
-            setIsTyping(false);
+        if (!fullText || typedText.length >= fullText.length) {
+            if (fullText && typedText.length >= fullText.length) {
+                setIsTypingComplete(true);
+            }
+            return;
         }
-    }, [isComplete]);
+
+        // 현재 phase에 맞는 타이핑 속도
+        const getTypingSpeed = () => {
+            switch (phase) {
+                case PHASES.INTRO: return TYPING_SPEED.INTRO;
+                case PHASES.HOOK: return TYPING_SPEED.HOOK;
+                case PHASES.FORESHADOW: return TYPING_SPEED.FORESHADOW;
+                case PHASES.TITLE: return TYPING_SPEED.TITLE;
+                case PHASES.VERDICT: return TYPING_SPEED.VERDICT;
+                case PHASES.BREATHE: return TYPING_SPEED.BREATHE;
+                case PHASES.FINAL: return TYPING_SPEED.FINAL;
+                default: return 50;
+            }
+        };
+
+        typingTimerRef.current = setTimeout(() => {
+            setTypedText(fullText.slice(0, typedText.length + 1));
+        }, getTypingSpeed());
+
+        return () => {
+            if (typingTimerRef.current) {
+                clearTimeout(typingTimerRef.current);
+            }
+        };
+    }, [fullText, typedText, phase]);
+
+    // 탭/클릭 핸들러 - 다음 단계로 이동
+    const handleTap = useCallback((e) => {
+        // 버튼 클릭은 제외
+        if (e.target.closest('.result-button')) return;
+        // 전환 중이면 무시
+        if (isTransitioning) return;
+
+        // 타이핑 중이면 즉시 완료
+        if (!isTypingComplete && fullText) {
+            if (typingTimerRef.current) {
+                clearTimeout(typingTimerRef.current);
+            }
+            setTypedText(fullText);
+            setIsTypingComplete(true);
+            return;
+        }
+
+        const goToNextPhase = (nextPhase, text, type = 'gold') => {
+            setIsTransitioning(true);
+            setOrnamentVisible(false);
+
+            setTimeout(() => {
+                setPhase(nextPhase);
+                setFullText(text);
+                setTypedText('');
+                setTextType(type);
+                setIsTypingComplete(false);
+                setOrnamentVisible(true);
+                setIsTransitioning(false);
+            }, 400);
+        };
+
+        // 텍스트 suffix 추가 (verdict는 ., 나머지는 ...)
+        const addSuffix = (text, isVerdict = false) => {
+            if (!text) return text;
+            const suffix = isVerdict ? '.' : '...';
+            // 이미 마침표나 ...로 끝나면 추가 안함
+            if (text.endsWith('...') || text.endsWith('.')) return text;
+            return text + suffix;
+        };
+
+        switch (phase) {
+            case PHASES.INTRO:
+                // hook이 있으면 hook으로, 없으면 대기
+                if (streamingData.hook) {
+                    goToNextPhase(PHASES.HOOK, addSuffix(streamingData.hook), 'gold');
+                }
+                break;
+
+            case PHASES.HOOK:
+                // foreshadow가 있으면 foreshadow로
+                if (streamingData.foreshadow) {
+                    goToNextPhase(PHASES.FORESHADOW, addSuffix(streamingData.foreshadow), 'purple');
+                }
+                break;
+
+            case PHASES.FORESHADOW:
+                // title이 있으면 title로 (title도 . 한 개)
+                if (streamingData.title) {
+                    goToNextPhase(PHASES.TITLE, addSuffix(streamingData.title, true), 'gold');
+                }
+                break;
+
+            case PHASES.TITLE:
+                // verdict가 있으면 verdict로
+                if (streamingData.verdict) {
+                    goToNextPhase(PHASES.VERDICT, addSuffix(streamingData.verdict, true), 'gold');
+                }
+                break;
+
+            case PHASES.VERDICT:
+                // 쉬어가는 단계로 (랜덤 context + body 조합)
+                goToNextPhase(PHASES.BREATHE, getRandomBreatheMessage(), 'purple');
+                break;
+
+            case PHASES.BREATHE:
+                // 마지막 메시지로
+                goToNextPhase(PHASES.FINAL, '그럼 이제 리딩을 펼쳐볼까요?', 'gold');
+                break;
+
+            case PHASES.FINAL:
+                // 이미지가 준비되었으면 결과 버튼 표시
+                if (isImagesReady) {
+                    setPhase(PHASES.READY);
+                }
+                break;
+
+            default:
+                break;
+        }
+    }, [phase, streamingData, isImagesReady, isTransitioning, isTypingComplete, fullText]);
+
+    // 결과 보기 버튼 클릭
+    const handleResultClick = useCallback(() => {
+        if (transitionTriggeredRef.current) return;
+        transitionTriggeredRef.current = true;
+
+        // 포탈 전환 효과
+        setIsPortalTransition(true);
+
+        setTimeout(() => {
+            setIsFadingOut(true);
+            setTimeout(() => {
+                onTransitionComplete?.();
+            }, 800);
+        }, 600);
+    }, [onTransitionComplete]);
+
+    // 대기 메시지 순환 (FINAL phase에서 이미지 준비 안됐을 때)
+    useEffect(() => {
+        if (phase === PHASES.FINAL && isTypingComplete && !isImagesReady) {
+            // 3초 후 두번째 메시지로
+            waitingTimerRef.current = setTimeout(() => {
+                setWaitingMsgIndex(1);
+            }, 3000);
+        }
+        return () => {
+            if (waitingTimerRef.current) {
+                clearTimeout(waitingTimerRef.current);
+            }
+        };
+    }, [phase, isTypingComplete, isImagesReady]);
+
+    // 리셋
+    useEffect(() => {
+        if (isVisible) return;
+
+        setPhase(PHASES.INTRO);
+        setFullText('');
+        setTypedText('');
+        setTextType('gold');
+        setIsTypingComplete(false);
+        setIsTransitioning(false);
+        setIsPortalTransition(false);
+        setIsFadingOut(false);
+        setOrnamentVisible(false);
+        setWaitingMsgIndex(0);
+        introMsgRef.current = '';
+        transitionTriggeredRef.current = false;
+        if (typingTimerRef.current) {
+            clearTimeout(typingTimerRef.current);
+        }
+        if (waitingTimerRef.current) {
+            clearTimeout(waitingTimerRef.current);
+        }
+    }, [isVisible]);
 
     if (!isVisible) return null;
 
-    const currentConfig = PHASE_CONFIG[currentStage];
-    const [primaryColor, secondaryColor] = currentConfig.colors;
+    // 다음 단계로 넘어갈 수 있는지 체크
+    const canProceed = () => {
+        if (!isTypingComplete) return false; // 타이핑 완료 후에만 진행 가능
+
+        switch (phase) {
+            case PHASES.INTRO:
+                return !!streamingData.hook;
+            case PHASES.HOOK:
+                return !!streamingData.foreshadow;
+            case PHASES.FORESHADOW:
+                return !!streamingData.title;
+            case PHASES.TITLE:
+                return !!streamingData.verdict;
+            case PHASES.VERDICT:
+                return true;
+            case PHASES.BREATHE:
+                return true;
+            case PHASES.FINAL:
+                return isImagesReady;
+            default:
+                return false;
+        }
+    };
+
+    // FINAL phase에서는 탭 힌트 없이 바로 버튼 표시
+    const showTapHint = canProceed() && phase < PHASES.FINAL && !isTransitioning;
+    // FINAL phase에서 타이핑 완료 + 이미지 준비되면 바로 버튼 표시
+    const showResultButton = phase === PHASES.READY || (phase === PHASES.FINAL && isTypingComplete && isImagesReady);
+    const isTyping = !isTypingComplete && typedText.length < fullText.length;
 
     return (
         <div
-            className="analysis-overlay"
-            style={{
-                '--primary-color': primaryColor,
-                '--secondary-color': secondaryColor
-            }}
+            className={`vn-intro-overlay ${isFadingOut ? 'fading-out' : ''} ${isPortalTransition ? 'portal-transition' : ''}`}
+            onClick={handleTap}
         >
-            {/* 배경 별 효과 */}
-            <div className="analysis-stars">
-                {stars.map(star => (
-                    <div
-                        key={star.id}
-                        className="analysis-star"
-                        style={{
-                            left: `${star.left}%`,
-                            top: `${star.top}%`,
-                            animationDelay: `${star.delay}s`,
-                            animationDuration: `${star.duration}s`,
-                            width: `${star.size}px`,
-                            height: `${star.size}px`
-                        }}
-                    />
-                ))}
-            </div>
+            {/* 배경 글로우 효과 */}
+            <div className="vn-bg-glow" />
+            <div className="vn-bg-glow secondary" />
 
-            {/* 플로팅 버블 효과 */}
-            <div className="analysis-bubbles">
-                <div className="bubble bubble-1" />
-                <div className="bubble bubble-2" />
-                <div className="bubble bubble-3" />
-                <div className="bubble bubble-4" />
-                <div className="bubble bubble-5" />
-            </div>
+            {/* 포탈 전환 효과 */}
+            {isPortalTransition && (
+                <div className="portal-effect">
+                    <div className="portal-ring portal-ring-1" />
+                    <div className="portal-ring portal-ring-2" />
+                    <div className="portal-ring portal-ring-3" />
+                    <div className="portal-center" />
+                </div>
+            )}
 
-            {/* 상단 도파민 메시지 - VN Intro 스타일 */}
-            <div className="analysis-top-message">
-                {/* 상단 장식 - VN 스타일 */}
-                <div className="vn-ornament-analysis">~ ✦ ~</div>
+            {/* 메인 컨텐츠 */}
+            <div className="vn-intro-content">
+                <div className={`vn-ornament top ${ornamentVisible ? 'visible' : ''}`}>~ ✧ ~</div>
 
-                <div className={`dopamine-text ${isFading ? 'fading' : ''} ${textColorIndex === 0 ? 'gold-text' : 'purple-text'}`}>
-                    <span className="message-content">{displayText}</span>
-                    {isTyping && <span className="typing-cursor">|</span>}
+                <div className={`vn-hook ${ornamentVisible ? '' : 'hidden'}`}>
+                    <p className={`vn-typing-text ${textType === 'purple' ? 'purple' : ''}`}>
+                        {typedText}
+                        {isTyping && <span className="vn-cursor">|</span>}
+                    </p>
                 </div>
 
-                {/* 하단 장식 - VN 스타일 */}
-                <div className="vn-ornament-analysis bottom">~ ✦ ~</div>
+                <div className={`vn-ornament bottom ${ornamentVisible ? 'visible' : ''}`}>~ ✧ ~</div>
             </div>
 
-            {/* 중앙 Pulsing Circle - Glacial Blue/Purple */}
-            <div className="analysis-center">
-                <div className="pulsing-orb">
-                    <div className="orb-ring ring-1" />
-                    <div className="orb-ring ring-2" />
-                    <div className="orb-ring ring-3" />
-                    <div className="orb-core">
-                        <span className="orb-emoji" key={currentStage}>{currentConfig.emoji}</span>
+            {/* 하단 영역 */}
+            {showResultButton ? (
+                <div className="result-text-container" onClick={handleResultClick}>
+                    <div className="result-sparkles">
+                        <span className="sparkle s1">✦</span>
+                        <span className="sparkle s2">✧</span>
+                        <span className="sparkle s3">✦</span>
+                        <span className="sparkle s4">✧</span>
+                        <span className="sparkle s5">✦</span>
+                        <span className="sparkle s6">✧</span>
                     </div>
+                    <p className="result-text">리딩 펼치기</p>
                 </div>
-            </div>
-
-            {/* 단계 Circle들 */}
-            <div className="analysis-stages">
-                {PHASE_CONFIG.map((config, i) => (
-                    <div
-                        key={i}
-                        className={`stage-dot ${i === currentStage ? 'active' : ''} ${i < currentStage ? 'completed' : ''}`}
-                    />
-                ))}
-            </div>
-
-            {/* 하단 안내 텍스트 - 실시간 진행률 표시 */}
-            <div className="analysis-bottom-hint">
-                <span className="hint-label">
-                    {isProgressComplete ? '✨ 분석 완료' : currentConfig.label}
-                </span>
-                {/* 진행률 % 표시 - 100% 완료 시 숨김 */}
-                {!isProgressComplete && smoothProgress < 100 && (
-                    <span className="hint-progress">
-                        {smoothProgress}%
-                    </span>
-                )}
-            </div>
-
-            {/* 소요 시간 안내 서브타이틀 */}
-            {!isProgressComplete && (
-                <div className="analysis-subtitle">
-                    AI가 정밀하게 해석 중이에요 · 최대 3분 소요
-                </div>
-            )}
-
-            {/* 분석이 끝나면 알림받기 버튼 */}
-            {onBrowseWhileWaiting && !isComplete && (
-                <button className="browse-while-waiting-btn" onClick={onBrowseWhileWaiting}>
-                    <span className="btn-icon">🔔</span>
-                    <span className="btn-text">분석이 끝나면 알림받기</span>
-                </button>
-            )}
+            ) : showTapHint ? (
+                <p className="vn-continue-hint">탭하여 계속...</p>
+            ) : (phase === PHASES.FINAL && isTypingComplete && !isImagesReady) ? (
+                <p className="vn-waiting-hint" key={waitingMsgIndex}>
+                    {waitingMsgIndex === 0
+                        ? '✦ 조금만 기다려주세요...'
+                        : '✦ 마지막 분석을 하고 있어요...'}
+                </p>
+            ) : null}
         </div>
     );
 });

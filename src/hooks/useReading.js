@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import Anthropic from '@anthropic-ai/sdk';
-import { runAnalysisAnimation, getApiKeys, getDreamMessages, getTarotMessages, getFortuneMessages } from '../utils/analysisHelpers';
+import { runAnalysisAnimation, getApiKeys, getDreamMessages, getFortuneMessages } from '../utils/analysisHelpers';
 import { useImageGeneration } from './useImageGeneration';
 import { getModelConfig, AI_MODELS, getContentLength } from '../utils/aiConfig';
 import {
     DETAILED_ANALYSIS_SYSTEM_PROMPT,
-    callClaudeWithCache
+    callClaudeWithCache,
+    callClaudeWithCacheStreaming
 } from '../utils/promptCache';
 
 // 별자리 계산 함수
@@ -170,6 +171,18 @@ export const useReading = ({
     const [progress, setProgress] = useState('');
     const [analysisPhase, setAnalysisPhase] = useState(0);
     const [imageProgress, setImageProgress] = useState({ current: 0, total: 5 }); // 이미지 생성 진행률
+
+    // 실시간 스트리밍 데이터 (AnalysisOverlay용)
+    const [streamingData, setStreamingData] = useState({
+        topics: null,
+        keywords: null,
+        title: null,
+        verdict: null,
+        hook: null,
+        foreshadow: null
+    });
+    // 이미지 준비 완료 상태 (Hero + Card1)
+    const [isImagesReady, setIsImagesReady] = useState(false);
 
     const { generateSingleImage } = useImageGeneration(tier);
 
@@ -352,7 +365,6 @@ JSON만 반환:
 {
   "title": "제목 (4-8글자)",
   "verdict": "핵심 한마디 (20자 이내)",
-  "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
   "dreamType": "기존 유형 key (영어 소문자)",
   "newDreamType": null,
 
@@ -399,18 +411,16 @@ JSON만 반환:
     "future": "미래 암시 (150자) - 이 꿈이 예고하는 것. 구체적 시기/상황"
   },
 
-  "shareText": "공유용 한 줄 (30자) - 구체적 디테일로 공유하고 싶게",
-
-  "imageStyle": "꿈 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙-악몽/공포), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 무서운/악몽은 mappa_dark, 평화로운 꿈은 ghibli/kyoani, 신비로운 꿈은 sciencesaru/cgi_gem 추천",
-
-  "colorPalette": "🎨 이 꿈만의 고유한 2색 그라디언트를 영어로 작성. 꿈의 내용, 해석, 숨겨진 감정의 뉘앙스(두려움과 희망의 비율, 긴장감, 평온함의 정도 등)를 분석하여 이 꿈에만 어울리는 창의적 색상 조합 선택. '무서운 꿈=빨강' 같은 공식 금지! 매번 완전히 다른 조합 필수. 형식: 'color1 and color2' (예: 'dusty lavender and warm amber')",
+  "visualMode": "🎬 반드시 꿈 분위기에 맞게 선택! 몽환적/판타지/감성적 꿈 → 'anime'. 생생한/현실적/악몽 → 'real'. ⚠️매번 꿈에 맞게 신중히 결정! 같은 스타일만 쓰지 말 것!",
+  "imageStyle": "🎨 visualMode에 맞춰 반드시 다양하게 선택! anime일 때: shinkai(감성)/ghibli(따뜻)/kyoani(청춘)/mappa(역동)/mappa_dark(어두운)/shojo(로맨스)/clamp(신비)/wit(드라마틱)/ilya(몽환)/minimalist(깔끔). real일 때: korean_soft(부드러운)/korean_dramatic(강렬)/japanese_clean(깔끔)/cinematic(영화적)/aesthetic_mood(감성). ⚠️꿈 분위기에 맞춰 매번 다른 스타일 선택!",
+  "colorPalette": "🎨 이 꿈만의 고유한 2색 그라디언트를 영어로 작성. '무서운 꿈=빨강' 같은 공식 금지! 형식: 'color1 and color2'",
 
   "images": {
-    "hero": "꿈을 꾼 사람의 심리와 감정을 시각화한 신비로운 장면. 꿈 내용에서 느껴지는 핵심 감정(두려움, 희망, 혼란, 그리움 등)을 추상적이고 감성적으로 표현. (스타일 prefix 없이 장면만 영어 50단어)",
-    "character": "캐릭터 외모 (영어 40단어)",
-    "dream": "꿈 장면 (스타일 prefix 없이 장면만 영어 40단어)",
-    "tarot": "타로 장면 (스타일 prefix 없이 장면만 영어 40단어)",
-    "meaning": "의미 장면 (스타일 prefix 없이 장면만 영어 40단어)"
+    "hero": "🎬 너는 영화 감독. 이 꿈의 핵심 감정을 오프닝 씬으로 자유롭게 연출. 영어 2문장. 🎯인물: 항상 20대 초중반. 🎯완전 자유: 인물 구성/구도/분위기 모두 네가 결정. 꿈의 감정(두려움/희망/혼란/그리움)을 시각적으로.",
+    "character": "캐릭터 외모 (영어 40단어). 20대 초중반 젊은 캐릭터.",
+    "dream": "🎬 이 꿈의 핵심 장면. 영어 2문장. 🎯완전 자유: 꿈 속 상황을 어떻게 시각화할지 네가 결정. hero와 다른 앵글/분위기로.",
+    "tarot": "🎬 선택된 타로 카드와 꿈의 연결. 영어 2문장. 🎯완전 자유: 카드 상징을 창의적으로 녹여서.",
+    "meaning": "🎬 이 꿈이 전하는 메시지의 시각화. 영어 2문장. 🎯완전 자유: 해석의 핵심을 임팩트 있게."
   }
 }
 
@@ -472,19 +482,23 @@ JSON만 반환:
             const dreamHeroPrompt = userProfile?.gender
                 ? `${dreamHeroBasePrompt}. The dreamer is ${dreamPersonDesc}.`
                 : dreamHeroBasePrompt;
-            const heroImage = await generateSingleImage(dreamHeroPrompt, imageStyle, characterDesc, 'dream', colorPalette);
+            // visualMode: 꿈 해몽은 기본적으로 anime 모드 (추후 Claude가 선택하도록 확장 가능)
+            const visualMode = data.visualMode || 'anime';
+            console.log(`🎬 Dream Visual Mode: ${visualMode}`);
+
+            const heroImage = await generateSingleImage(dreamHeroPrompt, imageStyle, characterDesc, 'dream', colorPalette, visualMode);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('🎨 당신의 꿈이 그림으로 피어나고 있어요...');
-            const dreamImage = await generateSingleImage(data.images.dream, imageStyle, characterDesc, 'dream', colorPalette);
+            const dreamImage = await generateSingleImage(data.images.dream, imageStyle, characterDesc, 'dream', colorPalette, visualMode);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('🃏 우주의 카드가 펼쳐지고 있어요...');
-            const tarotImage = await generateSingleImage(data.images.tarot, imageStyle, characterDesc, 'dream', colorPalette);
+            const tarotImage = await generateSingleImage(data.images.tarot, imageStyle, characterDesc, 'dream', colorPalette, visualMode);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('✨ 꿈 속 비밀이 드러나고 있어요...');
-            const meaningImage = await generateSingleImage(data.images.meaning, imageStyle, characterDesc, 'dream', colorPalette);
+            const meaningImage = await generateSingleImage(data.images.meaning, imageStyle, characterDesc, 'dream', colorPalette, visualMode);
 
             const detailedAnalysis = await detailedAnalysisPromise;
 
@@ -528,7 +542,8 @@ JSON만 반환:
     }, [user, dreamTypes, generateSingleImage, onSaveDream, onNewDreamType, setToast, setDopaminePopup, setSavedDreamField]);
 
     // 타로 리딩 생성 (4장 카드 시스템 + 스토리텔링)
-    const generateTarotReading = useCallback(async (question, selectedCards) => {
+    // streamingCallbacks: { onHookReady, onImagesReady, onPartialUpdate }
+    const generateTarotReading = useCallback(async (question, selectedCards, streamingCallbacks = {}) => {
         if (selectedCards.length !== 3 || !question.trim()) {
             setError('질문과 3장의 카드가 필요합니다');
             return null;
@@ -542,20 +557,12 @@ JSON만 반환:
 
         setLoading(true);
         setError('');
-        setAnalysisPhase(1);
+        setAnalysisPhase(1); // Phase 1: 시작
         setProgress('카드가 당신을 읽고 있어요...');
 
         const [card1, card2, card3] = selectedCards;
 
-        await runAnalysisAnimation(
-            getTarotMessages(question),
-            setAnalysisPhase, setProgress, null, null  // 초반에는 도파민 팝업 안 띄움
-        );
-
         try {
-            // 6단계: API 호출 단계 (5개의 애니메이션 메시지 이후)
-            setAnalysisPhase(6);
-            setProgress('운명의 이야기를 엮는 중...');
 
             // 78장 덱에서 4번째 결론 카드 랜덤 선택 (선택된 3장 제외)
             const { TAROT_DECK } = await import('../utils/constants');
@@ -635,6 +642,7 @@ conclusionCard는 반드시:
 - Hook에서 희귀도/카드조합/숫자/통계 언급 금지 ("1000명 중 17명" 같은 표현 절대 금지!)
 - Foreshadow에서 카드 순서 언급 금지 ("첫 번째 카드", "세 번째 카드", "네 번째 카드" 금지!)
 - 짧은 분석 금지 - 카드 1,2,3은 반드시 \${tarotCardLen}자 이상! 결론은 \${tarotConclusionLen}자 이상!
+- ⚠️ visualMode/imageStyle 항상 같은 값 금지! 질문 분위기에 따라 반드시 다르게 선택!
 
 ## 질문 유형별 심리 분석 (질문자의 숨은 심리 파악)
 - 연애/관계: '이 사람 맞아?' → 이미 답을 알면서 확인받고 싶은 마음
@@ -662,130 +670,350 @@ conclusionCard는 반드시:
 결론 카드 (운명이 선물한 카드):
 4. ${conclusionCard.nameKo} (${conclusionCard.name}): ${conclusionCard.meaning}
 
-## JSON 형식으로만 반환:
+## JSON 형식으로만 반환 (⚠️순서 중요! 반드시 위에서부터 차례로 생성):
 {
-  "title": "질문에 대한 한줄 답변 (15-25자). 피드에서 질문과 함께 보여질 공감형 답변. 예: 질문 '그 사람 마음?' → 답변 '마음은 있어요, 근데 타이밍이...' / 질문 '이직해도 될까?' → 답변 '지금은 아닌데, 3개월 뒤엔 달라요' / 질문 '시험 붙을까요?' → 답변 '붙어요, 근데 방식이 중요해요' 형식으로 직접적 답변 + 궁금증 유발",
-  "verdict": "답변 뒤에 붙는 감성 한마디 (15자 이내). 공감/위로/응원 느낌. 예: '믿어도 돼요', '기다려봐요', '괜찮아질 거예요'",
-  "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
-  "topics": ["질문에 가장 맞는 주제 딱 1개만 선택 (사랑/관계/돈/성장/건강/선택/일반 중). 반드시 1개! 예: 연애→'사랑', 대인관계→'관계', 취업/돈→'돈', 시험/자기계발→'성장', 건강→'건강', 결정/선택→'선택', 그 외 모든 것→'일반'"],
+  "hook": "⚠️질문자가 '뭐야 이거?' 하고 멈출 수밖에 없는 첫 마디. 답 먼저 + 반전 구조. 군더더기 없이. ❌금지: 희귀도/카드조합/숫자 절대 금지! 🚨매번 완전히 다른 시작 필수!",
+  "foreshadow": "⚠️Hook에서 던진 의외성을 안 보면 잠 못 잘 정도로 궁금하게. '뭔데?' '어떻게?' '왜?'를 자극. ❌금지: 카드 순서 언급 절대 금지!",
+  "title": "질문에 대한 한줄 답변 (15-30자). 피드에서 질문과 함께 보여질 공감형 답변. 예: 질문 '그 사람 마음?' → 답변 '마음은 있어요, 근데 타이밍이...' / 질문 '이직해도 될까?' → 답변 '지금은 아닌데, 3개월 뒤엔 달라요' / 질문 '시험 붙을까요?' → 답변 '붙어요, 근데 방식이 중요해요' 형식으로 직접적 답변 + 궁금증 유발",
+  "verdict": "답변 뒤에 붙는 감성 한마디 (25-45자). 공감/위로/응원 느낌의 두 문장. 예: '지금 느끼는 불안함, 당연해요. 근데 그게 답을 찾고 있다는 증거예요.'",
 
-  "jenny": {
-    "hook": "⚠️질문자가 '뭐야 이거?' 하고 멈출 수밖에 없는 첫 마디. 답 먼저 + 반전 구조. 군더더기 없이. ❌금지: 희귀도/카드조합/숫자 절대 금지! 🚨매번 완전히 다른 시작 필수! 예시는 참고만, 그대로 복사 금지! 느낌만 살려서 창의적으로: 연애→답/결과 먼저 + '근데' 반전 / 금전→방향 제시 + 예상 밖 루트 / 직장→결정 방향 + 숨은 이유 / 결정→답 + 의외의 전개. 시작어도 매번 다르게(OO님~/잠깐요~/먼저요~/글쎄요~ 등 다양하게)",
-    "foreshadow": "⚠️Hook에서 던진 의외성을 안 보면 잠 못 잘 정도로 궁금하게. '뭔데?' '어떻게?' '왜?'를 자극. ❌금지: 카드 순서 언급 절대 금지! 🚨매번 새로운 표현! 예시 복사 금지! 느낌: 힌트 있음/이유 나옴/타이밍 보임/상대방 마음 보임 등 내용으로 궁금증 유발",
-    "bonus": "⚠️질문에 답한 직후, '어? 이것까지?' 하는 순간. 예상 못한 정보가 툭 튀어나오는 텍스트 도파민. 🚨매번 완전히 다른 방식으로! 느낌: 안 물어봤는데/추가로/참고로/그리고 등 + 구체적 정보(시기/이름힌트/상황). 예시 문장 절대 복사 금지, 창의적으로!",
-    "twist": {
-      "emoji": "🔮",
-      "title": "숨겨진 진실",
-      "message": "반전 메시지 (80자) - 결론 카드에서 발견한 예상치 못한 인사이트. 문장 끝 반전 필수. 구체적 디테일 포함. 매번 새로운 통찰!"
-    },
-    "hiddenInsight": "🚨반드시 \${tarotHiddenLen}자 이상 작성! EXCEED expectations! 🚨매번 완전히 다른 도입/표현 필수! 예시 문장 절대 복사 금지! 구조만 참고: 1)의외의 도입 2-3문장(비밀/추가정보/느낌 등 다양한 시작) 2)핵심 정보 4-5문장(이름힌트/시기/상황/감정) 3)예상 못한 추가 4-5문장(질문 외 정보) 4)행동 가이드 3-4문장 5)기억할 것 2-3문장. 창의적 표현 필수! ⭐가장 놀라운 인사이트/이름힌트/시기 등 핵심 3-4개는 **bold** 처리!",
-    "shareHook": "공유 유도 - 매번 다르게! (느낌: 드문 조합/신기하면/대박이면 공유 등)"
-  },
-
-  "rarity": {
-    "percent": "희귀도 숫자 (0.1~5.0)",
-    "outOf": 1000,
-    "description": "희귀도 설명"
-  },
-
+  "topics": ["질문에 가장 맞는 주제 딱 1개만 선택 (사랑/관계/돈/성장/건강/선택/일반 중)"],
   "keywords": [
     {"word": "질문 '${question}'에서 추출한 주제 키워드 (명사형, 2-4글자)", "surface": "표면 의미", "hidden": "숨은 의미"},
     {"word": "질문에서 추출한 핵심 키워드1 (명사형, 2-4글자)", "surface": "표면 의미", "hidden": "숨은 의미"},
     {"word": "질문에서 추출한 핵심 키워드2 (명사형, 2-4글자)", "surface": "표면 의미", "hidden": "숨은 의미"}
   ],
 
-  "storyReading": {
-    "opening": "도입부 (200자 이상) - jenny.hook을 자연스럽게 녹여서 시작. 질문 뒤 숨은 심리 짚기. 🚨매번 완전히 다른 도입! 예시 복사 금지! 느낌: 질문자 심리 읽기 + 공감 + 답을 알려주겠다는 암시. 창의적으로! ⭐핵심 인사이트 1-2개는 **bold** 처리!",
-    "card1Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! 이것보다 짧으면 실패! 구조: 1)현재 상황/배경 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전/디테일 2-3문장. 말투는 친근하게 '~예요', '~거예요', '~잖아요' 사용. 문장마다 줄바꿈 없이 이어서 작성. ⭐가장 중요한 핵심 메시지 2-3개는 **bold** 처리! (예: **지금 기다리고 있는 건 확신이에요**, **이미 답을 알고 계시잖아요**)",
-    "card2Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전/디테일 2-3문장. 말투 친근하게. ⭐핵심 반전/인사이트 2-3개는 **bold** 처리!",
-    "card3Analysis": "🚨반드시 \${tarotCardLen}자 이상 작성! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기/상황 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드/반전 2-3문장. 말투 친근하게. ⭐미래 예측/시기 힌트 등 핵심 2-3개는 **bold** 처리!",
-    "conclusionCard": "🚨반드시 \${tarotConclusionLen}자 이상 작성! 결론 카드는 가장 길고 감동적이어야 함! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. 말투 친근하게. ⭐결론/답변/감동적인 문장 3-4개는 **bold** 처리!",
-    "synthesis": "🚨종합 메시지 (500자 이상) - 4장의 카드가 함께 말하는 것. EXCEED expectations! 확정 답 3-4문장 + Twist 4-5문장 + 핵심 조언 3-4문장 + 구체적 타이밍/행동 2-3문장. 질문에 대한 답을 넘어서 기대 이상의 가치를 주세요. ⭐최종 결론/핵심 조언 2-3개는 **bold** 처리!",
-    "actionAdvice": "구체적 행동 조언 (150자 이상) - 오늘/이번 주에 실제로 할 수 있는 것. 구체적인 시간, 장소, 행동 포함.",
-    "warning": "주의할 점 (100자) - 반드시 피해야 할 것.",
-    "timing": "행운의 타이밍 (80자) - 구체적 시기/상황/조건."
-  },
+  "visualMode": "🎬 질문 분위기에 맞게 자유롭게 선택! 예시(공식 아님): 감성적→anime, 현실적→real. 하지만 네가 판단해서 더 어울리는 걸 선택해도 됨. ⚠️매번 다르게!",
+  "imageStyle": "🎨 visualMode에 맞춰 자유롭게 선택! 예시(공식 아님): anime→shinkai/ghibli/mappa 등, real→korean_soft/cinematic 등. 하지만 질문에 더 어울리면 다른 조합도 가능. ⚠️매번 다르게!",
+  "colorPalette": "이 질문만의 2색 조합. 영어, 형식: 'color1 and color2'",
 
-  "shortReading": "요약 (50자) - 못 보면 잠 못 잘 정도로 궁금하게. 구체적 디테일 포함.",
-  "shareText": "공유용 (30자) - 구체적 디테일로 공유하고 싶게",
+  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 2문장. 🎯나이: 20대 초중반. ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정! 예시(공식 아님): 연애→둘, 성장→혼자, 선택→갈림길. 하지만 연애 질문이어도 혼자 있는 장면이 더 어울리면 그렇게 해도 됨. 질문의 핵심 감정을 시각화!",
+  "opening": "도입부 (200자 이상) - hook을 자연스럽게 녹여서 시작. 질문 뒤 숨은 심리 짚기. 🚨매번 완전히 다른 도입! ⭐핵심 인사이트 1-2개는 **bold** 처리!",
 
-  "imageStyle": "🎨 질문 분위기에 맞는 스타일 키를 아래 12개 중에서 **반드시 1개만** 선택 (매번 다른 스타일을 선택하세요! 다양성 중요!): shinkai / kyoani / ghibli / mappa_dark / mappa_action / ufotable / trigger / sciencesaru / shojo / persona5 / cgi_gem / minimalist. 🎯선택 가이드: 연애/설렘→kyoani,shojo / 기다림/그리움→shinkai / 불안/두려움→mappa_dark,trigger / 도전/변화→mappa_action,ufotable,persona5 / 신비/미지→ghibli,cgi_gem,sciencesaru / 정리/결단→minimalist",
+  "card1ImagePrompt": "🎬 Scene 1: 🃏${card1.nameKo}의 상징을 창의적으로 표현! 영어 2문장. 예시(공식 아님): The Star→별빛, The Tower→붕괴. 하지만 카드 상징을 네 방식대로 재해석해도 됨. ⚠️Hero와 다른 구도로! 인물 수/구성도 자유롭게.",
+  "card1Analysis": "🚨반드시 \${tarotCardLen}자 이상! 구조: 1)현재 상황 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "colorPalette": "🎨 이 질문과 리딩만의 고유한 2색 그라디언트를 영어로 작성. 질문의 맥락, 카드 해석 내용, 질문자의 숨겨진 감정 뉘앙스(간절함의 정도, 불안과 희망의 비율, 긴장감 등)를 분석하여 이 리딩에만 어울리는 창의적 색상 조합 선택. '연애=핑크' 같은 단순 공식 금지! 매번 완전히 다른 조합 필수. 형식: 'color1 and color2' (예: 'soft coral and midnight blue')",
+  "card2ImagePrompt": "🎬 Scene 2: 🃏${card2.nameKo}의 상징을 창의적으로 표현! 영어 2문장. ⚠️Scene 1과 다른 시각적 접근 필수! 예시(공식 아님): 다른 인물, 다른 시점, 상징적 장면 등. 네가 가장 어울린다고 생각하는 방식으로 자유롭게.",
+  "card2Analysis": "🚨반드시 \${tarotCardLen}자 이상! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "images": {
-    "hero": "애니메이션 영화 포스터 스타일. 반드시 한 명의 젊은 인물(20대 남성 또는 여성)이 화면 정중앙에 정면을 바라보며 서 있어야 함. 카메라를 똑바로 응시하는 강렬한 눈빛. 질문의 감정(기다림/불안/희망/갈등)을 표정으로 표현. 배경은 몽환적이고 신비로운 우주/타로 분위기. 상반신 클로즈업~미디엄샷, 인물이 프레임의 중심. (영어 50단어, 스타일 prefix 없이 장면만)",
-    "card1": "${card1.name} 카드를 형상화. 반드시 한 명의 인물이 이 카드의 상징적 의미를 체현하는 포즈/표정으로 등장. 인물이 카드 메시지를 전달하는 느낌. 미디엄샷~풀샷. (영어 45단어, 스타일 prefix 없이 장면만)",
-    "card2": "${card2.name} 카드를 형상화. 반드시 한 명의 인물이 이 카드의 감정/상황을 보여주는 장면. 표정과 분위기로 카드 의미 전달. 미디엄샷 구도. (영어 45단어, 스타일 prefix 없이 장면만)",
-    "card3": "${card3.name} 카드를 형상화. 반드시 한 명의 인물이 미래/가능성을 바라보는 장면. 희망적이거나 결정적인 순간. 미디엄샷~롱샷. (영어 45단어, 스타일 prefix 없이 장면만)",
-    "conclusion": "${conclusionCard.name} 카드를 형상화. 반드시 한 명의 인물이 운명의 선물을 받는 듯한 장면. 가장 감동적이고 신비로운 순간. 황금빛이나 마법적 이펙트와 함께. 미디엄샷~클로즈업. (영어 45단어, 스타일 prefix 없이 장면만)"
-  },
+  "card3ImagePrompt": "🎬 Scene 3: 🃏${card3.nameKo}의 상징을 창의적으로 표현! 영어 2문장. ⚠️앞 장면들과 완전히 다른 비주얼! 인물/구도/분위기 모두 네가 자유롭게 결정. 미래의 가능성을 네 방식대로 시각화.",
+  "card3Analysis": "🚨반드시 \${tarotCardLen}자 이상! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "luckyElements": {
-    "color": "행운의 색",
-    "number": "행운의 숫자",
-    "day": "행운의 요일",
-    "direction": "행운의 방향"
-  }
+  "conclusionImagePrompt": "🎬 Final Scene: 🃏${conclusionCard.nameKo}의 상징이 클라이맥스! 영어 2문장. ⚠️이 리딩의 가장 임팩트 있는 장면을 네가 자유롭게 연출! 카드 상징을 네 방식대로 재해석해서 가장 '와' 할 비주얼로.",
+  "conclusionCard": "🚨반드시 \${tarotConclusionLen}자 이상! 가장 길고 감동적! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. ⭐결론 3-4개 **bold**!",
+
+  "hiddenInsight": "🚨반드시 \${tarotHiddenLen}자 이상! 결론 카드가 말해주는 숨겨진 메시지. 질문자도 몰랐던 진짜 답. 구조: 1)의외의 도입 2-3문장 2)타로가 진짜 말하는 것 4-5문장 3)예상 못한 추가 인사이트 3-4문장 4)구체적 행동/시기 가이드 2-3문장. 문장 끝 반전 필수!",
+  "synthesis": "🚨종합 메시지 (500자 이상) - 4장의 카드가 함께 말하는 것. 확정 답 + Twist + 핵심 조언 + 구체적 타이밍. ⭐최종 결론 2-3개 **bold**!",
+  "shareText": "공유용 한 줄 (30자) - 핵심 메시지"
 }`;
 
-            // 캐싱 미적용 (프롬프트 구조가 복잡하여 분리 어려움)
-            const data = await callClaudeApi(null, tarotPrompt, 8000);
+            // 스트리밍 API 호출 (Progressive Loading)
+            const anthropic = new Anthropic({
+                apiKey: apiKeys.claudeApiKey,
+                dangerouslyAllowBrowser: true
+            });
 
-            // 프로필 기반 인물 설명 생성
-            const getPersonDescription = () => {
-                if (!userProfile || !userProfile.gender) return 'a mysterious person';
-                const gender = userProfile.gender === 'female' ? 'young woman' : userProfile.gender === 'male' ? 'young man' : 'person';
-                const age = userProfile.birthDate ? `in their ${Math.floor((new Date().getFullYear() - new Date(userProfile.birthDate).getFullYear()) / 10) * 10}s` : '';
-                return `a ${gender} ${age}`.trim();
+            // ═══════════════════════════════════════════════════════════════
+            // 이미지 생성: Claude가 모든 imagePrompt를 직접 생성
+            // - heroImagePrompt: 질문 기반 (나이 20대, 성별 프로필 참고)
+            // - card1~3ImagePrompt: 각 cardAnalysis 기반
+            // - conclusionImagePrompt: conclusionCard 기반
+            // ═══════════════════════════════════════════════════════════════
+
+            // ═══════════════════════════════════════════════════════════════
+            // 이미지 상태 및 Progressive UI
+            // ═══════════════════════════════════════════════════════════════
+
+            let visualMode = 'anime';  // 'anime' 또는 'real'
+            let imageStyle = 'shinkai';
+            let colorPalette = '';
+
+            let heroImage = null;
+            let card1Image = null;
+            let card2Image = null;
+            let card3Image = null;
+            let conclusionImage = null;
+            let hasTransitioned = false;
+
+            let partialResult = {
+                title: null,
+                verdict: null,
+                topics: null,
+                keywords: null,
+                jenny: { hook: null, foreshadow: null, hiddenInsight: null },
+                storyReading: {},
+                cards: [...selectedCards, conclusionCard],
+                question,
+                type: 'tarot',
+                isStreaming: true,
+                heroImage: null,
+                card1Image: null,
+                card2Image: null,
+                card3Image: null,
+                conclusionImage: null,
+                cardReady: { card1: false, card2: false, card3: false, conclusion: false }
             };
-            const personDesc = getPersonDescription();
 
-            // 5장 이미지 생성 - 7단계 시작 (히어로 + 4장 카드)
-            setAnalysisPhase(7);
-            setProgress('🌌 당신의 이야기가 그려지고 있어요...');
+            const checkAndTransition = () => {
+                // Hero + Card1 이미지만 완료되면 전환 (card1Analysis 파싱 제거 - 중첩 JSON 파싱 문제)
+                if (!hasTransitioned && heroImage && card1Image) {
+                    const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(1);
+                    console.log(`🚀 Hero + Card1 이미지 준비 완료 → 결과 페이지 전환 (${elapsedTime}s)`);
+                    hasTransitioned = true;
+                    setIsImagesReady(true); // AnalysisOverlay에 이미지 준비 완료 알림
+                    partialResult.heroImage = heroImage;
+                    partialResult.card1Image = card1Image;
+                    partialResult.pastImage = card1Image;
+                    partialResult.cardReady.card1 = true;
+                    if (streamingCallbacks.onHookReady) {
+                        streamingCallbacks.onHookReady({ ...partialResult });
+                    }
+                }
+            };
 
-            // Claude가 선택한 이미지 스타일과 색상 팔레트 (없으면 기본값)
-            const imageStyle = data.imageStyle || 'shinkai';
-            const colorPalette = data.colorPalette || '';
-            console.log(`🎨 Tarot Image Style: ${imageStyle}, Colors: ${colorPalette || 'default'}`);
+            const updateCardReady = (cardNum, image, analysis) => {
+                if (cardNum === 2 && analysis) {
+                    partialResult.card2Image = image;
+                    partialResult.presentImage = image;
+                    partialResult.cardReady.card2 = true;
+                } else if (cardNum === 3 && analysis) {
+                    partialResult.card3Image = image;
+                    partialResult.futureImage = image;
+                    partialResult.cardReady.card3 = true;
+                } else if (cardNum === 4) {
+                    partialResult.conclusionImage = image;
+                    partialResult.cardReady.conclusion = true;
+                }
+                if (hasTransitioned && streamingCallbacks.onPartialUpdate) {
+                    streamingCallbacks.onPartialUpdate({ ...partialResult });
+                }
+            };
 
-            // heroImage - Claude 생성 프롬프트 그대로 사용 (스타일 일관성 유지)
-            // 성별 정보는 프롬프트 뒤에 추가하여 스타일 prefix가 우선 적용되도록 함
-            setImageProgress({ current: 0, total: 5 });
-            const heroBasePrompt = data.images.hero || 'mystical tarot scene with emotional expression, cosmic energy surrounding, medium shot portrait composition';
-            const heroPrompt = userProfile?.gender
-                ? `${heroBasePrompt}. The main character is ${personDesc}.`
-                : heroBasePrompt;
-            const heroImage = await generateSingleImage(heroPrompt, imageStyle, '', 'tarot', colorPalette);
-            setImageProgress({ current: 1, total: 5 });
-            await new Promise(r => setTimeout(r, 400));
+            // ═══════════════════════════════════════════════════════════════
+            // 🎨 이미지 Promise 변수 (Claude가 생성한 프롬프트로 생성)
+            // ═══════════════════════════════════════════════════════════════
+            let heroPromise = null;
+            let card1Promise = null;
+            let card2Promise = null;
+            let card3Promise = null;
+            let conclusionPromise = null;
 
-            setProgress('🎨 첫 번째 카드가 그림으로 피어나고 있어요...');
-            const card1Image = await generateSingleImage(data.images.card1, imageStyle, '', 'tarot', colorPalette);
-            setImageProgress({ current: 2, total: 5 });
-            await new Promise(r => setTimeout(r, 400));
+            // ═══════════════════════════════════════════════════════════════
+            // ⏱️ 시간 측정
+            // ═══════════════════════════════════════════════════════════════
+            const startTime = Date.now();
+            const elapsed = () => `(${((Date.now() - startTime) / 1000).toFixed(1)}s)`;
 
-            setProgress('🃏 두 번째 카드가 모습을 드러내요...');
-            const card2Image = await generateSingleImage(data.images.card2, imageStyle, '', 'tarot', colorPalette);
-            setImageProgress({ current: 3, total: 5 });
-            await new Promise(r => setTimeout(r, 400));
+            console.log('⏱️ 타로 리딩 시작');
 
-            setProgress('✨ 세 번째 카드가 빛나고 있어요...');
-            const card3Image = await generateSingleImage(data.images.card3, imageStyle, '', 'tarot', colorPalette);
-            setImageProgress({ current: 4, total: 5 });
-            await new Promise(r => setTimeout(r, 400));
+            // ═══════════════════════════════════════════════════════════════
+            // 스트리밍 콜백: Claude가 생성한 imagePrompt로 이미지 생성
+            // ═══════════════════════════════════════════════════════════════
+            const streamCallbacks = {
+                // 오버레이용 데이터 (가장 먼저 파싱) - streamingData로도 업데이트
+                onTitle: (title) => {
+                    console.log(`📝 Title 설정 ${elapsed()}:`, title.slice(0, 30) + '...');
+                    partialResult.title = title;
+                    setStreamingData(prev => ({ ...prev, title }));
+                },
+                onVerdict: (verdict) => {
+                    console.log(`📝 Verdict 설정 ${elapsed()}:`, verdict);
+                    partialResult.verdict = verdict;
+                    setStreamingData(prev => ({ ...prev, verdict }));
+                },
+                onTopics: (topics) => {
+                    console.log(`📝 Topics 설정 ${elapsed()}:`, topics);
+                    partialResult.topics = topics;
+                    setStreamingData(prev => ({ ...prev, topics }));
+                },
+                onKeywords: (keywords) => {
+                    console.log(`📝 Keywords 설정 ${elapsed()}:`, keywords.map(k => k.word));
+                    partialResult.keywords = keywords;
+                    setStreamingData(prev => ({ ...prev, keywords }));
+                },
+                onHook: (hook) => {
+                    console.log(`🎣 Hook 완료 ${elapsed()}:`, hook.slice(0, 50) + '...');
+                    setProgress('당신의 이야기가 시작됩니다...');
+                    partialResult.hook = hook;
+                    partialResult.jenny.hook = hook; // 호환성
+                    setStreamingData(prev => ({ ...prev, hook }));
+                },
+                onForeshadow: (foreshadow) => {
+                    console.log(`✅ Foreshadow 완료 ${elapsed()}:`, foreshadow.slice(0, 50) + '...');
+                    partialResult.foreshadow = foreshadow;
+                    partialResult.jenny.foreshadow = foreshadow; // 호환성
+                    setStreamingData(prev => ({ ...prev, foreshadow }));
+                },
+                // visualMode 감지 → anime 또는 real
+                onVisualMode: (mode) => {
+                    console.log(`🎬 비주얼 모드 설정 ${elapsed()}:`, mode);
+                    visualMode = mode;
+                },
+                // imageStyle 감지 → 이미지 생성 전에 스타일 설정
+                onImageStyle: (style) => {
+                    console.log(`🎨 스타일 설정 ${elapsed()}:`, style);
+                    imageStyle = style;
+                    setAnalysisPhase(2); // Phase 2: 스타일/컬러 파싱
+                },
+                // colorPalette 감지 → 이미지 생성 전에 색상 설정
+                onColorPalette: (palette) => {
+                    console.log(`🎨 컬러 설정 ${elapsed()}:`, palette);
+                    colorPalette = palette;
+                },
+                // Hero 이미지 프롬프트 → Hero 이미지 생성 시작 (Claude가 질문 기반으로 생성)
+                onHeroImagePrompt: (prompt) => {
+                    console.log(`🎨 Hero 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
+                    console.log(`🎨 [DEBUG] Hero 이미지 파라미터: style=${imageStyle}, mode=${visualMode}, colors=${colorPalette}`);
+                    setAnalysisPhase(3); // Phase 3: Hero 이미지 생성
+                    setProgress('🌌 당신의 세계가 펼쳐지고 있어요...');
+                    heroPromise = generateSingleImage(prompt, imageStyle, '', 'tarot', colorPalette, visualMode)
+                        .then(img => {
+                            heroImage = img;
+                            console.log(`✅ Hero 이미지 완료 ${elapsed()}`);
+                            setAnalysisPhase(5); // Phase 5: 이미지 완료
+                            checkAndTransition();
+                            return img;
+                        });
+                },
+                // Card1 분석 완료 → 저장만
+                onCard1: (card1Analysis) => {
+                    console.log(`🃏 Card1 분석 완료 ${elapsed()}`);
+                    partialResult.storyReading.card1Analysis = card1Analysis;
+                },
+                // Card1 이미지 프롬프트 → 이미지 생성 시작
+                onCard1ImagePrompt: (prompt) => {
+                    console.log(`🎨 Card1 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
+                    setAnalysisPhase(4); // Phase 4: Card1 이미지 생성
+                    setProgress('🎨 첫 번째 카드가 피어나고 있어요...');
+                    card1Promise = generateSingleImage(prompt, imageStyle, '', 'tarot', colorPalette, visualMode)
+                        .then(img => {
+                            card1Image = img;
+                            console.log(`✅ Card1 이미지 완료 ${elapsed()}`);
+                            setAnalysisPhase(5); // Phase 5: 이미지 완료
+                            checkAndTransition();
+                            return img;
+                        });
+                },
+                // Card2 분석 완료 → 저장만
+                onCard2: (card2Analysis) => {
+                    console.log(`🃏 Card2 분석 완료 ${elapsed()}`);
+                    partialResult.storyReading.card2Analysis = card2Analysis;
+                },
+                // Card2 이미지 프롬프트 → 이미지 생성 시작
+                onCard2ImagePrompt: (prompt) => {
+                    console.log(`🎨 Card2 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
+                    setProgress('🃏 두 번째 카드가 나타나고 있어요...');
+                    card2Promise = generateSingleImage(prompt, imageStyle, '', 'tarot', colorPalette, visualMode)
+                        .then(img => {
+                            card2Image = img;
+                            console.log(`✅ Card2 이미지 완료 ${elapsed()}`);
+                            updateCardReady(2, img, partialResult.storyReading.card2Analysis);
+                            return img;
+                        });
+                },
+                // Card3 분석 완료 → 저장만
+                onCard3: (card3Analysis) => {
+                    console.log(`🃏 Card3 분석 완료 ${elapsed()}`);
+                    partialResult.storyReading.card3Analysis = card3Analysis;
+                },
+                // Card3 이미지 프롬프트 → 이미지 생성 시작
+                onCard3ImagePrompt: (prompt) => {
+                    console.log(`🎨 Card3 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
+                    setProgress('✨ 세 번째 카드가 빛나고 있어요...');
+                    card3Promise = generateSingleImage(prompt, imageStyle, '', 'tarot', colorPalette, visualMode)
+                        .then(img => {
+                            card3Image = img;
+                            console.log(`✅ Card3 이미지 완료 ${elapsed()}`);
+                            updateCardReady(3, img, partialResult.storyReading.card3Analysis);
+                            return img;
+                        });
+                },
+                // Conclusion 분석 완료 → 저장만
+                onConclusion: (conclusionAnalysis) => {
+                    console.log(`🎁 Conclusion 분석 완료 ${elapsed()}`);
+                    partialResult.storyReading.conclusionCard = conclusionAnalysis;
+                },
+                // Conclusion 이미지 프롬프트 → 이미지 생성 시작
+                onConclusionImagePrompt: (prompt) => {
+                    console.log(`🎨 Conclusion 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
+                    setProgress('🎁 운명의 선물이 도착하고 있어요...');
+                    conclusionPromise = generateSingleImage(prompt, imageStyle, '', 'tarot', colorPalette, visualMode)
+                        .then(img => {
+                            conclusionImage = img;
+                            console.log(`✅ Conclusion 이미지 완료 ${elapsed()}`);
+                            updateCardReady(4, img, partialResult.storyReading.conclusionCard);
+                            return img;
+                        });
+                },
+                onHiddenInsight: (hiddenInsight) => {
+                    console.log(`✅ Hidden Insight 완료 ${elapsed()}`);
+                    partialResult.jenny.hiddenInsight = hiddenInsight;
+                },
+                onProgress: (progressValue) => {
+                    // 진행률 기반 메시지 업데이트
+                    if (progressValue > 0.3 && progressValue < 0.5) {
+                        setProgress('카드가 이야기를 엮어가고 있어요...');
+                    } else if (progressValue > 0.5 && progressValue < 0.7) {
+                        setProgress('운명의 실타래가 풀리고 있어요...');
+                    } else if (progressValue > 0.7) {
+                        setProgress('마지막 메시지를 전하고 있어요...');
+                    }
+                },
+                onImages: () => {
+                    console.log(`🖼️ Images prompts detected ${elapsed()}`);
+                },
+                onComplete: (buffer) => {
+                    console.log(`✅ Streaming complete ${elapsed()}, buffer length:`, buffer.length);
+                }
+            };
 
-            // 결론 카드 이미지 생성 (4번째 카드)
-            setProgress('🎁 운명의 선물 카드가 나타나고 있어요...');
-            const conclusionImage = data.images.conclusion
-                ? await generateSingleImage(data.images.conclusion, imageStyle, '', 'tarot', colorPalette)
-                : null;
-            setImageProgress({ current: 5, total: 5 });
+            const responseText = await callClaudeWithCacheStreaming(
+                anthropic,
+                null,  // systemPrompt (타로는 userMessage에 포함)
+                tarotPrompt,
+                modelConfig.textModel,
+                10000,
+                streamCallbacks,
+                'tarot'
+            );
 
-            // 8단계: 완료
-            setAnalysisPhase(8);
-            setProgress('🔮 당신만의 타로 스토리가 완성되었어요');
+            // JSON 파싱
+            let cleanText = responseText
+                .replace(/```json\n?/g, "")
+                .replace(/```\n?/g, "")
+                .trim();
+            const data = JSON.parse(cleanText);
+
+            // Claude가 선택한 이미지 스타일로 업데이트 (남은 이미지에 적용)
+            if (data.imageStyle) {
+                imageStyle = data.imageStyle;
+                console.log(`🎨 Claude 선택 스타일: ${imageStyle}`);
+            }
+            if (data.colorPalette) {
+                colorPalette = data.colorPalette;
+            }
+
+            // partialResult에 data 병합 (storyReading 등)
+            partialResult = {
+                ...partialResult,
+                ...data,
+                cards: [...selectedCards, conclusionCard],
+                question,
+                type: 'tarot',
+                isStreaming: true
+            };
+
+            // 모든 이미지 Promise 완료 대기 (스트리밍 중 시작된 것들)
+            const allPromises = [heroPromise];
+            if (card1Promise) allPromises.push(card1Promise);
+            if (card2Promise) allPromises.push(card2Promise);
+            if (card3Promise) allPromises.push(card3Promise);
+            if (conclusionPromise) allPromises.push(conclusionPromise);
+
+            console.log(`⏳ ${allPromises.length}개 이미지 완료 대기 중... ${elapsed()}`);
+            await Promise.all(allPromises);
+            console.log(`🎉 모든 이미지 생성 완료 ${elapsed()}`);
 
             const tarotResultData = {
                 ...data,
@@ -801,20 +1029,23 @@ conclusionCard는 반드시:
                 futureImage: card3Image,
                 question,
                 type: 'tarot',
-                // 기본 공개 설정: 링크 공유 (unlisted)
-                visibility: 'unlisted'
+                // 기본 공개 설정: 전체 공개 (public)
+                visibility: 'public',
+                // 스트리밍 완료 플래그 + 모든 카드 준비 완료
+                isStreaming: false,
+                cardReady: { card1: true, card2: true, card3: true, conclusion: true }
             };
 
             setProgress('');
             setAnalysisPhase(0);
 
-            // 자동 저장 - 기본값: 링크 공유 (unlisted)
+            // 자동 저장 - 기본값: 전체 공개 (public)
             if (user && onSaveTarot) {
                 setTimeout(async () => {
-                    const savedId = await onSaveTarot(tarotResultData, { visibility: 'unlisted' });
+                    const savedId = await onSaveTarot(tarotResultData, { visibility: 'public' });
                     if (savedId) {
                         setSavedDreamField?.('id', savedId);
-                        setSavedDreamField?.('visibility', 'unlisted');
+                        setSavedDreamField?.('visibility', 'public');
                         setToast('live', { type: 'save', message: '타로 리딩이 저장되었어요!' });
                         setTimeout(() => setToast('live', null), 3000);
                     }
@@ -947,7 +1178,6 @@ JSON만 반환:
 {
   "title": "제목 (4-8글자)",
   "verdict": "핵심 한마디 (20자 이내)",
-  "affirmation": "오늘의 확언 (나는 ~한다 형식, 15자 이내)",
   "overallScore": 1-100 사이 숫자 (종합 사주 점수),
 
   "sajuInfo": {
@@ -1013,27 +1243,15 @@ JSON만 반환:
   "doList": ["${currentYear}년에 꼭 해야 할 것 1 (구체적 시기/방법)", "꼭 해야 할 것 2", "꼭 해야 할 것 3"],
   "dontList": ["${currentYear}년에 피해야 할 것 1 (구체적 상황)", "피해야 할 것 2", "피해야 할 것 3"],
 
-  "shortReading": "요약 (50자) - 못 보면 잠 못 잘 정도로 궁금하게. 구체적 디테일 포함.",
-  "shareText": "공유용 (30자) - 구체적 디테일로 공유하고 싶게",
-
-  "imageStyle": "사주 분위기에 맞는 애니메 스타일 키 (다음 중 하나 선택): shinkai(로맨틱/몽환/황금빛석양), kyoani(감성적/섬세/파스텔), ghibli(따뜻한/마법적/향수), mappa_dark(다크/그릿티/성숙), mappa_action(역동적/강렬한액션), ufotable(화려한이펙트/CGI블렌드), trigger(네온/대담한기하학), sciencesaru(실험적/컬러워시), shojo(우아/스파클/로맨틱), persona5(대담한빨강검정/스타일리시/반항적), cgi_gem(보석/반짝임/환상), minimalist(깔끔/여백/절제). 사주/운세는 주로 ghibli/shinkai/cgi_gem 추천, 강한 에너지 운세는 mappa_action/ufotable",
-
-  "colorPalette": "🎨 이 운세만의 고유한 2색 그라디언트를 영어로 작성. 오늘의 운세 내용, 핵심 에너지, 각 섹션의 뉘앙스(긍정과 주의의 비율, 에너지의 강도, 전체적인 흐름)를 분석하여 이 리딩에만 어울리는 창의적 색상 조합 선택. '금전운=금색' 같은 단순 공식 금지! 매번 완전히 다른 조합 필수. 형식: 'color1 and color2' (예: 'warm terracotta and sage green')",
+  "visualMode": "🎬 반드시 운세 분위기에 맞게 선택! 신비로운/동양적/감성적 → 'anime'. 현실적/세련된/비즈니스 → 'real'. ⚠️매번 운세에 맞게 신중히 결정! 같은 스타일만 쓰지 말 것!",
+  "imageStyle": "🎨 visualMode에 맞춰 반드시 다양하게 선택! anime일 때: shinkai(감성)/ghibli(따뜻)/kyoani(청춘)/mappa(역동)/mappa_dark(어두운)/shojo(로맨스)/clamp(신비)/wit(드라마틱)/ilya(몽환)/minimalist(깔끔). real일 때: korean_soft(부드러운)/korean_dramatic(강렬)/japanese_clean(깔끔)/cinematic(영화적)/aesthetic_mood(감성). ⚠️운세 분위기에 맞춰 매번 다른 스타일 선택!",
+  "colorPalette": "🎨 이 운세만의 고유한 2색 그라디언트를 영어로 작성. '금전운=금색' 같은 단순 공식 금지! 형식: 'color1 and color2'",
 
   "images": {
-    "hero": "사주 유형의 본질적 에너지를 시각화한 신비로운 장면. 동양적 사주/운명의 이미지 (스타일 prefix 없이 장면만 영어 50단어)",
-    "section1": "첫 번째 카테고리 테마의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
-    "section2": "두 번째 카테고리 테마의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)",
-    "section3": "세 번째 카테고리 테마의 신비로운 장면 (스타일 prefix 없이 장면만 영어 45단어)"
-  },
-
-  "luckyElements": {
-    "color": "행운의 색",
-    "number": "행운의 숫자",
-    "direction": "행운의 방향",
-    "time": "행운의 시간 (구체적 시간대)",
-    "item": "행운의 아이템",
-    "month": "${currentYear}년 행운의 달"
+    "hero": "🎬 너는 영화 감독. 이 사주/운세의 본질적 에너지를 오프닝 씬으로 자유롭게 연출. 영어 2문장. 🎯인물: 항상 20대 초중반. 🎯완전 자유: 인물 구성/구도/분위기 모두 네가 결정. 동양적 사주/운명의 느낌을 창의적으로.",
+    "section1": "🎬 첫 번째 운세 섹션의 핵심 장면. 영어 2문장. 🎯완전 자유: 이 섹션의 테마를 어떻게 시각화할지 네가 결정. hero와 다른 앵글/분위기로.",
+    "section2": "🎬 두 번째 운세 섹션의 핵심 장면. 영어 2문장. 🎯완전 자유: 앞 장면과 다른 시각적 접근. section1과 연결되면서도 변화가 느껴지게.",
+    "section3": "🎬 세 번째 운세 섹션의 핵심 장면. 영어 2문장. 🎯완전 자유: 이 리딩의 마무리 장면. 가장 임팩트 있게."
   }
 }`;
 
@@ -1052,7 +1270,9 @@ JSON만 반환:
             // Claude가 선택한 이미지 스타일과 색상 팔레트 (없으면 기본값)
             const imageStyle = data.imageStyle || 'shinkai';
             const colorPalette = data.colorPalette || '';
-            console.log(`🎨 Fortune Image Style: ${imageStyle}, Colors: ${colorPalette || 'default'}`);
+            // visualMode: 운세는 기본적으로 anime 모드 (추후 Claude가 선택하도록 확장 가능)
+            const visualMode = data.visualMode || 'anime';
+            console.log(`🎨 Fortune Image Style: ${imageStyle}, Colors: ${colorPalette || 'default'}, Mode: ${visualMode}`);
 
             // 이미지 생성
             setAnalysisPhase(5);
@@ -1064,23 +1284,23 @@ JSON만 반환:
             const fortuneHeroPrompt = userProfile?.gender
                 ? `${fortuneHeroBasePrompt}. The person is ${fortunePersonDesc}.`
                 : fortuneHeroBasePrompt;
-            const heroImage = await generateSingleImage(fortuneHeroPrompt, imageStyle, '', 'fortune', colorPalette);
+            const heroImage = await generateSingleImage(fortuneHeroPrompt, imageStyle, '', 'fortune', colorPalette, visualMode);
             await new Promise(r => setTimeout(r, 400));
 
             // 섹션별 이미지 생성 (section1/2/3 구조)
             const section1Category = data.sections?.section1?.category || '첫 번째 운';
             setProgress(`${data.sections?.section1?.icon || '✨'} ${section1Category} 이미지 생성 중...`);
-            const section1Image = await generateSingleImage(data.images.section1, imageStyle, '', 'fortune', colorPalette);
+            const section1Image = await generateSingleImage(data.images.section1, imageStyle, '', 'fortune', colorPalette, visualMode);
             await new Promise(r => setTimeout(r, 500));
 
             const section2Category = data.sections?.section2?.category || '두 번째 운';
             setProgress(`${data.sections?.section2?.icon || '💫'} ${section2Category} 이미지 생성 중...`);
-            const section2Image = await generateSingleImage(data.images.section2, imageStyle, '', 'fortune', colorPalette);
+            const section2Image = await generateSingleImage(data.images.section2, imageStyle, '', 'fortune', colorPalette, visualMode);
             await new Promise(r => setTimeout(r, 500));
 
             const section3Category = data.sections?.section3?.category || '세 번째 운';
             setProgress(`${data.sections?.section3?.icon || '🌟'} ${section3Category} 이미지 생성 중...`);
-            const section3Image = await generateSingleImage(data.images.section3, imageStyle, '', 'fortune', colorPalette);
+            const section3Image = await generateSingleImage(data.images.section3, imageStyle, '', 'fortune', colorPalette, visualMode);
 
             setProgress('✨ 오늘의 사주가 완성되었어요');
 
@@ -1130,6 +1350,9 @@ JSON만 반환:
         progress,
         analysisPhase,
         imageProgress, // 이미지 생성 진행률 { current, total }
+        // 실시간 스트리밍 데이터 (AnalysisOverlay용)
+        streamingData,
+        isImagesReady,
         // 티어 정보
         isPremium,
         modelConfig,
@@ -1139,6 +1362,10 @@ JSON만 반환:
         generateFortuneReading,
         // 상태 리셋
         clearError: () => setError(''),
-        clearProgress: () => setProgress('')
+        clearProgress: () => setProgress(''),
+        resetStreamingData: () => {
+            setStreamingData({ topics: null, keywords: null, title: null, verdict: null, hook: null, foreshadow: null });
+            setIsImagesReady(false);
+        }
     };
 };

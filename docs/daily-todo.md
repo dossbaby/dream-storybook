@@ -62,8 +62,8 @@
 > **원칙**: 기반 안정화 → 체감 개선 → 콘텐츠 품질 → 개인화 → 유입/참여 → 수익화 → 확장
 
 #### Phase A: 기반 안정화 🔧
-- [x] 태그라인 변경 ("마음이 궁금할 때" → "맘을 모를 때")
-- [ ] A1: 구버전 ResultView 삭제 검토 & 실행
+- [x] 태그라인 변경 ("마음이 궁금할 때" → "마음을 모를 때")
+- [x] A1: 구버전 ResultView 삭제 ✅ (2025-12-12 완료)
 - [x] A2: 데스크탑 카드 클릭 버그 수정 (`will-change: transform`)
 - [x] A2-1: 카드 hover/selected 스타일 개선
   - hover: 파란색 glow + translateY(-15px)
@@ -73,8 +73,12 @@
   - 원인: 백그라운드 전환 시 Gemini API 요청 타임아웃/실패
   - 해결: 스트리밍 구현 후 재시도 로직 추가 예정
 
-#### Phase B: 스트리밍 & 체감 개선 ⚡ (다음 단계)
-- [ ] B1: 스트리밍 구현 (`messages.create` → `messages.stream`)
+#### Phase B: 스트리밍 & 체감 개선 ⚡
+- [x] B1: 스트리밍 구현 ✅ (2025-12-12 완료)
+  - `callClaudeWithCacheStreaming()` 함수 추가
+  - 섹션별 콜백 (hook, foreshadow, cards, images)
+  - Progressive UI: hook 완료 시 즉시 결과 페이지 전환
+  - 이미지 5장 병렬 생성 (~40초 → ~10초)
 - [ ] B2: 분석 단계 스크롤바 숨기기
 - [ ] B3: 도파민 시간 제한 로직 정리
 - [ ] B4: Sticky Persona Card 위치 버그
@@ -100,8 +104,8 @@
 
 | Phase | 이름 | 핵심 작업 | 상태 |
 |-------|------|----------|------|
-| A | 기반 안정화 | ResultView 정리, 버그 수정 | 🔄 진행 중 |
-| B | 스트리밍 | 2-3분 → 10초 체감 | ⏳ 대기 |
+| A | 기반 안정화 | ResultView 정리, 버그 수정 | ✅ 완료 |
+| B | 스트리밍 | 2-3분 → 10초 체감 | 🔄 B1 완료 |
 | C | 리딩 품질 | Hidden Insight 개선, 나이 금지 | ⏳ 대기 |
 | D | 개인화 | MBTI 입력, 프사 설정 | ⏳ 대기 |
 | E | 유입/참여 | 질문 추천, 피드 CTA | ⏳ 대기 |
@@ -120,6 +124,16 @@
   - selected: Blue→Purple gradient border
   - slot-card: 보라→민트→시안→파랑 conic-gradient + hue-rotate 애니메이션
   - selection-number: Blue-Purple 테마
+- `src/utils/promptCache.js` - B1 스트리밍 구현
+  - `callClaudeWithCacheStreaming()` 함수 추가
+  - 섹션별 콜백 (hook, foreshadow, cards, images)
+  - systemPrompt null 처리 (타로용)
+- `src/hooks/useReading.js` - 스트리밍 연동
+  - streamingCallbacks 파라미터 추가
+  - partialResult 구조 (Progressive UI용)
+  - 이미지 5장 병렬 생성 (Promise.all)
+- `src/hooks/useTarotActions.js` - Progressive UI 지원
+  - onHookReady 콜백으로 조기 뷰 전환
 
 ---
 

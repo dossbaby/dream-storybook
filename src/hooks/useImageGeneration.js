@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { AI_MODELS, ANIME_STYLES } from '../utils/aiConfig';
+import { AI_MODELS, ANIME_STYLES, REAL_STYLES } from '../utils/aiConfig';
 
 // 이미지 생성 훅 - 모든 모드에서 공통으로 사용
 export const useImageGeneration = (tier = 'free') => {
@@ -18,16 +18,22 @@ export const useImageGeneration = (tier = 'free') => {
     /**
      * 단일 이미지 생성
      * @param {string} prompt - 장면 묘사 (Claude가 생성한 프롬프트)
-     * @param {string} styleKey - 애니메 스타일 키 (Claude가 선택, 예: 'kyoani', 'mappa_dark')
+     * @param {string} styleKey - 스타일 키 (Claude가 선택)
      * @param {string} characterDesc - 캐릭터 설명 (일관성용)
      * @param {string} readingType - 리딩 타입 ('dream', 'tarot', 'fortune') - fallback용
-     * @param {string} colorPalette - 감정 기반 색상 팔레트 (Claude가 생성, 예: 'soft pinks and warm rose gold tones')
+     * @param {string} colorPalette - 감정 기반 색상 팔레트
+     * @param {string} visualMode - 비주얼 모드 ('anime' 또는 'real')
      */
-    const generateSingleImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '') => {
+    const generateSingleImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '', visualMode = 'anime') => {
         if (!geminiApiKey) return null;
 
-        // 스타일 prefix 결정: ANIME_STYLES에서 가져오거나, 기본 분위기 사용
-        const stylePrefix = ANIME_STYLES[styleKey] || ANIME_STYLES.shinkai;
+        // 스타일 prefix 결정: visualMode에 따라 ANIME_STYLES 또는 REAL_STYLES 사용
+        let stylePrefix;
+        if (visualMode === 'real') {
+            stylePrefix = REAL_STYLES[styleKey] || `${REAL_STYLES._default} Style hint: ${styleKey}.`;
+        } else {
+            stylePrefix = ANIME_STYLES[styleKey] || `${ANIME_STYLES._default} Style hint: ${styleKey}.`;
+        }
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
 
         // 동적 색상 팔레트 (Claude가 질문 감정에서 추출)
@@ -49,18 +55,27 @@ export const useImageGeneration = (tier = 'free') => {
             // Gemini 3 Pro Image vs Gemini 2.5 Flash Image
             const isGemini3Pro = imageModelName.includes('gemini-3');
 
-            // 모든 티어에서 16:9 가로 비율로 생성
-            const response = await ai.models.generateContent({
-                model: imageModelName,
-                contents: fullPrompt,
-                config: {
-                    responseModalities: ['image', 'text'],
-                    imageSafety: 'block_low_and_above'
-                },
-                generationConfig: {
-                    aspectRatio: '16:9'
-                }
-            });
+            let response;
+            if (isGemini3Pro) {
+                // Gemini 3 Pro: config 지원
+                response = await ai.models.generateContent({
+                    model: imageModelName,
+                    contents: fullPrompt,
+                    config: {
+                        responseModalities: ['image', 'text'],
+                        imageConfig: {
+                            aspectRatio: '16:9',
+                            imageSize: '1K'
+                        }
+                    }
+                });
+            } else {
+                // Gemini 2.5 Flash: 단순 호출
+                response = await ai.models.generateContent({
+                    model: imageModelName,
+                    contents: fullPrompt
+                });
+            }
 
             // 응답에서 이미지 추출
             if (response.candidates?.[0]?.content?.parts) {
@@ -81,17 +96,18 @@ export const useImageGeneration = (tier = 'free') => {
     /**
      * 여러 이미지 순차 생성 (진행 콜백 포함)
      * @param {string[]} prompts - 장면 묘사 배열
-     * @param {string} styleKey - 애니메 스타일 키
+     * @param {string} styleKey - 스타일 키
      * @param {string} characterDesc - 캐릭터 설명
      * @param {string} readingType - 리딩 타입
      * @param {Function} onProgress - 진행 콜백
      * @param {string} colorPalette - 감정 기반 색상 팔레트
+     * @param {string} visualMode - 비주얼 모드 ('anime' 또는 'real')
      */
-    const generateImages = async (prompts, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '') => {
+    const generateImages = async (prompts, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '', visualMode = 'anime') => {
         const images = [];
         for (let i = 0; i < prompts.length; i++) {
             if (onProgress) onProgress(i, prompts.length);
-            const image = await generateSingleImage(prompts[i], styleKey, characterDesc, readingType, colorPalette);
+            const image = await generateSingleImage(prompts[i], styleKey, characterDesc, readingType, colorPalette, visualMode);
             images.push(image);
             // 이미지 생성 간 딜레이
             if (i < prompts.length - 1) {
@@ -104,15 +120,21 @@ export const useImageGeneration = (tier = 'free') => {
     /**
      * 소셜 공유용 이미지 생성 (9:16 세로 비율)
      * @param {string} prompt - 장면 묘사
-     * @param {string} styleKey - 애니메 스타일 키
+     * @param {string} styleKey - 스타일 키
      * @param {string} characterDesc - 캐릭터 설명
      * @param {string} readingType - 리딩 타입
      * @param {string} colorPalette - 감정 기반 색상 팔레트
+     * @param {string} visualMode - 비주얼 모드 ('anime' 또는 'real')
      */
-    const generateShareImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '') => {
+    const generateShareImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '', visualMode = 'anime') => {
         if (!geminiApiKey) return null;
 
-        const stylePrefix = ANIME_STYLES[styleKey] || ANIME_STYLES.shinkai;
+        let stylePrefix;
+        if (visualMode === 'real') {
+            stylePrefix = REAL_STYLES[styleKey] || `${REAL_STYLES._default} Style hint: ${styleKey}.`;
+        } else {
+            stylePrefix = ANIME_STYLES[styleKey] || `${ANIME_STYLES._default} Style hint: ${styleKey}.`;
+        }
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
         const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
 
@@ -169,7 +191,7 @@ export const useImageGeneration = (tier = 'free') => {
 };
 
 // 이미지 압축 유틸리티
-export const compressImage = async (blobUrl, maxWidth = 800, quality = 0.85) => {
+export const compressImage = async (blobUrl, maxWidth = 800, quality = 0.9) => {
     if (!blobUrl) return null;
     try {
         const response = await fetch(blobUrl);
