@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import { runAnalysisAnimation, getApiKeys, getDreamMessages, getTarotMessages, getFortuneMessages } from '../utils/analysisHelpers';
-import { DOPAMINE_HINTS } from '../utils/constants';
 import { useImageGeneration } from './useImageGeneration';
 import { getModelConfig, AI_MODELS, getContentLength } from '../utils/aiConfig';
 import {
@@ -173,15 +172,6 @@ export const useReading = ({
     const [imageProgress, setImageProgress] = useState({ current: 0, total: 5 }); // 이미지 생성 진행률
 
     const { generateSingleImage } = useImageGeneration(tier);
-
-    // 도파민 팝업 표시 헬퍼 (긴 작업 중 랜덤 표시)
-    const showRandomDopamine = useCallback(() => {
-        if (setDopaminePopup) {
-            const randomHint = DOPAMINE_HINTS[Math.floor(Math.random() * DOPAMINE_HINTS.length)];
-            setDopaminePopup(randomHint);
-            setTimeout(() => setDopaminePopup(null), 2500);
-        }
-    }, [setDopaminePopup]);
 
     // 현재 티어 설정 가져오기
     const modelConfig = getModelConfig(tier);
@@ -562,20 +552,10 @@ JSON만 반환:
             setAnalysisPhase, setProgress, null, null  // 초반에는 도파민 팝업 안 띄움
         );
 
-        // interval 변수들을 try 밖에 선언 (에러 시 정리 위해)
-        let dopamineInterval = null;
-        let imageInterval = null;
-
         try {
             // 6단계: API 호출 단계 (5개의 애니메이션 메시지 이후)
             setAnalysisPhase(6);
             setProgress('운명의 이야기를 엮는 중...');
-
-            // API 호출 중 도파민 팝업 (긴 작업이므로 여러 번 표시)
-            showRandomDopamine();
-            dopamineInterval = setInterval(() => {
-                showRandomDopamine();
-            }, 8000); // 8초마다 새로운 힌트
 
             // 78장 덱에서 4번째 결론 카드 랜덤 선택 (선택된 3장 제외)
             const { TAROT_DECK } = await import('../utils/constants');
@@ -752,9 +732,6 @@ conclusionCard는 반드시:
             // 캐싱 미적용 (프롬프트 구조가 복잡하여 분리 어려움)
             const data = await callClaudeApi(null, tarotPrompt, 8000);
 
-            // API 호출 완료 - 도파민 interval 정리
-            clearInterval(dopamineInterval);
-
             // 프로필 기반 인물 설명 생성
             const getPersonDescription = () => {
                 if (!userProfile || !userProfile.gender) return 'a mysterious person';
@@ -767,12 +744,6 @@ conclusionCard는 반드시:
             // 5장 이미지 생성 - 7단계 시작 (히어로 + 4장 카드)
             setAnalysisPhase(7);
             setProgress('🌌 당신의 이야기가 그려지고 있어요...');
-
-            // 이미지 생성 중 도파민 팝업 interval 시작
-            showRandomDopamine();
-            imageInterval = setInterval(() => {
-                showRandomDopamine();
-            }, 6000); // 6초마다 새로운 힌트
 
             // Claude가 선택한 이미지 스타일과 색상 팔레트 (없으면 기본값)
             const imageStyle = data.imageStyle || 'shinkai';
@@ -811,9 +782,6 @@ conclusionCard는 반드시:
                 ? await generateSingleImage(data.images.conclusion, imageStyle, '', 'tarot', colorPalette)
                 : null;
             setImageProgress({ current: 5, total: 5 });
-
-            // 이미지 생성 완료 - interval 정리 (5장: hero + card1 + card2 + card3 + conclusion)
-            clearInterval(imageInterval);
 
             // 8단계: 완료
             setAnalysisPhase(8);
@@ -858,18 +826,11 @@ conclusionCard는 반드시:
         } catch (err) {
             console.error('타로 리딩 생성 실패:', err);
             setError('타로 리딩 생성에 실패했습니다.');
-            // 에러 시 interval 정리 및 도파민 팝업 숨김
-            if (dopamineInterval) clearInterval(dopamineInterval);
-            if (imageInterval) clearInterval(imageInterval);
-            setDopaminePopup?.(null);
             return null;
         } finally {
             setLoading(false);
-            // finally에서도 interval 정리 (안전 장치)
-            if (dopamineInterval) clearInterval(dopamineInterval);
-            if (imageInterval) clearInterval(imageInterval);
         }
-    }, [user, generateSingleImage, onSaveTarot, setToast, setDopaminePopup, setSavedDreamField, showRandomDopamine]);
+    }, [user, generateSingleImage, onSaveTarot, setToast, setDopaminePopup, setSavedDreamField]);
 
     // 운세 리딩 생성
     const generateFortuneReading = useCallback(async (fortuneType, fortuneTypes) => {

@@ -136,18 +136,6 @@ export const dreamSymbols = {
     '숲': { emoji: '🌲', hint: '미지, 성장', meaning: '숲은 미지의 영역과 성장을 상징합니다' },
 };
 
-// 도파민 힌트 메시지
-export const DOPAMINE_HINTS = [
-    { emoji: '💕', text: '연애운이 감지되고 있어요...', category: 'love' },
-    { emoji: '💰', text: '재물운의 기운이 느껴져요...', category: 'money' },
-    { emoji: '💼', text: '직장운에 변화가 보여요...', category: 'career' },
-    { emoji: '✨', text: '행운의 조짐이 나타나고 있어요...', category: 'luck' },
-    { emoji: '🔮', text: '숨겨진 운명이 드러나려 해요...', category: 'destiny' },
-    { emoji: '💫', text: '특별한 인연의 기운이...', category: 'relationship' },
-    { emoji: '🌟', text: '성공의 기회가 엿보여요...', category: 'success' },
-    { emoji: '💝', text: '누군가 당신을 생각하고 있어요...', category: 'romance' },
-];
-
 // 운세 타입
 export const FORTUNE_TYPES = {
     today: { name: '오늘의 운세', emoji: '🌅', desc: '하루 전체 운세' },

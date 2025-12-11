@@ -1,12 +1,10 @@
-import { DOPAMINE_HINTS } from './constants';
-
 /**
  * 분석 단계 애니메이션 실행
  * @param {string[]} messages - 표시할 메시지 배열
  * @param {Function} setAnalysisPhase - 분석 단계 setter
  * @param {Function} setProgress - 진행 메시지 setter
  * @param {Function} setToast - 토스트 setter (optional)
- * @param {Function} setDopaminePopup - 도파민 팝업 setter
+ * @param {Function} _setDopaminePopup - 미사용 (하위 호환용)
  * @param {number} delay - 각 메시지 간 딜레이 (ms)
  */
 export const runAnalysisAnimation = async (
@@ -14,7 +12,7 @@ export const runAnalysisAnimation = async (
     setAnalysisPhase,
     setProgress,
     setToast,
-    setDopaminePopup,
+    _setDopaminePopup,
     delay = 2000
 ) => {
     for (let i = 0; i < messages.length; i++) {
@@ -23,13 +21,6 @@ export const runAnalysisAnimation = async (
 
         if (setToast) {
             setToast('live', { type: 'sorting', message: messages[i] });
-        }
-
-        // 2번째, 4번째 메시지에서 도파민 팝업 표시
-        if ((i === 1 || i === 3) && setDopaminePopup) {
-            const randomHint = DOPAMINE_HINTS[Math.floor(Math.random() * DOPAMINE_HINTS.length)];
-            setDopaminePopup(randomHint);
-            setTimeout(() => setDopaminePopup(null), 1800);
         }
 
         await new Promise(r => setTimeout(r, delay));
