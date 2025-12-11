@@ -11787,3 +11787,25 @@
     color: #5eead4;
 }
 
+/* ========== 질문 추천 받기 링크 ========== */
+.suggestion-link {
+    display: inline-block;
+    background: none;
+    border: none;
+    color: rgba(196, 181, 253, 0.7);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 8px 0;
+    margin-top: 12px;
+    transition: all 0.2s ease;
+}
+
+.suggestion-link:hover:not(:disabled) {
+    color: #c4b5fd;
+}
+
+.suggestion-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+

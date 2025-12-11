@@ -83,6 +83,21 @@
 - [ ] B3: 도파민 시간 제한 로직 정리
 - [ ] B4: Sticky Persona Card 위치 버그
 
+#### Phase C: 리딩 품질 개선 📝
+- [x] C1: 나이 언급 금지 강화 ✅
+  - 꿈/타로/사주 모든 프롬프트에 명시적 금지 규칙 추가
+  - "38살", "38세", "38년을 살면서", "30대 후반" 등 모든 형태 금지
+- [x] C2: Hidden Insight 개선 + MBTI/별자리 트위스트 ✅
+  - 시작 문구 다양화 ('원래 안 말할라 그랬는데' 금지)
+  - 7가지 자연스러운 시작 문구 예시 추가
+  - MBTI/별자리 기반 반전 구조 추가
+
+#### Phase E: 유입/참여 개선 🎯
+- [x] E1: 질문 추천 칩 UI ✅
+  - 💕 그 사람 마음 / 💼 이직해도 될까 / 🎯 이번 달 운세 / 💰 재정 상황 / 🤔 지금 결정해도 될까
+  - 타로 질문 입력 화면에 깔끔한 칩 버튼으로 추가
+  - 클릭 시 textarea에 자동 입력
+
 ### 전체 로드맵 (시너지 흐름)
 
 ```
@@ -106,9 +121,9 @@
 |-------|------|----------|------|
 | A | 기반 안정화 | ResultView 정리, 버그 수정 | ✅ 완료 |
 | B | 스트리밍 | 2-3분 → 10초 체감 | 🔄 B1 완료 |
-| C | 리딩 품질 | Hidden Insight 개선, 나이 금지 | ⏳ 대기 |
+| C | 리딩 품질 | Hidden Insight 개선, 나이 금지 | ✅ 완료 |
 | D | 개인화 | MBTI 입력, 프사 설정 | ⏳ 대기 |
-| E | 유입/참여 | 질문 추천, 피드 CTA | ⏳ 대기 |
+| E | 유입/참여 | 질문 추천, 피드 CTA | 🔄 질문추천 완료 |
 | F | 수익화 | 이미지 스타일, 게이미피케이션 | ⏳ 대기 |
 | G | 확장 | MBTI 탭, 피드 페이지네이션 | ⏳ 대기 |
 | H | 장기 | Desktop, 실시간 채팅 | ⏳ 대기 |
@@ -134,6 +149,15 @@
   - 이미지 5장 병렬 생성 (Promise.all)
 - `src/hooks/useTarotActions.js` - Progressive UI 지원
   - onHookReady 콜백으로 조기 뷰 전환
+- `src/hooks/useReading.js` - 리딩 품질 개선
+  - 나이 언급 금지 강화 (꿈/타로/사주 3곳)
+  - Hidden Insight 시작 문구 다양화 + MBTI/별자리 트위스트
+- `src/components/tarot/TarotInput.jsx` - 질문 추천 칩 UI 추가
+  - QUESTION_SUGGESTIONS 상수 추가 (5개 카테고리)
+  - 클릭 시 textarea에 자동 입력
+- `src/styles/views/tarot.css` - 질문 추천 칩 스타일 추가
+  - .question-suggestions, .suggestion-chip 스타일
+  - 모바일 최적화 포함
 
 ---
 

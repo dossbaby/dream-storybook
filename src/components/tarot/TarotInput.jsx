@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import QuestionSuggestionModal from './QuestionSuggestionModal';
 
 // 인트로 텍스트
 const INTRO_TEXTS = [
@@ -47,6 +48,7 @@ const PLACEHOLDER_EXAMPLES = [
     "올해 안에 결혼할 수 있을까요?"
 ];
 
+
 const TarotInput = ({
     tarotPhase,
     tarotQuestion,
@@ -91,6 +93,9 @@ const TarotInput = ({
     const [introPhase, setIntroPhase] = useState(0); // 0: 대기, 1: 첫번째 표시, 2: 두번째 표시, 3: fade out
     const [cardsRevealed, setCardsRevealed] = useState(false);
     const [cardsClickable, setCardsClickable] = useState(false); // 카드 클릭 가능 여부
+
+    // 질문 추천 모달 상태
+    const [showSuggestionModal, setShowSuggestionModal] = useState(false);
 
     // 인트로 시퀀스 (fade in 방식 - 타이핑 없이)
     // 카드 스프레드: 22장 × 30ms = 660ms 딜레이 + 0.8s 애니메이션 = 약 1.5초
@@ -197,6 +202,7 @@ const TarotInput = ({
                         <h2 className="create-title tarot-title">{randomHeading}</h2>
                         <p className="tarot-subtitle">질문을 구체적으로 적을수록 더 정확한 리딩을 받을 수 있어요</p>
                     </div>
+
                     <textarea
                         value={tarotQuestion}
                         onChange={(e) => setTarotQuestion(e.target.value)}
@@ -206,6 +212,7 @@ const TarotInput = ({
                         rows={4}
                     />
                     {error && <div className="error">{error}</div>}
+
                     <button
                         onClick={onStartSelection}
                         disabled={loading || !tarotQuestion.trim()}
@@ -213,6 +220,22 @@ const TarotInput = ({
                     >
                         {loading ? '준비 중...' : '🃏 카드 뽑기'}
                     </button>
+
+                    {/* 질문 추천 받기 링크 - 버튼 아래 */}
+                    <button
+                        className="suggestion-link"
+                        onClick={() => setShowSuggestionModal(true)}
+                        disabled={loading}
+                    >
+                        ✨ 질문 추천 받기
+                    </button>
+
+                    {/* 질문 추천 모달 */}
+                    <QuestionSuggestionModal
+                        isOpen={showSuggestionModal}
+                        onClose={() => setShowSuggestionModal(false)}
+                        onSelectQuestion={(q) => setTarotQuestion(q)}
+                    />
                 </>
             )}
 
