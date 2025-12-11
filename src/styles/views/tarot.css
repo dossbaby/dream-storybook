@@ -8899,10 +8899,17 @@
     align-items: center;
     justify-content: center;
     padding: 1.5rem 1rem;
-    z-index: 1000;
+    z-index: 9999; /* 최상위 - 다른 모든 요소 위에 */
     overflow: hidden;
     /* VN Intro 스타일 배경 - 단순화 */
     background: radial-gradient(ellipse at center, rgba(15, 5, 30, 0.98) 0%, rgba(0, 0, 0, 0.99) 100%);
+}
+
+/* 데스크탑에서 카드 클릭 영역 보장 - overflow로 잘리지 않도록 */
+@media (min-width: 769px) {
+    .tarot-table {
+        overflow: visible !important;
+    }
 }
 
 /* 중앙 blur 효과 제거 - VN Intro 스타일로 단순화 */
@@ -8972,6 +8979,58 @@
     }
 }
 
+/* 3장 선택 완료 시 - 별들 rainbow twinkle */
+.table-stars.all-ready .star {
+    animation: starTwinkle 2s ease-in-out infinite;
+}
+
+/* 보라색 별 */
+.table-stars.all-ready .star-1,
+.table-stars.all-ready .star-5,
+.table-stars.all-ready .star-9,
+.table-stars.all-ready .star-14 {
+    background: rgba(160, 80, 255, 0.8);
+    box-shadow: 0 0 6px 2px rgba(160, 80, 255, 0.5);
+    animation-delay: 0s;
+}
+
+/* 민트색 별 */
+.table-stars.all-ready .star-2,
+.table-stars.all-ready .star-6,
+.table-stars.all-ready .star-10,
+.table-stars.all-ready .star-15 {
+    background: rgba(80, 220, 200, 0.8);
+    box-shadow: 0 0 6px 2px rgba(80, 220, 200, 0.5);
+    animation-delay: 0.4s;
+}
+
+/* 시안색 별 */
+.table-stars.all-ready .star-3,
+.table-stars.all-ready .star-7,
+.table-stars.all-ready .star-11,
+.table-stars.all-ready .star-16 {
+    background: rgba(60, 200, 255, 0.8);
+    box-shadow: 0 0 6px 2px rgba(60, 200, 255, 0.5);
+    animation-delay: 0.8s;
+}
+
+/* 블루색 별 */
+.table-stars.all-ready .star-4,
+.table-stars.all-ready .star-8,
+.table-stars.all-ready .star-12,
+.table-stars.all-ready .star-17 {
+    background: rgba(100, 140, 255, 0.8);
+    box-shadow: 0 0 6px 2px rgba(100, 140, 255, 0.5);
+    animation-delay: 1.2s;
+}
+
+/* 중앙 별 (13) - 특별히 밝게 */
+.table-stars.all-ready .star-13 {
+    background: rgba(200, 180, 255, 0.9);
+    box-shadow: 0 0 8px 3px rgba(180, 160, 255, 0.6);
+    animation-delay: 0.6s;
+}
+
 /* 카드 스프레드 컨테이너 - top 5% */
 .table-mat {
     position: absolute;
@@ -8982,7 +9041,8 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    z-index: 50;
+    z-index: 600; /* selected-cards-area(500)와 tarot-intro-text(200)보다 높게 설정 */
+    overflow: visible;
 }
 
 .table-mat::before,
@@ -9036,15 +9096,27 @@
     top: 5%;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 200;
+    z-index: 40; /* 모든 카드(최소 z-index 50)보다 아래로 */
     text-align: center;
     transition: opacity 1.5s ease;
+    pointer-events: none; /* 카드 클릭 방해 방지 */
 }
 
 .tarot-intro-text.fade-out {
     opacity: 0;
     pointer-events: none;
     transition: opacity 2s ease;
+}
+
+/* 3장 선택 완료 시 fade out (0.8초) */
+.tarot-intro-text.all-ready {
+    opacity: 0;
+    transition: opacity 0.8s ease-out;
+}
+
+/* deselect 시 빠르게 fade in (0.3초) - 기본 transition 오버라이드 */
+.tarot-intro-text:not(.all-ready) {
+    transition: opacity 0.3s ease-in;
 }
 
 .tarot-intro-text .intro-line {
@@ -9104,6 +9176,15 @@
     justify-content: center;
     align-items: center;
     margin-left: -6%;
+    overflow: visible;
+}
+
+/* 데스크탑에서 중앙 정렬 보정 및 overflow 보장 (클릭 영역 문제 방지) */
+@media (min-width: 769px) {
+    .card-spread {
+        margin-left: -6.5%;
+        overflow: visible !important;
+    }
 }
 
 /* 개별 카드 - 사진 참고 디자인 */
@@ -9119,6 +9200,8 @@
     opacity: 0;
     visibility: hidden;
     transition: none;
+    /* 클릭 영역이 transform과 함께 이동하도록 보장 */
+    will-change: transform, filter;
 }
 
 /* hidden 상태 - 카드 숨기기 */
@@ -9135,10 +9218,12 @@
     transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                 opacity 0.3s ease-out,
                 visibility 0s;
+    pointer-events: auto !important; /* 클릭 가능 보장 */
 }
 
 .spread-card.card-revealed {
     cursor: pointer;
+    pointer-events: auto !important; /* 클릭 가능 보장 */
 }
 
 .spread-card .card-face,
@@ -9201,59 +9286,129 @@
     font-size: 0;
 }
 
-/* 호버 - 즉시 반응 (transition 없음) */
+/* 호버 - 포커처럼 카드를 살짝 들어올림 */
 .spread-card:hover {
-    z-index: 400 !important;
     filter: brightness(1.12);
-    /* hover 효과 즉시 적용 - transition 완전 제거 */
     transition: none !important;
 }
 
-.spread-card:hover .card-face {
-    /* Glacial 파란색 - 차갑고 신비로운 느낌 */
-    border-color: rgba(140, 190, 255, 0.6);
-    box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.5),
-        0 0 25px rgba(100, 160, 255, 0.35),
-        0 0 50px rgba(80, 140, 255, 0.2);
+/* 기본 hover - 카드 들어올림 */
+.spread-card:not(.selected):hover .card-face {
+    transform: translateY(-15px);
     transition: none !important;
 }
 
-.spread-card:hover .art-symbol {
-    text-shadow: 0 0 20px rgba(150, 200, 255, 0.7);
-    transition: none !important;
-}
-
-/* 선택된 카드 - Glacial/Cosmic glow */
-.spread-card.selected {
-    z-index: 450 !important;
-    filter: brightness(1.15);
-    /* selectedFloat 애니메이션 제거 - transform 충돌로 카드 위치 초기화 버그 발생 */
-}
-
-/* 선택된 카드 - 애니메이션 없이 정적 glow만 */
-.spread-card.selected .card-face {
-    border-color: rgba(150, 200, 255, 0.7);
+/* 0개 선택 시 hover - 보라→민트 */
+.card-spread.selected-0 .spread-card:not(.selected):hover .card-face {
+    border: 2px solid transparent;
     background:
-        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(180, 220, 255, 0.2) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 50% 70%, rgba(140, 180, 255, 0.15) 0%, transparent 50%),
-        linear-gradient(170deg, #1a2555 0%, #15204a 25%, #101840 50%, #0c1235 75%, #080d28 100%);
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) padding-box,
+        linear-gradient(135deg, rgba(160, 80, 255, 1) 0%, rgba(80, 220, 200, 1) 100%) border-box;
     box-shadow:
-        0 0 20px rgba(120, 180, 255, 0.5),
-        0 0 40px rgba(100, 160, 255, 0.3),
-        0 0 60px rgba(80, 140, 255, 0.2),
-        0 0 80px rgba(60, 120, 220, 0.1),
-        inset 0 0 30px rgba(150, 200, 255, 0.1);
-    /* 애니메이션 제거 */
+        0 0 15px rgba(160, 80, 255, 0.5),
+        0 0 30px rgba(120, 150, 230, 0.4),
+        0 0 50px rgba(80, 220, 200, 0.3) !important;
 }
 
-.spread-card.selected .art-symbol {
-    color: rgba(200, 230, 255, 0.95);
+/* 1개 선택 시 hover - 민트→시안 */
+.card-spread.selected-1 .spread-card:not(.selected):hover .card-face {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) padding-box,
+        linear-gradient(135deg, rgba(80, 220, 200, 1) 0%, rgba(60, 200, 255, 1) 100%) border-box;
+    box-shadow:
+        0 0 15px rgba(80, 220, 200, 0.5),
+        0 0 30px rgba(70, 210, 230, 0.4),
+        0 0 50px rgba(60, 200, 255, 0.3) !important;
+}
+
+/* 2개 선택 시 hover - 시안→파랑 */
+.card-spread.selected-2 .spread-card:not(.selected):hover .card-face {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) padding-box,
+        linear-gradient(135deg, rgba(60, 200, 255, 1) 0%, rgba(100, 140, 255, 1) 100%) border-box;
+    box-shadow:
+        0 0 15px rgba(60, 200, 255, 0.5),
+        0 0 30px rgba(80, 170, 255, 0.4),
+        0 0 50px rgba(100, 140, 255, 0.3) !important;
+}
+
+/* hover 시 심볼 glow도 그라디언트에 맞춤 */
+.card-spread.selected-0 .spread-card:not(.selected):hover .art-symbol {
+    text-shadow: 0 0 15px rgba(160, 80, 255, 0.7), 0 0 25px rgba(80, 220, 200, 0.5) !important;
+}
+.card-spread.selected-1 .spread-card:not(.selected):hover .art-symbol {
+    text-shadow: 0 0 15px rgba(80, 220, 200, 0.7), 0 0 25px rgba(60, 200, 255, 0.5) !important;
+}
+.card-spread.selected-2 .spread-card:not(.selected):hover .art-symbol {
+    text-shadow: 0 0 15px rgba(60, 200, 255, 0.7), 0 0 25px rgba(100, 140, 255, 0.5) !important;
+}
+
+/* 선택된 카드 - 기본 brightness */
+.spread-card.selected {
+    /* z-index는 인라인 스타일로 관리 (200 + selectedIndex) */
+    filter: brightness(1.2);
+}
+
+/* 1번째 선택 카드 (order-0) - 보라→민트 */
+.spread-card.selected.selected-order-0 .card-face {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) padding-box,
+        linear-gradient(135deg, rgba(160, 80, 255, 1) 0%, rgba(80, 220, 200, 1) 100%) border-box;
+    box-shadow:
+        0 0 12px rgba(160, 80, 255, 0.5),
+        0 0 25px rgba(120, 150, 230, 0.4),
+        0 0 40px rgba(80, 220, 200, 0.3);
+}
+
+.spread-card.selected.selected-order-0 .art-symbol {
+    color: rgba(200, 180, 255, 0.95);
     text-shadow:
-        0 0 10px rgba(150, 200, 255, 0.8),
-        0 0 20px rgba(120, 180, 255, 0.6),
-        0 0 30px rgba(100, 160, 255, 0.4);
-    /* 애니메이션 제거 */
+        0 0 10px rgba(160, 80, 255, 0.7),
+        0 0 20px rgba(120, 150, 230, 0.5),
+        0 0 30px rgba(80, 220, 200, 0.3);
+}
+
+/* 2번째 선택 카드 (order-1) - 민트→시안 */
+.spread-card.selected.selected-order-1 .card-face {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) padding-box,
+        linear-gradient(135deg, rgba(80, 220, 200, 1) 0%, rgba(60, 200, 255, 1) 100%) border-box;
+    box-shadow:
+        0 0 12px rgba(80, 220, 200, 0.5),
+        0 0 25px rgba(70, 210, 230, 0.4),
+        0 0 40px rgba(60, 200, 255, 0.3);
+}
+
+.spread-card.selected.selected-order-1 .art-symbol {
+    color: rgba(180, 240, 230, 0.95);
+    text-shadow:
+        0 0 10px rgba(80, 220, 200, 0.7),
+        0 0 20px rgba(70, 210, 230, 0.5),
+        0 0 30px rgba(60, 200, 255, 0.3);
+}
+
+/* 3번째 선택 카드 (order-2) - 시안→파랑 */
+.spread-card.selected.selected-order-2 .card-face {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) padding-box,
+        linear-gradient(135deg, rgba(60, 200, 255, 1) 0%, rgba(100, 140, 255, 1) 100%) border-box;
+    box-shadow:
+        0 0 12px rgba(60, 200, 255, 0.5),
+        0 0 25px rgba(80, 170, 255, 0.4),
+        0 0 40px rgba(100, 140, 255, 0.3);
+}
+
+.spread-card.selected.selected-order-2 .art-symbol {
+    color: rgba(180, 220, 255, 0.95);
+    text-shadow:
+        0 0 10px rgba(60, 200, 255, 0.7),
+        0 0 20px rgba(80, 170, 255, 0.5),
+        0 0 30px rgba(100, 140, 255, 0.3);
 }
 
 /* 선택된 카드 테두리 반짝임 제거 */
@@ -9271,7 +9426,27 @@
 
 /* selectedGlow 애니메이션 제거 - 너무 과함 */
 
-/* 선택 번호 - Glacial 테마 */
+/* 선택 해제된 카드 - 명시적 리셋 (브라우저 캐시 버그 방지) */
+.spread-card:not(.selected) {
+    filter: none !important;
+}
+
+.spread-card:not(.selected) .card-face {
+    border-color: rgba(140, 160, 200, 0.3) !important;
+    background:
+        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(100, 80, 140, 0.2) 0%, transparent 60%),
+        linear-gradient(170deg, #2a2850 0%, #1e1c40 25%, #161430 50%, #100e25 75%, #0a081a 100%) !important;
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(120, 150, 200, 0.15) !important;
+}
+
+.spread-card:not(.selected) .art-symbol {
+    color: rgba(180, 200, 255, 0.7) !important;
+    text-shadow: 0 0 10px rgba(150, 180, 255, 0.4) !important;
+}
+
+/* 선택 번호 - Blue-Purple 테마 */
 .spread-card .selection-number {
     position: absolute;
     top: 50%;
@@ -9280,33 +9455,88 @@
     width: 32px;
     height: 32px;
     background:
-        radial-gradient(circle at 30% 30%, rgba(200, 230, 255, 0.9) 0%, transparent 50%),
-        linear-gradient(135deg, #5090e0 0%, #4080d0 50%, #3070c0 100%);
+        radial-gradient(circle at 30% 30%, rgba(200, 180, 255, 0.9) 0%, transparent 50%),
+        linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #8b5cf6 100%);
     border-radius: 50%;
-    border: 2px solid rgba(180, 220, 255, 0.6);
+    border: 2px solid rgba(167, 139, 250, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.95rem;
     font-weight: 800;
     color: #fff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     box-shadow:
-        0 0 15px rgba(100, 160, 255, 0.6),
-        0 0 30px rgba(80, 140, 255, 0.3),
-        inset 0 0 10px rgba(200, 230, 255, 0.2);
+        0 0 15px rgba(139, 92, 246, 0.7),
+        0 0 30px rgba(99, 102, 241, 0.4),
+        inset 0 0 10px rgba(200, 180, 255, 0.3);
     animation: numberPop 0.2s ease-out, numberGlow 2s ease-in-out infinite;
     z-index: 10;
 }
 
 @keyframes numberGlow {
-    0%, 100% { box-shadow: 0 0 15px rgba(100, 160, 255, 0.6), 0 0 30px rgba(80, 140, 255, 0.3), inset 0 0 10px rgba(200, 230, 255, 0.2); }
-    50% { box-shadow: 0 0 20px rgba(120, 180, 255, 0.7), 0 0 40px rgba(100, 160, 255, 0.4), inset 0 0 15px rgba(220, 240, 255, 0.3); }
+    0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.7), 0 0 30px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(200, 180, 255, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.8), 0 0 40px rgba(139, 92, 246, 0.5), inset 0 0 15px rgba(220, 200, 255, 0.4); }
 }
 
 @keyframes numberPop {
     0% { transform: translate(-50%, -50%) scale(0); }
     100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 선택 순서별 번호 색상 - purple-blue / mint-cyan / cyan-blue */
+/* 1번째 선택: purple→blue 투톤 */
+.spread-card.selected-order-0 .selection-number {
+    background:
+        radial-gradient(circle at 30% 30%, rgba(200, 150, 255, 0.7) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(140, 60, 255, 1) 0%, rgba(100, 100, 255, 1) 100%);
+    border: 2px solid rgba(130, 90, 255, 0.5);
+    box-shadow:
+        0 0 8px rgba(140, 80, 255, 0.4),
+        0 0 15px rgba(100, 100, 255, 0.2),
+        inset 0 0 6px rgba(180, 160, 255, 0.2);
+    animation: numberPop 0.2s ease-out, numberGlow1 2.5s ease-in-out infinite;
+}
+
+/* 2번째 선택: mint→cyan */
+.spread-card.selected-order-1 .selection-number {
+    background:
+        radial-gradient(circle at 30% 30%, rgba(150, 255, 230, 0.7) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(80, 220, 200, 1) 0%, rgba(60, 200, 255, 1) 100%);
+    border: 2px solid rgba(80, 220, 200, 0.5);
+    box-shadow:
+        0 0 8px rgba(80, 220, 200, 0.4),
+        0 0 15px rgba(60, 200, 255, 0.2),
+        inset 0 0 6px rgba(150, 255, 230, 0.2);
+    animation: numberPop 0.2s ease-out, numberGlow2 2.5s ease-in-out infinite;
+}
+
+/* 3번째 선택: cyan→blue (blue 강조) */
+.spread-card.selected-order-2 .selection-number {
+    background:
+        radial-gradient(circle at 30% 30%, rgba(140, 180, 255, 0.7) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(80, 180, 255, 1) 0%, rgba(100, 140, 255, 1) 40%, rgba(90, 120, 255, 1) 100%);
+    border: 2px solid rgba(100, 140, 255, 0.5);
+    box-shadow:
+        0 0 8px rgba(100, 140, 255, 0.4),
+        0 0 15px rgba(90, 120, 255, 0.2),
+        inset 0 0 6px rgba(140, 180, 255, 0.2);
+    animation: numberPop 0.2s ease-out, numberGlow3 2.5s ease-in-out infinite;
+}
+
+@keyframes numberGlow1 {
+    0%, 100% { box-shadow: 0 0 8px rgba(140, 80, 255, 0.4), 0 0 15px rgba(100, 100, 255, 0.2), inset 0 0 6px rgba(180, 160, 255, 0.2); }
+    50% { box-shadow: 0 0 12px rgba(140, 80, 255, 0.5), 0 0 20px rgba(100, 100, 255, 0.3), inset 0 0 8px rgba(200, 180, 255, 0.25); }
+}
+
+@keyframes numberGlow2 {
+    0%, 100% { box-shadow: 0 0 8px rgba(80, 220, 200, 0.4), 0 0 15px rgba(60, 200, 255, 0.2), inset 0 0 6px rgba(150, 255, 230, 0.2); }
+    50% { box-shadow: 0 0 12px rgba(80, 220, 200, 0.5), 0 0 20px rgba(60, 200, 255, 0.3), inset 0 0 8px rgba(180, 255, 240, 0.25); }
+}
+
+@keyframes numberGlow3 {
+    0%, 100% { box-shadow: 0 0 8px rgba(100, 140, 255, 0.4), 0 0 15px rgba(90, 120, 255, 0.2), inset 0 0 6px rgba(140, 180, 255, 0.2); }
+    50% { box-shadow: 0 0 12px rgba(100, 140, 255, 0.5), 0 0 20px rgba(90, 120, 255, 0.3), inset 0 0 8px rgba(160, 200, 255, 0.25); }
 }
 
 /* 비활성 카드 */
@@ -9356,64 +9586,94 @@
     cursor: pointer;
 }
 
-.selected-slot.filled:hover .slot-card {
-    transform: scale(1.05);
-}
+/* slot-card hover 제거 - 선택된 슬롯에는 hover 불필요 */
 
-/* 선택 슬롯 - 스프레드 카드와 동일 크기 (116x174) - Blue-Purple Theme */
+/* 선택 슬롯 - 무지개 conic-gradient Theme */
 .slot-card {
     width: 116px;
     height: 174px;
     border-radius: 10px;
     background:
-        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(99, 102, 241, 0.2) 0%, transparent 60%),
-        linear-gradient(170deg, #2a2855 0%, #1e1e45 25%, #151535 50%, #0f0f28 75%, #080815 100%);
-    border: none;
+        linear-gradient(170deg, #1a1535 0%, #15122a 25%, #100e22 50%, #0c0a1a 75%, #080612 100%) padding-box,
+        conic-gradient(
+            from 180deg at 50% 50%,
+            rgba(120, 80, 180, 0.9) 0deg,
+            rgba(80, 220, 200, 1) 72deg,
+            rgba(60, 200, 255, 1) 144deg,
+            rgba(100, 140, 255, 1) 216deg,
+            rgba(160, 80, 255, 1) 288deg,
+            rgba(120, 80, 180, 0.9) 360deg
+        ) border-box;
+    border: 2px solid transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Blue-purple glow 강화 */
+    /* 보라-초록-시안-파랑 glow - subtle */
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.5),
-        0 0 20px rgba(99, 102, 241, 0.3),
-        0 0 40px rgba(139, 92, 246, 0.2),
-        0 0 60px rgba(168, 85, 247, 0.1);
-    transition: all 0.15s ease-out;
+        0 6px 20px rgba(0, 0, 0, 0.4),
+        0 0 10px rgba(100, 200, 150, 0.2),
+        0 0 20px rgba(60, 200, 255, 0.15),
+        0 0 30px rgba(100, 140, 255, 0.15),
+        0 0 40px rgba(160, 80, 255, 0.1);
     position: relative;
-    animation: slotCardIn 0.25s ease-out;
+    animation: slotCardIn 0.25s ease-out, rainbowRotate 4s linear infinite;
 }
 
-/* gradient border - Blue-Purple Theme */
-.slot-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    padding: 2px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6) 0%, rgba(99, 102, 241, 0.4) 35%, rgba(139, 92, 246, 0.5) 70%, rgba(168, 85, 247, 0.6) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+@keyframes rainbowRotate {
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(360deg); }
 }
 
-/* 각 슬롯별 다른 gradient border 색상 - Blue-Purple Theme 유지 */
-.selected-slot:nth-child(1) .slot-card::before {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.7) 0%, rgba(99, 102, 241, 0.4) 50%, rgba(139, 92, 246, 0.6) 100%);
-}
-
-.selected-slot:nth-child(2) .slot-card::before {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.7) 0%, rgba(139, 92, 246, 0.4) 50%, rgba(168, 85, 247, 0.6) 100%);
-}
-
-.selected-slot:nth-child(3) .slot-card::before {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.7) 0%, rgba(168, 85, 247, 0.4) 50%, rgba(192, 132, 252, 0.6) 100%);
-}
+/* slot-card::before 제거 - conic-gradient로 통합 */
 
 @keyframes slotCardIn {
     0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
     100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* 3장 모두 선택 시 - 미세한 sparkle 효과 */
+.slot-card.all-ready::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(160, 80, 255, 0.6) 0%, transparent 3%),
+        radial-gradient(circle at 80% 30%, rgba(80, 220, 200, 0.6) 0%, transparent 3%),
+        radial-gradient(circle at 40% 70%, rgba(60, 200, 255, 0.6) 0%, transparent 3%),
+        radial-gradient(circle at 70% 80%, rgba(100, 140, 255, 0.6) 0%, transparent 3%);
+    pointer-events: none;
+    animation: sparkleShimmer 2s ease-in-out infinite;
+}
+
+/* 각 카드별 다른 위치의 sparkle */
+.selected-slot:nth-child(1) .slot-card.all-ready::after {
+    background:
+        radial-gradient(circle at 15% 25%, rgba(160, 80, 255, 0.7) 0%, transparent 4%),
+        radial-gradient(circle at 75% 20%, rgba(100, 200, 180, 0.6) 0%, transparent 3%),
+        radial-gradient(circle at 30% 75%, rgba(80, 180, 255, 0.6) 0%, transparent 3%);
+    animation-delay: 0s;
+}
+
+.selected-slot:nth-child(2) .slot-card.all-ready::after {
+    background:
+        radial-gradient(circle at 85% 15%, rgba(80, 220, 200, 0.7) 0%, transparent 4%),
+        radial-gradient(circle at 25% 35%, rgba(60, 200, 255, 0.6) 0%, transparent 3%),
+        radial-gradient(circle at 70% 70%, rgba(160, 80, 255, 0.6) 0%, transparent 3%);
+    animation-delay: 0.3s;
+}
+
+.selected-slot:nth-child(3) .slot-card.all-ready::after {
+    background:
+        radial-gradient(circle at 20% 80%, rgba(60, 200, 255, 0.7) 0%, transparent 4%),
+        radial-gradient(circle at 80% 25%, rgba(160, 80, 255, 0.6) 0%, transparent 3%),
+        radial-gradient(circle at 50% 50%, rgba(80, 220, 200, 0.6) 0%, transparent 3%);
+    animation-delay: 0.6s;
+}
+
+@keyframes sparkleShimmer {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
 }
 
 .slot-card-art {
@@ -9429,13 +9689,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Blue-Purple glow 강화 */
-    color: #c4b5fd;
+    /* 무지개 glow와 어울리는 밝은 색상 */
+    color: rgba(255, 230, 200, 0.95);
     text-shadow:
-        0 0 15px rgba(139, 92, 246, 0.9),
-        0 0 30px rgba(99, 102, 241, 0.6),
-        0 0 50px rgba(168, 85, 247, 0.4);
-    filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.7));
+        0 0 10px rgba(255, 200, 100, 0.8),
+        0 0 20px rgba(255, 100, 150, 0.6),
+        0 0 30px rgba(150, 100, 255, 0.4);
+    filter: drop-shadow(0 0 12px rgba(255, 180, 120, 0.7));
 }
 
 /* 빈 슬롯 - Blue-Purple Theme */
@@ -9465,7 +9725,7 @@
     display: none;
 }
 
-/* 하단 푸터 */
+/* 하단 푸터 - 텍스트를 슬롯과 버튼 중간에 배치 */
 .table-footer {
     position: absolute;
     bottom: 60px;
@@ -9474,7 +9734,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.2rem;
+    gap: 2.5rem;
     z-index: 100;
     opacity: 0;
     transition: opacity 0.6s ease;
@@ -9486,10 +9746,10 @@
     pointer-events: auto;
 }
 
-/* 안내 텍스트 - foreshadow 스타일 (연보라) */
+/* 안내 텍스트 - foreshadow 스타일 (연보라) - intro text와 동일 크기 */
 .guide-text.foreshadow-style {
     font-family: 'RIDIBatang', serif;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: rgba(220, 200, 255, 0.9);
     text-align: center;
     margin: 0;
@@ -9569,6 +9829,96 @@
     box-shadow: 0 2px 12px rgba(120, 100, 180, 0.25);
 }
 
+/* 무지개 효과 - 준비 완료 텍스트 */
+.guide-text.rainbow-ready {
+    background: linear-gradient(
+        90deg,
+        rgba(160, 80, 255, 1) 0%,
+        rgba(80, 220, 200, 1) 25%,
+        rgba(60, 200, 255, 1) 50%,
+        rgba(100, 140, 255, 1) 75%,
+        rgba(160, 80, 255, 1) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowTextFlow 3s linear infinite, foreshadowPulse 2.5s ease-in-out infinite;
+    text-shadow: none;
+    filter: drop-shadow(0 0 15px rgba(120, 180, 255, 0.5));
+    /* background-clip: text 시 얇아 보이는 현상 보정 */
+    font-weight: 500;
+    -webkit-text-stroke: 0.3px rgba(160, 120, 255, 0.3);
+}
+
+@keyframes rainbowTextFlow {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* 무지개 효과 - 리딩 시작 버튼 */
+.read-btn.rainbow-btn {
+    position: relative;
+    background: linear-gradient(170deg, #1a1535 0%, #15122a 50%, #100e22 100%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    overflow: visible;
+}
+
+.read-btn.rainbow-btn::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 32px;
+    background: conic-gradient(
+        from 180deg at 50% 50%,
+        rgba(120, 80, 180, 0.9) 0deg,
+        rgba(80, 220, 200, 1) 72deg,
+        rgba(60, 200, 255, 1) 144deg,
+        rgba(100, 140, 255, 1) 216deg,
+        rgba(160, 80, 255, 1) 288deg,
+        rgba(120, 80, 180, 0.9) 360deg
+    );
+    z-index: -1;
+    animation: rainbowRotate 4s linear infinite;
+}
+
+.read-btn.rainbow-btn {
+    color: rgba(220, 210, 240, 1);
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(100, 200, 180, 0.3),
+        0 0 35px rgba(60, 200, 255, 0.25),
+        0 0 50px rgba(160, 80, 255, 0.2);
+}
+
+.read-btn.rainbow-btn:hover {
+    box-shadow:
+        0 6px 25px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(100, 200, 180, 0.4),
+        0 0 50px rgba(60, 200, 255, 0.35),
+        0 0 70px rgba(160, 80, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* hover 시 hue-rotate 멈추고 pulse glow만 */
+.read-btn.rainbow-btn:hover::before {
+    animation: rainbowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes rainbowPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+.read-btn.rainbow-btn:active {
+    transform: translateY(0);
+    box-shadow:
+        0 2px 15px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(100, 200, 180, 0.3),
+        0 0 25px rgba(60, 200, 255, 0.2);
+}
+
 /* 반응형 - 모바일 */
 @media (max-width: 768px) {
     .tarot-table {
@@ -9646,6 +9996,7 @@
     /* 하단 푸터 - 5% from bottom */
     .table-footer {
         bottom: 5% !important;
+        gap: 2rem !important;
     }
 
     /* 가이드 텍스트 - 인트로와 동일 크기 */
@@ -9721,7 +10072,7 @@
     /* 하단 푸터 - 카드 placeholder 바로 아래로 */
     .table-footer {
         bottom: 90px !important;
-        gap: 0.4rem;
+        gap: 1.5rem !important;
     }
 
     /* 가이드 텍스트 - 인트로와 동일 크기 */
@@ -9803,7 +10154,7 @@
     /* 하단 푸터 - 더 위로 */
     .table-footer {
         bottom: 25px !important;
-        gap: 0.3rem;
+        gap: 1rem !important;
     }
 
     /* 가이드 텍스트 - 인트로와 동일 크기 */
@@ -9825,24 +10176,22 @@
 }
 
 /* 노트북/작은 데스크탑 화면 대응 (1024px-1400px) */
+/* transform: scale() 제거 - 클릭 영역과 시각적 위치 불일치 버그 원인 */
+/* 대신 JS에서 ellipseWidth와 cardSize를 화면 크기에 맞게 조절 */
 @media (min-width: 769px) and (max-width: 1400px) {
     .card-spread {
-        transform: scale(0.85);
-        transform-origin: center center;
         height: 400px;
     }
 }
 
 @media (min-width: 769px) and (max-width: 1200px) {
     .card-spread {
-        transform: scale(0.75);
         height: 380px;
     }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
     .card-spread {
-        transform: scale(0.65);
         height: 350px;
     }
 }
@@ -10877,11 +11226,11 @@
     .table-footer {
         bottom: 2%;
         padding-bottom: 1rem;
+        gap: 2rem;
     }
 
     .table-footer .guide-text {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
     }
 
     .table-footer .read-btn {
@@ -10926,11 +11275,11 @@
     .table-footer {
         bottom: 4%;
         padding-bottom: 0.5rem;
+        gap: 1.5rem;
     }
 
     .table-footer .guide-text {
-        font-size: 0.8rem;
-        margin-bottom: 0.3rem;
+        font-size: 0.95rem;
     }
 
     .table-footer .read-btn {

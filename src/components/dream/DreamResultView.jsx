@@ -2,12 +2,26 @@ import { useState, useEffect, useRef } from 'react';
 import { useComments } from '../../hooks/useComments';
 import Reactions from '../common/Reactions';
 
-// 폴백용 인사이트
+// 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
-    "오늘의 사주에서 특별한 기운이 감지됐어요",
-    "이 사주풀이를 다시 저녁에 보면 새로운 의미가 보일 거예요",
-    "오늘 당신에게 좋은 기운이 숨어있어요"
+    "이 꿈은 당신의 무의식이 보낸 특별한 메시지예요",
+    "꿈속 상징들이 말하고 싶은 이야기가 있어요",
+    "이 꿈은 며칠 후에 다시 떠올려보면 새로운 의미가 보일 거예요"
 ];
+
+// 주제별 이모지 매핑
+const TOPIC_EMOJIS = {
+    '사랑': '💕',
+    '관계': '🙌',
+    '돈': '💰',
+    '성장': '🌱',
+    '건강': '💪',
+    '선택': '⚖️',
+    '일반': '💬',
+    '불안': '😰',
+    '희망': '🌟',
+    '경고': '⚠️'
+};
 
 // **bold** 마크다운을 하이라이트 span으로 변환
 const parseBoldText = (text) => {
@@ -42,8 +56,8 @@ const formatTimeAgo = (date) => {
     return date.toLocaleDateString('ko-KR');
 };
 
-const FortuneResultView = ({
-    fortuneResult,
+const DreamResultView = ({
+    dreamResult,
     onBack,
     onRestart,
     onKeywordClick,
@@ -51,14 +65,12 @@ const FortuneResultView = ({
     showToast,
     user,
     userNickname,
-    onLoginRequired,
-    isPremium = false,
-    onOpenPremium
+    onLoginRequired
 }) => {
     // 작성자인지 확인
-    const isAuthor = user?.uid && fortuneResult.userId && user.uid === fortuneResult.userId;
+    const isAuthor = user?.uid && dreamResult.userId && user.uid === dreamResult.userId;
 
-    // VN 인트로 단계
+    // VN 인트로 단계 (작성자만)
     const [introPhase, setIntroPhase] = useState(isAuthor ? 0 : 5);
     const [hookTyped, setHookTyped] = useState('');
     const [foreshadowTyped, setForeshadowTyped] = useState('');
@@ -68,7 +80,7 @@ const FortuneResultView = ({
     const [revealedSections, setRevealedSections] = useState([]);
     const [insightUnsealed, setInsightUnsealed] = useState(false);
 
-    // 섹션 참조
+    // 섹션 참조 (자동 스크롤용)
     const sectionRefs = useRef([]);
     const sectionBarRef = useRef(null);
 
@@ -90,7 +102,7 @@ const FortuneResultView = ({
         addReply,
         loadReplies,
         deleteReply
-    } = useComments('sajus', user, fortuneResult, userNickname);
+    } = useComments('dreams', user, dreamResult, userNickname);
 
     // 댓글 상태
     const [showAllComments, setShowAllComments] = useState(false);
@@ -98,67 +110,36 @@ const FortuneResultView = ({
     const [replyingTo, setReplyingTo] = useState(null);
     const [replyText, setReplyText] = useState('');
     const [repliesMap, setRepliesMap] = useState({});
+    const [expandedReplies, setExpandedReplies] = useState([]);
 
     const displayedComments = showAllComments ? comments : comments.slice(0, 3);
     const hasMoreComments = comments.length > 3;
 
     // Jenny 필드
-    const jenny = fortuneResult.jenny || {};
-    const rarity = fortuneResult.rarity || {};
-    const sajuInfo = fortuneResult.sajuInfo || {};
+    const jenny = dreamResult.jenny || {};
 
-    // 숨겨진 인사이트
-    const hiddenInsight = jenny.hiddenInsight || FALLBACK_INSIGHTS[Math.floor(fortuneResult.overallScore || 0) % FALLBACK_INSIGHTS.length];
-
-    // 희귀도
-    const rarityText = rarity.description || '';
+    // 히든 인사이트
+    const hiddenInsight = jenny.hiddenInsight || FALLBACK_INSIGHTS[Math.floor(dreamResult.title?.length || 0) % FALLBACK_INSIGHTS.length];
 
     // Hook/Foreshadow 텍스트
-    const hookText = jenny.hook || '오늘의 운세가 도착했어요... 사주팔자가 전하는 메시지를 함께 확인해볼까요?';
-    const foreshadowText = jenny.foreshadow || '별자리와 사주가 오늘 하루를 안내해줄 거예요.';
+    const hookText = jenny.hook || '어젯밤 꿈이 무언가를 말하고 있어요... 무의식이 보낸 메시지를 함께 해석해볼까요?';
+    const foreshadowText = jenny.foreshadow || '꿈속 상징들이 숨겨진 의미를 품고 있어요.';
 
     // 히어로 이미지
-    const heroImage = fortuneResult.heroImage || fortuneResult.morningImage || fortuneResult.image;
+    const heroImage = dreamResult.heroImage || dreamResult.image;
 
-    // 섹션 데이터
-    const sectionsData = fortuneResult.sections || {};
+    // 섹션 구성 (꿈은 카드 대신 섹션)
     const sections = [
-        {
-            id: 'section1',
-            icon: sectionsData.section1?.icon || '✨',
-            label: sectionsData.section1?.category || '첫 번째 운',
-            title: sectionsData.section1?.title || '',
-            content: sectionsData.section1?.analysis,
-            transition: jenny.section1Transition,
-            image: fortuneResult.section1Image
-        },
-        {
-            id: 'section2',
-            icon: sectionsData.section2?.icon || '💫',
-            label: sectionsData.section2?.category || '두 번째 운',
-            title: sectionsData.section2?.title || '',
-            content: sectionsData.section2?.analysis,
-            transition: jenny.section2Transition,
-            image: fortuneResult.section2Image
-        },
-        {
-            id: 'section3',
-            icon: sectionsData.section3?.icon || '🌟',
-            label: sectionsData.section3?.category || '세 번째 운',
-            title: sectionsData.section3?.title || '',
-            content: sectionsData.section3?.analysis,
-            transition: null,
-            image: fortuneResult.section3Image
-        }
+        { id: 'dream', label: '꿈 이야기', icon: '🌙' },
+        { id: 'symbols', label: '상징 해석', icon: '🔮' },
+        { id: 'meaning', label: '꿈의 의미', icon: '✨' }
     ];
-
-    const allSectionsRevealed = revealedSections.length >= sections.length;
 
     // 링크 공유
     const handleLinkShare = async () => {
         onUpdateVisibility?.('unlisted');
-        if (fortuneResult.id) {
-            const shareUrl = `${window.location.origin}/fortune/${fortuneResult.id}`;
+        if (dreamResult.id) {
+            const shareUrl = `${window.location.origin}/dream/${dreamResult.id}`;
             try {
                 await navigator.clipboard.writeText(shareUrl);
                 showToast?.('live', { message: '🔗 링크가 복사되었어요!', type: 'success' });
@@ -173,6 +154,9 @@ const FortuneResultView = ({
             }
         }
     };
+
+    // 모든 섹션 revealed 여부
+    const allSectionsRevealed = revealedSections.length >= sections.length;
 
     // VN 인트로 시퀀스
     useEffect(() => {
@@ -272,8 +256,21 @@ const FortuneResultView = ({
         setIntroPhase(5);
     };
 
+    // 꿈 reading 텍스트 추출
+    const getDreamReading = () => {
+        if (typeof dreamResult.reading === 'string') return dreamResult.reading;
+        if (dreamResult.reading && typeof dreamResult.reading === 'object') {
+            const parts = [];
+            if (dreamResult.reading.situation) parts.push(dreamResult.reading.situation);
+            if (dreamResult.reading.unconscious) parts.push(dreamResult.reading.unconscious);
+            if (dreamResult.reading.action) parts.push(dreamResult.reading.action);
+            return parts.join('\n\n');
+        }
+        return '';
+    };
+
     return (
-        <div className={`tarot-result-page fortune-result-page ${pageRevealed ? 'revealed' : ''}`}>
+        <div className={`tarot-result-page dream-result-page ${pageRevealed ? 'revealed' : ''}`}>
             {/* 별 효과 배경 */}
             <div className="stars-layer" aria-hidden="true"></div>
 
@@ -330,44 +327,39 @@ const FortuneResultView = ({
             )}
 
             {/* 메인 콘텐츠 */}
-            <div className="tarot-result-content fortune-result-content">
+            <div className="tarot-result-content dream-result-content">
                 <div className="modal-pattern-bg"></div>
                 <button className="modal-close-btn" onClick={onBack}>✕</button>
 
                 {/* 히어로 섹션 */}
-                <div className="reading-hero fortune-hero">
+                <div className="reading-hero">
                     {heroImage && (
                         <img src={heroImage} alt="" className="reading-hero-img" />
                     )}
                     <div className="reading-hero-overlay">
-                        <span className="reading-type-badge fortune-badge">☀️ 오늘의 사주</span>
-
-                        {rarityText && (
-                            <div className="rarity-hook">
-                                <span>✨</span> {rarityText}
-                            </div>
-                        )}
-
-                        <h1 className="reading-title">{fortuneResult.title}</h1>
-                        <p className="reading-verdict">"{fortuneResult.verdict}"</p>
-
-                        {/* 사주 점수 */}
-                        <div className="fortune-score-display">
-                            <div className="score-circle">
-                                <span className="score-number">{fortuneResult.overallScore}</span>
-                                <span className="score-unit">점</span>
-                            </div>
-                        </div>
-
-                        {/* 키워드 */}
+                        <span className="reading-type-badge">🌙 꿈 해몽</span>
+                        <h1 className="reading-title">{dreamResult.title}</h1>
+                        <p className="reading-verdict">"{dreamResult.verdict}"</p>
                         <div className="hero-tags-row">
-                            {fortuneResult.keywords?.slice(0, 3).map((kw, i) => (
+                            {(() => {
+                                const topic = (dreamResult.topics || [dreamResult.topic])[0];
+                                if (!topic) return null;
+                                return (
+                                    <span
+                                        className="hero-topic-tag"
+                                        onClick={() => onKeywordClick?.(topic)}
+                                    >
+                                        {TOPIC_EMOJIS[topic] || '💬'} {topic}
+                                    </span>
+                                );
+                            })()}
+                            {dreamResult.keywords?.length > 0 && dreamResult.keywords.slice(0, 3).map((kw, i) => (
                                 <span
                                     key={i}
                                     className="hero-keyword-tag"
-                                    onClick={() => onKeywordClick?.(kw.word || kw)}
+                                    onClick={() => onKeywordClick?.(kw.word)}
                                 >
-                                    #{kw.word || kw}
+                                    #{kw.word}
                                 </span>
                             ))}
                         </div>
@@ -375,13 +367,13 @@ const FortuneResultView = ({
                 </div>
                 <div className="hero-divider"></div>
 
-                {/* Hook/Foreshadow 요약 */}
+                {/* 꿈 내용 인용 */}
                 {introPhase >= 5 && (
                     <div className="question-answer-flow">
-                        {fortuneResult.affirmation && (
-                            <div className="reading-quote fortune-quote">
-                                <span className="quote-icon">💫</span>
-                                <p>"{fortuneResult.affirmation}"</p>
+                        {dreamResult.description && (
+                            <div className="reading-quote dream-quote">
+                                <span className="quote-icon">🌙</span>
+                                <p>"{dreamResult.description.slice(0, 200)}{dreamResult.description.length > 200 ? '...' : ''}"</p>
                             </div>
                         )}
                         <div className="qa-divider">
@@ -394,19 +386,19 @@ const FortuneResultView = ({
                     </div>
                 )}
 
-                {/* 섹션 바 (Persona 스타일) */}
+                {/* 섹션 바 (카드 바 대신) */}
                 <div
                     ref={sectionBarRef}
-                    className={`persona-card-bar fortune-section-bar ${introPhase >= 5 ? 'visible' : ''} ${allSectionsRevealed ? 'all-revealed' : ''}`}
+                    className={`persona-card-bar dream-section-bar ${introPhase >= 5 ? 'visible' : ''} ${allSectionsRevealed ? 'all-revealed' : ''}`}
                 >
                     <div className="persona-bg-pattern"></div>
                     <div className="persona-bar-header">
                         <span className={`persona-bar-label ${allSectionsRevealed ? 'revealed' : 'selecting'}`}>
-                            {allSectionsRevealed ? 'ALL FORTUNES REVEALED' : 'DISCOVER YOUR DESTINY'}
+                            {allSectionsRevealed ? 'ALL SECTIONS REVEALED' : 'EXPLORE YOUR DREAM'}
                         </span>
                     </div>
 
-                    <div className="persona-cards-row fortune-sections-row">
+                    <div className="persona-cards-row dream-sections-row">
                         {sections.map((section, i) => {
                             const isRevealed = revealedSections.includes(i);
                             const canReveal = i === 0 || revealedSections.includes(i - 1);
@@ -414,13 +406,13 @@ const FortuneResultView = ({
                             return (
                                 <div
                                     key={section.id}
-                                    className={`persona-card fortune-section-card ${isRevealed ? 'revealed' : ''} ${canReveal && !isRevealed ? 'ready' : ''}`}
+                                    className={`persona-card dream-section-card ${isRevealed ? 'revealed' : ''} ${canReveal && !isRevealed ? 'ready' : ''}`}
                                     onClick={() => handleSectionReveal(i)}
                                     style={{ '--card-index': i }}
                                 >
                                     <div className="persona-card-inner">
                                         {isRevealed ? (
-                                            <div className="fortune-section-revealed">
+                                            <div className="dream-section-revealed">
                                                 <span className="section-icon-large">{section.icon}</span>
                                                 <span className="section-label">{section.label}</span>
                                             </div>
@@ -446,104 +438,116 @@ const FortuneResultView = ({
                     </div>
                 </div>
 
-                {/* 본문 */}
+                {/* 본문 - 섹션별 내용 */}
                 {revealedSections.length > 0 && (
                     <div className="reading-body">
-                        {/* 사주팔자 정보 */}
-                        {sajuInfo.yearPillar && (
-                            <div className="saju-pillars-section fade-in-up">
-                                <h3 className="saju-pillars-title">📜 사주팔자</h3>
-                                <div className="saju-pillars-grid">
-                                    <div className="saju-pillar">
-                                        <span className="pillar-label">년주</span>
-                                        <span className="pillar-value">{sajuInfo.yearPillar}</span>
-                                    </div>
-                                    <div className="saju-pillar">
-                                        <span className="pillar-label">월주</span>
-                                        <span className="pillar-value">{sajuInfo.monthPillar}</span>
-                                    </div>
-                                    <div className="saju-pillar">
-                                        <span className="pillar-label">일주</span>
-                                        <span className="pillar-value">{sajuInfo.dayPillar}</span>
-                                    </div>
-                                    {sajuInfo.hourPillar && (
-                                        <div className="saju-pillar">
-                                            <span className="pillar-label">시주</span>
-                                            <span className="pillar-value">{sajuInfo.hourPillar}</span>
-                                        </div>
+                        {/* 섹션 1: 꿈 이야기 */}
+                        {revealedSections.includes(0) && (
+                            <section
+                                ref={el => sectionRefs.current[0] = el}
+                                className="card-chapter dream-chapter chapter-0"
+                            >
+                                <div className="chapter-hero">
+                                    {heroImage && (
+                                        <img src={heroImage} alt="" className="chapter-hero-img" />
                                     )}
-                                </div>
-                                {sajuInfo.mainElement && (
-                                    <div className="saju-element-info">
-                                        <span>주요 오행: <strong>{sajuInfo.mainElement}</strong></span>
-                                        {sajuInfo.yongsin && <span> | 용신: <strong>{sajuInfo.yongsin}</strong></span>}
+                                    <div className="chapter-hero-overlay">
+                                        <span className="chapter-number">01</span>
+                                        <span className="chapter-badge">🌙 꿈 이야기</span>
+                                        <h3 className="chapter-card-name">무의식의 메시지</h3>
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                                <div className="chapter-divider chapter-divider-0"></div>
+                                <div className="chapter-content">
+                                    <h2 className="chapter-title">
+                                        <span className="title-accent">1</span>
+                                        꿈이 보여준 이야기
+                                    </h2>
+                                    <div className="chapter-text reading-text">
+                                        {getDreamReading().split('\n').map((line, j) => (
+                                            <p key={j} className="reading-paragraph">{parseBoldText(line)}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                            </section>
                         )}
 
-                        {/* 섹션별 내용 */}
-                        {sections.map((section, i) => {
-                            const isRevealed = revealedSections.includes(i);
-                            if (!isRevealed) return null;
-
-                            return (
-                                <section
-                                    key={section.id}
-                                    ref={el => sectionRefs.current[i] = el}
-                                    className={`card-chapter fortune-chapter chapter-${i}`}
-                                >
-                                    {section.image && (
-                                        <div className="chapter-hero">
-                                            <img src={section.image} alt={section.label} className="chapter-hero-img" />
-                                            <div className="chapter-hero-overlay">
-                                                <span className="chapter-number">0{i + 1}</span>
-                                                <span className="chapter-badge">{section.icon} {section.label}</span>
-                                                {section.title && (
-                                                    <h3 className="chapter-card-name">{section.title}</h3>
+                        {/* 섹션 2: 상징 해석 */}
+                        {revealedSections.includes(1) && (
+                            <section
+                                ref={el => sectionRefs.current[1] = el}
+                                className="card-chapter dream-chapter chapter-1"
+                            >
+                                <div className="chapter-divider chapter-divider-1"></div>
+                                <div className="chapter-content">
+                                    <h2 className="chapter-title">
+                                        <span className="title-accent">2</span>
+                                        꿈속 상징들의 의미
+                                    </h2>
+                                    <div className="dream-symbols-grid">
+                                        {dreamResult.keywords?.map((kw, i) => (
+                                            <div
+                                                key={i}
+                                                className="dream-symbol-card"
+                                                onClick={() => onKeywordClick?.(kw.word)}
+                                            >
+                                                <span className="symbol-word">#{kw.word}</span>
+                                                {kw.surface && (
+                                                    <p className="symbol-surface">
+                                                        <span className="symbol-label">표면적 의미</span>
+                                                        {kw.surface}
+                                                    </p>
+                                                )}
+                                                {kw.hidden && (
+                                                    <p className="symbol-hidden">
+                                                        <span className="symbol-label">숨겨진 의미</span>
+                                                        {kw.hidden}
+                                                    </p>
                                                 )}
                                             </div>
+                                        ))}
+                                    </div>
+
+                                    {/* 타로 카드 해석 (있으면) */}
+                                    {dreamResult.tarot && (
+                                        <div className="dream-tarot-section">
+                                            <h3 className="dream-tarot-title">
+                                                <span className="tarot-emoji">{dreamResult.tarot.emoji || '🎴'}</span>
+                                                {dreamResult.tarot.name || dreamResult.tarot.nameKo}
+                                            </h3>
+                                            <p className="dream-tarot-meaning">{dreamResult.tarot.meaning}</p>
                                         </div>
                                     )}
+                                </div>
+                            </section>
+                        )}
 
-                                    <div className={`chapter-divider chapter-divider-${i}`}></div>
-
-                                    <div className="chapter-content">
-                                        <h2 className="chapter-title">
-                                            <span className="title-accent">{i + 1}</span>
-                                            {section.label} {section.title && `- ${section.title}`}
-                                        </h2>
-
-                                        <div className="chapter-text reading-text">
-                                            {section.content?.split('\n').map((line, j) => (
-                                                <p key={j} className="reading-paragraph">{parseBoldText(line)}</p>
-                                            ))}
-                                        </div>
-
-                                        {section.transition && (
-                                            <div className="chapter-transition">
-                                                <span className="transition-icon">→</span>
-                                                <span>{section.transition}</span>
-                                            </div>
+                        {/* 섹션 3: 꿈의 의미 */}
+                        {revealedSections.includes(2) && (
+                            <section
+                                ref={el => sectionRefs.current[2] = el}
+                                className="card-chapter dream-chapter chapter-2"
+                            >
+                                <div className="chapter-divider chapter-divider-2"></div>
+                                <div className="chapter-content">
+                                    <h2 className="chapter-title">
+                                        <span className="title-accent">3</span>
+                                        종합적인 꿈의 의미
+                                    </h2>
+                                    <div className="chapter-text reading-text">
+                                        {dreamResult.dreamMeaning?.summary && (
+                                            <p className="reading-paragraph dream-summary">
+                                                {parseBoldText(dreamResult.dreamMeaning.summary)}
+                                            </p>
+                                        )}
+                                        {dreamResult.dreamMeaning?.detail && (
+                                            <p className="reading-paragraph dream-detail">
+                                                {parseBoldText(dreamResult.dreamMeaning.detail)}
+                                            </p>
                                         )}
                                     </div>
-                                </section>
-                            );
-                        })}
-
-                        {/* 종합 분석 */}
-                        {allSectionsRevealed && fortuneResult.synthesisAnalysis && (
-                            <div className="synthesis-section fade-in-up">
-                                <h2 className="reading-section-title">
-                                    <span className="section-icon">🔮</span>
-                                    종합 사주 분석
-                                </h2>
-                                <div className="synthesis-text reading-text">
-                                    {fortuneResult.synthesisAnalysis.split('\n').map((line, i) => (
-                                        <p key={i} className="reading-paragraph">{parseBoldText(line)}</p>
-                                    ))}
                                 </div>
-                            </div>
+                            </section>
                         )}
 
                         {/* Hidden Insight */}
@@ -558,7 +562,7 @@ const FortuneResultView = ({
                                             <span className="seal-icon">🌌</span>
                                             <div className="seal-glow"></div>
                                         </div>
-                                        <div className="seal-text">운명의 문</div>
+                                        <div className="seal-text">무의식의 문</div>
                                         <div className="seal-hint">
                                             잠깐, 뭔가 더 있어요!!!
                                         </div>
@@ -570,7 +574,7 @@ const FortuneResultView = ({
                                     <div className="unsealed-insight">
                                         <h2 className="insight-header">
                                             <span className="section-icon">🌌</span>
-                                            운명이 보낸 숨겨진 메시지
+                                            무의식이 보낸 숨겨진 메시지
                                         </h2>
                                         <div className="insight-content reading-text">
                                             <p className="insight-text reading-paragraph">{parseBoldText(hiddenInsight)}</p>
@@ -583,66 +587,28 @@ const FortuneResultView = ({
                             </div>
                         )}
 
-                        {/* DO / DON'T 카드 */}
+                        {/* 조언 카드들 */}
                         {allSectionsRevealed && (
                             <div className="advice-grid fade-in-up">
-                                {fortuneResult.doList?.length > 0 && (
-                                    <div className="advice-card do-card">
-                                        <span className="advice-icon">✅</span>
-                                        <span className="advice-label">오늘 하면 좋은 것</span>
-                                        <ul className="do-dont-list">
-                                            {fortuneResult.doList.map((item, i) => (
-                                                <li key={i}>{item}</li>
-                                            ))}
-                                        </ul>
+                                {dreamResult.dreamMeaning?.advice && (
+                                    <div className="advice-card">
+                                        <span className="advice-icon">💡</span>
+                                        <span className="advice-label">꿈이 주는 조언</span>
+                                        <p>{dreamResult.dreamMeaning.advice}</p>
                                     </div>
                                 )}
-                                {fortuneResult.dontList?.length > 0 && (
-                                    <div className="advice-card warning dont-card">
-                                        <span className="advice-icon">❌</span>
-                                        <span className="advice-label">오늘 피해야 할 것</span>
-                                        <ul className="do-dont-list">
-                                            {fortuneResult.dontList.map((item, i) => (
-                                                <li key={i}>{item}</li>
-                                            ))}
-                                        </ul>
+                                {dreamResult.dreamMeaning?.warning && (
+                                    <div className="advice-card warning">
+                                        <span className="advice-icon">⚠️</span>
+                                        <span className="advice-label">주의할 점</span>
+                                        <p>{dreamResult.dreamMeaning.warning}</p>
                                     </div>
                                 )}
                                 {/* 공유 프리뷰 */}
                                 <div className="advice-card share-preview-card">
-                                    <span className="advice-icon">☀️</span>
-                                    <span className="advice-label">{fortuneResult.title}</span>
-                                    <p className="share-preview-verdict">"{fortuneResult.verdict}"</p>
-                                    <p className="share-preview-score">{fortuneResult.overallScore}점</p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* 행운의 요소 */}
-                        {allSectionsRevealed && fortuneResult.luckyElements && (
-                            <div className="lucky-elements-section fade-in-up">
-                                <h3 className="lucky-title">🍀 행운의 요소</h3>
-                                <div className="lucky-grid">
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">🎨</span>
-                                        <span className="lucky-label">색상</span>
-                                        <span className="lucky-value">{fortuneResult.luckyElements.color}</span>
-                                    </div>
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">🔢</span>
-                                        <span className="lucky-label">숫자</span>
-                                        <span className="lucky-value">{fortuneResult.luckyElements.number}</span>
-                                    </div>
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">🧭</span>
-                                        <span className="lucky-label">방향</span>
-                                        <span className="lucky-value">{fortuneResult.luckyElements.direction}</span>
-                                    </div>
-                                    <div className="lucky-item">
-                                        <span className="lucky-icon">⏰</span>
-                                        <span className="lucky-label">시간</span>
-                                        <span className="lucky-value">{fortuneResult.luckyElements.time}</span>
-                                    </div>
+                                    <span className="advice-icon">🌙</span>
+                                    <span className="advice-label">{dreamResult.title}</span>
+                                    <p className="share-preview-verdict">"{dreamResult.verdict}"</p>
                                 </div>
                             </div>
                         )}
@@ -660,8 +626,8 @@ const FortuneResultView = ({
                 </div>
             )}
 
-            {/* Visibility 패널 */}
-            {fortuneResult.id && introPhase >= 5 && isAuthor && onUpdateVisibility && (
+            {/* 리딩 공개 설정 패널 */}
+            {dreamResult.id && introPhase >= 5 && isAuthor && onUpdateVisibility && (
                 <div className="visibility-panel">
                     <div className="visibility-panel-inner">
                         <div className="visibility-header">
@@ -669,7 +635,7 @@ const FortuneResultView = ({
                             <label className="visibility-switch">
                                 <input
                                     type="checkbox"
-                                    checked={fortuneResult.visibility === 'public'}
+                                    checked={dreamResult.visibility === 'public'}
                                     onChange={(e) => onUpdateVisibility(e.target.checked ? 'public' : 'private')}
                                 />
                                 <span className="switch-track">
@@ -678,16 +644,16 @@ const FortuneResultView = ({
                             </label>
                         </div>
                         <p className="visibility-desc">
-                            {fortuneResult.visibility === 'public'
-                                ? '사주 풀이를 공유합니다'
-                                : '사주 풀이가 공개되지 않습니다'}
+                            {dreamResult.visibility === 'public'
+                                ? '꿈 해몽을 공유합니다'
+                                : '꿈 해몽이 공개되지 않습니다'}
                         </p>
                     </div>
                 </div>
             )}
 
-            {/* 엔게이지먼트 패널 */}
-            {fortuneResult.id && introPhase >= 5 && (
+            {/* 엔게이지먼트 사이드 패널 */}
+            {dreamResult.id && introPhase >= 5 && (
                 <aside className="engagement-panel">
                     <div className="engagement-panel-inner">
                         {/* 좋아요 */}
@@ -698,7 +664,7 @@ const FortuneResultView = ({
                                     if (!user) { onLoginRequired?.(); return; }
                                     toggleLike();
                                     if (!isLiked) {
-                                        showToast?.('live', { message: '💜 사주 풀이에 공감했어요!', type: 'success' });
+                                        showToast?.('live', { message: '💜 꿈 해몽에 공감했어요!', type: 'success' });
                                     }
                                 }}
                             >
@@ -711,6 +677,7 @@ const FortuneResultView = ({
 
                         <div className="engagement-divider"></div>
 
+                        {/* 리액션 */}
                         <div className="engagement-reactions-section">
                             <Reactions
                                 reactions={reactions}
@@ -724,18 +691,20 @@ const FortuneResultView = ({
 
                         <div className="engagement-divider"></div>
 
+                        {/* 조회수 & 게시일 */}
                         <div className="engagement-stats-simple">
-                            <span className="stat-text">조회수 {fortuneResult.viewCount || 0}</span>
+                            <span className="stat-text">조회수 {dreamResult.viewCount || 0}</span>
                             <span className="stat-dot">·</span>
                             <span className="stat-text">
-                                {fortuneResult.createdAt?.toDate
-                                    ? fortuneResult.createdAt.toDate().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+                                {dreamResult.createdAt?.toDate
+                                    ? dreamResult.createdAt.toDate().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
                                     : '-'}
                             </span>
                         </div>
 
                         <div className="engagement-divider"></div>
 
+                        {/* 댓글 */}
                         <div className="comments-header">
                             <span className="comments-title">💬 댓글</span>
                             <span className="comments-count-badge">{comments.length}</span>
@@ -787,6 +756,7 @@ const FortuneResultView = ({
                             )}
                         </div>
 
+                        {/* 댓글 리스트 */}
                         <div className="comments-list-blind">
                             {comments.length === 0 ? (
                                 <p className="comments-empty-text">첫 댓글을 남겨보세요</p>
@@ -865,6 +835,39 @@ const FortuneResultView = ({
                                                         </button>
                                                     </div>
                                                 )}
+
+                                                {repliesMap[comment.id]?.length > 0 && (
+                                                    <div className="blind-replies">
+                                                        {repliesMap[comment.id].map((reply) => (
+                                                            <div key={reply.id} className="blind-reply-item">
+                                                                <div className="blind-reply-header">
+                                                                    {reply.userPhoto ? (
+                                                                        <img src={reply.userPhoto} alt="" className="blind-avatar-sm" />
+                                                                    ) : (
+                                                                        <div className="blind-avatar-sm placeholder">
+                                                                            {(reply.userName || '?').charAt(0)}
+                                                                        </div>
+                                                                    )}
+                                                                    <span className="blind-nickname-sm">{reply.userName}</span>
+                                                                </div>
+                                                                <p className="blind-reply-text">{reply.text}</p>
+                                                                <div className="blind-reply-actions">
+                                                                    <span className="blind-time-sm">
+                                                                        {reply.createdAt?.toDate ? formatTimeAgo(reply.createdAt.toDate()) : ''}
+                                                                    </span>
+                                                                    {user?.uid === reply.userId && (
+                                                                        <button
+                                                                            className="blind-del-btn-sm"
+                                                                            onClick={() => deleteReply(comment.id, reply.id, reply.userId)}
+                                                                        >
+                                                                            삭제
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -887,4 +890,4 @@ const FortuneResultView = ({
     );
 };
 
-export default FortuneResultView;
+export default DreamResultView;

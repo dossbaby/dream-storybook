@@ -109,7 +109,8 @@ export const useTarotActions = ({
 
         if (resultData) {
             setTarotField('result', resultData);
-            // 분석 완료 후 자동 이동하지 않음 - 사용자가 하단바에서 직접 클릭해서 이동
+            // 분석 완료 후 TarotResultView로 자동 이동
+            setView('tarot-result');
             // 저장은 useReading.js에서 자동으로 처리됨
         }
 

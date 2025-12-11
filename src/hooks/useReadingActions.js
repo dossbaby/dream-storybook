@@ -29,7 +29,8 @@ export const useReadingActions = ({
         const resultData = await generateDreamReading(dreamDescription, selectedDreamDate);
         if (resultData) {
             setResult(resultData);
-            // 분석 완료 후 자동 이동하지 않음 - 사용자가 하단바에서 직접 클릭해서 이동
+            // 분석 완료 후 DreamResultView로 자동 이동
+            setView('dream-result');
             if (user) {
                 setSavedDreamField('id', null);
                 setSavedDreamField('isPublic', true); // 기본값 공개로 변경 (pSEO)
@@ -48,7 +49,8 @@ export const useReadingActions = ({
         const resultData = await generateFortuneReadingHook(fortune.type, FORTUNE_TYPES);
         if (resultData) {
             setFortuneField('result', resultData);
-            // 분석 완료 후 자동 이동하지 않음 - 사용자가 하단바에서 직접 클릭해서 이동
+            // 분석 완료 후 FortuneResultView로 자동 이동
+            setView('fortune-result');
             if (user) {
                 setSavedDreamField('id', null);
                 setSavedDreamField('isPublic', true); // 기본값 공개로 변경 (pSEO)

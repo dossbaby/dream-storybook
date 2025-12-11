@@ -113,9 +113,10 @@ const TarotInput = ({
         }, 500);
 
         // 카드 스프레드 애니메이션 완료 후 클릭 가능
+        // 78장 × 30ms = 2340ms + 800ms 애니메이션 = ~3200ms
         const timerClickable = setTimeout(() => {
             setCardsClickable(true);
-        }, 1800);
+        }, 4000);
 
         // Phase 1 → 2: 1.2초 후 두 번째 텍스트 fade in
         const timer2 = setTimeout(() => {
@@ -167,7 +168,14 @@ const TarotInput = ({
     }, []);
 
     // 카드 클릭
-    const handleCardClick = (card, isDisabled) => {
+    const handleCardClick = (card, isDisabled, index) => {
+        console.log('🃏 Card clicked!', {
+            cardId: card.id,
+            index,
+            isDisabled,
+            cardsClickable,
+            selectedCount: tarotSelectedCards.length
+        });
         if (!isDisabled) {
             onToggleCard(card);
         }
@@ -215,8 +223,8 @@ const TarotInput = ({
                         리딩 취소
                     </button>
 
-                    {/* 인트로 텍스트 - 항상 표시 */}
-                    <div className="tarot-intro-text">
+                    {/* 인트로 텍스트 - 3장 선택 시 fade out */}
+                    <div className={`tarot-intro-text ${tarotSelectedCards.length === 3 ? 'all-ready' : ''}`}>
                         <p className={`intro-line intro-line-1 ${introPhase >= 1 ? 'visible' : ''}`}>
                             {INTRO_TEXTS[0]}
                         </p>
@@ -226,7 +234,7 @@ const TarotInput = ({
                     </div>
 
                     {/* 반짝이는 별 효과 - 40% 추가 */}
-                    <div className="table-stars">
+                    <div className={`table-stars ${tarotSelectedCards.length === 3 ? 'all-ready' : ''}`}>
                         <div className="star star-1"></div>
                         <div className="star star-2"></div>
                         <div className="star star-3"></div>
@@ -260,7 +268,7 @@ const TarotInput = ({
                                         onClick={() => card && onToggleCard(card)}
                                     >
                                         {card ? (
-                                            <div className="slot-card">
+                                            <div className={`slot-card ${tarotSelectedCards.length === 3 ? 'all-ready' : ''}`}>
                                                 <div className="slot-card-art">
                                                     <div className={`slot-art-symbol symbol-${idx + 1}`}>{symbols[idx]}</div>
                                                 </div>
@@ -285,8 +293,8 @@ const TarotInput = ({
                             <div className="deck-card"></div>
                         </div>
                         <div
-                            className={`card-spread ${cardsRevealed ? 'revealed' : 'hidden'}`}
-                            style={{ width: containerWidth }}
+                            className={`card-spread ${cardsRevealed ? 'revealed' : 'hidden'} selected-${tarotSelectedCards.length}`}
+                            style={{ width: '100vw', maxWidth: '100vw' }}
                         >
                             {shuffledDeck.map((card, index) => {
                                 const isSelected = tarotSelectedCards.find(c => c.id === card.id);
@@ -355,8 +363,11 @@ const TarotInput = ({
                                 return (
                                     <div
                                         key={card.id}
-                                        className={`spread-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${cardsRevealed ? 'card-revealed' : ''}`}
-                                        onClick={() => cardsClickable && handleCardClick(card, isDisabled)}
+                                        className={`spread-card ${isSelected ? `selected selected-order-${selectedIndex}` : ''} ${isDisabled ? 'disabled' : ''} ${cardsRevealed ? 'card-revealed' : ''}`}
+                                        onClick={() => {
+                                            console.log('👆 onClick fired for index:', index, 'cardsClickable:', cardsClickable);
+                                            cardsClickable && handleCardClick(card, isDisabled, index);
+                                        }}
                                         style={{
                                             width: cardSize.width,
                                             height: cardSize.height,
@@ -384,19 +395,19 @@ const TarotInput = ({
 
                     {/* 하단 안내 */}
                     <div className={`table-footer ${cardsRevealed ? 'visible' : ''}`}>
-                        <p className="guide-text foreshadow-style">
+                        <p className={`guide-text foreshadow-style ${tarotSelectedCards.length === 3 ? 'rainbow-ready' : ''}`}>
                             {tarotSelectedCards.length === 0 && '마음이 속삭이는 카드를 선택하세요'}
                             {tarotSelectedCards.length === 1 && '두 장 더 선택하세요'}
                             {tarotSelectedCards.length === 2 && '마지막 한 장을 선택하세요'}
-                            {tarotSelectedCards.length === 3 && '운명의 카드가 준비되었습니다'}
+                            {tarotSelectedCards.length === 3 && '카드가 당신에게 하고 싶은 말이 있어요'}
                         </p>
 
                         <button
-                            className={`read-btn ${tarotSelectedCards.length === 3 ? 'ready' : ''}`}
+                            className={`read-btn ${tarotSelectedCards.length === 3 ? 'ready rainbow-btn' : ''}`}
                             onClick={onGenerateReading}
                             disabled={tarotSelectedCards.length !== 3 || loading}
                         >
-                            {loading ? '해석 중...' : tarotSelectedCards.length === 3 ? '🌙 리딩 시작하기' : '카드를 3장 선택하세요'}
+                            {loading ? '해석 중...' : tarotSelectedCards.length === 3 ? '🔮 이야기 펼치기' : '카드를 3장 선택하세요'}
                         </button>
                     </div>
                 </div>

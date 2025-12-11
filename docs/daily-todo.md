@@ -55,6 +55,74 @@
 
 ---
 
+## 2025-12-12 (목)
+
+### 오늘 할 작업 (시너지 기반 우선순위)
+
+> **원칙**: 기반 안정화 → 체감 개선 → 콘텐츠 품질 → 개인화 → 유입/참여 → 수익화 → 확장
+
+#### Phase A: 기반 안정화 🔧
+- [x] 태그라인 변경 ("마음이 궁금할 때" → "맘을 모를 때")
+- [ ] A1: 구버전 ResultView 삭제 검토 & 실행
+- [x] A2: 데스크탑 카드 클릭 버그 수정 (`will-change: transform`)
+- [x] A2-1: 카드 hover/selected 스타일 개선
+  - hover: 파란색 glow + translateY(-15px)
+  - selected: Blue→Purple gradient border
+  - slot-card: 보라→민트→시안→파랑 conic-gradient + hue-rotate
+- [x] A3: 이미지 안 뜨는 버그 원인 파악
+  - 원인: 백그라운드 전환 시 Gemini API 요청 타임아웃/실패
+  - 해결: 스트리밍 구현 후 재시도 로직 추가 예정
+
+#### Phase B: 스트리밍 & 체감 개선 ⚡ (다음 단계)
+- [ ] B1: 스트리밍 구현 (`messages.create` → `messages.stream`)
+- [ ] B2: 분석 단계 스크롤바 숨기기
+- [ ] B3: 도파민 시간 제한 로직 정리
+- [ ] B4: Sticky Persona Card 위치 버그
+
+### 전체 로드맵 (시너지 흐름)
+
+```
+[A] 안정화 ─→ [B] 스트리밍 ─→ [C] 리딩 품질 ─→ [D] 개인화
+     ↓              ↓              ↓              ↓
+  버그 수정     체감 10배 개선   Hidden Insight   MBTI 입력
+                                    개선         프사 설정
+                                      ↓              ↓
+                              [E] 유입/참여 ←────────┘
+                                      ↓
+                              [F] 수익화 (Freemium)
+                                      ↓
+                              [G] 확장 (MBTI 탭)
+                                      ↓
+                              [H] 장기 (실시간 채팅)
+```
+
+### Phase별 상세
+
+| Phase | 이름 | 핵심 작업 | 상태 |
+|-------|------|----------|------|
+| A | 기반 안정화 | ResultView 정리, 버그 수정 | 🔄 진행 중 |
+| B | 스트리밍 | 2-3분 → 10초 체감 | ⏳ 대기 |
+| C | 리딩 품질 | Hidden Insight 개선, 나이 금지 | ⏳ 대기 |
+| D | 개인화 | MBTI 입력, 프사 설정 | ⏳ 대기 |
+| E | 유입/참여 | 질문 추천, 피드 CTA | ⏳ 대기 |
+| F | 수익화 | 이미지 스타일, 게이미피케이션 | ⏳ 대기 |
+| G | 확장 | MBTI 탭, 피드 페이지네이션 | ⏳ 대기 |
+| H | 장기 | Desktop, 실시간 채팅 | ⏳ 대기 |
+
+### 변경된 파일
+- `index.html` - 태그라인 변경
+- `src/App.jsx` - 스플래시 태그라인 변경
+- `docs/implementation-strategy.md` - 태그라인 업데이트
+- `docs/ai-prompt-streaming.md` - 미래 확장 아이디어 추가 (15~22번)
+- `src/styles/views/tarot.css` - 카드 스타일 대폭 개선
+  - 데스크탑 클릭 버그 수정 (will-change: transform)
+  - hover: 파란색 glow + translateY(-15px)
+  - selected: Blue→Purple gradient border
+  - slot-card: 보라→민트→시안→파랑 conic-gradient + hue-rotate 애니메이션
+  - selection-number: Blue-Purple 테마
+
+---
+
 ## 2025-12-11 (수)
 
 ### 완료한 작업
@@ -83,45 +151,48 @@
 
 ---
 
-## 다음 작업 추천 (우선순위순)
+## 버그 & 개선 사항 참조
 
-### 1순위: Phase 24.3 - Visibility 간소화 (추천!)
-> 커뮤니티 피드 활성화의 핵심
+> 상세 내용: `docs/ai-prompt-streaming.md` 참조
 
-**해야 할 것:**
+### 스트리밍 이후 세팅 목록 (1~14번)
+1. 분석 단계 스크롤바 숨기기
+2. Sticky Persona Card 위치 버그
+3. Hidden Insight 대폭 개선
+4. 카드 재선택 시 덱 상태 버그
+5. 도파민 메시지 시간 제한
+6. 나이 언급 금지 강화
+7. 피드/인기 리딩 CTA
+8. 구버전 ResultView 삭제
+9. 프로필 설정 모달 레이아웃
+10. 로고 클릭 + 태그라인
+11. 피드 로딩 전략 & 검색
+12. Desktop 레이아웃 기준
+13. 리딩 이미지 Height 조정
+14. 이미지 안 뜨는 버그
+
+### 미래 확장 아이디어 (15~22번)
+15. MBTI 탭 & 커뮤니티 확장
+16. Hidden Insight MBTI/별자리 트위스트
+17. 질문 추천 기능
+18. ~~태그라인 변경~~ ✅ 완료
+19. 리딩 이미지 → 프사 설정
+20. 게이미피케이션 & 수익화
+21. 이미지 스타일 확장
+22. 실시간 채팅
+
+---
+
+## 기존 Phase 작업 (참고용)
+
+### Phase 24.3 - Visibility 간소화
 - [ ] unlisted 옵션 제거 (public / private만)
-- [ ] 비공개 시 보이는 영역 정의 (hero + question + hook + foreshadow)
-- [ ] 비공개 시 숨기는 영역 정의 (persona card 이하)
+- [ ] 비공개 시 보이는 영역 정의
 - [ ] TarotResultView 조건부 렌더링
-- [ ] 공개 토글 위치 변경 (engagement 댓글 위로)
 
-**파일:**
-- `src/hooks/useFirebaseSave.js`
-- `src/components/tarot/TarotResultView.jsx`
-- `src/components/common/VisibilitySelector.jsx`
-
-### 2순위: Phase 24.1 - 기반 정리 (일부 남음)
-- [ ] MyPage "무료 리딩" 섹션 삭제
-- [ ] 기본 visibility = public 설정
-
-### 3순위: Phase 24.4 - 참여 시스템 (타로)
-> 커뮤니티 참여 유도의 핵심 기능
-
+### Phase 24.4 - 참여 시스템 (타로)
 - [ ] "나도 같은 질문으로 타로보기" floating CTA
 - [ ] 질문 스킵 → 바로 카드 선택 플로우
-- [ ] Firebase 스키마 추가 (isParticipation, originalReadingId, participationCount)
-
-### 4순위: Phase 21 - 도파민 메시지 시스템
-> 분석 대기 경험 개선
-
-- [ ] AnalysisOverlay.jsx 풀스크린 개편
-- [ ] 타이핑 효과 구현
-- [ ] Haiku 도파민 메시지 선생성
-
-### 5순위: Phase 23 관련 - UX 개선
-- [ ] 공개 설정 실시간 반영
-- [ ] 공개 설정 버튼 active 스타일
-- [ ] 익명성 안내 문구 추가
 
 ---
 

@@ -230,7 +230,48 @@
 
 ---
 
-## 8. 참고 자료
+## 8. 카드 선택 UI 개선 (2025-12-11)
+
+### 완료된 작업
+
+#### Rainbow Effects (3장 선택 시)
+- [x] `.rainbow-ready` 클래스 - guide-text에 rainbow gradient 텍스트
+- [x] `.rainbow-btn` 클래스 - 버튼에 rainbow border 효과
+- [x] `.all-ready` 클래스 - intro-text fade out, table-stars rainbow twinkle, slot-card sparkle
+
+#### Progressive Gradient System (선택 순서별 색상)
+- [x] 0장 선택 → hover: purple→mint
+- [x] 1장 선택 → hover: mint→cyan
+- [x] 2장 선택 → hover: cyan→blue
+- [x] `selected-${count}` 클래스로 card-spread에 적용
+- [x] `selected-order-${index}` 클래스로 개별 카드 gradient 적용
+
+#### Selection Number Circle (번호 동그라미)
+- [x] 1번: purple→blue 투톤 gradient
+- [x] 2번: mint→cyan gradient
+- [x] 3번: cyan→blue gradient (blue 강조)
+- [x] 각각 subtle glow animation
+
+#### Slot Card 개선
+- [x] Conic-gradient rainbow border (purple→mint→cyan→blue)
+- [x] Box-shadow glow subtle하게 조정
+- [x] hue-rotate animation으로 rainbow 회전 효과
+
+#### 기타 UI 조정
+- [x] 데스크탑 deck 위치 조정 (margin-left: -6.5%)
+- [x] Guide text 크기 intro-line과 동기화 (1.4rem)
+- [x] Font-weight 보정 (gradient text에 -webkit-text-stroke 추가)
+- [x] Table-footer gap 조정 (vertical centering)
+- [x] 버튼 텍스트: "🔮 이야기 펼치기"
+- [x] Guide text: "카드가 당신에게 하고 싶은 말이 있어요"
+
+### 관련 파일
+- `src/components/tarot/TarotInput.jsx` - 클래스 추가
+- `src/styles/views/tarot.css` - 모든 CSS 효과
+
+---
+
+## 9. 참고 자료
 
 - Jenny Hoyos YouTube 전략: Hook → Foreshadow → But-Therefore → Twist → Ending
 - 페르소나 4/5 UI 스타일

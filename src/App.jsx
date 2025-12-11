@@ -54,7 +54,7 @@ const TarotInput = lazy(() => import('./components/tarot/TarotInput'));
 const TarotResultView = lazy(() => import('./components/tarot/TarotResultView'));
 const FortuneInput = lazy(() => import('./components/fortune/FortuneInput'));
 const FortuneResultView = lazy(() => import('./components/fortune/FortuneResultView'));
-const ResultView = lazy(() => import('./components/result/ResultView'));
+const DreamResultView = lazy(() => import('./components/dream/DreamResultView'));
 const DreamDetailView = lazy(() => import('./components/detail/DreamDetailView'));
 const MyPage = lazy(() => import('./components/my/MyPage'));
 const FeedView = lazy(() => import('./components/feed/FeedView'));
@@ -278,7 +278,7 @@ function App() {
                 </div>
             </div>
             <div className="loading-brand">점AI</div>
-            <div className="loading-tagline">마음이 궁금할 때</div>
+            <div className="loading-tagline">맘을 모를 때</div>
         </div>
     );
 
@@ -324,7 +324,7 @@ function App() {
 
             {/* 메인 3단 레이아웃 - Suspense로 lazy 컴포넌트 감싸기 */}
             <Suspense fallback={null}>
-            <div className={`main-layout ${view === 'create' && !tarot.result && !result && !fortune.result ? `${mode}-bg` : ''} ${view === 'tarot-result' || view === 'fortune-result' || view === 'detail' ? 'full-view' : ''}`}>
+            <div className={`main-layout ${view === 'create' && !tarot.result && !result && !fortune.result ? `${mode}-bg` : ''} ${view === 'tarot-result' || view === 'fortune-result' || view === 'detail' || (view === 'create' && tarot.phase === 'selecting') ? 'full-view' : ''}`}>
                 {/* 왼쪽 사이드바 - 실시간 정보 */}
                 <LeftSidebar
                     mode={mode}
@@ -529,47 +529,22 @@ function App() {
                         />
                     )}
 
-                    {/* 결과 뷰 - 모든 모드 통합 (꿈/타로/운세) - 분석 중이 아닐 때만 표시 */}
-                    {!readingLoading && (view === 'result' || (view === 'create' && (result || tarot.result || fortune.result))) && (result || tarot.result || fortune.result) && (
-                        <ResultView
-                            mode={mode}
-                            result={result}
-                            tarotResult={tarot.result}
-                            fortuneResult={fortune.result}
-                            cards={cards}
-                            currentCard={currentCard}
-                            setCurrentCard={setCurrentCard}
-                            cardRevealMode={cardReveal.mode}
-                            revealParticles={cardReveal.particles}
-                            user={user}
-                            savedDreamId={savedDream.id}
-                            savedDreamPublic={savedDream.isPublic}
-                            progress={progress}
-                            cardRef={cardRef}
-                            onTouchStart={onTouchStart}
-                            onTouchMove={onTouchMove}
-                            onTouchEnd={onTouchEnd}
+                    {/* 꿈 결과 뷰 */}
+                    {view === 'dream-result' && result && (
+                        <DreamResultView
+                            dreamResult={{ ...result, id: result.id || savedDream.id }}
                             onBack={handleResultBack}
                             onRestart={handleRestart}
-                            onPrevCard={prevCard}
-                            onNextCard={nextCard}
-                            onToggleVisibility={toggleSavedDreamVisibility}
-                            onGenerateDetailedReading={generateDetailedReading}
-                            onShare={openShareModal}
-                            onLogin={openAuthModal}
-                            renderCard={renderCard}
-                            isPremium={isPremium}
-                            onOpenPremium={openPremiumModal}
-                            onRate={async (docId, rating, readingMode) => {
-                                if (readingMode === 'dream') await rateDream(docId, rating);
-                                else if (readingMode === 'tarot') await rateTarot(docId, rating);
-                                else if (readingMode === 'fortune') await rateFortune(docId, rating);
-                            }}
                             onKeywordClick={(keyword) => {
-                                // 키워드 클릭 시 피드로 이동 + 필터 적용 (현재 모드 유지)
+                                setMode('dream');
                                 setFilter('keyword', keyword);
                                 setView('feed');
                             }}
+                            onUpdateVisibility={(newVisibility) => updateVisibility('dream', result.id || savedDream.id, newVisibility)}
+                            showToast={showToast}
+                            user={user}
+                            userNickname={userNickname}
+                            onLoginRequired={openAuthModal}
                         />
                     )}
 
@@ -656,22 +631,21 @@ function App() {
                     {/* 운세 결과 뷰 */}
                     {view === 'fortune-result' && fortune.result && (
                         <FortuneResultView
-                            fortuneResult={fortune.result}
+                            fortuneResult={{ ...fortune.result, id: fortune.result.id || savedDream.id }}
                             onBack={handleFortuneResultBack}
                             onRestart={handleFortuneResultRestart}
-                            onRevealSecret={() => setFortuneField('result', {...fortune.result, showFullReading: true})}
-                            whispers={[]}
-                            onAddWhisper={(text) => console.log('운세 속삭임:', text)}
-                            viewerCount={Math.floor(Math.random() * 5) + 1}
-                            similarCount={Math.floor(Math.random() * 10) + 2}
-                            isPremium={isPremium}
-                            onOpenPremium={openPremiumModal}
                             onKeywordClick={(keyword) => {
-                                // 키워드 클릭 시 피드로 이동 + 필터 적용
                                 setMode('fortune');
                                 setFilter('keyword', keyword);
                                 setView('feed');
                             }}
+                            onUpdateVisibility={(newVisibility) => updateVisibility('fortune', fortune.result.id || savedDream.id, newVisibility)}
+                            showToast={showToast}
+                            user={user}
+                            userNickname={userNickname}
+                            onLoginRequired={openAuthModal}
+                            isPremium={isPremium}
+                            onOpenPremium={openPremiumModal}
                         />
                     )}
 
