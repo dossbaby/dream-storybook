@@ -39,7 +39,7 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    border: 2px solid rgba(155, 89, 182, 0.5);
+    border: 2px solid rgba(196, 147, 237, 0.7);
     object-fit: cover;
     flex-shrink: 0;
 }
@@ -52,7 +52,7 @@
     height: 56px;
     border-radius: 50%;
     background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(108, 92, 231, 0.3));
-    border: 2px solid rgba(155, 89, 182, 0.5);
+    border: 2px solid rgba(196, 147, 237, 0.7);
     font-size: 1.8rem;
     flex-shrink: 0;
     padding-bottom: 2px;
@@ -63,7 +63,7 @@
     height: 56px;
     border-radius: 50%;
     background-size: 177.78% auto; /* 16:9 이미지를 원형에 맞춤 */
-    border: 2px solid rgba(155, 89, 182, 0.5);
+    border: 2px solid rgba(196, 147, 237, 0.7);
     flex-shrink: 0;
 }
 

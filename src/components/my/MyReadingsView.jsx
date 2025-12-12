@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { HISTORY_LIMITS } from '../../utils/aiConfig';
+import { getOptimizedImageUrl } from '../../utils/imageUtils';
 
 // 카테고리별 이모지
 const TOPIC_EMOJI = {
@@ -474,7 +475,7 @@ const MyReadingsView = ({
         const rawTopics = tarot.topics || (tarot.topic ? [tarot.topic] : []);
         const mainTopic = normalizeCategory(rawTopics[0]);
         const topicEmoji = TOPIC_EMOJI[mainTopic] || '💬';
-        const thumbImage = tarot.heroImage || tarot.pastImage || tarot.card1Image;
+        const thumbImage = getOptimizedImageUrl(tarot.heroImage || tarot.pastImage || tarot.card1Image, { size: 'small' });
         const question = tarot.question || '타로 리딩';
         const answer = tarot.title;
 
@@ -522,7 +523,7 @@ const MyReadingsView = ({
     // 꿈 카드 렌더링 - FeedView compact 스타일 완전 동일
     const renderDreamCard = (dream, index) => {
         const isLocked = index >= historyLimit;
-        const thumbImage = dream.dreamImage;
+        const thumbImage = getOptimizedImageUrl(dream.dreamImage, { size: 'small' });
         const dreamType = dreamTypes[dream.dreamType];
 
         if (isLocked) {
@@ -568,7 +569,7 @@ const MyReadingsView = ({
     // 사주 카드 렌더링 - FeedView compact 스타일 완전 동일
     const renderFortuneCard = (fortune, index) => {
         const isLocked = index >= historyLimit;
-        const thumbImage = fortune.morningImage;
+        const thumbImage = getOptimizedImageUrl(fortune.morningImage, { size: 'small' });
 
         if (isLocked) {
             return (

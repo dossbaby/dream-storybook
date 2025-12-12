@@ -2770,3 +2770,572 @@ export default {
     [ ] 스플래시 화면
     [ ] 오프라인 폴백
 ```
+
+---
+
+## D. SEO 확장 전략 (Future)
+
+### D.1 개별 리딩 페이지 + 동적 Sitemap
+
+```
+목표: 사용자가 공유한 모든 공개 리딩이 검색 가능하도록
+─────────────────────────────────────────────────────
+
+현재 상태:
+- sitemap.xml: 10개 정적 페이지 (메인, 타로 주제별, 꿈, 사주)
+- 개별 리딩 URL 없음 (404)
+
+구현 계획:
+┌─────────────────────────────────────────────────────────────┐
+│ 1. 개별 리딩 라우팅 추가                                       │
+│    - /tarot/:id → TarotDetailPage                           │
+│    - /dream/:id → DreamDetailPage                           │
+│    - /saju/:id → SajuDetailPage                             │
+│                                                             │
+│ 2. 동적 Sitemap (Cloud Function)                             │
+│    - Firestore에서 visibility === 'public' 리딩 조회          │
+│    - sitemap.xml 동적 생성                                    │
+│    - 캐싱: 1시간 또는 새 공개 리딩 시 무효화                     │
+│                                                             │
+│ 3. shareText에 링크 추가                                      │
+│    - generateShareText() 함수 수정                           │
+│    - https://www.jeom.ai/tarot/{id} 형식                     │
+│                                                             │
+│ 4. SSR 또는 Prerendering 고려                                │
+│    - SPA는 SEO 한계 있음                                     │
+│    - 옵션 A: Next.js 마이그레이션                             │
+│    - 옵션 B: Firebase Hosting + Cloud Functions prerender    │
+│    - 옵션 C: Prerender.io 서비스 연동                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### D.2 동적 Sitemap Cloud Function 예시
+
+```javascript
+// functions/sitemap.js
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+
+exports.sitemap = functions.https.onRequest(async (req, res) => {
+  const db = admin.firestore();
+  
+  // 정적 페이지
+  const staticUrls = [
+    { loc: 'https://www.jeom.ai/', priority: '1.0' },
+    { loc: 'https://www.jeom.ai/tarot/사랑', priority: '0.9' },
+    // ... 나머지 정적 페이지
+  ];
+  
+  // 공개 리딩 조회
+  const [tarots, dreams, sajus] = await Promise.all([
+    db.collection('tarots').where('visibility', '==', 'public').get(),
+    db.collection('dreams').where('visibility', '==', 'public').get(),
+    db.collection('sajus').where('visibility', '==', 'public').get()
+  ]);
+  
+  // 동적 URL 생성
+  const dynamicUrls = [];
+  tarots.forEach(doc => {
+    dynamicUrls.push({ loc: `https://www.jeom.ai/tarot/${doc.id}`, priority: '0.7' });
+  });
+  dreams.forEach(doc => {
+    dynamicUrls.push({ loc: `https://www.jeom.ai/dream/${doc.id}`, priority: '0.7' });
+  });
+  sajus.forEach(doc => {
+    dynamicUrls.push({ loc: `https://www.jeom.ai/saju/${doc.id}`, priority: '0.7' });
+  });
+  
+  // XML 생성
+  const urls = [...staticUrls, ...dynamicUrls];
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+  urls.forEach(url => {
+    xml += `<url><loc>${url.loc}</loc><priority>${url.priority}</priority><changefreq>daily</changefreq></url>`;
+  });
+  xml += '</urlset>';
+  
+  res.set('Content-Type', 'application/xml');
+  res.set('Cache-Control', 'public, max-age=3600'); // 1시간 캐싱
+  res.send(xml);
+});
+```
+
+### D.3 구현 우선순위
+
+```
+Phase 1: 개별 리딩 페이지 (필수)
+────────────────────────────────
+[ ] /tarot/:id 라우팅 + TarotDetailPage
+[ ] /dream/:id 라우팅 + DreamDetailPage  
+[ ] /saju/:id 라우팅 + SajuDetailPage
+[ ] 각 페이지 SEO 메타태그 (title, description, og:image)
+[ ] shareText에 링크 추가
+
+Phase 2: 동적 Sitemap (SEO 강화)
+────────────────────────────────
+[ ] Cloud Function sitemap.xml 생성
+[ ] firebase.json rewrite 설정
+[ ] Google Search Console 재등록
+[ ] robots.txt Cloud Function URL로 변경
+
+Phase 3: Prerendering (선택)
+────────────────────────────────
+[ ] SEO 성능 측정 후 필요시 구현
+[ ] 옵션 평가: Next.js vs Prerender.io vs Cloud Functions
+```
+
+### D.4 Search Console 등록 현황
+
+```
+✅ 완료:
+- Google Search Console: www.jeom.ai 등록
+- Naver Search Advisor: jeom.ai 등록 (소유권 인증 필요)
+- sitemap.xml 제출 완료 (10개 페이지)
+- robots.txt 배포 완료
+
+📝 향후 작업:
+- Naver 소유권 인증 완료
+- Naver sitemap 제출
+- 개별 리딩 페이지 구현 후 동적 sitemap 전환
+```
+
+---
+
+## E. 신규 기능 아이디어 (Backlog)
+
+> 최종 업데이트: 2025년 12월 13일
+
+### E.1 피드백/개선요청 페이지 ⭐⭐⭐⭐
+
+```
+기능 설명:
+─────────
+- 카드식 UI로 피드백/개선사항/버그제보 표시
+- 좋아요 순으로 정렬 (인기 요청 상위 노출)
+- 각 카드에 답장 기능
+- 진행 상태 표시: 검토중 / 진행중 / 완료 / 보류
+- 프로필 설정 > "피드백 보내기" 클릭 시 이동
+
+카테고리:
+- 💡 기능 요청
+- 🔧 개선 사항  
+- 🐛 버그 제보
+
+구현 계획:
+[ ] Firestore 'feedbacks' 컬렉션 설계
+[ ] FeedbackPage.jsx 카드 리스트 UI
+[ ] 좋아요/답글 기능
+[ ] 관리자 상태 변경 기능
+[ ] 마이페이지 링크 연동
+```
+
+### E.2 MBTI 표시 + 글쓰기 리워드 ⭐⭐⭐⭐⭐
+
+```
+기능 설명:
+─────────
+1. MBTI 표시
+   - 피드/댓글에 MBTI 배지 표시
+   - 프라이버시 옵션: 전체 공개(INFP) / 일부 숨김(I**P) / 비공개
+
+2. 글쓰기 리워드
+   - 공개 리딩 저장 시 무료 리딩 횟수 +1 충전
+   - 주간 최대 3회 제한 (어뷰징 방지)
+
+구현 계획:
+[ ] userProfile에 mbtiVisibility 필드 추가
+[ ] 피드 카드에 MBTI 배지 컴포넌트
+[ ] 공유 시 usageCount 차감 대신 충전 로직
+[ ] 주간 충전 횟수 제한 로직
+```
+
+### E.3 배경 음악 ⭐⭐⭐
+
+```
+기능 설명:
+─────────
+- 리딩 화면에 분위기 있는 배경 음악
+- 기본값: 음소거 (자동재생 X)
+- 토글 버튼으로 ON/OFF
+- 본인 음악 사용 (저작권 무료)
+
+고려사항:
+- 모바일 배터리/데이터 소모
+- 음악 파일 용량 최적화 (MP3 128kbps)
+- localStorage에 음소거 설정 저장
+
+구현 계획:
+[ ] public/audio/ 폴더에 음악 파일 추가
+[ ] AudioContext 또는 <audio> 태그 구현
+[ ] 음악 토글 버튼 UI (우측 하단 플로팅)
+[ ] 설정 저장 (localStorage)
+```
+
+### E.4 크리스마스 트리 이벤트 ⭐⭐⭐⭐⭐ (시즌 한정)
+
+```
+기능 설명:
+─────────
+- 메인 화면에 크리스마스 트리 표시
+- 리딩 참여 = 장식 추가
+- 참여 많을수록 장식이 밝아짐 (게이미피케이션)
+- 공유하고 싶은 비주얼 요소
+
+구현 계획:
+[ ] ChristmasTree.jsx 컴포넌트
+[ ] 트리 SVG/Canvas 애니메이션
+[ ] Firestore에서 총 리딩 수 집계
+[ ] 장식 밝기 = 리딩 수 기반 계산
+[ ] 12/25 이후 자동 숨김 또는 새해 테마 전환
+
+타이밍: 🚨 12월 25일까지 출시 필요
+```
+
+### E.5 맞춤 설정 (Custom Context) ⭐⭐⭐⭐⭐
+
+```
+기능 설명:
+─────────
+- 프로필 설정에 "맞춤 설정" 모듈 추가
+- 사용자가 입력한 정보를 Claude 리딩에 반영
+- 더 개인화된 리딩 경험 제공
+
+입력 필드 예시:
+- 현재 고민/상황 (자유 텍스트)
+- 직업/관심사
+- 최근 중요한 일
+- 리딩 스타일 선호 (따뜻한 / 직설적 / 유머러스)
+
+티어 차별화:
+- 무료: 3개 항목까지
+- 프리미엄: 무제한 + AI 자동 요약
+
+구현 계획:
+[ ] userProfile.customContext 필드 추가
+[ ] ProfileSettingsModal에 맞춤 설정 섹션
+[ ] useReading에서 customContext를 system prompt에 주입
+[ ] 티어별 항목 수 제한 로직
+```
+
+### E.6 버그 수정 (긴급) ⭐⭐⭐⭐⭐
+
+```
+1. PWA 아이콘 오류
+   - 에러: icon-152x152.png (Download error or resource isn't a valid image)
+   - 해결: public/icons/ 폴더에 올바른 아이콘 파일 확인/재생성
+
+2. 메타 태그 deprecated 경고
+   - 현재: <meta name="apple-mobile-web-app-capable" content="yes">
+   - 변경: <meta name="mobile-web-app-capable" content="yes">
+
+3. 데스크탑 뒤로가기 버튼 제거
+   - 프롬프트 입력 화면 가운데 글로벌 뒤로가기 버튼 불필요
+   - 모바일만 유지 또는 완전 제거
+```
+
+### E.7 우선순위 정리
+
+| 순위 | 항목 | 난이도 | 긴급도 | 비고 |
+|------|------|--------|--------|------|
+| 1 | 크리스마스 트리 | 중 | 🔴 긴급 | 12/25까지 |
+| 2 | 버그 수정 | 하 | 🔴 긴급 | 5분 소요 |
+| 3 | 뒤로가기 버튼 제거 | 하 | 중 | 간단 |
+| 4 | 맞춤 설정 | 중 | 중 | 리딩 품질↑ |
+| 5 | MBTI + 리워드 | 중 | 중 | 커뮤니티 활성화 |
+| 6 | 피드백 페이지 | 중 | 하 | 나중에 |
+| 7 | 배경 음악 | 하 | 하 | 선택적 |
+
+---
+
+## F. Major Update 계획
+
+> 대규모 기능 확장 - 크리스마스 이후 진행 권장
+
+### F.1 별도 커뮤니티 탭 (Major A)
+
+#### 컨셉
+```
+현재: 리딩 결과 = 콘텐츠 (리딩 안하면 글 못씀)
+제안: 자유 글쓰기 + AI 이미지 자동생성 + 리딩 연결
+
+핵심 차별화: "글만 써도 AI가 예쁜 이미지 만들어줌"
+```
+
+#### 네비게이션 변경
+```
+기존 BottomNav: 🏠홈  🔮리딩  📚내리딩  👤MY
+변경 BottomNav: 🏠피드  💬커뮤니티  🔮리딩  📚내리딩  👤MY
+
+또는 상단 탭 전환 방식:
+┌──────────┬──────────┐
+│   피드   │ 커뮤니티  │
+└──────────┴──────────┘
+```
+
+#### 커뮤니티 카테고리
+```
+💜 자유게시판   - 일상, 잡담
+💭 고민상담     - 연애, 직장, 인간관계
+🌙 꿈 이야기    - 해몽 아닌 꿈 공유
+🔮 리딩 후기    - 리딩 감상/후기
+✨ 운세 토크    - 별자리, MBTI, 운세
+```
+
+#### 글쓰기 플로우
+```
+┌─────────────────────────────────────────────────────────────┐
+│  글쓰기 화면                                                 │
+├─────────────────────────────────────────────────────────────┤
+│  카테고리: [💭 고민상담 ▼]                                   │
+│                                                             │
+│  제목: [오늘 남친이랑 싸웠어요...]                            │
+│                                                             │
+│  내용:                                                       │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ 사소한 거로 시작했는데 점점 커져서...               │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  🖼️ 이미지 설정                                             │
+│  ○ 자동 생성 (AI가 글에 맞는 이미지 생성) ← 기본값          │
+│  ○ 직접 업로드                                             │
+│  ○ 이미지 없음                                             │
+│                                                             │
+│  [글 올리기]                                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### AI 이미지 자동생성 로직
+```javascript
+// 글 내용 → 이미지 프롬프트 변환
+const generateImagePrompt = async (title, content, category) => {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    messages: [{
+      role: 'user',
+      content: `다음 글의 분위기를 표현하는 이미지 프롬프트를 생성해줘.
+      감정적이고 몽환적인 스타일로.
+      
+      카테고리: ${category}
+      제목: ${title}
+      내용: ${content}
+      
+      프롬프트만 출력 (영어, 50단어 이내)`
+    }]
+  });
+  return response.content[0].text;
+};
+
+const imageUrl = await generateGeminiImage(imagePrompt);
+```
+
+#### "이 글로 리딩 보기" 기능
+```
+글 상세 화면 하단:
+┌─────────────────────────────────────────────────────────────┐
+│  💜 이 고민으로 타로 리딩 받아보기                           │
+│                                                             │
+│  AI가 추천하는 질문:                                         │
+│  • "남친과의 관계가 앞으로 어떻게 될까요?"                   │
+│  • "이 상황에서 제가 어떻게 해야 할까요?"                    │
+│  • "우리 사이에 숨겨진 감정이 있을까요?"                     │
+│                                                             │
+│  [선택해서 타로 보기]                                        │
+└─────────────────────────────────────────────────────────────┘
+
+→ 클릭하면 해당 질문으로 타로 리딩 시작
+→ 리딩 완료 후 원글과 연결 (댓글로 자동 공유 옵션)
+```
+
+#### 비용 관리
+```
+무료 티어:
+- 이미지 자동생성: 하루 1회
+- 이후: "이미지 없음" 또는 "직접 업로드"만
+
+프리미엄:
+- 이미지 자동생성: 무제한
+
+비용 최적화:
+- Flash 모델 사용 (저렴)
+- 512x512 저해상도 옵션
+- 생성된 이미지 캐싱
+```
+
+#### Firestore 스키마
+```javascript
+// posts 컬렉션
+{
+  id: 'post_abc123',
+  userId: 'user_xyz',
+  userName: '익명의 고민러',
+  userPhoto: null,
+  userMbti: 'INFP', // 또는 'I**P'
+  
+  category: 'worry', // free, worry, dream, review, fortune
+  title: '오늘 남친이랑 싸웠어요...',
+  content: '사소한 거로 시작했는데...',
+  
+  imageUrl: 'https://storage.../post_abc123.webp',
+  imagePrompt: 'melancholic couple silhouette...',
+  
+  linkedReadings: ['tarot_def456'],
+  
+  likes: [],
+  likeCount: 0,
+  commentCount: 0,
+  viewCount: 0,
+  
+  isAnonymous: true,
+  createdAt: Timestamp,
+  updatedAt: Timestamp
+}
+```
+
+#### 선순환 구조
+```
+글 작성 → AI 이미지 생성 (재미)
+       → 연관 리딩 추천
+       → 리딩 참여
+       → 또 글 작성
+```
+
+---
+
+### F.2 질문 공개 Freemium (Major B)
+
+#### 컨셉
+```
+기존: 전체 공개 / 전체 비공개 선택
+제안: 질문은 기본 공개, 리딩 결과만 비공개 가능
+
+"다른 사람들이 어떤 질문을 하는지 보는 것만으로도 가치있음"
+```
+
+#### 공개 설정 변경
+```
+무료 티어:
+┌─────────────────────────────────────────────────────────────┐
+│  공개 설정                                                   │
+│  ○ 🌍 전체 공개 (질문 + 리딩 공개)                          │
+│  ○ 🔐 리딩만 비공개 (질문은 공개) ← 무료 기본값              │
+│  ○ 🔒 완전 비공개 (프리미엄 전용) 🔓                        │
+└─────────────────────────────────────────────────────────────┘
+
+프리미엄 티어:
+┌─────────────────────────────────────────────────────────────┐
+│  공개 설정                                                   │
+│  ○ 🌍 전체 공개                                             │
+│  ○ 🔐 리딩만 비공개                                         │
+│  ○ 🔒 완전 비공개 ✓                                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 피드 표시 (질문만 공개)
+```
+┌─────────────────────────────────────────────────────────────┐
+│  👤 익명의 타로리더 · INFP · 2시간 전                        │
+│                                                             │
+│  🔮 "직장 상사와의 관계가 앞으로 어떻게 될까요?"             │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │         🔒 리딩 결과는 비공개입니다                  │   │
+│  │     [나도 이 질문으로 리딩 받기]                     │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ❤️ 12  💬 3                                                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### "이 질문으로 리딩 받기"
+```
+1. [이 질문으로 리딩 받기] 클릭
+2. 질문 자동 복사되어 리딩 시작
+3. 내 리딩 결과 생성
+
+→ 인기 질문 트렌드 파악 가능
+→ "이번 주 인기 질문 TOP 10" 콘텐츠
+```
+
+#### Firestore 스키마 변경
+```javascript
+{
+  // 기존 visibility 확장
+  visibility: 'public' | 'question_only' | 'private',
+  // public: 전체 공개
+  // question_only: 질문만 공개, 리딩 비공개
+  // private: 완전 비공개 (프리미엄 전용)
+  
+  questionCopyCount: 15, // 이 질문으로 리딩 받은 횟수
+}
+```
+
+#### 기존 사용자 마이그레이션
+```
+정책:
+- 기존 private → 그대로 유지 (소급 적용 안함)
+- 신규 가입자부터 적용
+- 기존 사용자 선택적 전환 유도: "질문 공개하면 무료 리딩 +1회!"
+```
+
+#### 비즈니스 효과
+```
+1. 콘텐츠 자동 축적
+   - 질문만으로도 SEO 가치
+   - "연애 타로 질문", "취업 타로 질문" 검색 유입
+
+2. 프리미엄 전환 동기
+   - 민감한 질문 (불륜, 퇴사, 이혼 등)
+   - "완전 비공개" 원하면 프리미엄
+
+3. 바이럴 효과
+   - 재밌는 질문 SNS 공유
+
+4. 트렌드 데이터
+   - 인기 질문 분석
+   - 마케팅/콘텐츠 기획 활용
+```
+
+---
+
+### F.3 Major Update 우선순위
+
+```
+Phase 1: Major B (질문 공개) - 2-3일
+─────────────────────────────────────
+- 빠른 구현 가능
+- 기존 코드 수정 최소화
+- 즉시 콘텐츠 축적 효과
+
+Phase 2: Major A (커뮤니티) - 1-2주
+─────────────────────────────────────
+- 대규모 작업
+- 새 컬렉션, 새 페이지, 새 플로우
+- 크리스마스 이후 진행 권장
+```
+
+### F.4 구현 체크리스트
+
+#### Major B (질문 공개)
+```
+[ ] visibility 옵션 'question_only' 추가
+[ ] VisibilitySelector UI 수정
+[ ] 피드 카드 - 질문만 공개 UI
+[ ] "이 질문으로 리딩 받기" 버튼
+[ ] questionCopyCount 통계
+[ ] 무료 티어 private 제한 로직
+[ ] 인기 질문 TOP 10 페이지 (선택)
+```
+
+#### Major A (커뮤니티)
+```
+[ ] posts 컬렉션 설계
+[ ] CommunityPage.jsx
+[ ] PostWritePage.jsx
+[ ] PostDetailPage.jsx
+[ ] AI 이미지 프롬프트 생성 로직
+[ ] "이 글로 리딩 보기" 기능
+[ ] BottomNav 또는 TopTab 변경
+[ ] 카테고리 필터
+[ ] 댓글 시스템
+[ ] 티어별 이미지 생성 제한
+```

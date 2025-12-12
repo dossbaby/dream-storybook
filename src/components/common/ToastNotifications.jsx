@@ -6,20 +6,11 @@ const ToastNotifications = memo(({
 }) => {
     return (
         <>
-            {/* 라이브 토스트 */}
-            {toasts.live && (
-                <div className={`live-toast ${toasts.live.type === 'analysis' ? 'analysis-toast' : ''}`}>
-                    {toasts.live.type === 'analysis' ? (
-                        <>
-                            <span className="toast-phase">{toasts.live.phase}/8</span>
-                            <span className="toast-text">{toasts.live.message}</span>
-                        </>
-                    ) : (
-                        <>
-                            <span className="toast-dot"></span>
-                            <span className="toast-text">방금 <strong>{toasts.live.userName}</strong>님이 "{toasts.live.title}" 꿈을 공유했어요</span>
-                        </>
-                    )}
+            {/* 분석 과정 토스트 (라이브 공유 토스트 기능 삭제) */}
+            {toasts.live?.type === 'analysis' && (
+                <div className="live-toast analysis-toast">
+                    <span className="toast-phase">{toasts.live.phase}/8</span>
+                    <span className="toast-text">{toasts.live.message}</span>
                 </div>
             )}
 

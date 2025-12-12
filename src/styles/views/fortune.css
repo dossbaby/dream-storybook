@@ -633,10 +633,19 @@
     color: rgba(252, 211, 77, 0.6);
     margin-left: 0.15rem;
     transition: color 0.2s ease;
-    /* Reset any button styling */
-    background: none;
-    border: none;
-    padding: 0;
+    /* Reset any button styling - mypage.css의 화려한 스타일 완전 무효화 */
+    all: unset !important;
+    font-size: 0.85rem !important;
+    color: rgba(252, 211, 77, 0.6) !important;
+    margin-left: 0.15rem !important;
+    cursor: pointer !important;
+}
+
+/* mypage.css의 ::before, ::after 가상요소 제거 */
+.fortune-profile-text .profile-edit-btn::before,
+.fortune-profile-text .profile-edit-btn::after {
+    display: none !important;
+    content: none !important;
 }
 
 .fortune-profile-text:hover .profile-info {

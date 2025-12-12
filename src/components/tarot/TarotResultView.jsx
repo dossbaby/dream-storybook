@@ -4,6 +4,7 @@ import Reactions from '../common/Reactions';
 import AnalysisOverlay from '../common/AnalysisOverlay';
 import SEOHead from '../common/SEOHead';
 import { generateSEOMeta } from '../../utils/seoConfig';
+import { getOptimizedImageUrl } from '../../utils/imageUtils';
 
 // 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
@@ -180,14 +181,15 @@ const TarotResultView = ({
     const foreshadowText = tarotResult.foreshadow || jenny.foreshadow || '카드가 말하고 싶은 이야기가 있어요. 함께 들어볼까요?';
 
     // 히어로 이미지 (질문 기반 생성 이미지, 없으면 카드1 이미지 폴백)
-    const heroImage = tarotResult.heroImage || tarotResult.card1Image || tarotResult.pastImage;
+    const heroImageRaw = tarotResult.heroImage || tarotResult.card1Image || tarotResult.pastImage;
+    const heroImage = getOptimizedImageUrl(heroImageRaw, { size: 'large' });
 
-    // 카드 이미지 매핑 (4장)
+    // 카드 이미지 매핑 (4장) - 최적화된 URL 사용
     const cardImages = [
-        tarotResult.card1Image || tarotResult.pastImage,
-        tarotResult.card2Image || tarotResult.presentImage,
-        tarotResult.card3Image || tarotResult.futureImage,
-        tarotResult.conclusionImage
+        getOptimizedImageUrl(tarotResult.card1Image || tarotResult.pastImage),
+        getOptimizedImageUrl(tarotResult.card2Image || tarotResult.presentImage),
+        getOptimizedImageUrl(tarotResult.card3Image || tarotResult.futureImage),
+        getOptimizedImageUrl(tarotResult.conclusionImage)
     ];
 
     // 스토리 리딩 (flat 구조 또는 기존 storyReading 객체 지원)

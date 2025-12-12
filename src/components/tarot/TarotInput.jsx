@@ -118,10 +118,10 @@ const TarotInput = ({
         }, 500);
 
         // 카드 스프레드 애니메이션 완료 후 클릭 가능
-        // 78장 × 30ms = 2340ms + 800ms 애니메이션 = ~3200ms
+        // 78장 × 30ms = 2310ms + 800ms 애니메이션 = 3110ms (버퍼 포함 3200ms)
         const timerClickable = setTimeout(() => {
             setCardsClickable(true);
-        }, 4000);
+        }, 3200);
 
         // Phase 1 → 2: 1.2초 후 두 번째 텍스트 fade in
         const timer2 = setTimeout(() => {

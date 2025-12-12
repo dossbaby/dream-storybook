@@ -166,9 +166,20 @@ body {
     50% { transform: translateY(-5px); }
 }
 
+/* 태그라인 - 점AI 위에 위치 (오브와 겹치지 않게 더 아래로) */
+.loading-tagline {
+    margin-top: 5rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: rgba(212, 165, 255, 0.7);
+    letter-spacing: 0.05em;
+    animation: taglineFadeIn 1s ease-out 0.5s both;
+    position: relative;
+}
+
 /* 브랜드 텍스트 - NavBar 스타일과 동일 */
 .loading-brand {
-    margin-top: 4rem;
+    margin-top: 0.5rem;
     font-size: 1.5rem;
     font-weight: 700;
     background: linear-gradient(135deg, #fff, #d4a5ff);
@@ -182,17 +193,6 @@ body {
 @keyframes brandFadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-/* 태그라인 - 귀엽게 */
-.loading-tagline {
-    margin-top: 0.75rem;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: rgba(212, 165, 255, 0.7);
-    letter-spacing: 0.05em;
-    animation: taglineFadeIn 1s ease-out 0.5s both;
-    position: relative;
 }
 
 .loading-tagline::before,

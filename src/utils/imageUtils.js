@@ -8,6 +8,13 @@
 // WebP 지원 여부 캐시
 let webpSupported = null;
 
+// Firebase Resize Extension 크기 설정 (16:9 비율)
+const FIREBASE_RESIZE_SIZES = {
+    small: '512x288',
+    medium: '1024x576',
+    large: '1376x768'
+};
+
 /**
  * WebP 지원 여부 확인
  */
@@ -25,6 +32,89 @@ export const checkWebPSupport = () => {
 };
 
 /**
+ * Firebase Storage URL을 리사이즈된 버전으로 변환
+ * @param {string} url - 원본 Firebase Storage URL
+ * @param {'small'|'medium'|'large'} size - 원하는 크기
+ * @returns {string} 리사이즈된 이미지 URL (없으면 원본 반환)
+ */
+export const getResizedFirebaseUrl = (url, size = 'medium') => {
+    if (!url || !url.includes('firebasestorage.googleapis.com')) {
+        return url;
+    }
+
+    // 이미 리사이즈된 URL이면 그대로 반환
+    if (url.includes('_512x288') || url.includes('_1024x576') || url.includes('_1376x768')) {
+        return url;
+    }
+
+    const sizeStr = FIREBASE_RESIZE_SIZES[size] || FIREBASE_RESIZE_SIZES.medium;
+
+    // URL 구조: ...filename.jpg?alt=media&token=...
+    // 변환: ...filename_1024x576.webp?alt=media&token=...
+
+    // .jpg, .jpeg, .png 등 확장자 찾기
+    const extensionMatch = url.match(/(\.[a-zA-Z]+)(\?|$)/);
+    if (!extensionMatch) return url;
+
+    const extension = extensionMatch[1];
+    const newUrl = url.replace(extension, `_${sizeStr}.webp`);
+
+    return newUrl;
+};
+
+/**
+ * 화면 크기에 따라 적절한 이미지 크기 선택
+ * @returns {'small'|'medium'|'large'} 권장 이미지 크기
+ */
+export const getRecommendedImageSize = () => {
+    if (typeof window === 'undefined') return 'medium';
+
+    const width = window.innerWidth;
+    const dpr = window.devicePixelRatio || 1;
+    const effectiveWidth = width * dpr;
+
+    if (effectiveWidth <= 640) return 'small';      // 모바일
+    if (effectiveWidth <= 1280) return 'medium';    // 태블릿/작은 데스크탑
+    return 'large';                                  // 큰 데스크탑
+};
+
+/**
+ * Firebase Storage 이미지를 최적화된 URL로 변환
+ * 리사이즈된 이미지가 없으면 원본 반환 (이전 데이터 호환)
+ * @param {string} url - 원본 이미지 URL
+ * @param {object} options - 옵션
+ * @returns {string} 최적화된 URL (또는 원본 URL)
+ */
+export const getOptimizedImageUrl = (url, options = {}) => {
+    const { size, forceOriginal = false } = options;
+
+    if (!url || forceOriginal) return url;
+
+    // Firebase Storage URL이 아니면 그대로 반환
+    if (!url.includes('firebasestorage.googleapis.com')) {
+        return url;
+    }
+
+    // Extension 설치 이후 (2024-12-13 오후) 업로드된 이미지만 리사이즈됨
+    // 기존 이미지는 원본 URL 그대로 반환
+    // Extension 설치 시간: 약 1765579000000 (2024-12-13 오후)
+    const timestampMatch = url.match(/\/(\d{13})_/);
+    if (!timestampMatch) {
+        // 타임스탬프가 없는 URL = 구형식 = 리사이즈 없음 → 원본 반환
+        return url;
+    }
+
+    const timestamp = parseInt(timestampMatch[1]);
+    if (timestamp < 1765579000000) {
+        // Extension 설치 전 이미지 → 원본 반환
+        return url;
+    }
+
+    const recommendedSize = size || getRecommendedImageSize();
+    return getResizedFirebaseUrl(url, recommendedSize);
+};
+
+/**
  * 이미지 URL에서 srcset 생성
  * Cloudinary, Firebase Storage, imgix 등 CDN에서 사용 가능
  * @param {string} src - 원본 이미지 URL
@@ -34,11 +124,16 @@ export const checkWebPSupport = () => {
 export const generateSrcset = (src, widths = [320, 640, 1024, 1536]) => {
     if (!src) return null;
 
-    // Firebase Storage URL 처리
+    // Firebase Storage URL 처리 - srcset 생성
     if (src.includes('firebasestorage.googleapis.com')) {
-        // Firebase Storage는 URL 파라미터로 리사이징 지원하지 않음
-        // 원본 반환
-        return null;
+        const smallUrl = getResizedFirebaseUrl(src, 'small');
+        const mediumUrl = getResizedFirebaseUrl(src, 'medium');
+        const largeUrl = getResizedFirebaseUrl(src, 'large');
+
+        // 리사이즈된 URL이 원본과 같으면 (리사이즈 안됨) null 반환
+        if (smallUrl === src) return null;
+
+        return `${smallUrl} 512w, ${mediumUrl} 1024w, ${largeUrl} 1376w`;
     }
 
     // Cloudinary URL 처리

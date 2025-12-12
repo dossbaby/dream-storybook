@@ -72,7 +72,7 @@ export const IMAGE_CONFIG = {
 // ═══════════════════════════════════════════════════════════════
 
 // 캐릭터 미학 가이드 (Claude에게 전달 - 프롬프트 작성 시 참고)
-const CHARACTER_AESTHETIC_GUIDE = `⚠️ CRITICAL: This MUST be ANIME/ILLUSTRATION style - NEVER photorealistic, NEVER real human photos, NEVER 3D render. Always 2D Japanese anime art style with clear linework. As a visual director, portray characters as young adults in their early 20s with a fresh, lovely beauty reminiscent of K-pop idols. They should have graceful slim proportions with a chic, cool, and effortlessly carefree urban vibe. Avoid childish or chibi proportions - instead capture that nonchalant city aesthetic with pretty, adorable yet sophisticated features.`;
+const CHARACTER_AESTHETIC_GUIDE = `⚠️ CRITICAL: This MUST be ANIME/ILLUSTRATION style - NEVER photorealistic, NEVER real human photos, NEVER 3D render. Always 2D Japanese anime art style with clear linework. ⭐ TOP PRIORITY - BEAUTY IS NON-NEGOTIABLE: Female characters MUST be extremely pretty, beautiful, cute, adorable with gorgeous big sparkly eyes, lovely delicate features like K-pop idol visuals. Male characters MUST be very handsome, attractive, good-looking with sharp features. Late teens to early 20s (17-24 years old), graceful slim proportions, chic urban vibe. Avoid childish/chibi proportions. ⚠️ Every character must be visually stunning and attractive - no exceptions!`;
 
 // 신비로운 분위기 가이드
 const MYSTIC_GUIDE = `The scene should be infused with mystical tarot energy - ethereal glows, subtle cosmic particles, and hints of sacred geometry that evoke destiny and fortune-telling without overwhelming the composition.`;

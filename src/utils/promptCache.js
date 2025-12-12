@@ -54,12 +54,12 @@ ${studioRef}
 ${characterRef}
 - random: 위 캐릭터 중 랜덤 선택
 
-🎯 캐릭터 미학 가이드 (모든 이미지에 적용!):
-- 20대 초반의 청아하고 사랑스러운 K-pop 아이돌 같은 느낌
-- 슬림하고 우아한 비율, 시크하고 쿨한 도시적 분위기
-- 무심하면서도 자유로운(nonchalant, carefree) 바이브
-- 예쁘고 사랑스러우면서도 세련된 이목구비
-- ❌ 아동용/치비 비율 절대 금지! 못생긴 얼굴 금지!
+🎯 캐릭터 미학 가이드 (모든 이미지에 적용!) - ⭐최우선 원칙: 무조건 예쁘고 잘생겨야 함!
+- 여성: 극도로 예쁘고, 귀엽고, 사랑스러운 얼굴. 반짝이는 큰 눈, K-pop 아이돌급 비주얼 필수!
+- 남성: 매우 잘생기고, 매력적이고, 샤프한 이목구비. 꽃미남/훈남 비주얼 필수!
+- 10대 후반~20대 (17-24세), 슬림하고 우아한 비율, 시크하고 쿨한 도시적 분위기
+- ❌ 아동용/치비 비율 절대 금지! 못생긴 얼굴 절대 금지!
+- ⚠️ 예쁨/잘생김은 타협 불가! 모든 캐릭터는 비주얼이 뛰어나야 함!
 
 ⚠️ imagePrompt 작성 규칙:
 1. 위 캐릭터 미학 가이드를 모든 인물 묘사에 자연스럽게 녹여서 작성
@@ -248,7 +248,6 @@ conclusionCard는 반드시:
 - Hook에서 희귀도/카드조합/숫자/통계 언급 금지 ("1000명 중 17명" 같은 표현 절대 금지!)
 - Foreshadow에서 카드 순서 언급 금지 ("첫 번째 카드", "세 번째 카드", "네 번째 카드" 금지!)
 - 짧은 분석 금지 - 카드 1,2,3은 반드시 ${cardLen}자 이상! 결론은 ${conclusionLen}자 이상!
-- ⚠️ studioStyle + characterStyle 조합을 질문에 맞게 선택! 예: 연애+멜랑콜리→shinkai+reze, 직장+강렬→mappa+maki, 힐링+순수→ghibli+frieren
 
 ## 질문 유형별 심리 분석 (질문자의 숨은 심리 파악)
 - 연애/관계: '이 사람 맞아?' → 이미 답을 알면서 확인받고 싶은 마음
@@ -282,11 +281,11 @@ ${getStyleReference()}
     {"word": "질문에서 추출한 핵심 키워드2 (명사형, 2-4글자)", "surface": "표면 의미", "hidden": "숨은 의미"}
   ],
 
-  "studioStyle": "🎲 Math.random()처럼 완전 무작위로 1개만 선택! shinkai/ghibli/kyoani/mappa/mappa_dark/shojo/clamp/takehiko/wit/ilya/minimalist 중 무작위. 매번 다른 스튜디오!",
-  "characterStyle": "🎲 Math.random()처럼 완전 무작위로 1개만 선택! reze/makima/power/himeno/frieren/maomao/yor/anya/ai/ruby/gojo/maki/itadori/nezuko/mitsuri/rengoku/rem/emilia/mikasa/levi/violet/asuna/2b 중 무작위. 매번 다른 캐릭터!",
+  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 위에서 작성한 hook, foreshadow, title, verdict의 감정톤과 topics, keywords를 보고, 이 리딩을 가장 아름답게 표현할 스튜디오 스타일 1개 선택. shinkai/ghibli/kyoani/mappa/mappa_dark/shojo/clamp/takehiko/wit/ilya/minimalist 중. ⚠️매번 다른 스튜디오 선택!",
+  "characterStyle": "🎬 연출 전문가로서 위 hook/title/verdict 분위기와 어울리며 가장 아름다운 이미지가 나올 캐릭터 미학 1개 선택. 여성 캐릭터 75% 우선: reze/makima/power/himeno/frieren/maomao/yor/anya/ai/ruby/nezuko/mitsuri/rem/emilia/mikasa/violet/asuna/2b/maki 중 택1. 남성 캐릭터 25%: gojo/itadori/rengoku/levi 중 택1. ⚠️특정 캐릭터 편향 금지! 여성 우선 선택하되 매번 다양하게!",
   "colorPalette": "🎨 이 질문만의 색상을 영어 1문장으로 자연스럽게 묘사. 예: 'warm amber tones flowing into deep twilight purple' 또는 'soft moonlit silver with hints of melancholic blue'. 단순 나열 금지!",
 
-  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 5-7문장 descriptive paragraph로 작성. 선택한 studioStyle과 characterStyle, colorPalette를 자연스럽게 녹여서 하나의 응집력 있는 장면 설명으로! 🎯나이: 20대 초중반. ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정. 조명, 분위기, 카메라 앵글, 인물의 감정과 자세까지 구체적으로 묘사.",
+  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 5-7문장 descriptive paragraph로 작성. 선택한 studioStyle과 characterStyle, colorPalette를 자연스럽게 녹여서 하나의 응집력 있는 장면 설명으로! 🎯나이: 10대 후반~20대. ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정. 조명, 분위기, 카메라 앵글, 인물의 감정과 자세까지 구체적으로 묘사.",
   "card1ImagePrompt": "🎬 Scene 1: 첫번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소(예: The Star→별빛+물, The Tower→붕괴, The Moon→달빛+불안)를 studioStyle/characterStyle/colorPalette와 함께 응집력 있는 장면으로! ⚠️Hero와 다른 구도!",
   "card1Analysis": "🚨반드시 ${cardLen}자 이상! 구조: 1)현재 상황 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
