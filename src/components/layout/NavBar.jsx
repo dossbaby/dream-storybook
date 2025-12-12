@@ -4,6 +4,7 @@ import PremiumBadge from '../common/PremiumBadge';
 const NavBar = ({
     mode,
     user,
+    userProfile, // 프로필 사진 포함
     onlineCount,
     isPremium,
     tier, // 추가: 티어 정보
@@ -118,11 +119,24 @@ const NavBar = ({
 
                 {user ? (
                     <div className="nav-user" onClick={() => onViewChange('my')}>
-                        <img
-                            src={user.photoURL || '/default-avatar.png'}
-                            alt=""
-                            className="user-avatar-img"
-                        />
+                        {userProfile?.profilePhoto?.imageUrl ? (
+                            <div
+                                className="user-avatar-crop"
+                                style={{
+                                    backgroundImage: `url(${userProfile.profilePhoto.imageUrl})`,
+                                    backgroundPosition: `${userProfile.profilePhoto.cropX}% ${userProfile.profilePhoto.cropY}%`,
+                                    backgroundSize: `${(userProfile.profilePhoto.zoom || 1) * 177.78}% auto`
+                                }}
+                            />
+                        ) : user.photoURL ? (
+                            <img
+                                src={user.photoURL}
+                                alt=""
+                                className="user-avatar-img"
+                            />
+                        ) : (
+                            <span className="user-avatar-emoji">👻</span>
+                        )}
                     </div>
                 ) : (
                     <span className="nav-login-text" onClick={onLogin}>

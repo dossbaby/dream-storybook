@@ -343,8 +343,43 @@
     transition: border-color 0.2s;
 }
 
+.user-avatar-emoji {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(108, 92, 231, 0.3));
+    border: 2px solid rgba(155, 89, 182, 0.5);
+    font-size: 1.2rem;
+    padding-bottom: 2px;
+    transition: all 0.2s;
+}
+
 .nav-user:hover .user-avatar-img {
     border-color: var(--purple);
+}
+
+.nav-user:hover .user-avatar-emoji {
+    border-color: var(--purple);
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(155, 89, 182, 0.4);
+}
+
+.user-avatar-crop {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-size: 177.78% auto; /* 16:9 이미지를 원형에 맞춤 */
+    border: 2px solid rgba(155, 89, 182, 0.5);
+    transition: all 0.2s;
+}
+
+.nav-user:hover .user-avatar-crop {
+    border-color: var(--purple);
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(155, 89, 182, 0.4);
 }
 
 /* 로그인 텍스트 */

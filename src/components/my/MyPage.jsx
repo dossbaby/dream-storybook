@@ -27,12 +27,68 @@ const MyPage = ({
     // Admin 티어 변경
     onSetTier,
     // 사용량 요약
-    usageSummary = null
+    usageSummary = null,
+    // 배너 shake 트리거 (시작 버튼 클릭 시)
+    shakeTrigger = 0
 }) => {
     // Admin 이메일 목록
     const ADMIN_EMAILS = ['dossbb@naver.com'];
 
-    // 프로필 완성도 계산
+    // 아바타 툴팁 표시 상태 (모바일 클릭용)
+    const [showAvatarTooltip, setShowAvatarTooltip] = useState(false);
+    const avatarRef = useRef(null);
+    const clickHandlerRef = useRef(null);
+
+    // 클릭 후 자동 fade-out + 외부 클릭 시 닫기
+    useEffect(() => {
+        if (showAvatarTooltip) {
+            const timer = setTimeout(() => {
+                setShowAvatarTooltip(false);
+            }, 3000);
+
+            clickHandlerRef.current = (e) => {
+                if (avatarRef.current && !avatarRef.current.contains(e.target)) {
+                    setShowAvatarTooltip(false);
+                }
+            };
+            // 다음 틱에 리스너 등록 (현재 클릭 이벤트 버블링 방지)
+            const rafId = requestAnimationFrame(() => {
+                document.addEventListener('click', clickHandlerRef.current);
+            });
+
+            return () => {
+                clearTimeout(timer);
+                cancelAnimationFrame(rafId);
+                if (clickHandlerRef.current) {
+                    document.removeEventListener('click', clickHandlerRef.current);
+                }
+            };
+        }
+    }, [showAvatarTooltip]);
+
+    // 배너 shake 애니메이션 상태
+    const [isShaking, setIsShaking] = useState(false);
+    const bannerRef = useRef(null);
+
+    // shakeTrigger가 변경되면 shake 애니메이션 재실행
+    useEffect(() => {
+        if (shakeTrigger > 0) {
+            // 이미 shaking 중이면 먼저 끄고 다시 켜기 (애니메이션 리셋)
+            setIsShaking(false);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setIsShaking(true);
+                    setTimeout(() => setIsShaking(false), 800);
+                });
+            });
+        }
+    }, [shakeTrigger]);
+
+    // 필수 필드 체크 (nickname, name, gender, birthDate)
+    const requiredFields = ['name', 'gender', 'birthDate'];
+    const hasRequiredProfile = requiredFields.every(f => userProfile[f]) && userNickname;
+
+    // 프로필 완성도 계산 (기존 유지)
     const calculateProfileCompletion = () => {
         const fields = ['name', 'birthDate', 'gender', 'mbti'];
         const filled = fields.filter(f => userProfile[f]).length;
@@ -101,11 +157,46 @@ const MyPage = ({
     return (
         <>
             <div className="my-page-content">
+                {/* 필수 정보 미입력 배너 */}
+                {!hasRequiredProfile && (
+                    <div
+                        ref={bannerRef}
+                        className={`required-profile-banner ${isShaking ? 'shake' : ''}`}
+                        onClick={onOpenProfileModal || onOpenNicknameModal}
+                    >
+                        <div className="banner-content">
+                            <span className="banner-title">✨ 필수 정보를 입력해야 리딩을 볼 수 있어요</span>
+                            <span className="banner-desc">프로필 설정을 완료해야 더 정확한 AI 맞춤 리딩을 받을 수 있어요!</span>
+                        </div>
+                        <span className="banner-arrow">→</span>
+                    </div>
+                )}
+
                 {/* 프로필 섹션 */}
                 <section className="my-section">
                     <div className="section-label">프로필</div>
                     <div className="my-profile-card">
-                        <img src={user.photoURL || '/default-avatar.png'} alt="" className="my-avatar" />
+                        <div
+                            ref={avatarRef}
+                            className={`my-avatar-wrapper ${showAvatarTooltip ? 'active' : ''}`}
+                            onClick={() => setShowAvatarTooltip(true)}
+                        >
+                            {userProfile?.profilePhoto?.imageUrl ? (
+                                <div
+                                    className="my-avatar-crop"
+                                    style={{
+                                        backgroundImage: `url(${userProfile.profilePhoto.imageUrl})`,
+                                        backgroundPosition: `${userProfile.profilePhoto.cropX}% ${userProfile.profilePhoto.cropY}%`,
+                                        backgroundSize: `${(userProfile.profilePhoto.zoom || 1) * 177.78}% auto`
+                                    }}
+                                />
+                            ) : user.photoURL ? (
+                                <img src={user.photoURL} alt="" className="my-avatar" />
+                            ) : (
+                                <span className="my-avatar-emoji">👻</span>
+                            )}
+                            <span className="avatar-tooltip">💜 <span className="highlight">내 리딩</span>에서 아바타 사진을 바꿀 수 있어요!</span>
+                        </div>
                         <div className="my-profile-info">
                             <div className="profile-name-row">
                                 <span className="profile-nickname-rainbow">{userNickname || '닉네임'}</span>
@@ -121,65 +212,32 @@ const MyPage = ({
                             <button className="logout-btn" onClick={onLogout}>로그아웃</button>
                         </div>
                     </div>
-                    {hasProfile ? (
-                        <div className="profile-details-card">
-                            <div className="profile-detail-row">
-                                <span className="detail-label">생년월일</span>
-                                <span className="detail-value">
-                                    {userProfile.birthDate ? userProfile.birthDate.replace(/-/g, '.') : '—'}
-                                    {age ? ` (${age}세)` : ''}
-                                </span>
-                            </div>
-                            <div className="profile-detail-row">
-                                <span className="detail-label">태어난 시간</span>
-                                <span className="detail-value">{userProfile.birthTime || '—'}</span>
-                            </div>
-                            <div className="profile-detail-row">
-                                <span className="detail-label">별자리</span>
-                                <span className="detail-value">{zodiac ? `${zodiac.emoji} ${zodiac.name}` : '—'}</span>
-                            </div>
-                            <div className="profile-detail-row">
-                                <span className="detail-label">성별</span>
-                                <span className="detail-value">
-                                    {userProfile.gender === 'female' ? '여성' : userProfile.gender === 'male' ? '남성' : '—'}
-                                </span>
-                            </div>
-                            <div className="profile-detail-row">
-                                <span className="detail-label">MBTI</span>
-                                <span className="detail-value">{userProfile.mbti || '—'}</span>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="profile-setup-banner" onClick={onOpenProfileModal || onOpenNicknameModal}>
-                            <div className="banner-content">
-                                <span className="banner-title">✨ 맞춤 리딩을 받아보세요</span>
-                                <span className="banner-desc">프로필 설정 시 더 정확한 타로, 꿈해몽, 사주를 경험할 수 있어요</span>
-                            </div>
-                            <span className="banner-arrow">→</span>
-                        </div>
-                    )}
-                </section>
-
-                {/* 계정 섹션 */}
-                <section className="my-section">
-                    <div className="section-label">계정</div>
-                    {!isPremium && usageSummary && (
-                        <div className="usage-bar">
-                            <span className="usage-title">무료 리딩</span>
-                            <span className={`usage-chip ${!usageSummary.tarot.canUse ? 'depleted' : ''}`}>
-                                🔮 {usageSummary.tarot.remaining}/{usageSummary.tarot.limit}
-                            </span>
-                            <span className={`usage-chip ${!usageSummary.dream.canUse ? 'depleted' : ''}`}>
-                                🌙 {usageSummary.dream.remaining}/{usageSummary.dream.limit}
-                            </span>
-                            <span className={`usage-chip ${!usageSummary.saju.canUse ? 'depleted' : ''}`}>
-                                🔮 {usageSummary.saju.remaining}/{usageSummary.saju.limit}
+                    <div className="profile-details-card">
+                        <div className="profile-detail-row">
+                            <span className="detail-label">성별</span>
+                            <span className="detail-value">
+                                {userProfile.gender === 'female' ? '여성' : userProfile.gender === 'male' ? '남성' : '—'}
                             </span>
                         </div>
-                    )}
-                    <div className="my-quick-links">
-                        <button onClick={onOpenReferral}>🎁 친구 초대</button>
-                        <button onClick={onOpenFeedback}>💬 의견 보내기</button>
+                        <div className="profile-detail-row">
+                            <span className="detail-label">생년월일</span>
+                            <span className="detail-value">
+                                {userProfile.birthDate ? userProfile.birthDate.replace(/-/g, '.') : '—'}
+                                {age ? ` (${age}세)` : ''}
+                            </span>
+                        </div>
+                        <div className="profile-detail-row">
+                            <span className="detail-label">별자리</span>
+                            <span className="detail-value">{zodiac ? `${zodiac.emoji} ${zodiac.name}` : '—'}</span>
+                        </div>
+                        <div className="profile-detail-row">
+                            <span className="detail-label">태어난 시간</span>
+                            <span className="detail-value">{userProfile.birthTime || '—'}</span>
+                        </div>
+                        <div className="profile-detail-row">
+                            <span className="detail-label">MBTI</span>
+                            <span className="detail-value">{userProfile.mbti || '—'}</span>
+                        </div>
                     </div>
                 </section>
 

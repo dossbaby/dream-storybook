@@ -8,4 +8,4 @@ Allow: /dream/
 Allow: /fortune/
 
 # 사이트맵
-Sitemap: https://jeom.ai/sitemap.xml
+Sitemap: https://www.jeom.ai/sitemap.xml

@@ -139,3 +139,82 @@ export const supportsIntersectionObserver = () => {
     if (typeof window === 'undefined') return false;
     return 'IntersectionObserver' in window;
 };
+
+/**
+ * 이미지를 크롭하여 Canvas로 그리기
+ * @param {string} imageUrl - 원본 이미지 URL
+ * @param {object} cropOptions - 크롭 옵션
+ * @param {number} cropOptions.x - 크롭 중심 X (0-100%)
+ * @param {number} cropOptions.y - 크롭 중심 Y (0-100%)
+ * @param {number} cropOptions.zoom - 줌 배율 (1-3)
+ * @param {number} outputSize - 출력 이미지 크기 (기본 200px)
+ * @returns {Promise<Blob>} 크롭된 이미지 Blob
+ */
+export const cropImageToBlob = async (imageUrl, cropOptions, outputSize = 200) => {
+    const { x = 50, y = 50, zoom = 1 } = cropOptions;
+
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = outputSize;
+            canvas.height = outputSize;
+
+            // 원본 이미지에서 크롭할 영역 계산
+            // 16:9 비율 이미지에서 원형 크롭
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+
+            // 줌에 따른 크롭 영역 크기 (줌이 클수록 작은 영역을 크롭)
+            const cropSize = Math.min(imgWidth, imgHeight) / zoom;
+
+            // 크롭 중심 좌표 계산 (% -> px)
+            const centerX = (x / 100) * imgWidth;
+            const centerY = (y / 100) * imgHeight;
+
+            // 크롭 시작점 (경계 처리)
+            let startX = centerX - cropSize / 2;
+            let startY = centerY - cropSize / 2;
+
+            // 경계 넘어가지 않도록 조정
+            startX = Math.max(0, Math.min(startX, imgWidth - cropSize));
+            startY = Math.max(0, Math.min(startY, imgHeight - cropSize));
+
+            // 원형 클리핑
+            ctx.beginPath();
+            ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+
+            // 이미지 그리기
+            ctx.drawImage(
+                img,
+                startX, startY, cropSize, cropSize,
+                0, 0, outputSize, outputSize
+            );
+
+            // Blob으로 변환
+            canvas.toBlob(
+                (blob) => {
+                    if (blob) {
+                        resolve(blob);
+                    } else {
+                        reject(new Error('Canvas to Blob 변환 실패'));
+                    }
+                },
+                'image/webp',
+                0.85
+            );
+        };
+
+        img.onerror = () => {
+            reject(new Error('이미지 로드 실패'));
+        };
+
+        img.src = imageUrl;
+    });
+};

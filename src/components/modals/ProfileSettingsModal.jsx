@@ -42,7 +42,7 @@ const ProfileSettingsModal = ({
             setFormData({
                 nickname: currentNickname || '',
                 name: currentProfile.name || '',
-                birthDate: currentProfile.birthDate || '2000-01-01',
+                birthDate: currentProfile.birthDate || '',
                 birthTime: currentProfile.birthTime || '',
                 gender: currentProfile.gender || '',
                 mbti: currentProfile.mbti || ''
@@ -84,28 +84,28 @@ const ProfileSettingsModal = ({
                         <h3 className="profile-group-title">기본 정보</h3>
                         <div className="profile-field-row">
                             <div className="profile-field">
-                                <label>닉네임</label>
+                                <label>닉네임 <span className="visibility-tag public">(필수/공개)</span></label>
                                 <input
                                     type="text"
                                     value={formData.nickname}
                                     onChange={e => handleChange('nickname', e.target.value)}
-                                    placeholder="피드에 표시될 이름"
+                                    placeholder="피드/리딩에 공개"
                                     maxLength={12}
                                 />
                             </div>
                             <div className="profile-field">
-                                <label>이름</label>
+                                <label>이름 <span className="visibility-tag public">(필수/비공개)</span></label>
                                 <input
                                     type="text"
                                     value={formData.name}
                                     onChange={e => handleChange('name', e.target.value)}
-                                    placeholder="리딩에 활용"
+                                    placeholder="AI 분석 용도만"
                                     maxLength={20}
                                 />
                             </div>
                         </div>
                         <div className="profile-field">
-                            <label>성별</label>
+                            <label>성별 <span className="visibility-tag public">(필수)</span></label>
                             <div className="gender-toggle">
                                 <button
                                     type="button"
@@ -130,7 +130,7 @@ const ProfileSettingsModal = ({
                         <h3 className="profile-group-title">생년월일</h3>
                         <div className="profile-field-row">
                             <div className="profile-field">
-                                <label>날짜</label>
+                                <label>날짜 <span className="visibility-tag public">(필수)</span></label>
                                 <input
                                     type="date"
                                     value={formData.birthDate}

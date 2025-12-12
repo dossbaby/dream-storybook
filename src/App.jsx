@@ -38,7 +38,7 @@ const NicknameModal = lazy(() => import('./components/modals/NicknameModal'));
 const PremiumModal = lazy(() => import('./components/modals/PremiumModal'));
 const AuthModal = lazy(() => import('./components/modals/AuthModal'));
 const ProfileSettingsModal = lazy(() => import('./components/modals/ProfileSettingsModal'));
-const ProfilePromptModal = lazy(() => import('./components/modals/ProfilePromptModal'));
+// ProfilePromptModal 삭제됨 (필수 프로필 검증으로 대체)
 const ShareModal = lazy(() => import('./components/modals/ShareModal'));
 const ReportModal = lazy(() => import('./components/modals/ReportModal'));
 // PointsModal 삭제됨 (포인트 시스템 제거)
@@ -92,7 +92,7 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, profilePrompt: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general' });
+    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
     const openAuthModal = () => setModals(prev => ({ ...prev, auth: true }));
@@ -171,17 +171,16 @@ function App() {
         setFilter, setMode
     });
 
-    // 프로필 완성도 체크 (닉네임 + 생년월일)
-    const isProfileIncomplete = () => {
-        if (!user) return false;
-        return !userNickname || !userProfile?.birthDate;
+    // 필수 프로필 정보 체크 (닉네임, 이름, 성별, 생년월일)
+    const [profileShakeTrigger, setProfileShakeTrigger] = useState(0);
+    const hasRequiredProfile = () => {
+        if (!user) return true; // 비로그인 사용자는 체크 안함
+        return userNickname && userProfile?.name && userProfile?.gender && userProfile?.birthDate;
     };
-    // 프로필 유도 표시 여부 (세션당 1회)
-    const [hasShownProfilePrompt, setHasShownProfilePrompt] = useState(false);
 
     // 유저 액션 (로그인 등) - 타로 액션보다 먼저 정의
     const setShareTarget = (target) => setModals(prev => ({ ...prev, shareTarget: target }));
-    const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile } = useUserActions({
+    const { handleGoogleLogin, handleLogout, openShareModal, copyShareText, saveNickname, saveProfile, saveProfilePhoto } = useUserActions({
         user, setUserNickname, setUserProfile, shareTarget: modals.shareTarget, setShareTarget, dreamTypes, openModal, closeModal
     });
 
@@ -274,6 +273,7 @@ function App() {
             <NavBar
                 mode={mode}
                 user={user}
+                userProfile={userProfile}
                 onlineCount={onlineCount}
                 isPremium={isPremium}
                 tier={tier}
@@ -359,10 +359,11 @@ function App() {
                             popularKeywords={popularKeywords}
                             symbolFilter={filters.keyword}
                             onCreateClick={() => {
-                                // 프로필 미완성 시 유도 모달 (세션당 1회)
-                                if (isProfileIncomplete() && !hasShownProfilePrompt) {
-                                    setHasShownProfilePrompt(true);
-                                    openModal('profilePrompt');
+                                // 필수 프로필 미완성 시 프로필 페이지로 이동
+                                if (!hasRequiredProfile()) {
+                                    setView('my');
+                                    setProfileShakeTrigger(prev => prev + 1);
+                                    return;
                                 }
                                 setView('create');
                                 // 현재 모드의 결과 초기화 (피드에서 본 결과 클리어)
@@ -650,11 +651,38 @@ function App() {
                             onDeleteDream={deleteDream}
                             onDeleteTarot={deleteTarot}
                             onDeleteFortune={deleteFortune}
+                            onSetProfilePhoto={saveProfilePhoto}
                             tier={tier}
                             onOpenPremium={handleOpenPremiumModal}
+                            onCreateClick={(cat) => { setMode(cat); setView('create'); }}
+                            onLogin={openLoginModal}
                         />
                     )}
-                    {/* 마이페이지 */}
+                    {/* 마이페이지 - 비로그인 시 empty state */}
+                    {view === 'my' && !user && (
+                        <div className="my-page-empty">
+                            <div className="feed-empty-state tarot-mode">
+                                <div className="empty-illustration">
+                                    <span className="empty-emoji">🔮</span>
+                                    <div className="empty-sparkles tarot-sparkles">
+                                        <span>✦</span>
+                                        <span>✧</span>
+                                        <span>✦</span>
+                                    </div>
+                                </div>
+                                <h3 className="empty-title">마음이 복잡할 땐 점AI</h3>
+                                <p className="empty-subtitle">로그인해서 나만의 리딩을 시작하세요</p>
+                                <button
+                                    className="empty-action-btn tarot-btn"
+                                    onClick={openLoginModal}
+                                >
+                                    <span>✨</span>
+                                    <span>시작하기</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    {/* 마이페이지 - 로그인 시 */}
                     {view === 'my' && user && (
                         <MyPage
                             user={user}
@@ -695,6 +723,7 @@ function App() {
                             onSetTier={setTier}
                             initialCategory={myCategory}
                             usageSummary={getUsageSummary()}
+                            shakeTrigger={profileShakeTrigger}
                         />
                     )}
 
@@ -741,13 +770,6 @@ function App() {
                         currentProfile={userProfile}
                         currentNickname={userNickname}
                         onSave={saveProfile}
-                    />
-
-                    {/* 프로필 유도 모달 */}
-                    <ProfilePromptModal
-                        isOpen={modals.profilePrompt}
-                        onClose={() => closeModal('profilePrompt')}
-                        onOpenProfile={() => openModal('profile')}
                     />
 
                     {/* 상세 풀이 모달 */}
@@ -818,10 +840,11 @@ function App() {
                     onOpenTarotResult={handleOpenTarotResult}
                     onOpenFortuneResult={handleOpenFortuneResult}
                     onCreateClick={() => {
-                        // 프로필 미완성 시 유도 모달 (세션당 1회)
-                        if (isProfileIncomplete() && !hasShownProfilePrompt) {
-                            setHasShownProfilePrompt(true);
-                            openModal('profilePrompt');
+                        // 필수 프로필 미완성 시 프로필 페이지로 이동
+                        if (!hasRequiredProfile()) {
+                            setView('my');
+                            setProfileShakeTrigger(prev => prev + 1);
+                            return;
                         }
                         setView('create');
                         // 현재 모드의 결과 초기화
@@ -851,10 +874,11 @@ function App() {
                 }}
                 onViewChange={(v) => {
                     if (v === 'create') {
-                        // 프로필 미완성 시 유도 모달 (세션당 1회)
-                        if (isProfileIncomplete() && !hasShownProfilePrompt) {
-                            setHasShownProfilePrompt(true);
-                            openModal('profilePrompt');
+                        // 필수 프로필 미완성 시 프로필 페이지로 이동
+                        if (!hasRequiredProfile()) {
+                            setView('my');
+                            setProfileShakeTrigger(prev => prev + 1);
+                            return;
                         }
                         // 시작 버튼 클릭 시 결과 초기화
                         setView('create');

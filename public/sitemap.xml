@@ -2,58 +2,58 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- 메인 페이지 -->
   <url>
-    <loc>https://jeom.ai/</loc>
+    <loc>https://www.jeom.ai/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- 타로 주제별 -->
   <url>
-    <loc>https://jeom.ai/tarot/사랑</loc>
+    <loc>https://www.jeom.ai/tarot/사랑</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jeom.ai/tarot/관계</loc>
+    <loc>https://www.jeom.ai/tarot/관계</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jeom.ai/tarot/돈</loc>
+    <loc>https://www.jeom.ai/tarot/돈</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jeom.ai/tarot/성장</loc>
+    <loc>https://www.jeom.ai/tarot/성장</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jeom.ai/tarot/건강</loc>
+    <loc>https://www.jeom.ai/tarot/건강</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jeom.ai/tarot/선택</loc>
+    <loc>https://www.jeom.ai/tarot/선택</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://jeom.ai/tarot/일반</loc>
+    <loc>https://www.jeom.ai/tarot/일반</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- 꿈해몽 -->
   <url>
-    <loc>https://jeom.ai/dream</loc>
+    <loc>https://www.jeom.ai/dream</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- 사주/운세 -->
   <url>
-    <loc>https://jeom.ai/fortune</loc>
+    <loc>https://www.jeom.ai/fortune</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>

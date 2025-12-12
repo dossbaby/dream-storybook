@@ -39,9 +39,108 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    border: 2px solid rgba(0, 212, 255, 0.3);
+    border: 2px solid rgba(155, 89, 182, 0.5);
     object-fit: cover;
     flex-shrink: 0;
+}
+
+.my-avatar-emoji {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(108, 92, 231, 0.3));
+    border: 2px solid rgba(155, 89, 182, 0.5);
+    font-size: 1.8rem;
+    flex-shrink: 0;
+    padding-bottom: 2px;
+}
+
+.my-avatar-crop {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-size: 177.78% auto; /* 16:9 이미지를 원형에 맞춤 */
+    border: 2px solid rgba(155, 89, 182, 0.5);
+    flex-shrink: 0;
+}
+
+/* 아바타 wrapper + 툴팁 */
+.my-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.my-avatar-wrapper:hover .my-avatar,
+.my-avatar-wrapper:hover .my-avatar-emoji,
+.my-avatar-wrapper:hover .my-avatar-crop {
+    transform: scale(1.05);
+    border-color: var(--purple);
+    box-shadow: 0 0 16px rgba(155, 89, 182, 0.5);
+}
+
+.my-avatar,
+.my-avatar-emoji,
+.my-avatar-crop {
+    transition: all 0.2s ease;
+}
+
+.avatar-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    transform: scale(0.9);
+    background: linear-gradient(135deg, rgba(30, 20, 50, 0.98), rgba(20, 15, 35, 0.98));
+    border: 1px solid rgba(155, 89, 182, 0.4);
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(155, 89, 182, 0.2);
+    z-index: 10;
+}
+
+.avatar-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border: 6px solid transparent;
+    border-top-color: rgba(155, 89, 182, 0.4);
+}
+
+/* 데스크탑에서만 hover 적용 */
+@media (hover: hover) and (pointer: fine) {
+    .my-avatar-wrapper:hover .avatar-tooltip {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 모바일 클릭/터치 시 active 클래스로 표시 */
+.my-avatar-wrapper.active .avatar-tooltip {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.avatar-tooltip .highlight {
+    color: #a78bfa;
+    font-weight: 700;
+}
+
+.my-avatar-wrapper.active .my-avatar,
+.my-avatar-wrapper.active .my-avatar-emoji,
+.my-avatar-wrapper.active .my-avatar-crop {
+    transform: scale(1.05);
+    border-color: var(--purple);
+    box-shadow: 0 0 16px rgba(155, 89, 182, 0.5);
 }
 
 .my-profile-info {
@@ -1222,6 +1321,19 @@
     font-size: 0.65rem;
 }
 
+.profile-modal .profile-field label .visibility-tag {
+    font-size: 0.65rem;
+    font-weight: 500;
+}
+
+.profile-modal .profile-field label .visibility-tag.public {
+    color: rgba(167, 139, 250, 0.9);
+}
+
+.profile-modal .profile-field label .visibility-tag.private {
+    color: rgba(255, 255, 255, 0.35);
+}
+
 .profile-modal .profile-field input {
     width: 100%;
     min-width: 0;
@@ -1563,6 +1675,22 @@
     margin: 0 auto;
     padding: 1rem;
     padding-bottom: calc(var(--bottom-nav-height, 70px) + var(--safe-area-bottom, 0px) + 2rem);
+    overflow: visible;
+}
+
+/* 비로그인 시 empty state (프로필, 내 리딩 공통) */
+.my-page-empty,
+.my-readings-view > .feed-empty-state {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 1rem;
+    overflow: visible;
+}
+
+.my-page-empty .feed-empty-state,
+.my-readings-view > .feed-empty-state {
+    min-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height, 70px) - var(--safe-area-bottom, 0px) - 40px);
 }
 
 /* 헤더 */
@@ -1707,6 +1835,17 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+}
+
+/* 내 리딩 뷰 안의 empty state - 헤더/탭 높이 고려 */
+.my-readings-list .feed-empty-state {
+    min-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height, 70px) - var(--safe-area-bottom, 0px) - 260px);
+}
+
+@media (max-width: 768px) {
+    .my-readings-list .feed-empty-state {
+        min-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height, 70px) - var(--safe-area-bottom, 0px) - 240px);
+    }
 }
 
 /* 리딩 카드 */
@@ -2193,11 +2332,7 @@
 .action-group {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
+    gap: 0.5rem;
 }
 
 .action-group-title {
@@ -2214,6 +2349,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    background: transparent;
 }
 
 .visibility-option {
@@ -2222,8 +2358,8 @@
     gap: 0.75rem;
     width: 100%;
     padding: 0.85rem 1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -2231,8 +2367,8 @@
 }
 
 .visibility-option:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .visibility-option.active {
@@ -2422,10 +2558,384 @@
     transform: translateY(-1px);
 }
 
+/* 프로필 사진 선택 */
+.profile-photo-picker {
+    padding: 1rem;
+    background: transparent;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.photo-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.picker-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.picker-close:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* 이미지 썸네일 목록 */
+.photo-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.photo-thumb {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid transparent;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+}
+
+.photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-thumb:hover {
+    border-color: rgba(155, 89, 182, 0.5);
+}
+
+.photo-thumb.selected {
+    border-color: #9b59b6;
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.4);
+}
+
+/* Crop 영역 */
+.photo-crop-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.crop-instruction {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+.photo-cropper {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 16/9;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: crosshair;
+    user-select: none;
+    touch-action: none;
+}
+
+.photo-cropper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.crop-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.crop-circle {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow:
+        0 0 0 9999px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(155, 89, 182, 0.6);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* 미리보기 */
+.crop-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.preview-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.preview-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-size: 177.78% auto; /* 16:9 이미지를 원형에 맞춤 */
+    border: 2px solid rgba(155, 89, 182, 0.5);
+}
+
+/* Zoom 슬라이더 */
+.zoom-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+}
+
+.zoom-label {
+    font-size: 0.9rem;
+}
+
+.zoom-slider {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9b59b6, #6c5ce7);
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: transform 0.15s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.zoom-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9b59b6, #6c5ce7);
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.zoom-value {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    min-width: 36px;
+    text-align: right;
+}
+
+/* 프로필 설정 버튼 */
+.btn-set-profile {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #9b59b6, #6c5ce7);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-set-profile:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.photo-toast {
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
 /* 모바일 */
 @media (max-width: 640px) {
     .reading-action-modal {
         width: calc(100% - 2rem);
         max-width: 380px;
     }
+
+    .photo-cropper {
+        max-width: 100%;
+    }
+
+    .crop-circle {
+        width: 48px;
+        height: 48px;
+    }
+
+    .preview-avatar {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* ========== 필수 프로필 정보 배너 ========== */
+.required-profile-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.08) 0%,
+        rgba(88, 101, 242, 0.1) 50%,
+        rgba(168, 85, 247, 0.08) 100%
+    );
+    border: 2px dashed transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    margin-bottom: 0;
+    animation: subtleShake 0.8s ease-in-out 0.3s;
+}
+
+@keyframes subtleShake {
+    0%, 100% { transform: translateY(0); }
+    15% { transform: translateY(-4px) rotate(-0.3deg); }
+    30% { transform: translateY(3px) rotate(0.3deg); }
+    45% { transform: translateY(-3px) rotate(-0.2deg); }
+    60% { transform: translateY(2px) rotate(0.2deg); }
+    75% { transform: translateY(-2px); }
+    90% { transform: translateY(1px); }
+}
+
+/* 시작 버튼 클릭 시 재실행되는 shake - 다른 keyframes 사용 */
+@keyframes triggeredShake {
+    0%, 100% { transform: translateY(0); }
+    15% { transform: translateY(-4px) rotate(-0.3deg); }
+    30% { transform: translateY(3px) rotate(0.3deg); }
+    45% { transform: translateY(-3px) rotate(-0.2deg); }
+    60% { transform: translateY(2px) rotate(0.2deg); }
+    75% { transform: translateY(-2px); }
+    90% { transform: translateY(1px); }
+}
+
+.required-profile-banner.shake {
+    animation: triggeredShake 0.8s ease-in-out !important;
+}
+
+/* 애니메이션 dashed border */
+.required-profile-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(90deg,
+        rgba(0, 212, 255, 0.8) 0%,
+        rgba(168, 85, 247, 0.8) 25%,
+        rgba(0, 212, 255, 0.8) 50%,
+        rgba(168, 85, 247, 0.8) 75%,
+        rgba(0, 212, 255, 0.8) 100%
+    );
+    background-size: 200% 100%;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: borderMove 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes borderMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+}
+
+/* 은은한 glow 효과 */
+.required-profile-banner::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 14px;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.15) 0%,
+        rgba(168, 85, 247, 0.15) 100%
+    );
+    filter: blur(8px);
+    opacity: 0.6;
+    z-index: -1;
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+}
+
+.required-profile-banner:hover {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+}
+
+.required-profile-banner:hover::after {
+    opacity: 0.9;
+}
+
+.required-profile-banner .banner-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    z-index: 1;
+}
+
+.required-profile-banner .banner-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #00d4ff;
+    text-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+}
+
+.required-profile-banner .banner-desc {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.4;
+}
+
+.required-profile-banner .banner-arrow {
+    font-size: 1.5rem;
+    color: rgba(168, 85, 247, 0.7);
+    z-index: 1;
+    animation: arrowBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(4px); }
 }

@@ -81,12 +81,36 @@ export const useUserActions = ({
         }
     };
 
+    // 프로필 사진 저장 (리딩 이미지 + crop 좌표 + zoom)
+    const saveProfilePhoto = async (imageUrl, cropPosition) => {
+        if (!user) return;
+        try {
+            const profilePhoto = {
+                imageUrl,
+                cropX: cropPosition.x,
+                cropY: cropPosition.y,
+                zoom: cropPosition.zoom || 1,
+                updatedAt: Timestamp.now()
+            };
+            await setDoc(doc(db, 'users', user.uid), {
+                profilePhoto,
+                updatedAt: Timestamp.now()
+            }, { merge: true });
+            // userProfile에 profilePhoto 추가
+            setUserProfile(prev => ({ ...prev, profilePhoto }));
+        } catch (err) {
+            console.error('프로필 사진 저장 실패:', err);
+            throw err;
+        }
+    };
+
     return {
         handleGoogleLogin,
         handleLogout,
         openShareModal,
         copyShareText,
         saveNickname,
-        saveProfile
+        saveProfile,
+        saveProfilePhoto
     };
 };

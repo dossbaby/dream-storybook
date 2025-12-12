@@ -624,7 +624,7 @@
 /* 모바일에서 empty state만 있을 때 스크롤 방지 */
 @media (max-width: 768px) {
     .feed-view:has(.feed-empty-state) {
-        overflow: hidden;
+        overflow: visible;
         max-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height) - var(--safe-area-bottom));
     }
 }
@@ -1016,6 +1016,62 @@
     padding: 4rem 2rem;
     text-align: center;
     min-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height, 0px) - 100px);
+    position: relative;
+    overflow: visible;
+}
+
+/* 배경 glow 효과 - 타로 (보라색) */
+.feed-empty-state.tarot-mode::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: radial-gradient(
+        ellipse 60% 50% at 50% 40%,
+        rgba(99, 102, 241, 0.15) 0%,
+        rgba(139, 92, 246, 0.08) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 배경 glow 효과 - 꿈 (틸/초록색) */
+.feed-empty-state.dream-mode::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: radial-gradient(
+        ellipse 60% 50% at 50% 40%,
+        rgba(20, 184, 166, 0.12) 0%,
+        rgba(13, 148, 136, 0.06) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 배경 glow 효과 - 사주 (앰버/노란색) */
+.feed-empty-state.fortune-mode::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: radial-gradient(
+        ellipse 60% 50% at 50% 40%,
+        rgba(251, 191, 36, 0.12) 0%,
+        rgba(251, 146, 60, 0.06) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
 }
 
 .empty-illustration {
@@ -1028,10 +1084,63 @@
     margin-bottom: 1.5rem;
 }
 
+/* 이모지 뒤 glow 효과 - 타로 (보라색) */
+.tarot-mode .empty-illustration::before {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(99, 102, 241, 0.35) 0%,
+        rgba(139, 92, 246, 0.2) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 이모지 뒤 glow 효과 - 꿈 (틸/초록색) */
+.dream-mode .empty-illustration::before {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(20, 184, 166, 0.35) 0%,
+        rgba(13, 148, 136, 0.2) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 이모지 뒤 glow 효과 - 사주 (앰버/노란색) */
+.fortune-mode .empty-illustration::before {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(251, 191, 36, 0.35) 0%,
+        rgba(251, 146, 60, 0.2) 40%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
 .empty-emoji {
     font-size: 4rem;
     filter: grayscale(0.3) opacity(0.8);
     animation: emptyFloat 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes emptyFloat {
@@ -1147,9 +1256,9 @@
 @media (max-width: 768px) {
     .feed-empty-state {
         padding: 2rem 1.5rem;
-        min-height: auto;
+        min-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height, 70px) - var(--safe-area-bottom, 0px) - 20px);
         max-height: calc(100vh - var(--nav-height) - var(--bottom-nav-height) - var(--safe-area-bottom));
-        overflow: hidden;
+        overflow: visible;
         /* 스크롤바 숨김 */
         scrollbar-width: none;
         -ms-overflow-style: none;
@@ -1163,6 +1272,14 @@
         width: 80px;
         height: 80px;
         margin-bottom: 1rem;
+    }
+
+    /* 모바일 glow 크기 조정 */
+    .tarot-mode .empty-illustration::before,
+    .dream-mode .empty-illustration::before,
+    .fortune-mode .empty-illustration::before {
+        width: 100px;
+        height: 100px;
     }
 
     .empty-emoji {

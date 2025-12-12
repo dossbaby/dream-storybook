@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { HISTORY_LIMITS } from '../../utils/aiConfig';
 
 // 카테고리별 이모지
@@ -43,19 +43,96 @@ const formatTime = (timestamp) => {
     return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
 };
 
-// 리딩 액션 모달 (공개 설정, 삭제)
-const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete }) => {
+// 리딩 액션 모달 (공개 설정, 삭제, 프로필 사진 설정)
+const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, onSetProfilePhoto }) => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [toast, setToast] = useState(null);
     const initialVisibility = item?.visibility || (item?.isPublic ? 'public' : 'private');
     const [selectedVisibility, setSelectedVisibility] = useState(initialVisibility);
 
-    // item이 변경되면 selectedVisibility 초기화
+    // 프로필 사진 선택 관련 state
+    const [showPhotoPicker, setShowPhotoPicker] = useState(false);
+    const [selectedPhoto, setSelectedPhoto] = useState(null);
+    const [cropPosition, setCropPosition] = useState({ x: 50, y: 50 }); // % 기준
+    const [zoom, setZoom] = useState(1); // 1 = 100%, 범위: 1~3
+    const [isDragging, setIsDragging] = useState(false);
+    const cropperRef = useRef(null);
+
+    // item이 변경되면 초기화
     useEffect(() => {
         if (item) {
             setSelectedVisibility(item.visibility || (item.isPublic ? 'public' : 'private'));
+            setShowPhotoPicker(false);
+            setSelectedPhoto(null);
+            setCropPosition({ x: 50, y: 50 });
+            setZoom(1);
         }
     }, [item]);
+
+    // 리딩에서 이미지 추출
+    const getReadingImages = () => {
+        if (!item) return [];
+        const images = [];
+
+        // 타로
+        if (item.heroImage) images.push({ url: item.heroImage, label: '대표' });
+        if (item.card1Image) images.push({ url: item.card1Image, label: '카드1' });
+        if (item.card2Image) images.push({ url: item.card2Image, label: '카드2' });
+        if (item.card3Image) images.push({ url: item.card3Image, label: '카드3' });
+        if (item.conclusionImage) images.push({ url: item.conclusionImage, label: '결론' });
+
+        // 꿈 (dreamImage)
+        if (item.dreamImage) images.push({ url: item.dreamImage, label: '꿈' });
+
+        // 사주 (morningImage 등)
+        if (item.morningImage) images.push({ url: item.morningImage, label: '오전' });
+        if (item.afternoonImage) images.push({ url: item.afternoonImage, label: '오후' });
+        if (item.eveningImage) images.push({ url: item.eveningImage, label: '저녁' });
+
+        return images;
+    };
+
+    // 드래그 핸들러
+    const handleDragStart = (e) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragMove = (e) => {
+        if (!isDragging || !cropperRef.current) return;
+
+        const rect = cropperRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        // 이미지 영역 내에서의 % 위치 계산
+        let x = ((clientX - rect.left) / rect.width) * 100;
+        let y = ((clientY - rect.top) / rect.height) * 100;
+
+        // 0~100 범위로 제한
+        x = Math.max(0, Math.min(100, x));
+        y = Math.max(0, Math.min(100, y));
+
+        setCropPosition({ x, y });
+    };
+
+    const handleDragEnd = () => {
+        setIsDragging(false);
+    };
+
+    // 프로필 사진 저장
+    const handleSaveProfilePhoto = async () => {
+        if (selectedPhoto && onSetProfilePhoto) {
+            await onSetProfilePhoto(selectedPhoto.url, { ...cropPosition, zoom });
+            setToast('프로필 사진이 설정되었어요');
+            setTimeout(() => {
+                setToast(null);
+                setShowPhotoPicker(false);
+                setSelectedPhoto(null);
+                setZoom(1);
+            }, 1500);
+        }
+    };
 
     if (!isOpen || !item) return null;
 
@@ -106,6 +183,124 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete })
                 </header>
 
                 <div className="reading-action-modal-body">
+                    {/* 프로필 사진 설정 섹션 */}
+                    <section className="action-group">
+                        <h3 className="action-group-title">프로필 사진 설정</h3>
+                        {!showPhotoPicker ? (
+                            <button
+                                className="visibility-option profile-photo-option"
+                                onClick={() => setShowPhotoPicker(true)}
+                            >
+                                <span className="option-icon">📷</span>
+                                <div className="option-info">
+                                    <span className="option-label">프로필 사진 변경</span>
+                                    <span className="option-desc">리딩 이미지를 프로필 사진으로 쓰기</span>
+                                </div>
+                            </button>
+                        ) : (
+                            <div className="profile-photo-picker">
+                                <div className="photo-picker-header">
+                                    <span>이미지 선택</span>
+                                    <button className="picker-close" onClick={() => {
+                                        setShowPhotoPicker(false);
+                                        setSelectedPhoto(null);
+                                    }}>×</button>
+                                </div>
+
+                                {/* 이미지 썸네일 목록 */}
+                                <div className="photo-thumbnails">
+                                    {getReadingImages().map((img, idx) => (
+                                        <button
+                                            key={idx}
+                                            className={`photo-thumb ${selectedPhoto?.url === img.url ? 'selected' : ''}`}
+                                            onClick={() => {
+                                                setSelectedPhoto(img);
+                                                setCropPosition({ x: 50, y: 50 });
+                                                setZoom(1);
+                                            }}
+                                        >
+                                            <img src={img.url + '?w=100'} alt={img.label} loading="lazy" />
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Crop 영역 */}
+                                {selectedPhoto && (
+                                    <div className="photo-crop-container">
+                                        <p className="crop-instruction">드래그로 위치, 슬라이더로 확대/축소</p>
+                                        <div
+                                            ref={cropperRef}
+                                            className="photo-cropper"
+                                            onMouseDown={handleDragStart}
+                                            onMouseMove={handleDragMove}
+                                            onMouseUp={handleDragEnd}
+                                            onMouseLeave={handleDragEnd}
+                                            onTouchStart={handleDragStart}
+                                            onTouchMove={handleDragMove}
+                                            onTouchEnd={handleDragEnd}
+                                        >
+                                            <img
+                                                src={selectedPhoto.url + '?w=400'}
+                                                alt="crop preview"
+                                                style={{ transform: `scale(${zoom})` }}
+                                            />
+                                            <div
+                                                className="crop-circle"
+                                                style={{
+                                                    left: `${cropPosition.x}%`,
+                                                    top: `${cropPosition.y}%`
+                                                }}
+                                            />
+                                            <div className="crop-overlay" />
+                                        </div>
+
+                                        {/* Zoom 슬라이더 */}
+                                        <div className="zoom-slider-container">
+                                            <span className="zoom-label">🔍</span>
+                                            <input
+                                                type="range"
+                                                min="1"
+                                                max="3"
+                                                step="0.1"
+                                                value={zoom}
+                                                onChange={(e) => setZoom(parseFloat(e.target.value))}
+                                                className="zoom-slider"
+                                            />
+                                            <span className="zoom-value">{Math.round(zoom * 100)}%</span>
+                                        </div>
+
+                                        {/* 미리보기 */}
+                                        <div className="crop-preview">
+                                            <span className="preview-label">미리보기</span>
+                                            <div
+                                                className="preview-avatar"
+                                                style={{
+                                                    backgroundImage: `url(${selectedPhoto.url}?w=200)`,
+                                                    backgroundPosition: `${cropPosition.x}% ${cropPosition.y}%`,
+                                                    backgroundSize: `${zoom * 177.78}% auto`
+                                                }}
+                                            />
+                                        </div>
+
+                                        <button
+                                            className="btn-set-profile"
+                                            onClick={handleSaveProfilePhoto}
+                                        >
+                                            프로필 사진 설정
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* 토스트 */}
+                                {toast && (
+                                    <div className="action-toast photo-toast">
+                                        {toast}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </section>
+
                     {/* 공개 설정 섹션 */}
                     <section className="action-group">
                         <h3 className="action-group-title">공개 설정</h3>
@@ -152,8 +347,7 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete })
                                 {selectedVisibility === 'private' && <span className="option-check">✓</span>}
                             </button>
 
-                            {/* 삭제 옵션 (공개 설정과 같은 섹션) */}
-                            <div className="visibility-divider" />
+                            {/* 삭제 옵션 */}
                             {!showDeleteConfirm ? (
                                 <button
                                     className="visibility-option delete-option"
@@ -216,8 +410,11 @@ const MyReadingsView = ({
     onDeleteDream,
     onDeleteTarot,
     onDeleteFortune,
+    onSetProfilePhoto,
     tier = 'free',
-    onOpenPremium
+    onOpenPremium,
+    onCreateClick, // 시작하기 버튼 클릭 시
+    onLogin // 로그인 모달 열기
 }) => {
     const [category, setCategory] = useState('tarot');
     const [actionModal, setActionModal] = useState({ isOpen: false, item: null, type: null });
@@ -248,10 +445,24 @@ const MyReadingsView = ({
     if (!user) {
         return (
             <div className="my-readings-view">
-                <div className="my-readings-empty">
-                    <span className="empty-icon">💜</span>
-                    <h3>내 리딩을 모아보세요</h3>
-                    <p>로그인하면 리딩 기록을 저장하고 관리할 수 있어요</p>
+                <div className="feed-empty-state tarot-mode">
+                    <div className="empty-illustration">
+                        <span className="empty-emoji">💜</span>
+                        <div className="empty-sparkles tarot-sparkles">
+                            <span>✦</span>
+                            <span>✧</span>
+                            <span>✦</span>
+                        </div>
+                    </div>
+                    <h3 className="empty-title">내 리딩을 모아보세요</h3>
+                    <p className="empty-subtitle">로그인하면 리딩 기록을 저장하고 관리할 수 있어요</p>
+                    <button
+                        className="empty-action-btn tarot-btn"
+                        onClick={onLogin}
+                    >
+                        <span>🔮</span>
+                        <span>시작하기</span>
+                    </button>
                 </div>
             </div>
         );
@@ -400,20 +611,55 @@ const MyReadingsView = ({
         );
     };
 
-    // 빈 상태
+    // 빈 상태 - FeedView 스타일과 완전 동일
     const renderEmptyState = () => {
-        const emptyConfig = {
-            tarot: { emoji: '🔮', text: '아직 타로 리딩이 없어요', sub: '첫 번째 타로 리딩을 시작해보세요!' },
-            dream: { emoji: '🌙', text: '아직 꿈 해몽이 없어요', sub: '어젯밤 꿈을 기록해보세요!' },
-            fortune: { emoji: '☀️', text: '아직 사주가 없어요', sub: '오늘의 운세를 확인해보세요!' }
+        const emptyStates = {
+            tarot: {
+                emoji: '🔮',
+                title: '아직 타로 리딩이 없어요',
+                subtitle: '카드가 당신을 기다리고 있어요',
+                btnText: '타로 보기',
+                btnEmoji: '🔮',
+                btnClass: 'tarot-btn'
+            },
+            dream: {
+                emoji: '🌙',
+                title: '아직 꿈 해몽이 없어요',
+                subtitle: '어젯밤 꿈을 풀어보세요!',
+                btnText: '꿈 풀이 보기',
+                btnEmoji: '🌙',
+                btnClass: 'dream-btn'
+            },
+            fortune: {
+                emoji: '🔮',
+                title: '아직 사주가 없어요',
+                subtitle: '오늘의 사주를 확인해보세요',
+                btnText: '사주 보기',
+                btnEmoji: '☀️',
+                btnClass: 'fortune-btn'
+            }
         };
-        const config = emptyConfig[category];
+        const state = emptyStates[category];
 
         return (
-            <div className="my-readings-empty">
-                <span className="empty-icon">{config.emoji}</span>
-                <h3>{config.text}</h3>
-                <p>{config.sub}</p>
+            <div className={`feed-empty-state ${category}-mode`}>
+                <div className="empty-illustration">
+                    <span className="empty-emoji">{state.emoji}</span>
+                    <div className={`empty-sparkles ${category}-sparkles`}>
+                        <span>✦</span>
+                        <span>✧</span>
+                        <span>✦</span>
+                    </div>
+                </div>
+                <h3 className="empty-title">{state.title}</h3>
+                <p className="empty-subtitle">{state.subtitle}</p>
+                <button
+                    className={`empty-action-btn ${state.btnClass || ''}`}
+                    onClick={() => onCreateClick?.(category)}
+                >
+                    <span>{state.btnEmoji}</span>
+                    <span>{state.btnText}</span>
+                </button>
             </div>
         );
     };
@@ -491,6 +737,7 @@ const MyReadingsView = ({
                 type={actionModal.type}
                 onUpdate={onUpdateVisibility}
                 onDelete={handleDelete}
+                onSetProfilePhoto={onSetProfilePhoto}
             />
         </div>
     );

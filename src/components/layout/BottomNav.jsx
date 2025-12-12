@@ -62,8 +62,18 @@ const BottomNav = ({
             }
             if (onViewChange) onViewChange('create');
         } else if (item.action === 'my-readings') {
+            // 비로그인 시 로그인 모달
+            if (!user && onLoginRequired) {
+                onLoginRequired();
+                return;
+            }
             if (onViewChange) onViewChange('my-readings');
         } else if (item.action === 'mypage') {
+            // 비로그인 시 로그인 모달
+            if (!user && onLoginRequired) {
+                onLoginRequired();
+                return;
+            }
             if (onViewChange) onViewChange('my');
         } else if (item.mode && onModeChange) {
             onModeChange(item.mode);
