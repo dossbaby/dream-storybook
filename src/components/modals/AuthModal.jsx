@@ -1,41 +1,23 @@
 import { useState } from 'react';
 import { sendMagicLink } from '../../firebase';
 
-const AuthModal = ({ isOpen, onClose, onGoogleLogin, onSuccess, trigger = 'action' }) => {
-    // trigger: 'action' (타로/꿈/사주 보기) | 'login' (로그인 버튼)
+const AuthModal = ({ isOpen, onClose, onGoogleLogin, onSuccess }) => {
     const [email, setEmail] = useState('');
     const [step, setStep] = useState('choice'); // 'choice' | 'email' | 'sent'
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // trigger에 따른 카피
-    const copyOptions = {
-        action: {
-            intro: '소름돋는 정확함!',
-            introSub: '준비 되셨을까요?',
-            usp: [
-                { icon: '⚡', text: '3초면 바로 시작' },
-                { icon: '🎁', text: '매주 3회 무료' },
-                { icon: '💾', text: '기록 자동 저장' },
-            ],
-            promise: '후회 안 하실 거예요 💞',
-            googleBtn: 'Google로 시작하기',
-            emailBtn: '이메일로 시작하기',
-        },
-        login: {
-            intro: '역시 오셨네요',
-            introSub: '기다리고 있었습니다.',
-            usp: [
-                { icon: '✨', text: '매주 무료 리딩 3회' },
-                { icon: '💾', text: '내 리딩 기록 자동 저장' },
-                { icon: '👁️', text: '점AI는 당신을 기억해요' },
-            ],
-            promise: '어디 한번 볼까요? 🌙',
-            googleBtn: 'Google로 로그인',
-            emailBtn: '이메일로 로그인',
-        }
+    const copy = {
+        intro: '마음이 복잡할 땐',
+        introSub: '점AI에게 물어봐요',
+        usp: [
+            { icon: '✨', text: 'AI가 마음을 읽어드려요' },
+            { icon: '💜', text: '리딩이 차곡차곡 기록 돼요' },
+            { icon: '🌙', text: '새벽에도 언제든 물어보세요' },
+        ],
+        googleBtn: 'Google로 시작하기',
+        emailBtn: '이메일로 시작하기',
     };
-    const copy = copyOptions[trigger] || copyOptions.action;
 
     if (!isOpen) return null;
 
@@ -146,8 +128,6 @@ const AuthModal = ({ isOpen, onClose, onGoogleLogin, onSuccess, trigger = 'actio
                         </div>
 
                         {error && <p className="auth-error">{error}</p>}
-
-                        <p className="auth-promise">{copy.promise}</p>
 
                         <p className="auth-terms">
                             계속 진행하면 <a href="/terms" target="_blank">이용약관</a> 및{' '}

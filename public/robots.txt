@@ -2,13 +2,10 @@
 User-agent: *
 Allow: /
 
-# SEO 페이지 허용
-Allow: /dream/
+# 페이지 허용
 Allow: /tarot/
+Allow: /dream/
 Allow: /fortune/
-Allow: /dreams
-Allow: /tarots
-Allow: /fortunes
 
 # 사이트맵
 Sitemap: https://jeom.ai/sitemap.xml

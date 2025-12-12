@@ -92,11 +92,11 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, profilePrompt: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general', authTrigger: 'action' });
+    const [modals, setModals] = useState({ nickname: false, profile: false, profilePrompt: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
-    const openAuthModal = (trigger = 'action') => setModals(prev => ({ ...prev, auth: true, authTrigger: trigger }));
-    const openLoginModal = () => openAuthModal('login');
+    const openAuthModal = () => setModals(prev => ({ ...prev, auth: true }));
+    const openLoginModal = () => openAuthModal();
     const [mobileSheet, setMobileSheet] = useState({ explore: false });
     const selectedDreamDate = '';
     const [calendar, setCalendar] = useState({ view: false, month: new Date() });
@@ -263,8 +263,8 @@ function App() {
                     <div className="loading-text">🔮</div>
                 </div>
             </div>
+            <div className="loading-tagline">마음이 복잡할 땐</div>
             <div className="loading-brand">점AI</div>
-            <div className="loading-tagline">마음을 모를 때</div>
         </div>
     );
 
@@ -802,7 +802,7 @@ function App() {
                         onSuccess={() => {
                             setDopaminePopup({ type: 'login', message: '로그인 성공! 환영합니다' });
                         }}
-                        trigger={modals.authTrigger}
+                        
                     />
                 </main>
 

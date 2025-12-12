@@ -125,9 +125,9 @@ const NavBar = ({
                         />
                     </div>
                 ) : (
-                    <button className="nav-login-btn" onClick={onLogin}>
+                    <span className="nav-login-text" onClick={onLogin}>
                         로그인
-                    </button>
+                    </span>
                 )}
 
                 {/* 모바일 메뉴 버튼 */}

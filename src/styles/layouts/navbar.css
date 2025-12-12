@@ -347,22 +347,17 @@
     border-color: var(--purple);
 }
 
-/* 로그인 버튼 */
-.nav-login-btn {
-    padding: 0.55rem 1.1rem;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    color: var(--light);
-    font-size: 0.8rem;
+/* 로그인 텍스트 */
+.nav-login-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: color 0.2s;
 }
 
-.nav-login-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.3);
+.nav-login-text:hover {
+    color: rgba(255, 255, 255, 1);
 }
 
 /* 모바일 메뉴 버튼 */
@@ -521,9 +516,8 @@
     }
 
     /* 로그인 버튼 컴팩트하게 */
-    .nav-login-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
+    .nav-login-text {
+        font-size: 0.8rem;
     }
 
     /* 액션 버튼 간격 줄이기 */
