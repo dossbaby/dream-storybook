@@ -2739,12 +2739,31 @@
     to { transform: rotate(360deg); }
 }
 
-/* 모바일 */
+/* 모바일 - 아래서 슬라이드업 */
 @media (max-width: 640px) {
+    .auth-modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
     .auth-modal {
         max-width: 100%;
+        width: 100%;
         border-radius: 24px 24px 0 0;
-        margin-top: auto;
+        margin: 0;
+        animation: authSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+    }
+
+    @keyframes authSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .auth-emoji {
@@ -2753,5 +2772,144 @@
 
     .auth-header h2 {
         font-size: 1.2rem;
+    }
+}
+
+/* ========== 프로필 유도 모달 (ProfilePromptModal) ========== */
+.profile-prompt-overlay {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.profile-prompt-modal {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    border-radius: 24px;
+    padding: 2rem 1.5rem;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    animation: profilePromptEnter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes profilePromptEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.profile-prompt-modal .prompt-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: promptFloat 2s ease-in-out infinite;
+}
+
+@keyframes promptFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.profile-prompt-modal h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.75rem;
+}
+
+.profile-prompt-modal > p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
+}
+
+.profile-prompt-modal .prompt-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-prompt-modal .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    background: rgba(155, 89, 182, 0.1);
+    border: 1px solid rgba(155, 89, 182, 0.2);
+    border-radius: 12px;
+    text-align: left;
+}
+
+.profile-prompt-modal .benefit-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.profile-prompt-modal .benefit-item span:last-child {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.profile-prompt-modal .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.profile-prompt-modal .later-btn {
+    flex: 0.8;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profile-prompt-modal .later-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.profile-prompt-modal .setup-btn {
+    flex: 1.2;
+    padding: 0.85rem 1rem;
+    background: linear-gradient(135deg, var(--purple) 0%, #8e44ad 100%);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.profile-prompt-modal .setup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+}
+
+/* 모바일 */
+@media (max-width: 640px) {
+    .profile-prompt-modal {
+        max-width: 100%;
+        border-radius: 24px 24px 0 0;
+        padding: 2rem 1.25rem 2.5rem;
+    }
+
+    .profile-prompt-modal .prompt-icon {
+        font-size: 2.5rem;
+    }
+
+    .profile-prompt-modal h3 {
+        font-size: 1.15rem;
     }
 }

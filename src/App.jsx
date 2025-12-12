@@ -38,6 +38,7 @@ const NicknameModal = lazy(() => import('./components/modals/NicknameModal'));
 const PremiumModal = lazy(() => import('./components/modals/PremiumModal'));
 const AuthModal = lazy(() => import('./components/modals/AuthModal'));
 const ProfileSettingsModal = lazy(() => import('./components/modals/ProfileSettingsModal'));
+const ProfilePromptModal = lazy(() => import('./components/modals/ProfilePromptModal'));
 const ShareModal = lazy(() => import('./components/modals/ShareModal'));
 const ReportModal = lazy(() => import('./components/modals/ReportModal'));
 // PointsModal 삭제됨 (포인트 시스템 제거)
@@ -55,6 +56,7 @@ const FortuneResultView = lazy(() => import('./components/fortune/FortuneResultV
 const DreamResultView = lazy(() => import('./components/dream/DreamResultView'));
 const DreamDetailView = lazy(() => import('./components/detail/DreamDetailView'));
 const MyPage = lazy(() => import('./components/my/MyPage'));
+const MyReadingsView = lazy(() => import('./components/my/MyReadingsView'));
 const FeedView = lazy(() => import('./components/feed/FeedView'));
 const FloatingActionButton = lazy(() => import('./components/common/FloatingActionButton'));
 // InstallPrompt 삭제됨 (PWA 설치 프롬프트 제거)
@@ -90,7 +92,7 @@ function App() {
     const [toasts, setToasts] = useState({ live: null, newType: null, badge: null, tarotReveal: null, dopamine: null });
     const setToast = (key, value) => setToasts(prev => ({ ...prev, [key]: value }));
     const setDopaminePopup = (value) => setToast('dopamine', value);
-    const [modals, setModals] = useState({ nickname: false, profile: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general', authTrigger: 'action' });
+    const [modals, setModals] = useState({ nickname: false, profile: false, profilePrompt: false, share: false, report: false, points: false, premium: false, feedback: false, referral: false, auth: false, shareTarget: null, premiumTrigger: 'general', authTrigger: 'action' });
     const openModal = (name) => setModals(prev => ({ ...prev, [name]: true }));
     const closeModal = (name) => setModals(prev => ({ ...prev, [name]: false }));
     const openAuthModal = (trigger = 'action') => setModals(prev => ({ ...prev, auth: true, authTrigger: trigger }));
@@ -168,6 +170,14 @@ function App() {
         setDetailedReadingField, setLoadingState, setCurrentCard, setView, loadInterpretations,
         setFilter, setMode
     });
+
+    // 프로필 완성도 체크 (닉네임 + 생년월일)
+    const isProfileIncomplete = () => {
+        if (!user) return false;
+        return !userNickname || !userProfile?.birthDate;
+    };
+    // 프로필 유도 표시 여부 (세션당 1회)
+    const [hasShownProfilePrompt, setHasShownProfilePrompt] = useState(false);
 
     // 유저 액션 (로그인 등) - 타로 액션보다 먼저 정의
     const setShareTarget = (target) => setModals(prev => ({ ...prev, shareTarget: target }));
@@ -349,6 +359,11 @@ function App() {
                             popularKeywords={popularKeywords}
                             symbolFilter={filters.keyword}
                             onCreateClick={() => {
+                                // 프로필 미완성 시 유도 모달 (세션당 1회)
+                                if (isProfileIncomplete() && !hasShownProfilePrompt) {
+                                    setHasShownProfilePrompt(true);
+                                    openModal('profilePrompt');
+                                }
                                 setView('create');
                                 // 현재 모드의 결과 초기화 (피드에서 본 결과 클리어)
                                 if (mode === 'tarot') {
@@ -619,6 +634,26 @@ function App() {
                         />
                     )}
 
+
+                    {/* 내 리딩 */}
+                    {view === 'my-readings' && (
+                        <MyReadingsView
+                            user={user}
+                            myDreams={myDreams}
+                            myTarots={myTarots}
+                            myFortunes={myFortunes}
+                            dreamTypes={dreamTypes}
+                            onOpenDreamDetail={openDreamDetail}
+                            onOpenTarotDetail={(tarot) => { setTarot(prev => ({ ...prev, result: { ...tarot, showFullReading: true } })); setView('tarot-result'); }}
+                            onOpenFortuneDetail={(fortune) => { setFortune(prev => ({ ...prev, result: { ...fortune, showFullReading: true } })); setView('fortune-result'); }}
+                            onUpdateVisibility={updateVisibility}
+                            onDeleteDream={deleteDream}
+                            onDeleteTarot={deleteTarot}
+                            onDeleteFortune={deleteFortune}
+                            tier={tier}
+                            onOpenPremium={handleOpenPremiumModal}
+                        />
+                    )}
                     {/* 마이페이지 */}
                     {view === 'my' && user && (
                         <MyPage
@@ -708,6 +743,13 @@ function App() {
                         onSave={saveProfile}
                     />
 
+                    {/* 프로필 유도 모달 */}
+                    <ProfilePromptModal
+                        isOpen={modals.profilePrompt}
+                        onClose={() => closeModal('profilePrompt')}
+                        onOpenProfile={() => openModal('profile')}
+                    />
+
                     {/* 상세 풀이 모달 */}
                     <DetailedReadingModal
                         isOpen={detailedReading.show}
@@ -776,6 +818,11 @@ function App() {
                     onOpenTarotResult={handleOpenTarotResult}
                     onOpenFortuneResult={handleOpenFortuneResult}
                     onCreateClick={() => {
+                        // 프로필 미완성 시 유도 모달 (세션당 1회)
+                        if (isProfileIncomplete() && !hasShownProfilePrompt) {
+                            setHasShownProfilePrompt(true);
+                            openModal('profilePrompt');
+                        }
                         setView('create');
                         // 현재 모드의 결과 초기화
                         if (mode === 'tarot') {
@@ -804,6 +851,11 @@ function App() {
                 }}
                 onViewChange={(v) => {
                     if (v === 'create') {
+                        // 프로필 미완성 시 유도 모달 (세션당 1회)
+                        if (isProfileIncomplete() && !hasShownProfilePrompt) {
+                            setHasShownProfilePrompt(true);
+                            openModal('profilePrompt');
+                        }
                         // 시작 버튼 클릭 시 결과 초기화
                         setView('create');
                         if (mode === 'tarot') {
@@ -826,6 +878,8 @@ function App() {
                     setSavedDream({ id: null, isPublic: false });
                 }}
                 onOpenExplore={() => setMobileSheet(prev => ({ ...prev, explore: true }))}
+                user={user}
+                onLoginRequired={openAuthModal}
             />
 
             {/* 모바일 탐색 바텀시트 */}

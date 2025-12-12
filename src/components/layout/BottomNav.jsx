@@ -14,7 +14,9 @@ const BottomNav = ({
     onModeChange,
     onViewChange,
     onHomeClick,
-    onOpenExplore
+    onOpenExplore,
+    user,
+    onLoginRequired
 }) => {
     // localStorage에서 마지막 모드 불러오기
     useEffect(() => {
@@ -43,7 +45,7 @@ const BottomNav = ({
         { id: 'home', icon: getModeEmoji(currentMode), label: '커뮤니티', action: 'home' },
         { id: 'explore', icon: '🔥', label: '인기 리딩', action: 'explore' },
         { id: 'create', icon: getModeEmoji(currentMode), label: '시작', action: 'create', isCenter: true },
-        { id: 'feed', icon: '💜', label: '내 리딩', action: 'feed' },
+        { id: 'my-readings', icon: '💜', label: '내 리딩', action: 'my-readings' },
         { id: 'mypage', icon: '👤', label: '프로필', action: 'mypage' },
     ];
 
@@ -53,9 +55,14 @@ const BottomNav = ({
         } else if (item.action === 'explore') {
             if (onOpenExplore) onOpenExplore();
         } else if (item.action === 'create') {
+            // 로그인 체크 - 비로그인 시 로그인 모달
+            if (!user && onLoginRequired) {
+                onLoginRequired();
+                return;
+            }
             if (onViewChange) onViewChange('create');
-        } else if (item.action === 'feed') {
-            if (onViewChange) onViewChange('feed');
+        } else if (item.action === 'my-readings') {
+            if (onViewChange) onViewChange('my-readings');
         } else if (item.action === 'mypage') {
             if (onViewChange) onViewChange('my');
         } else if (item.mode && onModeChange) {
@@ -70,8 +77,8 @@ const BottomNav = ({
         if (item.action === 'create') {
             return currentView === 'create';
         }
-        if (item.action === 'feed') {
-            return currentView === 'feed';
+        if (item.action === 'my-readings') {
+            return currentView === 'my-readings';
         }
         if (item.action === 'mypage') {
             return currentView === 'my';

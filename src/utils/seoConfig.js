@@ -111,28 +111,124 @@ export const generateSEOMeta = (content, type) => {
     const typeConfig = CONTENT_TYPES[type];
     if (!typeConfig) return null;
 
-    const title = content.title || `${typeConfig.name} 결과`;
-    const description = content.verdict || content.shareText || `${typeConfig.name} 상세 풀이`;
+    // 타입별 SEO 메타 생성
+    if (type === 'tarot') {
+        return generateTarotSEOMeta(content, typeConfig);
+    } else if (type === 'dream') {
+        return generateDreamSEOMeta(content, typeConfig);
+    } else if (type === 'saju') {
+        return generateSajuSEOMeta(content, typeConfig);
+    }
 
-    // 키워드 조합
+    // 기본 fallback
+    return generateDefaultSEOMeta(content, typeConfig);
+};
+
+// 타로 SEO 메타 생성
+const generateTarotSEOMeta = (content, typeConfig) => {
+    // 제목: title 또는 question 기반
+    const title = content.title || (content.question ? `타로 리딩: ${content.question}` : '타로 리딩 결과');
+
+    // 설명: hook → foreshadow 조합 (160자)
+    const descParts = [];
+    if (content.hook) descParts.push(content.hook);
+    if (content.foreshadow) descParts.push(content.foreshadow);
+    const description = descParts.join(' ').slice(0, 160) || '타로 카드 리딩 결과입니다.';
+
+    // 키워드: 기본 + topics + keywords + 카드 이름들
     const keywords = [
         ...typeConfig.seoKeywords,
+        ...(content.topics || []),
         ...(content.keywords?.map(k => k.word || k) || []),
-    ];
+        ...(content.cards?.map(c => c.name || c.nameKo) || []),
+    ].filter(Boolean);
+
+    // OG 이미지: heroImage → card1Image
+    const ogImage = content.heroImage || content.card1Image || typeConfig.defaultImage;
+    // OG 이미지 alt: heroImagePrompt (Claude가 생성한 이미지 프롬프트)
+    const ogImageAlt = content.heroImagePrompt || content.title || '타로 리딩 이미지';
+
+    // 이미지 객체 배열 (구조화 데이터용) - 각 이미지에 alt 설명 포함
+    const images = [
+        content.heroImage && {
+            '@type': 'ImageObject',
+            url: content.heroImage,
+            description: content.heroImagePrompt || '타로 리딩 대표 이미지'
+        },
+        content.card1Image && {
+            '@type': 'ImageObject',
+            url: content.card1Image,
+            description: content.card1ImagePrompt || '첫 번째 타로 카드'
+        },
+        content.card2Image && {
+            '@type': 'ImageObject',
+            url: content.card2Image,
+            description: content.card2ImagePrompt || '두 번째 타로 카드'
+        },
+        content.card3Image && {
+            '@type': 'ImageObject',
+            url: content.card3Image,
+            description: content.card3ImagePrompt || '세 번째 타로 카드'
+        },
+        content.conclusionImage && {
+            '@type': 'ImageObject',
+            url: content.conclusionImage,
+            description: content.conclusionImagePrompt || '결론 카드'
+        }
+    ].filter(Boolean);
+
+    // 본문 콘텐츠 (구조화 데이터용) - 상세한 SEO 텍스트
+    const articleBody = [
+        content.question && `질문: ${content.question}`,
+        content.title && `제목: ${content.title}`,
+        content.verdict && `핵심 메시지: ${content.verdict}`,
+        content.hook,
+        content.foreshadow,
+        // 카드별 분석 + 이미지 설명
+        content.card1ImagePrompt && `[첫 번째 카드 이미지: ${content.card1ImagePrompt}]`,
+        content.card1Analysis,
+        content.card2ImagePrompt && `[두 번째 카드 이미지: ${content.card2ImagePrompt}]`,
+        content.card2Analysis,
+        content.card3ImagePrompt && `[세 번째 카드 이미지: ${content.card3ImagePrompt}]`,
+        content.card3Analysis,
+        content.conclusionImagePrompt && `[결론 카드 이미지: ${content.conclusionImagePrompt}]`,
+        content.conclusionCard,
+        content.synthesis && `종합: ${content.synthesis}`,
+        content.hiddenInsight && `숨겨진 인사이트: ${content.hiddenInsight}`
+    ].filter(Boolean).join('\n\n');
 
     return {
-        title: `${title} | 점AI`,
-        description: description.slice(0, 160),
-        keywords: keywords.join(', '),
+        title,
+        description,
+        keywords,
         ogType: 'article',
-        ogImage: content.dreamImage || content.pastImage || content.morningImage || typeConfig.defaultImage,
-        canonical: `/${typeConfig.urlPath}/${content.id}`,
+        ogImage,
+        ogImageAlt,
+        canonical: `/tarot/${content.id}`,
+        // 추가 SEO 데이터
+        question: content.question,
+        hook: content.hook,
+        verdict: content.verdict,
+        hiddenInsight: content.hiddenInsight,
+        foreshadow: content.foreshadow,
+        synthesis: content.synthesis,
+        cards: content.cards,
+        // 이미지 alt 텍스트들
+        imageAlts: {
+            hero: content.heroImagePrompt,
+            card1: content.card1ImagePrompt,
+            card2: content.card2ImagePrompt,
+            card3: content.card3ImagePrompt,
+            conclusion: content.conclusionImagePrompt
+        },
         structuredData: {
             '@context': 'https://schema.org',
             '@type': 'Article',
             headline: title,
             description: description,
-            image: content.dreamImage || typeConfig.defaultImage,
+            image: images.length > 0 ? images : ogImage,
+            articleBody: articleBody.slice(0, 5000), // 구글 권장 길이
+            keywords: keywords.join(', '),
             author: {
                 '@type': 'Person',
                 name: content.userName || '점AI'
@@ -142,14 +238,99 @@ export const generateSEOMeta = (content, type) => {
                 name: '점AI',
                 logo: {
                     '@type': 'ImageObject',
-                    url: '/logo.png'
+                    url: 'https://jeom.ai/logo.png'
                 }
             },
             datePublished: content.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
             mainEntityOfPage: {
                 '@type': 'WebPage',
-                '@id': `/${typeConfig.urlPath}/${content.id}`
+                '@id': `https://jeom.ai/tarot/${content.id}`
             }
+        }
+    };
+};
+
+// 꿈 SEO 메타 생성
+const generateDreamSEOMeta = (content, typeConfig) => {
+    const title = content.title || '꿈해몽 결과';
+    const description = (content.verdict || content.dreamMeaning || '꿈해몽 상세 풀이').slice(0, 160);
+
+    const keywords = [
+        ...typeConfig.seoKeywords,
+        ...(content.keywords?.map(k => k.word || k) || []),
+    ].filter(Boolean);
+
+    const ogImage = content.dreamImage || typeConfig.defaultImage;
+
+    return {
+        title,
+        description,
+        keywords,
+        ogType: 'article',
+        ogImage,
+        canonical: `/dream/${content.id}`,
+        structuredData: {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: title,
+            description: description,
+            image: ogImage,
+            author: { '@type': 'Person', name: content.userName || '점AI' },
+            publisher: { '@type': 'Organization', name: '점AI' },
+            datePublished: content.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        }
+    };
+};
+
+// 사주 SEO 메타 생성
+const generateSajuSEOMeta = (content, typeConfig) => {
+    const title = content.title || '사주 풀이 결과';
+    const description = (content.verdict || content.synthesisAnalysis || '사주 상세 풀이').slice(0, 160);
+
+    const keywords = [
+        ...typeConfig.seoKeywords,
+        ...(content.keywords?.map(k => k.word || k) || []),
+    ].filter(Boolean);
+
+    const ogImage = content.section1Image || content.morningImage || typeConfig.defaultImage;
+
+    return {
+        title,
+        description,
+        keywords,
+        ogType: 'article',
+        ogImage,
+        canonical: `/saju/${content.id}`,
+        structuredData: {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: title,
+            description: description,
+            image: ogImage,
+            author: { '@type': 'Person', name: content.userName || '점AI' },
+            publisher: { '@type': 'Organization', name: '점AI' },
+            datePublished: content.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),
+        }
+    };
+};
+
+// 기본 SEO 메타 생성 (fallback)
+const generateDefaultSEOMeta = (content, typeConfig) => {
+    const title = content.title || `${typeConfig.name} 결과`;
+    const description = (content.verdict || content.shareText || `${typeConfig.name} 상세 풀이`).slice(0, 160);
+
+    return {
+        title,
+        description,
+        keywords: typeConfig.seoKeywords,
+        ogType: 'article',
+        ogImage: typeConfig.defaultImage,
+        canonical: `/${typeConfig.urlPath}/${content.id}`,
+        structuredData: {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: title,
+            description: description,
         }
     };
 };

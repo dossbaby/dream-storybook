@@ -357,21 +357,6 @@ const FeedView = ({
                     <h3 className="compact-title compact-question">{question}</h3>
                     {/* 답변 */}
                     {answer && <p className="compact-answer">{answer}</p>}
-                    {tarot.keywords?.length > 0 && (
-                        <div className="compact-footer">
-                            <div className="compact-tags">
-                                {tarot.keywords.slice(0, 3).map((k, i) => (
-                                    <span
-                                        key={i}
-                                        className="compact-tag"
-                                        onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
-                                    >
-                                        #{k.word}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         );
@@ -411,21 +396,6 @@ const FeedView = ({
                         </div>
                     </div>
                     <h3 className="compact-title">{dream.title}</h3>
-                    {dream.keywords?.length > 0 && (
-                        <div className="compact-footer">
-                            <div className="compact-tags">
-                                {dream.keywords.slice(0, 3).map((k, i) => (
-                                    <span
-                                        key={i}
-                                        className="compact-tag"
-                                        onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
-                                    >
-                                        {k.word}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         );
@@ -463,21 +433,6 @@ const FeedView = ({
                         </div>
                     </div>
                     <h3 className="compact-title">{fortune.title}</h3>
-                    {fortune.keywords?.length > 0 && (
-                        <div className="compact-footer">
-                            <div className="compact-tags">
-                                {fortune.keywords.slice(0, 3).map((k, i) => (
-                                    <span
-                                        key={i}
-                                        className="compact-tag"
-                                        onClick={(e) => { e.stopPropagation(); navigateToTagPage(k.word, e); }}
-                                    >
-                                        {k.word}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         );

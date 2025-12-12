@@ -1,4 +1,10 @@
 /* ========== 커뮤니티 스타일 네비게이션 ========== */
+
+/* 헤더 오프셋 CSS 변수 - sticky 요소들이 헤더 숨김 상태에 맞춰 이동 */
+:root {
+    --header-offset: 60px;
+}
+
 .nav-bar {
     position: fixed;
     top: 0;

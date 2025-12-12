@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useComments } from '../../hooks/useComments';
 import Reactions from '../common/Reactions';
 import AnalysisOverlay from '../common/AnalysisOverlay';
+import SEOHead from '../common/SEOHead';
+import { generateSEOMeta } from '../../utils/seoConfig';
 
 // 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
@@ -24,12 +26,30 @@ const TOPIC_EMOJIS = {
     '일반': '💬'
 };
 
+// 텍스트 정규화 - AI 응답의 이상한 문자열 패턴 정리
+const normalizeText = (text) => {
+    if (!text) return '';
+    return text
+        // 리터럴 \n 문자열을 실제 줄바꿈으로
+        .replace(/\\n\\n/g, '\n\n')
+        .replace(/\\n/g, '\n')
+        // n/n/ 패턴 (AI 오류)
+        .replace(/n\/n\//g, '\n')
+        .replace(/n\/n/g, '\n')
+        // 연속 줄바꿈 정리 (3개 이상 → 2개)
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+};
+
 // **bold** 마크다운을 무지개 그라디언트 span으로 변환하는 헬퍼
 const parseBoldText = (text) => {
     if (!text) return null;
 
+    // 먼저 텍스트 정규화
+    const normalizedText = normalizeText(text);
+
     // **text** 패턴을 찾아서 분리
-    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    const parts = normalizedText.split(/(\*\*[^*]+\*\*)/g);
 
     return parts.map((part, index) => {
         if (part.startsWith('**') && part.endsWith('**')) {
@@ -178,18 +198,23 @@ const TarotResultView = ({
         synthesis: tarotResult.synthesis || tarotResult.cardMeaning?.summary || ''
     };
 
-    // 각 카드가 준비되었는지 확인 (분석 텍스트 + 이미지)
+    // cardReady 객체 (스트리밍 중 업데이트됨)
+    const cardReady = tarotResult.cardReady || { card1: false, card2: false, card3: false, conclusion: false };
+
+    // 각 카드가 준비되었는지 확인 (cardReady 객체 또는 실제 데이터 체크)
     const isCardReady = (index) => {
         if (index === 0) {
-            // 카드 1은 항상 먼저 준비됨
-            return !!(cardImages[0] && storyReading.card1Analysis);
+            // 카드 1: cardReady 또는 실제 데이터 체크
+            return cardReady.card1 || !!(cardImages[0] && storyReading.card1Analysis);
         } else if (index === 1) {
-            return !!(cardImages[1] && storyReading.card2Analysis);
+            // 카드 2: cardReady 또는 실제 데이터 체크
+            return cardReady.card2 || !!(cardImages[1] && storyReading.card2Analysis);
         } else if (index === 2) {
-            return !!(cardImages[2] && storyReading.card3Analysis);
+            // 카드 3: cardReady 또는 실제 데이터 체크
+            return cardReady.card3 || !!(cardImages[2] && storyReading.card3Analysis);
         } else if (index === 3) {
-            // 결과 카드: conclusion + hiddenInsight + 이미지
-            return !!(cardImages[3] && storyReading.conclusionCard && hiddenInsight);
+            // 결론 카드: cardReady 또는 실제 데이터 체크 (hiddenInsight 포함)
+            return cardReady.conclusion || !!(cardImages[3] && storyReading.conclusionCard && hiddenInsight);
         }
         return false;
     };
@@ -309,11 +334,15 @@ const TarotResultView = ({
         const section = sectionRefs.current[index];
         if (section) {
             const stickyBarHeight = cardBarRef.current?.offsetHeight || 120;
+            // 헤더 오프셋 CSS 변수 읽기 (헤더 숨김 상태에 따라 0px 또는 60px)
+            const headerOffset = parseInt(
+                getComputedStyle(document.documentElement).getPropertyValue('--header-offset') || '60'
+            );
             const sectionTop = section.getBoundingClientRect().top + window.scrollY;
 
-            // 이미지 상단이 보이도록 여유를 줌 (30px 더 내림)
+            // sticky bar가 header-offset 위치에 있으므로 둘 다 고려
             window.scrollTo({
-                top: sectionTop - stickyBarHeight - 45,
+                top: sectionTop - stickyBarHeight - headerOffset,
                 behavior: 'smooth'
             });
         }
@@ -361,8 +390,26 @@ const TarotResultView = ({
         null
     ];
 
+    // SEO 메타데이터 생성 (공유 링크용)
+    const seoMeta = tarotResult.id ? generateSEOMeta(tarotResult, 'tarot') : null;
+
     return (
         <div className={`tarot-result-page ${pageRevealed ? 'revealed' : ''}`}>
+            {/* SEO 메타태그 - 공유 링크용 */}
+            {seoMeta && (
+                <SEOHead
+                    title={seoMeta.title}
+                    description={seoMeta.description}
+                    keywords={seoMeta.keywords}
+                    image={seoMeta.ogImage}
+                    imageAlt={seoMeta.ogImageAlt}
+                    url={seoMeta.canonical}
+                    type={seoMeta.ogType}
+                    publishedTime={tarotResult.createdAt?.toDate?.()?.toISOString()}
+                    structuredData={seoMeta.structuredData}
+                />
+            )}
+
             {/* 별 효과 배경 */}
             <div className="stars-layer" aria-hidden="true"></div>
 
@@ -433,41 +480,43 @@ const TarotResultView = ({
                 {/* 닫기 버튼 */}
                 <button className="modal-close-btn" onClick={onBack}>✕</button>
 
-                {/* 히어로 섹션 */}
+                {/* 히어로 섹션 - 이미지 + 최소 오버레이 */}
                 <div className="reading-hero">
                     {heroImage && (
                         <img src={heroImage} alt="" className="reading-hero-img" />
                     )}
                     <div className="reading-hero-overlay">
-                        <span className="reading-type-badge">🔮 타로 리딩</span>
+                        <span className="reading-type-badge">타로</span>
                         <h1 className="reading-title">{tarotResult.title}</h1>
-                        <p className="reading-verdict">"{tarotResult.verdict}"</p>
-                        {/* 주제 + 키워드 태그 - hero 안에 배치 */}
-                        <div className="hero-tags-row">
-                            {/* 주제 태그 (왼쪽) */}
-                            {(() => {
-                                const topic = (tarotResult.topics || [tarotResult.topic])[0];
-                                if (!topic) return null;
-                                return (
-                                    <span
-                                        className="hero-topic-tag"
-                                        onClick={() => onKeywordClick?.(topic)}
-                                    >
-                                        {TOPIC_EMOJIS[topic] || '💬'} {topic}
-                                    </span>
-                                );
-                            })()}
-                            {/* 키워드 태그들 */}
-                            {tarotResult.keywords?.length > 0 && tarotResult.keywords.slice(0, 3).map((kw, i) => (
+                    </div>
+                </div>
+                {/* 히어로 하단 메타 정보 - 이미지 아래 배치 */}
+                <div className="hero-meta-section">
+                    <p className="reading-verdict">"{tarotResult.verdict}"</p>
+                    <div className="hero-tags-row">
+                        {/* 주제 태그 */}
+                        {(() => {
+                            const topic = (tarotResult.topics || [tarotResult.topic])[0];
+                            if (!topic) return null;
+                            return (
                                 <span
-                                    key={i}
-                                    className="hero-keyword-tag"
-                                    onClick={() => onKeywordClick?.(kw.word)}
+                                    className="hero-topic-tag"
+                                    onClick={() => onKeywordClick?.(topic)}
                                 >
-                                    #{kw.word}
+                                    {TOPIC_EMOJIS[topic] || '💬'} {topic}
                                 </span>
-                            ))}
-                        </div>
+                            );
+                        })()}
+                        {/* 키워드 태그들 */}
+                        {tarotResult.keywords?.length > 0 && tarotResult.keywords.slice(0, 3).map((kw, i) => (
+                            <span
+                                key={i}
+                                className="hero-keyword-tag"
+                                onClick={() => onKeywordClick?.(kw.word)}
+                            >
+                                #{kw.word}
+                            </span>
+                        ))}
                     </div>
                 </div>
                 {/* 히어로 하단 divider */}
@@ -622,7 +671,7 @@ const TarotResultView = ({
                                     </h2>
 
                                     <div className="chapter-text reading-text">
-                                        {analyses[i]?.split('\n').map((line, j) => (
+                                        {normalizeText(analyses[i]).split('\n').filter(line => line.trim()).map((line, j) => (
                                             <p key={j} className="reading-paragraph">{parseBoldText(line)}</p>
                                         ))}
                                     </div>
@@ -655,7 +704,7 @@ const TarotResultView = ({
                                 {hasConclusion ? '네' : '세'} 장의 카드가 전하는 메시지
                             </h2>
                             <div className="synthesis-text reading-text">
-                                {storyReading.synthesis.split('\n').map((line, i) => (
+                                {normalizeText(storyReading.synthesis).split('\n').filter(line => line.trim()).map((line, i) => (
                                     <p key={i} className="reading-paragraph">{parseBoldText(line)}</p>
                                 ))}
                             </div>
@@ -729,31 +778,7 @@ const TarotResultView = ({
                 </div>
             )}
 
-            {/* 리딩 공개 설정 패널 - 작성자에게만 표시 (별도 패널) */}
-            {tarotResult.id && introPhase >= 5 && isAuthor && onUpdateVisibility && (
-                <div className="visibility-panel">
-                    <div className="visibility-panel-inner">
-                        <div className="visibility-header">
-                            <span className="visibility-title">리딩 공개</span>
-                            <label className="visibility-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={tarotResult.visibility === 'public'}
-                                    onChange={(e) => onUpdateVisibility(e.target.checked ? 'public' : 'private')}
-                                />
-                                <span className="switch-track">
-                                    <span className="switch-thumb"></span>
-                                </span>
-                            </label>
-                        </div>
-                        <p className="visibility-desc">
-                            {tarotResult.visibility === 'public'
-                                ? '리딩 결과를 공유합니다'
-                                : '리딩 결과가 공개되지 않습니다'}
-                        </p>
-                    </div>
-                </div>
-            )}
+            {/* visibility-panel 임시 삭제 - CSS는 tarot.css에 보존됨 */}
 
             {/* 엔게이지먼트 사이드 패널 - 카드 오픈 전에도 표시 */}
             {tarotResult.id && introPhase >= 5 && (

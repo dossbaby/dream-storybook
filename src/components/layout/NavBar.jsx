@@ -48,6 +48,14 @@ const NavBar = ({
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // 헤더 숨김 상태에 따라 CSS 변수 업데이트 (sticky 요소들이 따라옴)
+    useEffect(() => {
+        document.documentElement.style.setProperty(
+            '--header-offset',
+            isHidden ? '0px' : '60px'
+        );
+    }, [isHidden]);
+
     const handleBrandClick = () => {
         onResetResults();
         onViewChange('feed');

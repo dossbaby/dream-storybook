@@ -30,11 +30,17 @@ const ContentPage = ({ type }) => {
                 if (docSnap.exists()) {
                     const data = { id: docSnap.id, ...docSnap.data() };
 
-                    // 비공개 콘텐츠 체크
-                    if (!data.isPublic) {
+                    // visibility 기반 접근 권한 체크
+                    // public: 모두 접근 가능
+                    // link: 링크가 있으면 접근 가능 (피드에는 안 뜸)
+                    // private: 본인만 접근 가능 (링크 있어도 차단)
+                    const visibility = data.visibility || (data.isPublic ? 'public' : 'private');
+
+                    if (visibility === 'private') {
                         setError('비공개 콘텐츠입니다');
                         return;
                     }
+                    // 'public' 또는 'link'는 접근 허용
 
                     setContent(data);
 

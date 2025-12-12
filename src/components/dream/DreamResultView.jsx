@@ -626,31 +626,7 @@ const DreamResultView = ({
                 </div>
             )}
 
-            {/* 리딩 공개 설정 패널 */}
-            {dreamResult.id && introPhase >= 5 && isAuthor && onUpdateVisibility && (
-                <div className="visibility-panel">
-                    <div className="visibility-panel-inner">
-                        <div className="visibility-header">
-                            <span className="visibility-title">리딩 공개</span>
-                            <label className="visibility-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={dreamResult.visibility === 'public'}
-                                    onChange={(e) => onUpdateVisibility(e.target.checked ? 'public' : 'private')}
-                                />
-                                <span className="switch-track">
-                                    <span className="switch-thumb"></span>
-                                </span>
-                            </label>
-                        </div>
-                        <p className="visibility-desc">
-                            {dreamResult.visibility === 'public'
-                                ? '꿈 해몽을 공유합니다'
-                                : '꿈 해몽이 공개되지 않습니다'}
-                        </p>
-                    </div>
-                </div>
-            )}
+            {/* visibility-panel 임시 삭제 - CSS는 tarot.css에 보존됨 */}
 
             {/* 엔게이지먼트 사이드 패널 */}
             {dreamResult.id && introPhase >= 5 && (

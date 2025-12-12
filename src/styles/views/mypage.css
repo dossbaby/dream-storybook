@@ -59,6 +59,73 @@
     text-overflow: ellipsis;
 }
 
+/* 프로필 이름 행 - 이름 + 닉네임 */
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.15rem 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* 닉네임 - 무지개 그라디언트 (왼쪽) */
+.profile-nickname-rainbow {
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(
+        90deg,
+        #ff6b6b 0%,
+        #ffd93d 20%,
+        #6bcb77 40%,
+        #4d96ff 60%,
+        #9b59b6 80%,
+        #ff6b6b 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowShift 4s linear infinite;
+}
+
+/* 구분자 */
+.profile-name-divider {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.2);
+    font-weight: 300;
+}
+
+/* 이름 - 흐린 흰색 (오른쪽) */
+.profile-name-white {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffffe6;
+}
+
+@keyframes rainbowShift {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* 레거시: 이전 rainbow 클래스 호환성 (제거 예정) */
+.my-profile-info h3.profile-name-rainbow {
+    background: linear-gradient(
+        90deg,
+        #ff6b6b 0%,
+        #ffd93d 20%,
+        #6bcb77 40%,
+        #4d96ff 60%,
+        #9b59b6 80%,
+        #ff6b6b 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbowShift 4s linear infinite;
+}
+
 .my-profile-info p {
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.4);
@@ -68,22 +135,85 @@
     text-overflow: ellipsis;
 }
 
+/* 설정 버튼 - Cyber Mystic 화려한 스타일 */
 .profile-edit-btn {
-    padding: 0.5rem 1rem;
-    background: rgba(0, 212, 255, 0.1);
-    border: 1px solid rgba(0, 212, 255, 0.25);
-    border-radius: 8px;
-    color: #00d4ff;
-    font-size: 0.75rem;
-    font-weight: 500;
+    position: relative;
+    padding: 0.55rem 1.1rem;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.2) 0%,
+        rgba(88, 101, 242, 0.25) 50%,
+        rgba(168, 85, 247, 0.2) 100%
+    );
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 400;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     flex-shrink: 0;
+    overflow: hidden;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.15),
+        0 0 30px rgba(139, 92, 246, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 그라디언트 보더 */
+.profile-edit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    padding: 1px;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.8) 0%,
+        rgba(88, 101, 242, 0.6) 50%,
+        rgba(168, 85, 247, 0.8) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* 빛나는 효과 */
+.profile-edit-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 60%
+    );
+    animation: shimmer 3s infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
 }
 
 .profile-edit-btn:hover {
-    background: rgba(0, 212, 255, 0.18);
-    border-color: rgba(0, 212, 255, 0.4);
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.35) 0%,
+        rgba(88, 101, 242, 0.4) 50%,
+        rgba(168, 85, 247, 0.35) 100%
+    );
+    box-shadow:
+        0 0 20px rgba(0, 212, 255, 0.3),
+        0 0 40px rgba(139, 92, 246, 0.2),
+        0 0 60px rgba(168, 85, 247, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    text-shadow: 0 0 12px rgba(0, 212, 255, 0.8);
 }
 
 /* 프로필 액션 버튼 그룹 */
@@ -941,12 +1071,12 @@
     color: rgba(255, 255, 255, 0.6);
 }
 
-/* ========== 프로필 설정 모달 ========== */
+/* ========== 프로필 설정 모달 (MyPage 통일 테마 + Cyber Mystic 포인트) ========== */
 .profile-modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -958,34 +1088,44 @@
     width: 100%;
     max-width: 420px;
     max-height: 85vh;
-    background: #0d0b12;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* MyPage와 동일한 어두운 배경 */
+    background: rgba(10, 10, 15, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 16px;
     overflow: hidden;
-    overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    animation: profileModalIn 0.2s ease-out;
+    animation: profileModalIn 0.25s ease-out;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes profileModalIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .profile-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .profile-modal-header h2 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
-    color: rgba(255, 255, 255, 0.95);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-modal-header h2::before {
+    content: '✨';
+    font-size: 1rem;
 }
 
 .profile-modal-close {
@@ -1018,20 +1158,24 @@
     gap: 1.25rem;
 }
 
-/* 프로필 그룹 */
+/* 프로필 그룹 - MyPage 섹션 스타일 */
 .profile-group {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
 }
 
 .profile-group-title {
     font-size: 0.7rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.35);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin: 0;
+    margin: 0 0 0.25rem 0;
 }
 
 .profile-group-title .optional {
@@ -1083,18 +1227,21 @@
     min-width: 0;
     box-sizing: border-box;
     padding: 0.65rem 0.85rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 8px;
     color: rgba(255, 255, 255, 0.9);
     font-size: 0.85rem;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
 }
 
 .profile-modal .profile-field input:focus {
     outline: none;
-    border-color: rgba(0, 212, 255, 0.35);
-    background: rgba(0, 212, 255, 0.05);
+    border-color: rgba(0, 212, 255, 0.4);
+    background: rgba(0, 212, 255, 0.03);
+    box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.12),
+        0 0 25px rgba(139, 92, 246, 0.08);
 }
 
 .profile-modal .profile-field input::placeholder {
@@ -1112,7 +1259,7 @@
     margin: 0;
 }
 
-/* 성별 토글 */
+/* 성별 토글 - Cyber Mystic 포인트 */
 .gender-toggle {
     display: flex;
     gap: 0.5rem;
@@ -1120,28 +1267,58 @@
 
 .gender-toggle button {
     flex: 1;
+    position: relative;
     padding: 0.6rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 8px;
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.8rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
+    overflow: hidden;
 }
 
 .gender-toggle button:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.04);
     color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-.gender-toggle button.active {
-    background: rgba(155, 89, 182, 0.15);
-    border-color: rgba(155, 89, 182, 0.35);
-    color: #c792ea;
+/* 여성 선택 - 보라 계열 */
+.gender-toggle button.active.female {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+    border-color: rgba(168, 85, 247, 0.45);
+    color: #c084fc;
+    box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.15),
+        0 0 25px rgba(139, 92, 246, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    text-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
 }
 
-/* MBTI 셀렉터 */
+/* 남성 선택 - 파랑 계열 */
+.gender-toggle button.active.male {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+    border-color: rgba(0, 180, 255, 0.5);
+    color: #60b8ff;
+    box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.15),
+        0 0 25px rgba(88, 101, 242, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    text-shadow: 0 0 10px rgba(96, 184, 255, 0.5);
+}
+
+/* MBTI 셀렉터 - Cyber Mystic 포인트 */
 .mbti-selector {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1150,67 +1327,182 @@
 
 .mbti-selector button {
     padding: 0.5rem 0.25rem;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 6px;
     color: rgba(255, 255, 255, 0.45);
     font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
 }
 
 .mbti-selector button:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.04);
     color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-.mbti-selector button.active {
-    background: rgba(0, 212, 255, 0.12);
-    border-color: rgba(0, 212, 255, 0.35);
+/* NT 분석가 (INTJ, INTP, ENTJ, ENTP) - 시안 계열 */
+.mbti-selector button.active.nt-group {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+    border-color: rgba(0, 212, 255, 0.5);
     color: #00d4ff;
+    box-shadow:
+        0 0 12px rgba(0, 212, 255, 0.2),
+        0 0 20px rgba(0, 180, 255, 0.1);
+    text-shadow: 0 0 6px rgba(0, 212, 255, 0.5);
 }
 
-/* 모달 푸터 */
+/* NF 외교관 (INFJ, INFP, ENFJ, ENFP) - 보라 계열 */
+.mbti-selector button.active.nf-group {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+    border-color: rgba(168, 85, 247, 0.45);
+    color: #c084fc;
+    box-shadow:
+        0 0 12px rgba(168, 85, 247, 0.15),
+        0 0 20px rgba(139, 92, 246, 0.1);
+    text-shadow: 0 0 6px rgba(192, 132, 252, 0.4);
+}
+
+/* SJ 관리자 (ISTJ, ISFJ, ESTJ, ESFJ) - 파랑 계열 */
+.mbti-selector button.active.sj-group {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+    border-color: rgba(0, 180, 255, 0.5);
+    color: #60b8ff;
+    box-shadow:
+        0 0 12px rgba(0, 180, 255, 0.15),
+        0 0 20px rgba(88, 101, 242, 0.1);
+    text-shadow: 0 0 6px rgba(96, 184, 255, 0.4);
+}
+
+/* SP 탐험가 (ISTP, ISFP, ESTP, ESFP) - 청록 계열 */
+.mbti-selector button.active.sp-group {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.12) 0%,
+        rgba(88, 101, 242, 0.15) 50%,
+        rgba(168, 85, 247, 0.12) 100%
+    );
+    border-color: rgba(32, 178, 170, 0.5);
+    color: #5dd3c8;
+    box-shadow:
+        0 0 12px rgba(32, 178, 170, 0.15),
+        0 0 20px rgba(64, 200, 190, 0.1);
+    text-shadow: 0 0 6px rgba(93, 211, 200, 0.4);
+}
+
+/* 모달 푸터 - MyPage 스타일 */
 .profile-modal-footer {
     display: flex;
-    gap: 0.5rem;
-    padding: 1rem 1.25rem;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .profile-modal-footer .btn-cancel {
-    padding: 0.7rem 1.25rem;
-    background: transparent;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 0.85rem;
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
 }
 
 .profile-modal-footer .btn-cancel:hover {
     background: rgba(255, 255, 255, 0.04);
-    color: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.8);
 }
 
+/* 저장 버튼 - 설정 버튼과 동일한 화려한 Cyber Mystic 스타일 */
 .profile-modal-footer .btn-save {
     flex: 1;
-    padding: 0.7rem;
-    background: rgba(0, 212, 255, 0.12);
-    border: 1px solid rgba(0, 212, 255, 0.3);
-    border-radius: 8px;
-    color: #00d4ff;
-    font-size: 0.85rem;
+    position: relative;
+    padding: 0.75rem;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.2) 0%,
+        rgba(88, 101, 242, 0.25) 50%,
+        rgba(168, 85, 247, 0.2) 100%
+    );
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    box-shadow:
+        0 0 15px rgba(0, 212, 255, 0.15),
+        0 0 30px rgba(139, 92, 246, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 저장 버튼 그라디언트 보더 */
+.profile-modal-footer .btn-save::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    padding: 1px;
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.8) 0%,
+        rgba(88, 101, 242, 0.6) 50%,
+        rgba(168, 85, 247, 0.8) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* 저장 버튼 shimmer 효과 */
+.profile-modal-footer .btn-save::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 60%
+    );
+    animation: shimmer 3s infinite;
+    pointer-events: none;
 }
 
 .profile-modal-footer .btn-save:hover {
-    background: rgba(0, 212, 255, 0.2);
-    border-color: rgba(0, 212, 255, 0.45);
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.35) 0%,
+        rgba(88, 101, 242, 0.4) 50%,
+        rgba(168, 85, 247, 0.35) 100%
+    );
+    box-shadow:
+        0 0 20px rgba(0, 212, 255, 0.3),
+        0 0 40px rgba(139, 92, 246, 0.2),
+        0 0 60px rgba(168, 85, 247, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    text-shadow: 0 0 12px rgba(0, 212, 255, 0.8);
 }
 
 /* ========== 반응형 ========== */
@@ -1258,5 +1550,882 @@
 
     .category-tab .tab-label {
         font-size: 0.65rem;
+    }
+}
+
+/* ========================================
+   MyReadingsView - 내 리딩 전용 페이지
+   ======================================== */
+
+.my-readings-view {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 1rem;
+    padding-bottom: calc(var(--bottom-nav-height, 70px) + var(--safe-area-bottom, 0px) + 2rem);
+}
+
+/* 헤더 */
+.my-readings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+}
+
+.my-readings-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.my-readings-count {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+/* 카테고리 탭 - 시작 페이지 스타일 참고 */
+.my-readings-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1rem;
+    padding: 4px;
+    max-width: 400px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.my-readings-tabs .tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.65rem 0.6rem;
+    background: transparent;
+    border: none;
+    border-radius: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.my-readings-tabs .tab-btn .tab-emoji {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.my-readings-tabs .tab-btn .tab-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+
+.my-readings-tabs .tab-btn:hover:not(.active) {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* 타로 탭 활성화 - 파스텔 라벤더 그라디언트 */
+.my-readings-tabs .tab-btn.active[data-mode="tarot"] {
+    color: #1a1625;
+    background: linear-gradient(135deg, #7c8dff 0%, #a78bfa 50%, #c4b5fd 100%);
+    border: 1px solid rgba(196, 181, 253, 0.4);
+    box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3);
+}
+
+/* 꿈 탭 활성화 - 파스텔 민트 그라디언트 */
+.my-readings-tabs .tab-btn.active[data-mode="dream"] {
+    color: #0a1f1a;
+    background: linear-gradient(135deg, #6ee7b7 0%, #a7f3d0 50%, #d1fae5 100%);
+    border: 1px solid rgba(167, 243, 208, 0.4);
+    box-shadow: 0 4px 15px rgba(110, 231, 183, 0.25);
+}
+
+/* 사주 탭 활성화 - 파스텔 피치 그라디언트 */
+.my-readings-tabs .tab-btn.active[data-mode="fortune"] {
+    color: #1f0a0a;
+    background: linear-gradient(135deg, #fca5a5 0%, #fcd5ce 50%, #ffecd2 100%);
+    border: 1px solid rgba(252, 213, 206, 0.4);
+    box-shadow: 0 4px 15px rgba(252, 165, 165, 0.25);
+}
+
+.my-readings-tabs .tab-count {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.35rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    color: inherit;
+    font-weight: 500;
+}
+
+.my-readings-tabs .tab-btn.active .tab-count {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* 북마크 필터 버튼 */
+.bookmark-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    margin-bottom: 1rem;
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 20px;
+    color: rgba(255, 215, 0, 0.8);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bookmark-filter-btn:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.bookmark-filter-btn.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+}
+
+/* 리딩 목록 - feed-compact과 동일하게 */
+.my-readings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* 리딩 카드 */
+.my-reading-card {
+    position: relative;
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.my-reading-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(168, 85, 247, 0.2);
+    transform: translateY(-1px);
+}
+
+.my-reading-card.locked {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.my-reading-card.locked:hover {
+    opacity: 0.7;
+}
+
+/* 카드 썸네일 */
+.my-reading-card .card-thumb {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.my-reading-card .card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.my-reading-card .thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+}
+
+.my-reading-card .thumb-placeholder.locked {
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 1.2rem;
+}
+
+/* 카드 콘텐츠 */
+.my-reading-card .card-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.my-reading-card .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.my-reading-card .card-topic {
+    color: rgba(168, 85, 247, 0.9);
+    font-weight: 500;
+}
+
+.my-reading-card .card-time {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.my-reading-card .card-question,
+.my-reading-card .card-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.my-reading-card .card-title-sub {
+    margin: 0;
+    font-size: 0.8rem;
+    color: rgba(255, 200, 100, 0.8);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+}
+
+/* 북마크된 카드 강조 */
+.my-reading-card.bookmarked {
+    border-color: rgba(255, 215, 0, 0.25);
+}
+
+.my-reading-card.bookmarked::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.5), transparent);
+}
+
+.my-reading-card .card-cards {
+    display: flex;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.my-reading-card .card-tags {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.my-reading-card .card-tag {
+    font-size: 0.7rem;
+    color: rgba(168, 85, 247, 0.7);
+    background: rgba(168, 85, 247, 0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+}
+
+.my-reading-card .card-score {
+    margin: 0;
+    font-size: 0.8rem;
+    color: rgba(255, 200, 100, 0.8);
+}
+
+.my-reading-card .locked-text {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ========== 미니 액션 버튼 (FeedView compact 스타일과 통합) ========== */
+.mini-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.mini-action-btn {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 3px;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.mini-action-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 북마크 버튼 */
+.mini-action-btn.active {
+    color: rgba(255, 215, 0, 0.9);
+}
+
+.mini-action-btn.active:hover {
+    background: rgba(255, 215, 0, 0.1);
+}
+
+/* 공개 상태 버튼 */
+.mini-action-btn.public {
+    color: rgba(26, 188, 156, 0.7);
+}
+
+.mini-action-btn.private {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* 삭제 버튼 */
+.mini-action-btn.delete {
+    font-size: 0.6rem;
+}
+
+.mini-action-btn.delete:hover {
+    color: rgba(231, 76, 60, 0.9);
+    background: rgba(231, 76, 60, 0.1);
+}
+
+/* 삭제 확인 모드 */
+.mini-actions.confirm-mode {
+    gap: 3px;
+}
+
+.mini-confirm-yes,
+.mini-confirm-no {
+    padding: 3px 6px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
+}
+
+.mini-confirm-yes {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+.mini-confirm-yes:hover {
+    background: rgba(231, 76, 60, 0.35);
+}
+
+.mini-confirm-no {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mini-confirm-no:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* 공개 설정 옵션 버튼 */
+.mini-option-btn {
+    padding: 3px 6px;
+    font-size: 0.6rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mini-option-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.mini-option-btn.active {
+    background: rgba(26, 188, 156, 0.2);
+    color: #1abc9c;
+}
+
+/* 링크 공유 상태 버튼 */
+.mini-action-btn.link {
+    color: rgba(155, 89, 182, 0.7);
+}
+
+/* 북마크된 feed-card-compact 강조 */
+.feed-card-compact.bookmarked {
+    background: rgba(255, 215, 0, 0.03);
+}
+
+.feed-card-compact.bookmarked::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.6), rgba(255, 215, 0, 0.2));
+}
+
+/* 잠긴 카드 스타일 */
+.feed-card-compact.locked-card {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.feed-card-compact.locked-card:hover {
+    opacity: 0.65;
+}
+
+.feed-card-compact .locked-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+.feed-card-compact .compact-thumb-placeholder.locked {
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 1.2rem;
+}
+
+/* 빈 상태 */
+.my-readings-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.my-readings-empty .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.my-readings-empty h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.my-readings-empty p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* 모바일 최적화 */
+@media (max-width: 480px) {
+    .my-readings-view {
+        padding: 0.75rem;
+    }
+
+    .my-readings-title {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .my-readings-tabs .tab-btn {
+        padding: 0.6rem 0.25rem;
+        font-size: 0.8rem;
+    }
+
+    .my-reading-card .card-thumb {
+        width: 64px;
+        height: 64px;
+    }
+
+    .my-reading-card .card-question,
+    .my-reading-card .card-title {
+        font-size: 0.9rem;
+    }
+}
+
+/* ========== 더보기 버튼 (...) ========== */
+.more-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s ease;
+    flex-shrink: 0;
+    /* 터치 디바이스 여백 제거 */
+    min-height: unset;
+    min-width: unset;
+    touch-action: manipulation;
+}
+
+.more-btn:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 터치 디바이스에서 more-btn 여백 강제 제거 */
+@media (pointer: coarse) {
+    .more-btn {
+        min-height: unset !important;
+        min-width: unset !important;
+        padding: 0 !important;
+    }
+}
+
+/* ========== 리딩 액션 모달 (ProfileSettingsModal 동일 스타일) ========== */
+.reading-action-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.reading-action-modal {
+    position: relative;
+    width: calc(100% - 2rem);
+    max-width: 380px;
+    max-height: calc(100vh - 2rem);
+    margin: 1rem;
+    background: rgba(10, 10, 15, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: readingActionModalIn 0.25s ease-out;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes readingActionModalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.reading-action-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.reading-action-modal-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #f1f1f1e6;
+}
+
+.reading-action-modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reading-action-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.reading-action-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* 액션 그룹 */
+.action-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+}
+
+.action-group-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.25rem 0;
+}
+
+/* 공개 설정 옵션 */
+.visibility-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.visibility-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.visibility-option:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.visibility-option.active {
+    background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.08) 0%,
+        rgba(88, 101, 242, 0.1) 50%,
+        rgba(168, 85, 247, 0.08) 100%
+    );
+    border-color: rgba(0, 212, 255, 0.3);
+}
+
+.visibility-option .option-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.visibility-option .option-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.visibility-option .option-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.visibility-option .option-desc {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.visibility-option .option-check {
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* 구분선 */
+.visibility-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 0.5rem 0;
+}
+
+/* 삭제 옵션 (visibility-option 기반) */
+.visibility-option.delete-option {
+    border-color: rgba(231, 76, 60, 0.15);
+}
+
+.visibility-option.delete-option:hover {
+    background: rgba(231, 76, 60, 0.08);
+    border-color: rgba(231, 76, 60, 0.25);
+}
+
+.visibility-option .delete-label {
+    color: rgba(231, 76, 60, 0.9);
+}
+
+/* 인라인 삭제 확인 */
+.delete-confirm-inline {
+    padding: 0.85rem 1rem;
+    background: rgba(231, 76, 60, 0.08);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.delete-confirm-inline p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 0.75rem;
+}
+
+/* 옵션 wrapper (토스트 위치용) */
+.visibility-option-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* 토스트 메시지 - 링크 공유 버튼 위에 overlay */
+.action-toast {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.6rem 1.25rem;
+    background: rgba(15, 15, 20, 0.95);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    animation: toastFadeIn 0.25s ease-out;
+    z-index: 5;
+}
+
+@keyframes toastFadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.delete-confirm-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.delete-confirm-actions .confirm-cancel {
+    flex: 1;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-confirm-actions .confirm-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.delete-confirm-actions .confirm-delete {
+    flex: 1;
+    padding: 0.75rem;
+    background: rgba(231, 76, 60, 0.9);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-confirm-actions .confirm-delete:hover {
+    background: #e74c3c;
+}
+
+/* 푸터 - 저장/취소 버튼 */
+.reading-action-modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.reading-action-modal-footer .btn-cancel {
+    flex: 1;
+    padding: 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reading-action-modal-footer .btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.reading-action-modal-footer .btn-save {
+    flex: 1;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, #00d4ff 0%, #5865f2 50%, #a855f7 100%);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reading-action-modal-footer .btn-save:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* 모바일 */
+@media (max-width: 640px) {
+    .reading-action-modal {
+        width: calc(100% - 2rem);
+        max-width: 380px;
     }
 }

@@ -5751,7 +5751,9 @@
     aspect-ratio: 16 / 9;
     max-height: 450px;
     overflow: hidden;
-    border-radius: 0; /* border-radius 제거 */
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /* 히어로 하단 섬세한 divider */
@@ -5773,7 +5775,8 @@
     object-fit: cover;
     object-position: center;
     /* filter 제거 - 원본 이미지 유지 */
-    border-radius: 8px 8px 0 0;
+    border-radius: 0 !important;
+    border: none !important;
 }
 
 .tarot-result-content .reading-hero-overlay {
@@ -5781,18 +5784,33 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 3rem 2rem 2rem;
-    background: linear-gradient(
-        to top,
-        #0a0015 0%,
-        rgba(10, 0, 21, 0.98) 20%,
-        rgba(10, 0, 21, 0.85) 40%,
-        rgba(10, 0, 21, 0.5) 70%,
-        transparent 100%
-    );
+    padding: 1.5rem 1.25rem 1rem;
+    background: linear-gradient(to top, rgba(10, 0, 21, 1) 0%, rgba(10, 0, 21, 0.5) 50%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* 히어로 아래 메타 정보 섹션 */
+.hero-meta-section {
+    padding: 0rem 1rem 1.25rem;
+    background: rgba(10, 0, 21, 0.95);
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+.hero-meta-section .reading-verdict {
+    font-family: 'RIDIBatang', serif;
+    font-size: 0.95rem;
+    color: rgba(255, 200, 100, 0.95);
+    font-weight: 400;
+    font-style: italic;
+    margin: 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid rgba(255, 200, 100, 0.4);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    line-height: 1.5;
 }
 
 /* Hero 주제 + 키워드 태그 */
@@ -5851,43 +5869,32 @@
 .tarot-result-content .reading-type-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, rgba(155, 89, 182, 0.8), rgba(138, 43, 226, 0.6));
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #fff;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.7), rgba(138, 43, 226, 0.5));
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     width: fit-content;
-    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    border-radius: 4px;
 }
 
 .tarot-result-content .reading-title {
     font-family: 'RIDIBatang', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 600;
     color: #fff;
-    line-height: 1.4;
+    line-height: 1.35;
     margin: 0;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     text-shadow:
-        0 2px 20px rgba(0, 0, 0, 0.8),
-        0 0 40px rgba(138, 43, 226, 0.4);
+        0 2px 15px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(138, 43, 226, 0.3);
 }
 
-.tarot-result-content .reading-verdict {
-    font-family: 'RIDIBatang', serif;
-    font-size: 1rem;
-    color: rgba(255, 200, 100, 0.95);
-    font-weight: 400;
-    font-style: italic;
-    margin: 0;
-    padding-left: 1rem;
-    border-left: 2px solid rgba(255, 200, 100, 0.5);
-    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6);
-    line-height: 1.6;
-}
+/* .reading-verdict는 .hero-meta-section 내부에서 스타일링 */
 
 /* Sticky 카드 바 - 페이지 전체에 고정 */
 .tarot-result-content .sticky-card-bar {
@@ -6253,10 +6260,8 @@
         margin-top: 0 !important;
     }
 
-    /* 모바일 persona-card-bar 위치 조정 */
-    .persona-card-bar {
-        top: 52px !important;
-    }
+    /* 모바일 persona-card-bar - CSS 변수로 동적 처리됨 (NavBar.jsx) */
+    /* top은 --header-offset 변수가 제어 */
 
     /* 모바일 synthesis-section 패딩 */
     .synthesis-section,
@@ -6446,7 +6451,6 @@
     width: 100%;
     height: 320px;
     overflow: hidden;
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
 }
 
 .tarot-result-modal .reading-hero-img {
@@ -7278,17 +7282,10 @@
     font-weight: 400;
 }
 
-/* clip-path 사선 제거 */
+/* 모달/페이지 reading-hero 스타일 */
 .tarot-result-modal .reading-hero,
 .tarot-result-page .reading-hero {
-    clip-path: none !important;
     overflow: hidden;
-}
-
-/* 모달/페이지 ::after 제거 (별도 요소로 대체) */
-.tarot-result-modal .reading-hero::after,
-.tarot-result-page .reading-hero::after {
-    display: none;
 }
 
 /* ========================================
@@ -7296,13 +7293,13 @@
    ======================================== */
 .persona-card-bar {
     position: sticky;
-    top: 59px; /* 헤더 높이 - 1px (틈 방지) */
+    top: var(--header-offset, 60px); /* 헤더 숨김 상태에 따라 동적 변경 */
     z-index: 100;
     width: 100%;
     padding: 1rem 0 1.5rem;
     overflow: visible;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease, top 0.3s ease; /* 헤더와 동기화 */
     /* Premium Modal 스타일 배경 + 그라디언트 보더 */
     background: linear-gradient(165deg, rgba(12, 8, 24, 0.99) 0%, rgba(20, 12, 35, 0.98) 40%, rgba(8, 5, 18, 1) 100%);
     border-top: 2px solid transparent;

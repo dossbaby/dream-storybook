@@ -7,6 +7,20 @@ const MBTI_TYPES = [
     'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ];
 
+// MBTI 그룹 분류
+const getMbtiGroup = (type) => {
+    const ntTypes = ['INTJ', 'INTP', 'ENTJ', 'ENTP']; // 분석가
+    const nfTypes = ['INFJ', 'INFP', 'ENFJ', 'ENFP']; // 외교관
+    const sjTypes = ['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ']; // 관리자
+    const spTypes = ['ISTP', 'ISFP', 'ESTP', 'ESFP']; // 탐험가
+
+    if (ntTypes.includes(type)) return 'nt-group';
+    if (nfTypes.includes(type)) return 'nf-group';
+    if (sjTypes.includes(type)) return 'sj-group';
+    if (spTypes.includes(type)) return 'sp-group';
+    return '';
+};
+
 const ProfileSettingsModal = ({
     isOpen,
     onClose,
@@ -95,14 +109,14 @@ const ProfileSettingsModal = ({
                             <div className="gender-toggle">
                                 <button
                                     type="button"
-                                    className={formData.gender === 'female' ? 'active' : ''}
+                                    className={`female ${formData.gender === 'female' ? 'active' : ''}`}
                                     onClick={() => handleChange('gender', formData.gender === 'female' ? '' : 'female')}
                                 >
                                     여성
                                 </button>
                                 <button
                                     type="button"
-                                    className={formData.gender === 'male' ? 'active' : ''}
+                                    className={`male ${formData.gender === 'male' ? 'active' : ''}`}
                                     onClick={() => handleChange('gender', formData.gender === 'male' ? '' : 'male')}
                                 >
                                     남성
@@ -115,7 +129,7 @@ const ProfileSettingsModal = ({
                     <section className="profile-group">
                         <h3 className="profile-group-title">생년월일</h3>
                         <div className="profile-field-row">
-                            <div className="profile-field flex-2">
+                            <div className="profile-field">
                                 <label>날짜</label>
                                 <input
                                     type="date"
@@ -125,7 +139,7 @@ const ProfileSettingsModal = ({
                                     max="2015-12-31"
                                 />
                             </div>
-                            <div className="profile-field flex-1">
+                            <div className="profile-field">
                                 <label>시간 <span className="optional">(선택)</span></label>
                                 <input
                                     type="time"
@@ -145,7 +159,7 @@ const ProfileSettingsModal = ({
                                 <button
                                     key={type}
                                     type="button"
-                                    className={formData.mbti === type ? 'active' : ''}
+                                    className={`${getMbtiGroup(type)} ${formData.mbti === type ? 'active' : ''}`}
                                     onClick={() => handleChange('mbti', formData.mbti === type ? '' : type)}
                                 >
                                     {type}

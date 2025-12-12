@@ -1500,8 +1500,8 @@
 
 /* 컴팩트 썸네일 */
 .compact-thumb {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
@@ -1738,8 +1738,8 @@
     }
 
     .compact-thumb {
-        width: 48px;
-        height: 48px;
+        width: 64px;
+        height: 64px;
     }
 
     .compact-title {

@@ -195,13 +195,13 @@ const AnalysisOverlay = memo(({
             }, 400);
         };
 
-        // 텍스트 suffix 추가 (verdict는 ., 나머지는 ...)
-        const addSuffix = (text, isVerdict = false) => {
+        // 텍스트 suffix 추가 (hook/foreshadow에 ... 추가)
+        const addSuffix = (text) => {
             if (!text) return text;
-            const suffix = isVerdict ? '.' : '...';
-            // 이미 마침표나 ...로 끝나면 추가 안함
-            if (text.endsWith('...') || text.endsWith('.')) return text;
-            return text + suffix;
+            
+            // 이미 마침표나 ...나 !로 끝나면 추가 안함
+            if (text.endsWith('...') || text.endsWith('.') || text.endsWith('!')) return text;
+            return text + '...';
         };
 
         switch (phase) {
@@ -220,16 +220,16 @@ const AnalysisOverlay = memo(({
                 break;
 
             case PHASES.FORESHADOW:
-                // title이 있으면 title로 (title도 . 한 개)
+                // title이 있으면 title로 (AI가 이미 ./! 붙임)
                 if (streamingData.title) {
-                    goToNextPhase(PHASES.TITLE, addSuffix(streamingData.title, true), 'gold');
+                    goToNextPhase(PHASES.TITLE, streamingData.title, 'gold');
                 }
                 break;
 
             case PHASES.TITLE:
                 // verdict가 있으면 verdict로
                 if (streamingData.verdict) {
-                    goToNextPhase(PHASES.VERDICT, addSuffix(streamingData.verdict, true), 'gold');
+                    goToNextPhase(PHASES.VERDICT, streamingData.verdict, 'gold');
                 }
                 break;
 

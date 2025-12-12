@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App.jsx'
 import ContentPage from './pages/ContentPage.jsx'
+import TarotResultPage from './pages/TarotResultPage.jsx'
 import ContentListPage from './pages/ContentListPage.jsx'
 import TagPage from './pages/TagPage.jsx'
 import TagsPage from './pages/TagsPage.jsx'
@@ -48,7 +49,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Routes>
             {/* SEO 개별 콘텐츠 페이지 */}
             <Route path="/dream/:id" element={<ContentPage type="dream" />} />
-            <Route path="/tarot/:id" element={<ContentPage type="tarot" />} />
+            <Route path="/tarot/:id" element={<TarotResultPage />} />
             <Route path="/saju/:id" element={<ContentPage type="saju" />} />
 
             {/* 태그 페이지 */}

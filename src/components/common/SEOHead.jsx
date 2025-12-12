@@ -9,16 +9,19 @@ const SEOHead = ({
     description,
     keywords,
     image,
+    imageAlt,
     url,
     type = 'article',
     author = '점AI',
     publishedTime,
-    modifiedTime
+    modifiedTime,
+    structuredData
 }) => {
     const siteUrl = 'https://jeom.ai';
     const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
     const defaultImage = `${siteUrl}/og-image.png`;
     const ogImage = image || defaultImage;
+    const ogImageAlt = imageAlt || title || '점AI 리딩 결과';
 
     return (
         <Helmet>
@@ -34,6 +37,7 @@ const SEOHead = ({
             <meta property="og:description" content={description} />
             <meta property="og:url" content={fullUrl} />
             <meta property="og:image" content={ogImage} />
+            <meta property="og:image:alt" content={ogImageAlt} />
             <meta property="og:site_name" content="점AI" />
             <meta property="og:locale" content="ko_KR" />
 
@@ -42,6 +46,7 @@ const SEOHead = ({
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={description} />
             <meta name="twitter:image" content={ogImage} />
+            <meta name="twitter:image:alt" content={ogImageAlt} />
 
             {/* Article 메타태그 (콘텐츠용) */}
             {type === 'article' && (
@@ -55,9 +60,9 @@ const SEOHead = ({
                 </>
             )}
 
-            {/* JSON-LD 구조화 데이터 */}
+            {/* JSON-LD 구조화 데이터 - 커스텀 또는 기본 */}
             <script type="application/ld+json">
-                {JSON.stringify({
+                {JSON.stringify(structuredData || {
                     "@context": "https://schema.org",
                     "@type": type === 'article' ? 'Article' : 'WebPage',
                     "headline": title,

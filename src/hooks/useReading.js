@@ -676,8 +676,8 @@ conclusionCard는 반드시:
 {
   "hook": "⚠️질문자가 '뭐야 이거?' 하고 멈출 수밖에 없는 첫 마디. 답 먼저 + 반전 구조. 군더더기 없이. ❌금지: 희귀도/카드조합/숫자 절대 금지! 🚨매번 완전히 다른 시작 필수!",
   "foreshadow": "⚠️Hook에서 던진 의외성을 안 보면 잠 못 잘 정도로 궁금하게. '뭔데?' '어떻게?' '왜?'를 자극. ❌금지: 카드 순서 언급 절대 금지!",
-  "title": "질문에 대한 한줄 답변 (15-30자). 피드에서 질문과 함께 보여질 공감형 답변. 예: 질문 '그 사람 마음?' → 답변 '마음은 있어요, 근데 타이밍이...' / 질문 '이직해도 될까?' → 답변 '지금은 아닌데, 3개월 뒤엔 달라요' / 질문 '시험 붙을까요?' → 답변 '붙어요, 근데 방식이 중요해요' 형식으로 직접적 답변 + 궁금증 유발",
-  "verdict": "답변 뒤에 붙는 감성 한마디 (25-45자). 공감/위로/응원 느낌의 두 문장. 예: '지금 느끼는 불안함, 당연해요. 근데 그게 답을 찾고 있다는 증거예요.'",
+  "title": "질문에 대한 한줄 답변 (15-30자). 피드에서 질문과 함께 보여질 공감형 답변. 예: 질문 '그 사람 마음?' → 답변 '마음은 있어요, 근데 타이밍이...' / 질문 '이직해도 될까?' → 답변 '지금은 아닌데, 3개월 뒤엔 달라요' / 질문 '시험 붙을까요?' → 답변 '붙어요, 근데 방식이 중요해요' 형식으로 직접적 답변 + 궁금증 유발. ⚠️구두점 규칙: 질문형이면 '?', 강조/확신/exciting이면 '!', 그 외에는 마침표 없이 끝내기",
+  "verdict": "답변 뒤에 붙는 감성 한마디 (25-45자). 공감/위로/응원 느낌의 두 문장. 예: '지금 느끼는 불안함, 당연해요. 근데 그게 답을 찾고 있다는 증거예요.' ⚠️마지막 문장 끝에 상황에 맞게 '.' 또는 '!'를 붙일 것!",
 
   "topics": ["질문에 가장 맞는 주제 딱 1개만 선택 (사랑/관계/돈/성장/건강/선택/일반 중)"],
   "keywords": [
@@ -775,17 +775,42 @@ conclusionCard는 반드시:
             };
 
             const updateCardReady = (cardNum, image, analysis) => {
-                if (cardNum === 2 && analysis) {
-                    partialResult.card2Image = image;
-                    partialResult.presentImage = image;
-                    partialResult.cardReady.card2 = true;
-                } else if (cardNum === 3 && analysis) {
-                    partialResult.card3Image = image;
-                    partialResult.futureImage = image;
-                    partialResult.cardReady.card3 = true;
-                } else if (cardNum === 4) {
-                    partialResult.conclusionImage = image;
-                    partialResult.cardReady.conclusion = true;
+                // Card 2: 이미지 + 분석 필요
+                if (cardNum === 2) {
+                    if (image) {
+                        partialResult.card2Image = image;
+                        partialResult.presentImage = image;
+                    }
+                    // 이미지와 분석이 모두 있어야 ready
+                    const card2Analysis = analysis || partialResult.storyReading?.card2Analysis;
+                    const card2Img = image || partialResult.card2Image;
+                    if (card2Analysis && card2Img) {
+                        partialResult.cardReady.card2 = true;
+                    }
+                }
+                // Card 3: 이미지 + 분석 필요
+                else if (cardNum === 3) {
+                    if (image) {
+                        partialResult.card3Image = image;
+                        partialResult.futureImage = image;
+                    }
+                    const card3Analysis = analysis || partialResult.storyReading?.card3Analysis;
+                    const card3Img = image || partialResult.card3Image;
+                    if (card3Analysis && card3Img) {
+                        partialResult.cardReady.card3 = true;
+                    }
+                }
+                // Conclusion: 이미지 + 분석 + hiddenInsight 필요
+                else if (cardNum === 4) {
+                    if (image) {
+                        partialResult.conclusionImage = image;
+                    }
+                    const conclusionAnalysis = analysis || partialResult.storyReading?.conclusionCard;
+                    const conclusionImg = image || partialResult.conclusionImage;
+                    const hiddenInsight = partialResult.jenny?.hiddenInsight || partialResult.hiddenInsight;
+                    if (conclusionAnalysis && conclusionImg && hiddenInsight) {
+                        partialResult.cardReady.conclusion = true;
+                    }
                 }
                 if (hasTransitioned && streamingCallbacks.onPartialUpdate) {
                     streamingCallbacks.onPartialUpdate({ ...partialResult });
@@ -897,10 +922,12 @@ conclusionCard는 반드시:
                             return img;
                         });
                 },
-                // Card2 분석 완료 → 저장만
+                // Card2 분석 완료 → 저장 + ready 체크
                 onCard2: (card2Analysis) => {
                     console.log(`🃏 Card2 분석 완료 ${elapsed()}`);
                     partialResult.storyReading.card2Analysis = card2Analysis;
+                    // 이미지가 이미 완료됐으면 ready 상태로 업데이트
+                    updateCardReady(2, null, card2Analysis);
                 },
                 // Card2 이미지 프롬프트 → 이미지 생성 시작
                 onCard2ImagePrompt: (prompt) => {
@@ -914,10 +941,12 @@ conclusionCard는 반드시:
                             return img;
                         });
                 },
-                // Card3 분석 완료 → 저장만
+                // Card3 분석 완료 → 저장 + ready 체크
                 onCard3: (card3Analysis) => {
                     console.log(`🃏 Card3 분석 완료 ${elapsed()}`);
                     partialResult.storyReading.card3Analysis = card3Analysis;
+                    // 이미지가 이미 완료됐으면 ready 상태로 업데이트
+                    updateCardReady(3, null, card3Analysis);
                 },
                 // Card3 이미지 프롬프트 → 이미지 생성 시작
                 onCard3ImagePrompt: (prompt) => {
@@ -931,10 +960,12 @@ conclusionCard는 반드시:
                             return img;
                         });
                 },
-                // Conclusion 분석 완료 → 저장만
+                // Conclusion 분석 완료 → 저장 + ready 체크
                 onConclusion: (conclusionAnalysis) => {
                     console.log(`🎁 Conclusion 분석 완료 ${elapsed()}`);
                     partialResult.storyReading.conclusionCard = conclusionAnalysis;
+                    // 이미지와 hiddenInsight가 이미 완료됐으면 ready 상태로 업데이트
+                    updateCardReady(4, null, conclusionAnalysis);
                 },
                 // Conclusion 이미지 프롬프트 → 이미지 생성 시작
                 onConclusionImagePrompt: (prompt) => {
@@ -951,6 +982,9 @@ conclusionCard는 반드시:
                 onHiddenInsight: (hiddenInsight) => {
                     console.log(`✅ Hidden Insight 완료 ${elapsed()}`);
                     partialResult.jenny.hiddenInsight = hiddenInsight;
+                    partialResult.hiddenInsight = hiddenInsight; // 최상위에도 저장
+                    // 이미지와 분석이 이미 완료됐으면 conclusion ready 상태로 업데이트
+                    updateCardReady(4, null, null);
                 },
                 onProgress: (progressValue) => {
                     // 진행률 기반 메시지 업데이트
