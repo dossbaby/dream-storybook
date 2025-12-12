@@ -38,16 +38,16 @@ const BREATHE_CONTEXTS = [
 
 // 쉬어가는 단계 본문 (10가지)
 const BREATHE_BODIES = [
-    "잠시 눈을 감고 마지막 카드에 에너지를 모아볼게요...",
-    "우주의 기운을 모아 마지막 답을 준비할게요...",
-    "카드들이 하나로 모여 이야기를 완성하고 있어요...",
-    "별들의 속삭임을 마지막 카드에 담아볼게요...",
-    "깊이 숨을 쉬고 운명의 조각을 맞춰볼게요...",
-    "모든 기운이 하나로 모이고 있어요...",
-    "카드가 전할 메시지를 준비하고 있어요...",
-    "우주가 특별한 답을 만들고 있어요...",
-    "타로의 에너지가 하나로 엮이고 있어요...",
-    "마지막 카드의 목소리에 귀 기울여 볼까요..."
+    "잠시 눈을 감고 마지막 카드에 에너지를 모아볼게요.",
+    "우주의 기운을 모아 마지막 답을 준비할게요.",
+    "카드들이 하나로 모여 이야기를 완성하고 있어요.",
+    "별들의 속삭임을 마지막 카드에 담아볼게요.",
+    "깊이 숨을 쉬고 운명의 조각을 맞춰볼게요.",
+    "모든 기운이 하나로 모이고 있어요.",
+    "카드가 전할 메시지를 준비하고 있어요.",
+    "우주가 특별한 답을 만들고 있어요.",
+    "타로의 에너지가 하나로 엮이고 있어요.",
+    "마지막 카드의 목소리에 귀 기울여 볼까요."
 ];
 
 // context + body 조합 생성
@@ -204,6 +204,14 @@ const AnalysisOverlay = memo(({
             return text + '...';
         };
 
+        // title용: ?나 !로 끝나지 않으면 . 추가
+        const addPeriod = (text) => {
+            if (!text) return text;
+            const trimmed = text.trim();
+            if (trimmed.endsWith('?') || trimmed.endsWith('!') || trimmed.endsWith('.')) return trimmed;
+            return trimmed + '.';
+        };
+
         switch (phase) {
             case PHASES.INTRO:
                 // hook이 있으면 hook으로, 없으면 대기
@@ -221,8 +229,9 @@ const AnalysisOverlay = memo(({
 
             case PHASES.FORESHADOW:
                 // title이 있으면 title로 (AI가 이미 ./! 붙임)
+                // '그래서' presuffix 추가
                 if (streamingData.title) {
-                    goToNextPhase(PHASES.TITLE, streamingData.title, 'gold');
+                    goToNextPhase(PHASES.TITLE, `그래서 ${addPeriod(streamingData.title)}`, 'gold');
                 }
                 break;
 
@@ -363,7 +372,10 @@ const AnalysisOverlay = memo(({
 
             {/* 메인 컨텐츠 */}
             <div className="vn-intro-content">
-                <div className={`vn-ornament top ${ornamentVisible ? 'visible' : ''}`}>~ ✧ ~</div>
+                {/* FINAL phase에서는 ornament 숨김 */}
+                {phase !== PHASES.FINAL && phase !== PHASES.READY && (
+                    <div className={`vn-ornament top ${ornamentVisible ? 'visible' : ''}`}>~ ✧ ~</div>
+                )}
 
                 <div className={`vn-hook ${ornamentVisible ? '' : 'hidden'}`}>
                     <p className={`vn-typing-text ${textType === 'purple' ? 'purple' : ''}`}>
@@ -372,7 +384,10 @@ const AnalysisOverlay = memo(({
                     </p>
                 </div>
 
-                <div className={`vn-ornament bottom ${ornamentVisible ? 'visible' : ''}`}>~ ✧ ~</div>
+                {/* FINAL phase에서는 ornament 숨김 */}
+                {phase !== PHASES.FINAL && phase !== PHASES.READY && (
+                    <div className={`vn-ornament bottom ${ornamentVisible ? 'visible' : ''}`}>~ ✧ ~</div>
+                )}
             </div>
 
             {/* 하단 영역 */}
@@ -394,7 +409,7 @@ const AnalysisOverlay = memo(({
                 <p className="vn-waiting-hint" key={waitingMsgIndex}>
                     {waitingMsgIndex === 0
                         ? '✦ 조금만 기다려주세요...'
-                        : '✦ 마지막 분석을 하고 있어요...'}
+                        : '✦ 마지막 분석 중...'}
                 </p>
             ) : null}
         </div>

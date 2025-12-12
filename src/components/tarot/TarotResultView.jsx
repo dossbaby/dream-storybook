@@ -171,6 +171,8 @@ const TarotResultView = ({
     // 숨겨진 인사이트 (최상위 또는 jenny 객체 내부 체크)
     const hiddenInsight = tarotResult.hiddenInsight || jenny.hiddenInsight || FALLBACK_INSIGHTS[Math.floor(tarotResult.title?.length || 0) % FALLBACK_INSIGHTS.length];
 
+    // Hidden Insight 로딩 상태 (실제 AI 생성 데이터가 있는지 확인)
+    const isHiddenInsightReady = !!(tarotResult.hiddenInsight || jenny.hiddenInsight);
     // Hook 텍스트 (최상위 또는 jenny 객체 내부 체크)
     const hookText = tarotResult.hook || jenny.hook || '당신의 질문에 카드가 응답했어요... 세 장의 카드가 이야기를 시작합니다.';
 
@@ -190,7 +192,6 @@ const TarotResultView = ({
 
     // 스토리 리딩 (flat 구조 또는 기존 storyReading 객체 지원)
     const storyReading = tarotResult.storyReading || {
-        opening: tarotResult.opening || tarotResult.reading?.past || '',
         card1Analysis: tarotResult.card1Analysis || tarotResult.cardMeaning?.detail || '',
         card2Analysis: tarotResult.card2Analysis || tarotResult.reading?.present || '',
         card3Analysis: tarotResult.card3Analysis || tarotResult.reading?.future || '',
@@ -716,8 +717,9 @@ const TarotResultView = ({
                         <div className="sealed-insight-section fade-in-up">
                             {!insightUnsealed ? (
                                 <div
-                                    className="sealed-message"
+                                    className={`sealed-message ${isHiddenInsightReady ? "ready" : "loading"}`}
                                     onClick={() => {
+                                        if (!isHiddenInsightReady) return;
                                         setInsightOpening(true);
                                         setTimeout(() => {
                                             setInsightUnsealed(true);
@@ -726,16 +728,40 @@ const TarotResultView = ({
                                     }}
                                 >
                                     <div className="seal-visual">
-                                        <span className="seal-icon">🌌</span>
+                                        <span className="seal-icon">🌀</span>
                                         <div className="seal-glow"></div>
                                     </div>
-                                    <div className="seal-text">차원의 틈</div>
-                                    <div className="seal-hint">
-                                        잠깐, 뭔가 더 있어요!!!
+                                    <div className={`seal-text fragmenting ${isHiddenInsightReady ? 'ready' : ''}`}>
+                                        <span className="seal-char">차</span>
+                                        <span className="seal-char">원</span>
+                                        <span className="seal-char">의</span>
+                                        <span className="seal-char"> </span>
+                                        <span className="seal-char">틈</span>
                                     </div>
-                                    <button className="unseal-btn">
-                                        ✦ 틈새 엿보기
-                                    </button>
+                                    {/* 별 파티클 배경 - ready 상태에서만 */}
+                                    {isHiddenInsightReady && (
+                                        <div className="star-particles">
+                                            {[...Array(12)].map((_, i) => (
+                                                <span key={i} className="star-particle" />
+                                            ))}
+                                        </div>
+                                    )}
+                                    <div className="seal-hint">
+                                        {isHiddenInsightReady
+                                            ? '잠깐, 뭔가 더 있어요!!!'
+                                            : '시공간을 넘나드는 중...'}
+                                    </div>
+                                    {isHiddenInsightReady ? (
+                                        <button className="unseal-btn">
+                                            ✦ 틈새 엿보기
+                                        </button>
+                                    ) : (
+                                        <div className="insight-loading-indicator">
+                                            <span className="loading-dot"></span>
+                                            <span className="loading-dot"></span>
+                                            <span className="loading-dot"></span>
+                                        </div>
+                                    )}
                                     {/* 포탈 오픈 이펙트 */}
                                     {insightOpening && (
                                         <div className="insight-portal-effect">
@@ -749,8 +775,8 @@ const TarotResultView = ({
                             ) : (
                                 <div className="unsealed-insight">
                                     <h2 className="insight-header">
-                                        <span className="section-icon">🌌</span>
-                                        평행우주가 보낸 신호
+                                        <span className="section-icon">🌀</span>
+                                        평행우주가 보내는 신호
                                     </h2>
                                     <div className="insight-content reading-text">
                                         <p className="insight-text reading-paragraph">{parseBoldText(hiddenInsight)}</p>

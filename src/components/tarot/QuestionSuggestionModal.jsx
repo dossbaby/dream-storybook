@@ -20,12 +20,18 @@ const getTimeContext = () => {
     const month = now.getMonth() + 1;
     const weekOfMonth = Math.ceil(now.getDate() / 7);
 
+    // 10월~12월이면 "내년"에 대한 관심이 높음
+    const isNearYearEnd = month >= 10;
+    const nextYear = year + 1;
+
     return {
         year,
         month,
         weekOfMonth,
         monthName: `${month}월`,
         weekName: `${weekOfMonth}주차`,
+        isNearYearEnd,
+        nextYear,
     };
 };
 
@@ -76,6 +82,7 @@ const QuestionSuggestionModal = ({ isOpen, onClose, onSelectQuestion }) => {
 시간 컨텍스트:
 - 현재: ${timeContext.year}년 ${timeContext.monthName} ${timeContext.weekName}
 - 가능하면 "이번 주", "이번 달", "최근", "${timeContext.year}년", "올해 안에", "언제" 등 시기를 포함
+${timeContext.isNearYearEnd ? `- 연말 시즌! "${timeContext.nextYear}년", "내년", "새해" 관련 질문도 1-2개 포함하면 좋음 (사람들이 내년에 대해 궁금해하는 시기)` : ''}
 
 도파민 질문 원칙:
 - 사람들이 정말 궁금해서 클릭하고 싶은 질문
@@ -88,8 +95,8 @@ const QuestionSuggestionModal = ({ isOpen, onClose, onSelectQuestion }) => {
 - 직장/이직: 합격할지, 이직 타이밍, 상사와의 관계
 - 재물: 투자 시기, 목돈 들어올지, 지출 조심할 때
 - 결정: 지금 결정해도 될지, 선택의 결과
-- 인간관계: 그 사람 진짜 마음, 관계 정리할 때인지
-- 미래: 올해 운세, 터닝포인트 시기
+- 사람 관계(연애 제외): 친구/가족/동료와의 갈등, 관계 정리할 때인지, 그 사람 진심인지
+- 미래: 올해 운세, 터닝포인트 시기${timeContext.isNearYearEnd ? `, 내년 운세` : ''}
 
 출력 형식 (JSON 배열만, 설명 없이):
 ["질문1", "질문2", "질문3", "질문4", "질문5", "질문6", "질문7"]`

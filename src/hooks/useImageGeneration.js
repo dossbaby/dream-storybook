@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { AI_MODELS, ANIME_STYLES, REAL_STYLES } from '../utils/aiConfig';
+import { AI_MODELS, combineStyles } from '../utils/aiConfig';
 
 // 이미지 생성 훅 - 모든 모드에서 공통으로 사용
 export const useImageGeneration = (tier = 'free') => {
@@ -16,31 +16,27 @@ export const useImageGeneration = (tier = 'free') => {
     };
 
     /**
-     * 단일 이미지 생성
+     * 단일 이미지 생성 (v2: 스튜디오 + 캐릭터 조합 지원)
      * @param {string} prompt - 장면 묘사 (Claude가 생성한 프롬프트)
-     * @param {string} styleKey - 스타일 키 (Claude가 선택)
-     * @param {string} characterDesc - 캐릭터 설명 (일관성용)
+     * @param {string} studioStyle - 스튜디오 스타일 키 (shinkai, ghibli, random 등)
+     * @param {string} characterDesc - 캐릭터 설명 (일관성용) - 레거시
      * @param {string} readingType - 리딩 타입 ('dream', 'tarot', 'fortune') - fallback용
      * @param {string} colorPalette - 감정 기반 색상 팔레트
-     * @param {string} visualMode - 비주얼 모드 ('anime' 또는 'real')
+     * @param {string} characterStyle - 캐릭터 미학 키 (reze, frieren, random, none 등)
      */
-    const generateSingleImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '', visualMode = 'anime') => {
+    const generateSingleImage = async (prompt, studioStyle = 'random', characterDesc = '', readingType = 'tarot', colorPalette = '', characterStyle = 'random') => {
         if (!geminiApiKey) return null;
 
-        // 스타일 prefix 결정: visualMode에 따라 ANIME_STYLES 또는 REAL_STYLES 사용
-        let stylePrefix;
-        if (visualMode === 'real') {
-            stylePrefix = REAL_STYLES[styleKey] || `${REAL_STYLES._default} Style hint: ${styleKey}.`;
-        } else {
-            stylePrefix = ANIME_STYLES[styleKey] || `${ANIME_STYLES._default} Style hint: ${styleKey}.`;
-        }
+        // v2: 스튜디오 + 캐릭터 조합 (항상 사용)
+        const stylePrefix = combineStyles(studioStyle, characterStyle);
+
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
 
         // 동적 색상 팔레트 (Claude가 질문 감정에서 추출)
         const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
 
         // 디버깅: 실제 사용되는 모델과 스타일 확인
-        console.log(`🎨 Image Generation - Tier: ${tier}, Model: ${imageModelName}, Style: ${styleKey}, Colors: ${colorPalette || 'default'}`);
+        console.log(`🎨 Image Generation - Tier: ${tier}, Model: ${imageModelName}, Studio: ${studioStyle}, Character: ${characterStyle || 'none'}, Colors: ${colorPalette || 'default'}`);
 
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });
@@ -96,18 +92,18 @@ export const useImageGeneration = (tier = 'free') => {
     /**
      * 여러 이미지 순차 생성 (진행 콜백 포함)
      * @param {string[]} prompts - 장면 묘사 배열
-     * @param {string} styleKey - 스타일 키
-     * @param {string} characterDesc - 캐릭터 설명
+     * @param {string} studioStyle - 스튜디오 스타일 키
+     * @param {string} characterDesc - 캐릭터 설명 (레거시)
      * @param {string} readingType - 리딩 타입
      * @param {Function} onProgress - 진행 콜백
      * @param {string} colorPalette - 감정 기반 색상 팔레트
-     * @param {string} visualMode - 비주얼 모드 ('anime' 또는 'real')
+     * @param {string} characterStyle - 캐릭터 미학 키
      */
-    const generateImages = async (prompts, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '', visualMode = 'anime') => {
+    const generateImages = async (prompts, studioStyle = 'random', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '', characterStyle = 'random') => {
         const images = [];
         for (let i = 0; i < prompts.length; i++) {
             if (onProgress) onProgress(i, prompts.length);
-            const image = await generateSingleImage(prompts[i], styleKey, characterDesc, readingType, colorPalette, visualMode);
+            const image = await generateSingleImage(prompts[i], studioStyle, characterDesc, readingType, colorPalette, characterStyle);
             images.push(image);
             // 이미지 생성 간 딜레이
             if (i < prompts.length - 1) {
@@ -120,25 +116,22 @@ export const useImageGeneration = (tier = 'free') => {
     /**
      * 소셜 공유용 이미지 생성 (9:16 세로 비율)
      * @param {string} prompt - 장면 묘사
-     * @param {string} styleKey - 스타일 키
-     * @param {string} characterDesc - 캐릭터 설명
+     * @param {string} studioStyle - 스튜디오 스타일 키
+     * @param {string} characterDesc - 캐릭터 설명 (레거시)
      * @param {string} readingType - 리딩 타입
      * @param {string} colorPalette - 감정 기반 색상 팔레트
-     * @param {string} visualMode - 비주얼 모드 ('anime' 또는 'real')
+     * @param {string} characterStyle - 캐릭터 미학 키
      */
-    const generateShareImage = async (prompt, styleKey = 'shinkai', characterDesc = '', readingType = 'tarot', colorPalette = '', visualMode = 'anime') => {
+    const generateShareImage = async (prompt, studioStyle = 'random', characterDesc = '', readingType = 'tarot', colorPalette = '', characterStyle = 'random') => {
         if (!geminiApiKey) return null;
 
-        let stylePrefix;
-        if (visualMode === 'real') {
-            stylePrefix = REAL_STYLES[styleKey] || `${REAL_STYLES._default} Style hint: ${styleKey}.`;
-        } else {
-            stylePrefix = ANIME_STYLES[styleKey] || `${ANIME_STYLES._default} Style hint: ${styleKey}.`;
-        }
+        // v2: 스튜디오 + 캐릭터 조합 (항상 사용)
+        const stylePrefix = combineStyles(studioStyle, characterStyle);
+
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
         const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
 
-        console.log(`📱 Share Image Generation - Tier: ${tier}, Model: ${imageModelName}, Style: ${styleKey}, Colors: ${colorPalette || 'default'}, Ratio: 9:16`);
+        console.log(`📱 Share Image Generation - Tier: ${tier}, Model: ${imageModelName}, Studio: ${studioStyle}, Character: ${characterStyle || 'none'}, Colors: ${colorPalette || 'default'}, Ratio: 9:16`);
 
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });

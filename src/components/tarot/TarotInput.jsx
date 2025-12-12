@@ -227,7 +227,8 @@ const TarotInput = ({
                         onClick={() => setShowSuggestionModal(true)}
                         disabled={loading}
                     >
-                        ✨ 질문 추천 받기
+                        <span className="suggestion-emoji">✨</span>
+                        <span className="suggestion-text">질문 추천 받기</span>
                     </button>
 
                     {/* 질문 추천 모달 */}

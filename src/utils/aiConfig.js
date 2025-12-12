@@ -59,89 +59,192 @@ export const IMAGE_CONFIG = {
 };
 
 /**
- * 동적 애니메 스타일 시스템
- * Claude가 질문 분위기에 맞게 선택 → Gemini에 전달
+ * 동적 애니메 스타일 시스템 v2
+ * Claude가 스튜디오 + 캐릭터 조합 선택 → Gemini에 전달
  *
- * 구조: [Quality Prefix] + [Style Core] + [Mystic/Cinematic Suffix]
- * 사용: const stylePrefix = ANIME_STYLES[imageStyle] || ANIME_STYLES._default;
+ * 구조: [Quality Prefix] + [Studio Style] + [Character Aesthetic] + [Mystic/Cinematic Suffix]
+ * 조합 예시: ghibli + reze = 지브리 느낌의 레제 미학
  */
 
-// 공통 퀄리티 prefix (모든 스타일에 적용) - 극장판 퀄리티 강조
-const QUALITY_PREFIX = 'masterpiece, best quality, ultra-detailed, 8k resolution, theatrical movie quality, anime film production value, official key visual, professional illustration, cinematic anime feature film quality';
+// ═══════════════════════════════════════════════════════════════
+// Visual Director 가이드 (Gemini 프롬프트에 자연스럽게 녹여서 사용)
+// Gemini 공식 가이드: "descriptive paragraphs > keyword lists"
+// ═══════════════════════════════════════════════════════════════
 
-// 타로/신비로운 분위기 suffix (모든 스타일에 적용)
-const MYSTIC_SUFFIX = 'mystical atmosphere, ethereal glow, tarot card aesthetic, fortune-telling mood, cosmic energy, starlight particles, sacred geometry hints, destiny vibes';
+// 캐릭터 미학 가이드 (Claude에게 전달 - 프롬프트 작성 시 참고)
+const CHARACTER_AESTHETIC_GUIDE = `⚠️ CRITICAL: This MUST be ANIME/ILLUSTRATION style - NEVER photorealistic, NEVER real human photos, NEVER 3D render. Always 2D Japanese anime art style with clear linework. As a visual director, portray characters as young adults in their early 20s with a fresh, lovely beauty reminiscent of K-pop idols. They should have graceful slim proportions with a chic, cool, and effortlessly carefree urban vibe. Avoid childish or chibi proportions - instead capture that nonchalant city aesthetic with pretty, adorable yet sophisticated features.`;
 
-// 시네마틱 렌더링 suffix
-const CINEMATIC_SUFFIX = 'volumetric lighting, god rays, cinematic color grading, depth of field, bokeh background, rim lighting, dramatic composition';
+// 신비로운 분위기 가이드
+const MYSTIC_GUIDE = `The scene should be infused with mystical tarot energy - ethereal glows, subtle cosmic particles, and hints of sacred geometry that evoke destiny and fortune-telling without overwhelming the composition.`;
 
-export const ANIME_STYLES = {
+// 시네마틱 렌더링 가이드
+const CINEMATIC_GUIDE = `Render with cinematic quality: volumetric lighting with god rays, thoughtful depth of field, bokeh backgrounds, rim lighting that defines the subject, and dramatic composition worthy of an official anime key visual.`;
+
+// ═══════════════════════════════════════════════════════════════
+// 스튜디오 스타일 (렌더링/분위기) - 11개 + random
+// ═══════════════════════════════════════════════════════════════
+export const STUDIO_STYLES = {
     // 로맨틱/몽환적 계열
-    shinkai: `${QUALITY_PREFIX}. Makoto Shinkai style (Your Name, Weathering With You). Beautiful anime character as focal point, golden hour lighting, hyper-detailed backgrounds with lens flare, dreamy twilight atmosphere, emotional expressive eyes with light reflections, flowing hair with wind movement, ${MYSTIC_SUFFIX}, ${CINEMATIC_SUFFIX}`,
+    shinkai: `Makoto Shinkai style (Your Name, Weathering With You). Golden hour lighting, hyper-detailed backgrounds with lens flare, dreamy twilight atmosphere, emotional expressive eyes with light reflections, flowing hair with wind movement`,
 
-    kyoani: `${QUALITY_PREFIX}. Kyoto Animation style (Violet Evergarden). Detailed anime character with subsurface scattering on skin, delicate porcelain features, elegant emotional portrayal, intricate costume details, soft diffused lighting, character-focused composition, ${MYSTIC_SUFFIX}, ${CINEMATIC_SUFFIX}`,
+    kyoani: `Kyoto Animation style (Violet Evergarden). Subsurface scattering on skin, delicate porcelain features, elegant emotional portrayal, intricate costume details, soft diffused lighting, character-focused composition`,
 
-    ghibli: `${QUALITY_PREFIX}. Studio Ghibli style (Spirited Away, Howl's Moving Castle). Expressive anime character in magical enchanted setting, hand-painted watercolor aesthetic, warm human emotions, whimsical fantasy elements, nature spirits, ${MYSTIC_SUFFIX}, soft atmospheric haze, painterly texture`,
+    ghibli: `Studio Ghibli style (Spirited Away, Howl's Moving Castle). Hand-painted watercolor aesthetic, warm human emotions, whimsical fantasy elements, nature spirits, soft atmospheric haze, painterly texture`,
 
     // MAPPA 계열
-    mappa: `${QUALITY_PREFIX}. MAPPA studio style (Jujutsu Kaisen). Dynamic anime character with bold saturated colors, expressive action energy, fluid motion blur, modern anime aesthetic, sharp detailed linework, intense eyes, ${MYSTIC_SUFFIX}, ${CINEMATIC_SUFFIX}, high contrast dramatic shadows`,
+    mappa: `MAPPA studio style (Jujutsu Kaisen). Bold saturated colors, expressive action energy, fluid motion blur, modern anime aesthetic, sharp detailed linework, intense eyes, high contrast dramatic shadows`,
 
-    mappa_dark: `${QUALITY_PREFIX}. MAPPA dark style (Chainsaw Man). Intense anime character with edgy aesthetic, bold chiaroscuro shadows on face, visceral raw emotion, mature dramatic lighting, character silhouette prominent, blood moon atmosphere, ${MYSTIC_SUFFIX}, noir color palette, gritty texture`,
+    mappa_dark: `MAPPA dark style (Chainsaw Man). Edgy aesthetic, bold chiaroscuro shadows on face, visceral raw emotion, mature dramatic lighting, character silhouette prominent, blood moon atmosphere, noir color palette, gritty texture`,
 
     // 클래식/우아한 계열
-    shojo: `${QUALITY_PREFIX}. Classic shojo anime style (Apothecary Diaries). Beautiful anime character with breathtaking intricate details, sparkles and flower petals floating, elegant flowing hair with highlights, romantic pastel atmosphere, detailed lace and fabric, ${MYSTIC_SUFFIX}, soft bloom effect, dreamy color palette`,
+    shojo: `Classic shojo anime style. Breathtaking intricate details, sparkles and flower petals floating, elegant flowing hair with highlights, romantic pastel atmosphere, detailed lace and fabric, soft bloom effect, dreamy color palette`,
 
-    clamp: `${QUALITY_PREFIX}. CLAMP style (Cardcaptor Sakura, xxxHolic). Elongated elegant proportions, flowing fabric and hair with movement, graceful ethereal poses, magical girl aesthetic, sophisticated dark beauty, art nouveau influences, ${MYSTIC_SUFFIX}, dramatic cape/cloth flow, stained glass colors`,
+    clamp: `CLAMP style (Cardcaptor Sakura, xxxHolic). Elongated elegant proportions, flowing fabric and hair with movement, graceful ethereal poses, magical girl aesthetic, sophisticated dark beauty, art nouveau influences, dramatic cape/cloth flow, stained glass colors`,
 
     // 역동적/스포츠 계열
-    takehiko: `${QUALITY_PREFIX}. Takehiko Inoue style (Slam Dunk, Vagabond). Dynamic human anatomy with muscle definition, powerful emotional moments, realistic yet stylized features, athletic movement captured, raw intensity in eyes, traditional ink wash texture, ${MYSTIC_SUFFIX}, dramatic action lines, hand-drawn organic feel`,
+    takehiko: `Takehiko Inoue style (Slam Dunk, Vagabond). Dynamic human anatomy with muscle definition, powerful emotional moments, realistic yet stylized features, athletic movement captured, raw intensity in eyes, traditional ink wash texture, dramatic action lines, hand-drawn organic feel`,
 
-    wit: `${QUALITY_PREFIX}. WIT Studio style (Attack on Titan, Spy x Family). Clean ultra-sharp linework, dynamic action poses with motion energy, expressive character acting, cinematic widescreen composition, high contrast lighting with ambient occlusion, ${MYSTIC_SUFFIX}, ${CINEMATIC_SUFFIX}`,
+    wit: `WIT Studio style (Attack on Titan, Spy x Family). Clean ultra-sharp linework, dynamic action poses with motion energy, expressive character acting, cinematic widescreen composition, high contrast lighting with ambient occlusion`,
 
     // 현대 일러스트 계열
-    ilya: `${QUALITY_PREFIX}. Ilya Kuvshinov style. Modern digital illustration, soft skin rendering with subsurface scattering, highly detailed eyes with multiple light reflections, contemporary fashion details, Instagram-popular aesthetic, painterly color blending, ${MYSTIC_SUFFIX}, portrait focus, soft gradient backgrounds`,
+    ilya: `Ilya Kuvshinov style. Modern digital illustration, soft skin rendering with subsurface scattering, highly detailed eyes with multiple light reflections, contemporary fashion details, Instagram-popular aesthetic, painterly color blending, portrait focus, soft gradient backgrounds`,
 
     // 미니멀/아트 계열
-    minimalist: `${QUALITY_PREFIX}. Minimalist artistic anime. Clean elegant character design, strategic negative space, subtle nuanced expressions, character as focal point, simple but impactful composition, limited color palette with accent colors, ${MYSTIC_SUFFIX}, zen aesthetic, floating elements`,
+    minimalist: `Minimalist artistic anime. Clean elegant character design, strategic negative space, subtle nuanced expressions, character as focal point, simple but impactful composition, limited color palette with accent colors, zen aesthetic, floating elements`,
 
-    // fallback (Claude가 새로운 키워드 생성 시)
-    _default: `${QUALITY_PREFIX}. High quality Japanese/Korean anime illustration style. Beautiful expressive character with emotional depth, highly detailed eyes with light reflections, cinematic dramatic composition, atmospheric volumetric lighting, professional anime key visual aesthetic, ${MYSTIC_SUFFIX}, ${CINEMATIC_SUFFIX}`
+    // 🎲 히든 카드: 위 스타일 중 랜덤 선택
+    random: '_RANDOM_STUDIO_'
 };
 
+// 스튜디오 랜덤 선택용 리스트 (random 제외)
+export const STUDIO_LIST = ['shinkai', 'kyoani', 'ghibli', 'mappa', 'mappa_dark', 'shojo', 'clamp', 'takehiko', 'wit', 'ilya', 'minimalist'];
+
+// ═══════════════════════════════════════════════════════════════
+// 캐릭터 미학 (외모/분위기 특징) - 23개 + random + none
+// 복장은 자유, 얼굴/분위기 특징만 참고
+// ═══════════════════════════════════════════════════════════════
+export const CHARACTER_AESTHETICS = {
+    // ─── 체인소맨 ───
+    reze: `Character with Reze-inspired aesthetic: short dark hair with soft bangs, beautiful alluring eyes with mysterious depth, charming youthful face, soft feminine features with subtle dangerous edge. Romantic yet melancholic atmosphere, urban night aesthetic with soft neon glow, bittersweet emotional tone`,
+
+    makima: `Character with Makima-inspired aesthetic: long reddish-brown hair with bangs, hypnotic ringed eyes with absolute confidence, serene yet unsettling smile, elegant mature beauty with overwhelming presence. Mysterious controlling atmosphere, cold yet captivating aura, dominant yet ethereal mood`,
+
+    power: `Character with Power-inspired aesthetic: long pink-blonde wild hair with small horns, sharp red eyes full of mischief, confident smirk, chaotic cute energy with fang tooth. Chaotic playful atmosphere, bold vivid colors, energetic rebellious mood`,
+
+    himeno: `Character with Himeno-inspired aesthetic: short black hair covering one eye (eyepatch), playful yet sorrowful remaining eye, mature cool beauty with cigarette aesthetic, experienced melancholic charm. Urban night bar atmosphere, bittersweet mentor aesthetic, tragic cool beauty`,
+
+    // ─── 장송의 프리렌 ───
+    frieren: `Character with Frieren-inspired aesthetic: long silver-white hair, pointed elf ears, serene timeless eyes with gentle melancholy, youthful yet ancient presence. Peaceful nostalgic atmosphere, soft magical glow, bittersweet immortal solitude`,
+
+    // ─── 약사의 혼잣말 ───
+    maomao: `Character with Maomao-inspired aesthetic: dark hair in traditional style, sharp intelligent eyes with curiosity, petite features with subtle freckles, analytical calm expression. Classical Chinese palace aesthetic, mysterious medicinal atmosphere, intellectual detective mood`,
+
+    // ─── 스파이패밀리 ───
+    yor: `Character with Yor-inspired aesthetic: long black hair with elegant style, beautiful red eyes, gentle smile hiding lethal grace, stunning mature beauty. Elegant yet dangerous duality, refined assassin aesthetic, sophisticated deadly charm`,
+
+    anya: `Character with Anya-inspired aesthetic: pink hair with small horn-like tufts, large green curious eyes, adorable innocent expressions, small childlike features with mischievous charm. Playful cute atmosphere, telepathic sparkle effects, wholesome comedic energy`,
+
+    // ─── 최애의 아이 ───
+    ai: `Character with Ai Hoshino-inspired aesthetic: long gradient purple-pink hair, star-shaped pupils in mesmerizing eyes, radiant idol smile with hidden depth, captivating stage presence. Dazzling starlight atmosphere, idol stage aesthetic, brilliant yet tragic star mood`,
+
+    ruby: `Character with Ruby-inspired aesthetic: blonde twin-tails with ribbons, star-shaped ruby red pupils, bright energetic idol smile, petite cute frame with fierce determination. Sparkling idol stage lights, vengeful star aesthetic, bright surface hiding dark resolve`,
+
+    // ─── 주술회전 ───
+    gojo: `Character with Gojo-inspired aesthetic: white spiky hair, striking blue Six Eyes (or blindfolded mystery), confident playful smirk, tall handsome features with overwhelming power aura. Dynamic powerful atmosphere, infinity space aesthetic, invincible charismatic presence`,
+
+    maki: `Character with Maki-inspired aesthetic: short dark hair with athletic build, sharp determined eyes (or glasses), strong beautiful features with warrior spirit, scarred tough beauty. Powerful athletic aesthetic, cursed tool mastery, fierce independent strength`,
+
+    itadori: `Character with Itadori-inspired aesthetic: spiky pink-salmon hair, warm brown eyes with pure heart, athletic youthful face with bright smile, muscular but friendly build. Dynamic action aesthetic, cursed energy effects, genuine heroic spirit`,
+
+    // ─── 귀멸의 칼날 ───
+    nezuko: `Character with Nezuko-inspired aesthetic: long black hair with orange tips, pink demon eyes with bamboo muzzle or without, cute yet fierce expression, small frame with hidden power. Beautiful demon aesthetic, protective sibling love atmosphere, innocent yet powerful mood`,
+
+    mitsuri: `Character with Mitsuri-inspired aesthetic: long gradient pink-green braided hair, bright green eyes full of love, voluptuous feminine figure, bashful yet powerful expressions. Love breathing pink energy, romantic warrior aesthetic, powerful femininity with pure heart`,
+
+    rengoku: `Character with Rengoku-inspired aesthetic: flame-colored gradient hair swept back, intense golden-red eyes burning with passion, broad bright smile with unwavering spirit, strong heroic build. Blazing flame breathing effects, heroic pillar aesthetic, burning determination and warmth`,
+
+    // ─── Re:제로 ───
+    rem: `Character with Rem-inspired aesthetic: short blue hair covering one eye, gentle devoted blue eyes, sweet caring smile, maid-like grace with hidden strength. Soft romantic atmosphere, devotional love aesthetic, gentle protective mood`,
+
+    emilia: `Character with Emilia-inspired aesthetic: long silver-white hair with delicate braids, beautiful purple eyes with gentle innocence, half-elf pointed ears, ethereal angelic beauty with kind expression. Pure white snow aesthetic, magical ice crystal atmosphere, gentle warmth within cold beauty`,
+
+    // ─── 진격의 거인 ───
+    mikasa: `Character with Mikasa-inspired aesthetic: short black hair with red scarf, intense dark eyes with unwavering loyalty, beautiful stoic face with deadly grace, athletic toned figure. Military precision aesthetic, protective warrior aura, devoted strength and elegance`,
+
+    levi: `Character with Levi-inspired aesthetic: short black undercut hair, narrow sharp grey eyes with intimidating gaze, small but perfectly proportioned features, clean precise military bearing. Spinning blade mastery, humanity's strongest aesthetic, cold efficiency and hidden care`,
+
+    // ─── 기타 인기 캐릭터 ───
+    violet: `Character with Violet Evergarden-inspired aesthetic: golden blonde hair with ribbon, beautiful blue doll-like eyes, elegant military bearing, prosthetic metal hands with grace. European classical beauty, letter-writing emotional atmosphere, learning to understand love`,
+
+    asuna: `Character with Asuna-inspired aesthetic: long chestnut-orange hair flowing elegantly, warm amber-brown eyes with determination, beautiful refined features, graceful yet fierce warrior princess. Virtual fantasy aesthetic, flash of light rapier mastery, elegant strength and devotion`,
+
+    '2b': `Character with 2B-inspired aesthetic: silver-white bob hair, black blindfold over eyes (or beautiful blue eyes), gothic maid-inspired outfit aesthetic, perfect cold beauty with hidden emotions. Post-apocalyptic elegance, mechanical angel aesthetic, melancholic android existence`,
+
+    // 🎲 히든 카드: 위 캐릭터 중 랜덤 선택
+    random: '_RANDOM_CHARACTER_'
+};
+
+// 캐릭터 랜덤 선택용 리스트 (random, none 제외)
+export const CHARACTER_LIST = ['reze', 'makima', 'power', 'himeno', 'frieren', 'maomao', 'yor', 'anya', 'ai', 'ruby', 'gojo', 'maki', 'itadori', 'nezuko', 'mitsuri', 'rengoku', 'rem', 'emilia', 'mikasa', 'levi', 'violet', 'asuna', '2b'];
+
+// ═══════════════════════════════════════════════════════════════
+// 하위 호환용 ANIME_STYLES (기존 코드 지원)
+// 스튜디오만 사용하는 레거시 코드용
+// ═══════════════════════════════════════════════════════════════
+export const ANIME_STYLES = Object.fromEntries(
+    Object.entries(STUDIO_STYLES)
+        .filter(([key]) => key !== 'random')
+        .map(([key, value]) => [
+            key,
+            `${CHARACTER_AESTHETIC_GUIDE} ${value} ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`
+        ])
+);
+
+// fallback 추가
+ANIME_STYLES._default = `${CHARACTER_AESTHETIC_GUIDE} Premium anime character with expressive eyes, beautiful flowing hair, captivating features balancing cute and cool, charismatic presence. ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`;
+
+// ═══════════════════════════════════════════════════════════════
+// 스타일 조합 헬퍼 함수
+// ═══════════════════════════════════════════════════════════════
+
 /**
- * 실사 스타일 시스템 (visualMode === 'real' 일 때)
- * Claude가 질문 분위기에 맞게 선택 → Gemini에 전달
- *
- * 구조: [Quality Prefix] + [Style Core] + [Mystic/Cinematic Suffix]
+ * 스튜디오 + 캐릭터 스타일 조합 (Gemini descriptive paragraph 스타일)
+ * @param {string} studioKey - 스튜디오 키 (shinkai, ghibli, random 등)
+ * @param {string} characterKey - 캐릭터 키 (reze, frieren, random 등) - 필수!
+ * @returns {string} 조합된 프롬프트 (descriptive paragraph)
  */
+export const combineStyles = (studioKey, characterKey = 'random') => {
+    // 랜덤 처리
+    let actualStudio = studioKey;
+    let actualCharacter = characterKey;
 
-// 실사용 퀄리티 prefix
-const REAL_QUALITY_PREFIX = 'masterpiece photography, best quality, ultrarealistic HD, hyperrealistic, 8k resolution, RAW photo, professional DSLR quality';
+    if (studioKey === 'random') {
+        actualStudio = STUDIO_LIST[Math.floor(Math.random() * STUDIO_LIST.length)];
+        console.log(`🎲 Random Studio: ${actualStudio}`);
+    }
 
-// 실사용 mystic suffix (타로 분위기)
-const REAL_MYSTIC_SUFFIX = 'mystical atmosphere, ethereal mood, destiny feeling, fortune-telling aesthetic, subtle magical realism, cosmic undertones, fate and stars theme';
+    if (characterKey === 'random') {
+        actualCharacter = CHARACTER_LIST[Math.floor(Math.random() * CHARACTER_LIST.length)];
+        console.log(`🎲 Random Character: ${actualCharacter}`);
+    }
 
-// 실사용 cinematic suffix
-const REAL_CINEMATIC_SUFFIX = 'volumetric lighting, lens flare, cinematic color grading, shallow depth of field, bokeh, rim lighting, professional photography composition';
+    // 스튜디오 스타일 가져오기
+    const studioStyle = STUDIO_STYLES[actualStudio] || STUDIO_STYLES.shinkai;
 
-export const REAL_STYLES = {
-    // 한국 스타일
-    korean_soft: `${REAL_QUALITY_PREFIX}. Korean beauty photography style. Young Korean in early 20s, clear bright porcelain skin with natural glow, bright radiant face, soft diffused natural lighting, clean minimal background, gentle soulful expression, K-drama cinematic aesthetic, subsurface scattering on skin. Glamorous elegant body for female. Hair style varies naturally with soft movement. ${REAL_MYSTIC_SUFFIX}, ${REAL_CINEMATIC_SUFFIX}`,
+    // 캐릭터 미학 가져오기 (none이면 생략)
+    const characterRef = actualCharacter && actualCharacter !== 'none'
+        ? CHARACTER_AESTHETICS[actualCharacter]
+        : '';
 
-    korean_dramatic: `${REAL_QUALITY_PREFIX}. Korean cinematic editorial style. Young Korean in early 20s, clear flawless porcelain skin, bright intensely expressive face, dramatic chiaroscuro lighting, deep emotional depth, high fashion Vogue Korea feel, sharp detailed features. Glamorous elegant body for female. Dynamic windswept hair styling. ${REAL_MYSTIC_SUFFIX}, ${REAL_CINEMATIC_SUFFIX}, moody color palette`,
+    // Gemini 공식 가이드: descriptive paragraph로 조합
+    // Visual Director 관점에서 자연스럽게 연결
+    let combined = `${CHARACTER_AESTHETIC_GUIDE} ${studioStyle}`;
+    if (characterRef) {
+        combined += ` Drawing inspiration from ${characterRef}`;
+    }
+    combined += ` ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`;
 
-    // 일본 스타일
-    japanese_clean: `${REAL_QUALITY_PREFIX}. Japanese minimalist photography style. Young Japanese in early 20s, clear delicate translucent skin, bright gentle serene face, soft natural window light, clean zen aesthetic, subtle understated elegance, muji-like simplicity. Glamorous elegant body for female. Naturally styled hair with soft texture. ${REAL_MYSTIC_SUFFIX}, clean composition, negative space`,
-
-    japanese_warm: `${REAL_QUALITY_PREFIX}. Japanese warm nostalgic photography. Young Japanese in early 20s, clear glowing warm skin tone, bright warm inviting face, golden hour magic lighting, gentle nostalgic film mood, soft dreamy focus, summer afternoon feeling. Glamorous elegant body for female. Flowing natural hair catching light. ${REAL_MYSTIC_SUFFIX}, ${REAL_CINEMATIC_SUFFIX}, warm amber tones`,
-
-    // 분위기 중심
-    aesthetic_mood: `${REAL_QUALITY_PREFIX}. Asian aesthetic photography. Young East Asian in early 20s, clear luminous dewy skin, bright dreamy ethereal face, soft artistic focus, pastel gradient tones, Instagram editorial aesthetic, fashion-forward styling. Glamorous elegant body for female. Trendy styled hair with highlights. ${REAL_MYSTIC_SUFFIX}, soft bloom effect, dreamy atmosphere`,
-
-    cinematic: `${REAL_QUALITY_PREFIX}. Cinematic movie still style. Young East Asian in early 20s, clear skin with film-like color grading, bright intensely expressive face, dramatic three-point lighting, emotional visual storytelling, award-winning cinematography feel. Glamorous elegant body for female. Cinematic hair with dynamic movement. ${REAL_MYSTIC_SUFFIX}, ${REAL_CINEMATIC_SUFFIX}, anamorphic lens feel`,
-
-    // fallback (Claude가 새로운 스타일 만들 때)
-    _default: `${REAL_QUALITY_PREFIX}. Photorealistic artistic portrait. Young East Asian (Korean/Japanese) in early 20s, clear bright porcelain skin with natural radiance, bright beautifully expressive face, natural beauty enhanced, clean elegant sophisticated style, soft professional studio lighting, cinematic magazine composition. Glamorous elegant body for female. Beautiful flowing natural hair. ${REAL_MYSTIC_SUFFIX}, ${REAL_CINEMATIC_SUFFIX}`
+    return combined;
 };
 
 /**

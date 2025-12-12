@@ -198,7 +198,7 @@
 
 .result-text-container {
     position: fixed;
-    bottom: 35%;
+    bottom: 40%;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
@@ -262,14 +262,14 @@
 }
 
 .result-sparkles .sparkle.s1 {
-    top: -15px;
+    top: 5px;
     left: 20%;
     color: #ffd700;
     animation-delay: 0s;
 }
 
 .result-sparkles .sparkle.s2 {
-    top: -10px;
+    top: 10px;
     right: 15%;
     color: #00d9ff;
     animation-delay: 0.3s;

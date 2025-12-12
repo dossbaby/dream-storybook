@@ -3259,7 +3259,7 @@
     position: relative;
     width: 120px;
     height: 120px;
-    margin: 0 auto 1.25rem auto;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4653,16 +4653,13 @@
     align-items: center;
     gap: 0.75rem;
     padding: 2rem;
-    background:
-        linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9)) padding-box,
-        linear-gradient(135deg, rgba(100, 150, 200, 0.3), rgba(150, 120, 180, 0.25)) border-box;
-    border: 1px solid transparent;
+    background: linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9));
+    border: 1px solid rgba(80, 120, 180, 0.3);
     border-radius: 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
-    animation: riftPulse 4s ease-in-out infinite;
 }
 
 .sealed-message:hover {
@@ -4799,7 +4796,147 @@
         0 0 10px rgba(100, 180, 255, 0.8),
         0 0 20px rgba(140, 120, 255, 0.6),
         0 0 30px rgba(80, 150, 255, 0.4);
+    display: flex;
+    gap: 0.05em;
 }
+/* Fragment 애니메이션 - Glitchy Matrix 스타일 (시공간 왜곡) */
+.seal-text.fragmenting {
+    animation: none;
+}
+
+.seal-text.fragmenting .seal-char {
+    display: inline-block;
+    animation: charGlitchReady 2s ease-in-out infinite;
+    text-shadow:
+        0 0 2px rgba(100, 200, 255, 0.6),
+        0 0 4px rgba(100, 150, 255, 0.3);
+}
+
+/* 로딩/레디 모두 같은 stagger delay */
+.seal-text.fragmenting .seal-char:nth-child(1) { animation-delay: 0s; }
+.seal-text.fragmenting .seal-char:nth-child(2) { animation-delay: 0.3s; }
+.seal-text.fragmenting .seal-char:nth-child(3) { animation-delay: 0.6s; }
+.seal-text.fragmenting .seal-char:nth-child(5) { animation-delay: 0.9s; }
+
+/* Ready 상태 - 더 강한 glow */
+.seal-text.fragmenting.ready .seal-char {
+    animation: charGlitchReady 2s ease-in-out infinite;
+    text-shadow:
+        0 0 8px rgba(100, 220, 255, 0.9),
+        0 0 15px rgba(150, 100, 255, 0.5),
+        2px 0 0 rgba(255, 50, 150, 0.3),
+        -2px 0 0 rgba(50, 255, 200, 0.3);
+}
+
+.seal-text.fragmenting.ready .seal-char:nth-child(1) { animation-delay: 0s; }
+.seal-text.fragmenting.ready .seal-char:nth-child(2) { animation-delay: 0.3s; }
+.seal-text.fragmenting.ready .seal-char:nth-child(3) { animation-delay: 0.6s; }
+.seal-text.fragmenting.ready .seal-char:nth-child(5) { animation-delay: 0.9s; }
+
+/* 로딩: 빠른 glitch - 유리 깨짐/시공간 왜곡 */
+@keyframes charGlitchLoading {
+    0% {
+        transform: translate(0, 0) skewX(0deg);
+        opacity: 0.4;
+        clip-path: inset(0 0 0 0);
+    }
+    25% {
+        transform: translate(-2px, 1px) skewX(-5deg);
+        opacity: 0.9;
+        clip-path: inset(30% 0 40% 0);
+    }
+    50% {
+        transform: translate(2px, -1px) skewX(3deg);
+        opacity: 0.3;
+        clip-path: inset(60% 0 10% 0);
+    }
+    75% {
+        transform: translate(-1px, 2px) skewX(-2deg);
+        opacity: 0.7;
+        clip-path: inset(10% 0 70% 0);
+    }
+    100% {
+        transform: translate(1px, 0) skewX(0deg);
+        opacity: 0.5;
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* Ready: 안정화된 에너지 파동 + 미세 glitch */
+@keyframes charGlitchReady {
+    0%, 100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    10% {
+        transform: translate(0.5px, 0);
+    }
+    20% {
+        transform: translate(-0.5px, 0.5px);
+    }
+    50% {
+        transform: translate(0, -0.5px);
+        opacity: 0.95;
+    }
+    80% {
+        transform: translate(0.5px, 0);
+    }
+    /* 가끔 순간 glitch */
+    92% {
+        transform: translate(-1px, 0) skewX(-1deg);
+        opacity: 0.8;
+    }
+    94% {
+        transform: translate(1px, 0) skewX(1deg);
+        opacity: 1;
+    }
+}
+
+/* 별 파티클 배경 - 가벼운 갤럭시 효과 */
+.star-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.star-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: starTwinkle 2s ease-in-out infinite;
+    box-shadow: 0 0 4px rgba(200, 220, 255, 0.8);
+}
+
+/* 별 위치 랜덤 배치 */
+.star-particle:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+.star-particle:nth-child(2) { top: 25%; left: 85%; animation-delay: 0.3s; }
+.star-particle:nth-child(3) { top: 45%; left: 20%; animation-delay: 0.6s; }
+.star-particle:nth-child(4) { top: 60%; left: 75%; animation-delay: 0.9s; }
+.star-particle:nth-child(5) { top: 80%; left: 30%; animation-delay: 1.2s; }
+.star-particle:nth-child(6) { top: 35%; left: 50%; animation-delay: 0.2s; }
+.star-particle:nth-child(7) { top: 70%; left: 60%; animation-delay: 0.5s; }
+.star-particle:nth-child(8) { top: 20%; left: 40%; animation-delay: 0.8s; }
+.star-particle:nth-child(9) { top: 55%; left: 90%; animation-delay: 1.1s; }
+.star-particle:nth-child(10) { top: 85%; left: 70%; animation-delay: 0.4s; }
+.star-particle:nth-child(11) { top: 10%; left: 65%; animation-delay: 0.7s; }
+.star-particle:nth-child(12) { top: 75%; left: 15%; animation-delay: 1s; }
+
+@keyframes starTwinkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+
 
 /* 우주 신호 접신 펄스 효과 */
 @keyframes cosmicSignal {
@@ -4840,12 +4977,211 @@
 .seal-hint {
     font-family: 'RIDIBatang', 'Noto Serif KR', serif;
     font-size: 1.1rem;
-    font-weight: 400;
-    color: rgba(255, 220, 150, 0.95);
+    font-weight: 600;
     font-style: normal;
     z-index: 2;
     position: relative;
-    text-shadow: 0 0 8px rgba(255, 200, 100, 0.5);
+    /* Mint → Cyan → Blue gradient text */
+    background: linear-gradient(90deg,
+        #6ee7b7 0%,    /* mint */
+        #22d3ee 35%,   /* cyan */
+        #38bdf8 65%,   /* sky blue */
+        #3b82f6 100%   /* blue */
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: sealHintGradient 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6))
+            drop-shadow(0 0 16px rgba(34, 211, 238, 0.4));
+}
+
+@keyframes sealHintGradient {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ========================================
+   Sealed Message - Loading State
+   차원의 틈이 아직 열리지 않았을 때
+   ======================================== */
+.sealed-message.loading {
+    cursor: default;
+    opacity: 0.7;
+    animation: riftPulseLoading 3s ease-in-out infinite;
+    /* Subtle gradient border - loading */
+    border: 1px solid transparent;
+    background:
+        linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9)) padding-box,
+        linear-gradient(135deg, rgba(80, 120, 180, 0.3), rgba(120, 80, 160, 0.25)) border-box;
+}
+
+.sealed-message.loading:hover {
+    transform: none;
+    box-shadow:
+        0 0 20px rgba(50, 80, 150, 0.4),
+        0 0 40px rgba(90, 70, 170, 0.2),
+        inset 0 0 30px rgba(80, 120, 200, 0.1);
+}
+
+.sealed-message.loading::before {
+    animation: riftOpenLoading 4s ease-in-out infinite;
+    height: 10%;
+    opacity: 0.3;
+}
+
+@keyframes riftPulseLoading {
+    0%, 100% {
+        opacity: 0.5;
+        box-shadow:
+            0 0 15px rgba(50, 80, 150, 0.3),
+            0 0 30px rgba(90, 70, 170, 0.15);
+    }
+    50% {
+        opacity: 0.7;
+        box-shadow:
+            0 0 25px rgba(80, 120, 200, 0.4),
+            0 0 50px rgba(120, 90, 200, 0.2);
+    }
+}
+
+@keyframes riftOpenLoading {
+    0%, 100% {
+        height: 5%;
+        opacity: 0.2;
+    }
+    50% {
+        height: 15%;
+        opacity: 0.4;
+    }
+}
+
+/* Loading indicator - 세 개의 점 */
+.insight-loading-indicator {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+}
+
+.insight-loading-indicator .loading-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6ee7b7, #22d3ee, #3b82f6);
+    animation: loadingDotPulse 1.4s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+}
+
+.insight-loading-indicator .loading-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.insight-loading-indicator .loading-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.insight-loading-indicator .loading-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes loadingDotPulse {
+    0%, 80%, 100% {
+        transform: scale(0.6);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* Ready State - 활성화 애니메이션 */
+.sealed-message.ready {
+    animation: riftPulse 4s ease-in-out infinite, riftReady 0.6s ease-out, borderGlow 3s ease-in-out infinite;
+    /* Vibrant gradient border - blue → mint → purple */
+    border: 1.5px solid transparent;
+    background:
+        linear-gradient(145deg, rgba(5, 10, 30, 0.95), rgba(15, 25, 55, 0.9)) padding-box,
+        linear-gradient(135deg,
+            rgba(59, 130, 246, 0.8),    /* blue */
+            rgba(34, 211, 238, 0.8),    /* cyan/mint */
+            rgba(168, 85, 247, 0.8),    /* purple */
+            rgba(59, 130, 246, 0.8)     /* blue again for smooth loop */
+        ) border-box;
+    background-size: 100% 100%, 300% 300%;
+}
+
+/* Gradient border 애니메이션 */
+@keyframes borderGlow {
+    0%, 100% {
+        background-position: 0% 0%, 0% 50%;
+    }
+    50% {
+        background-position: 0% 0%, 100% 50%;
+    }
+}
+
+@keyframes riftReady {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(50, 80, 150, 0.4);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 40px rgba(100, 200, 255, 0.6), 0 0 80px rgba(150, 100, 255, 0.4);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+
+/* Sparkle effect around seal-hint */
+.sealed-message {
+    position: relative;
+}
+
+.sealed-message .seal-hint::before,
+.sealed-message .seal-hint::after {
+    content: '✦';
+    position: absolute;
+    font-size: 0.6rem;
+    color: #22d3ee;
+    animation: sparkleFloat 2s ease-in-out infinite;
+    -webkit-text-fill-color: #22d3ee;
+}
+
+.sealed-message .seal-hint::before {
+    left: -1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    animation-delay: 0s;
+}
+
+.sealed-message .seal-hint::after {
+    right: -1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    animation-delay: 1s;
+}
+
+@keyframes sparkleFloat {
+    0%, 100% {
+        opacity: 0.4;
+        transform: translateY(-50%) scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-50%) scale(1.3);
+    }
 }
 
 .unseal-btn {
@@ -5364,6 +5700,7 @@
 
     .reading-text {
         font-size: 0.95rem;
+        padding: 0;
     }
 
     .sealed-message {
@@ -6323,6 +6660,10 @@
         padding-top: 0 !important;
     }
 
+    .unsealed-insight .insight-text {
+        font-size: 0.95rem !important;
+    }
+
     /* 모바일 insight-text.reading-text 패딩 */
     p.insight-text.reading-text {
         padding: 0 !important;
@@ -7021,15 +7362,35 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle, rgba(155, 89, 182, 0.4), transparent);
-    animation: sealPulse 2s ease-in-out infinite;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    border-radius: 50%;
+    box-shadow:
+        0 0 8px rgba(100, 180, 255, 0.7),
+        0 0 16px rgba(150, 100, 255, 0.5),
+        0 0 28px rgba(50, 200, 200, 0.35);
+    filter: blur(4px);
+    animation: sealGlowPulse 2.5s ease-in-out infinite;
 }
 
-@keyframes sealPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-    50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.8; }
+@keyframes sealGlowPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+        box-shadow:
+            0 0 8px rgba(100, 180, 255, 0.7),
+            0 0 16px rgba(150, 100, 255, 0.5),
+            0 0 28px rgba(50, 200, 200, 0.35);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+        box-shadow:
+            0 0 12px rgba(100, 220, 255, 0.9),
+            0 0 24px rgba(180, 100, 255, 0.6),
+            0 0 40px rgba(50, 255, 200, 0.45);
+    }
 }
 
 .tarot-result-modal .seal-text {
@@ -7477,7 +7838,8 @@
     cursor: pointer;
     transition: transform 0.3s ease, filter 0.3s ease;
     border-radius: 8px;
-    overflow: hidden;
+    /* overflow: hidden 제거 - bottom border 짤림 방지 */
+    overflow: visible;
 }
 
 .persona-card:hover {
@@ -7520,6 +7882,8 @@
     border-radius: 8px;
     border: 2px solid rgba(155, 89, 182, 0.3);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    /* box-sizing으로 border 포함 */
+    box-sizing: border-box;
 }
 
 .persona-card.ready .persona-card-inner {
@@ -11786,19 +12150,52 @@
 
 /* ========== 질문 추천 받기 링크 ========== */
 .suggestion-link {
-    display: inline-block;
-    background: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     border: none;
-    color: rgba(196, 181, 253, 0.7);
+    background: transparent;
     font-size: 0.85rem;
     cursor: pointer;
     padding: 8px 0;
-    margin-top: 12px;
+    margin-top: 0;
     transition: all 0.2s ease;
+    width: 100%;
+}
+
+/* 이모지는 그라데이션 없이 원래 색상 */
+.suggestion-emoji {
+    -webkit-text-fill-color: initial;
+}
+
+/* 텍스트에만 그라데이션 적용 */
+.suggestion-text {
+    /* Blue → Purple → Violet gradient */
+    background: linear-gradient(90deg,
+        #93c5fd 0%,      /* blue */
+        #c4b5fd 33%,     /* purple */
+        #a78bfa 66%,     /* violet */
+        #93c5fd 100%     /* blue */
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: suggestionGradient 4s ease-in-out infinite;
+}
+
+@keyframes suggestionGradient {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .suggestion-link:hover:not(:disabled) {
-    color: #c4b5fd;
+    filter: brightness(1.2);
 }
 
 .suggestion-link:disabled {
