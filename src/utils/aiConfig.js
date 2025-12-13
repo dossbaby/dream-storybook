@@ -120,74 +120,6 @@ export const STUDIO_STYLES = {
 export const STUDIO_LIST = ['shinkai', 'kyoani', 'ghibli', 'mappa', 'mappa_dark', 'shojo', 'clamp', 'takehiko', 'wit', 'ilya', 'minimalist'];
 
 // ═══════════════════════════════════════════════════════════════
-// 캐릭터 미학 (외모/분위기 특징) - 23개 + random + none
-// 복장은 자유, 얼굴/분위기 특징만 참고
-// ═══════════════════════════════════════════════════════════════
-export const CHARACTER_AESTHETICS = {
-    // ─── 체인소맨 ───
-    reze: `Character with Reze-inspired aesthetic: short dark hair with soft bangs, beautiful alluring eyes with mysterious depth, charming youthful face, soft feminine features with subtle dangerous edge. Romantic yet melancholic atmosphere, urban night aesthetic with soft neon glow, bittersweet emotional tone`,
-
-    makima: `Character with Makima-inspired aesthetic: long reddish-brown hair with bangs, hypnotic ringed eyes with absolute confidence, serene yet unsettling smile, elegant mature beauty with overwhelming presence. Mysterious controlling atmosphere, cold yet captivating aura, dominant yet ethereal mood`,
-
-    power: `Character with Power-inspired aesthetic: long pink-blonde wild hair with small horns, sharp red eyes full of mischief, confident smirk, chaotic cute energy with fang tooth. Chaotic playful atmosphere, bold vivid colors, energetic rebellious mood`,
-
-    himeno: `Character with Himeno-inspired aesthetic: short black hair covering one eye (eyepatch), playful yet sorrowful remaining eye, mature cool beauty with cigarette aesthetic, experienced melancholic charm. Urban night bar atmosphere, bittersweet mentor aesthetic, tragic cool beauty`,
-
-    // ─── 장송의 프리렌 ───
-    frieren: `Character with Frieren-inspired aesthetic: long silver-white hair, pointed elf ears, serene timeless eyes with gentle melancholy, youthful yet ancient presence. Peaceful nostalgic atmosphere, soft magical glow, bittersweet immortal solitude`,
-
-    // ─── 약사의 혼잣말 ───
-    maomao: `Character with Maomao-inspired aesthetic: dark hair in traditional style, sharp intelligent eyes with curiosity, petite features with subtle freckles, analytical calm expression. Classical Chinese palace aesthetic, mysterious medicinal atmosphere, intellectual detective mood`,
-
-    // ─── 스파이패밀리 ───
-    yor: `Character with Yor-inspired aesthetic: long black hair with elegant style, beautiful red eyes, gentle smile hiding lethal grace, stunning mature beauty. Elegant yet dangerous duality, refined assassin aesthetic, sophisticated deadly charm`,
-
-    anya: `Character with Anya-inspired aesthetic: pink hair with small horn-like tufts, large green curious eyes, adorable innocent expressions, small childlike features with mischievous charm. Playful cute atmosphere, telepathic sparkle effects, wholesome comedic energy`,
-
-    // ─── 최애의 아이 ───
-    ai: `Character with Ai Hoshino-inspired aesthetic: long gradient purple-pink hair, star-shaped pupils in mesmerizing eyes, radiant idol smile with hidden depth, captivating stage presence. Dazzling starlight atmosphere, idol stage aesthetic, brilliant yet tragic star mood`,
-
-    ruby: `Character with Ruby-inspired aesthetic: blonde twin-tails with ribbons, star-shaped ruby red pupils, bright energetic idol smile, petite cute frame with fierce determination. Sparkling idol stage lights, vengeful star aesthetic, bright surface hiding dark resolve`,
-
-    // ─── 주술회전 ───
-    gojo: `Character with Gojo-inspired aesthetic: white spiky hair, striking blue Six Eyes (or blindfolded mystery), confident playful smirk, tall handsome features with overwhelming power aura. Dynamic powerful atmosphere, infinity space aesthetic, invincible charismatic presence`,
-
-    maki: `Character with Maki-inspired aesthetic: short dark hair with athletic build, sharp determined eyes (or glasses), strong beautiful features with warrior spirit, scarred tough beauty. Powerful athletic aesthetic, cursed tool mastery, fierce independent strength`,
-
-    itadori: `Character with Itadori-inspired aesthetic: spiky pink-salmon hair, warm brown eyes with pure heart, athletic youthful face with bright smile, muscular but friendly build. Dynamic action aesthetic, cursed energy effects, genuine heroic spirit`,
-
-    // ─── 귀멸의 칼날 ───
-    nezuko: `Character with Nezuko-inspired aesthetic: long black hair with orange tips, pink demon eyes with bamboo muzzle or without, cute yet fierce expression, small frame with hidden power. Beautiful demon aesthetic, protective sibling love atmosphere, innocent yet powerful mood`,
-
-    mitsuri: `Character with Mitsuri-inspired aesthetic: long gradient pink-green braided hair, bright green eyes full of love, voluptuous feminine figure, bashful yet powerful expressions. Love breathing pink energy, romantic warrior aesthetic, powerful femininity with pure heart`,
-
-    rengoku: `Character with Rengoku-inspired aesthetic: flame-colored gradient hair swept back, intense golden-red eyes burning with passion, broad bright smile with unwavering spirit, strong heroic build. Blazing flame breathing effects, heroic pillar aesthetic, burning determination and warmth`,
-
-    // ─── Re:제로 ───
-    rem: `Character with Rem-inspired aesthetic: short blue hair covering one eye, gentle devoted blue eyes, sweet caring smile, maid-like grace with hidden strength. Soft romantic atmosphere, devotional love aesthetic, gentle protective mood`,
-
-    emilia: `Character with Emilia-inspired aesthetic: long silver-white hair with delicate braids, beautiful purple eyes with gentle innocence, half-elf pointed ears, ethereal angelic beauty with kind expression. Pure white snow aesthetic, magical ice crystal atmosphere, gentle warmth within cold beauty`,
-
-    // ─── 진격의 거인 ───
-    mikasa: `Character with Mikasa-inspired aesthetic: short black hair with red scarf, intense dark eyes with unwavering loyalty, beautiful stoic face with deadly grace, athletic toned figure. Military precision aesthetic, protective warrior aura, devoted strength and elegance`,
-
-    levi: `Character with Levi-inspired aesthetic: short black undercut hair, narrow sharp grey eyes with intimidating gaze, small but perfectly proportioned features, clean precise military bearing. Spinning blade mastery, humanity's strongest aesthetic, cold efficiency and hidden care`,
-
-    // ─── 기타 인기 캐릭터 ───
-    violet: `Character with Violet Evergarden-inspired aesthetic: golden blonde hair with ribbon, beautiful blue doll-like eyes, elegant military bearing, prosthetic metal hands with grace. European classical beauty, letter-writing emotional atmosphere, learning to understand love`,
-
-    asuna: `Character with Asuna-inspired aesthetic: long chestnut-orange hair flowing elegantly, warm amber-brown eyes with determination, beautiful refined features, graceful yet fierce warrior princess. Virtual fantasy aesthetic, flash of light rapier mastery, elegant strength and devotion`,
-
-    '2b': `Character with 2B-inspired aesthetic: silver-white bob hair, black blindfold over eyes (or beautiful blue eyes), gothic maid-inspired outfit aesthetic, perfect cold beauty with hidden emotions. Post-apocalyptic elegance, mechanical angel aesthetic, melancholic android existence`,
-
-    // 🎲 히든 카드: 위 캐릭터 중 랜덤 선택
-    random: '_RANDOM_CHARACTER_'
-};
-
-// 캐릭터 랜덤 선택용 리스트 (random, none 제외)
-export const CHARACTER_LIST = ['reze', 'makima', 'power', 'himeno', 'frieren', 'maomao', 'yor', 'anya', 'ai', 'ruby', 'gojo', 'maki', 'itadori', 'nezuko', 'mitsuri', 'rengoku', 'rem', 'emilia', 'mikasa', 'levi', 'violet', 'asuna', '2b'];
-
-// ═══════════════════════════════════════════════════════════════
 // 하위 호환용 ANIME_STYLES (기존 코드 지원)
 // 스튜디오만 사용하는 레거시 코드용
 // ═══════════════════════════════════════════════════════════════
@@ -204,44 +136,28 @@ export const ANIME_STYLES = Object.fromEntries(
 ANIME_STYLES._default = `${CHARACTER_AESTHETIC_GUIDE} Premium anime character with expressive eyes, beautiful flowing hair, captivating features balancing cute and cool, charismatic presence. ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`;
 
 // ═══════════════════════════════════════════════════════════════
-// 스타일 조합 헬퍼 함수
+// 스타일 조합 헬퍼 함수 (스튜디오만)
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * 스튜디오 + 캐릭터 스타일 조합 (Gemini descriptive paragraph 스타일)
+ * 스튜디오 스타일 조합 (Gemini descriptive paragraph 스타일)
  * @param {string} studioKey - 스튜디오 키 (shinkai, ghibli, random 등)
- * @param {string} characterKey - 캐릭터 키 (reze, frieren, random 등) - 필수!
  * @returns {string} 조합된 프롬프트 (descriptive paragraph)
  */
-export const combineStyles = (studioKey, characterKey = 'random') => {
+export const combineStyles = (studioKey) => {
     // 랜덤 처리
     let actualStudio = studioKey;
-    let actualCharacter = characterKey;
 
     if (studioKey === 'random') {
         actualStudio = STUDIO_LIST[Math.floor(Math.random() * STUDIO_LIST.length)];
         console.log(`🎲 Random Studio: ${actualStudio}`);
     }
 
-    if (characterKey === 'random') {
-        actualCharacter = CHARACTER_LIST[Math.floor(Math.random() * CHARACTER_LIST.length)];
-        console.log(`🎲 Random Character: ${actualCharacter}`);
-    }
-
     // 스튜디오 스타일 가져오기
     const studioStyle = STUDIO_STYLES[actualStudio] || STUDIO_STYLES.shinkai;
 
-    // 캐릭터 미학 가져오기 (none이면 생략)
-    const characterRef = actualCharacter && actualCharacter !== 'none'
-        ? CHARACTER_AESTHETICS[actualCharacter]
-        : '';
-
     // Gemini 공식 가이드: descriptive paragraph로 조합
-    // Visual Director 관점에서 자연스럽게 연결
     let combined = `${CHARACTER_AESTHETIC_GUIDE} ${studioStyle}`;
-    if (characterRef) {
-        combined += ` Drawing inspiration from ${characterRef}`;
-    }
     combined += ` ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`;
 
     return combined;

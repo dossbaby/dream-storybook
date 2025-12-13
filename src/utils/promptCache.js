@@ -15,7 +15,7 @@
  * - 동일 티어 사용자끼리 캐시 공유
  */
 
-import { TIER_CONTENT_LENGTH, STUDIO_STYLES, CHARACTER_AESTHETICS, STUDIO_LIST, CHARACTER_LIST } from './aiConfig';
+import { TIER_CONTENT_LENGTH, STUDIO_STYLES, STUDIO_LIST } from './aiConfig';
 
 // ═══════════════════════════════════════════════════════════════
 // 스타일 레퍼런스 (캐싱용 - 시스템 프롬프트에 포함)
@@ -26,49 +26,22 @@ import { TIER_CONTENT_LENGTH, STUDIO_STYLES, CHARACTER_AESTHETICS, STUDIO_LIST, 
  * - aiConfig.js에서 import하여 자동 동기화
  * - 시스템 프롬프트에 포함되어 캐싱됨 (90% 비용 절감)
  */
-export const getStyleReference = () => {
-    // 스튜디오 스타일 (축약 버전 - 핵심 키워드만)
-    const studioRef = STUDIO_LIST.map(key => {
+// 스튜디오 스타일 레퍼런스 (studioStyle 필드용)
+export const getStudioReference = () => {
+    return STUDIO_LIST.map(key => {
         const desc = STUDIO_STYLES[key];
-        // 첫 문장만 추출 (마침표 기준)
         const shortDesc = desc.split('.').slice(0, 2).join('.').slice(0, 120);
-        return `- ${key}: ${shortDesc}`;
-    }).join('\n');
+        return `${key}: ${shortDesc}`;
+    }).join(' | ');
+};
 
-    // 캐릭터 미학 (축약 버전 - 핵심 외모/분위기만)
-    const characterRef = CHARACTER_LIST.map(key => {
-        const desc = CHARACTER_AESTHETICS[key];
-        // "Character with X-inspired aesthetic:" 이후 핵심만
-        const shortDesc = desc.replace(/^Character with \w+-inspired aesthetic:\s*/, '').slice(0, 100);
-        return `- ${key}: ${shortDesc}`;
-    }).join('\n');
-
-    return `
-## 🎨 이미지 스타일 레퍼런스 (imagePrompt 작성 시 반드시 참고!)
-
-### 스튜디오 스타일 (렌더링/분위기) - studioStyle 필드에 키 입력
-${studioRef}
-- random: 위 스타일 중 랜덤 선택
-
-### 캐릭터 미학 (외모/분위기) - characterStyle 필드에 키 입력
-${characterRef}
-- random: 위 캐릭터 중 랜덤 선택
-
-🎯 캐릭터 미학 가이드 (모든 이미지에 적용!) - ⭐최우선 원칙: 무조건 예쁘고 잘생겨야 함!
-- 여성: 극도로 예쁘고, 귀엽고, 사랑스러운 얼굴. 반짝이는 큰 눈, K-pop 아이돌급 비주얼 필수!
-- 남성: 매우 잘생기고, 매력적이고, 샤프한 이목구비. 꽃미남/훈남 비주얼 필수!
-- 10대 후반~20대 (17-24세), 슬림하고 우아한 비율, 시크하고 쿨한 도시적 분위기
-- ❌ 아동용/치비 비율 절대 금지! 못생긴 얼굴 절대 금지!
-- ⚠️ 예쁨/잘생김은 타협 불가! 모든 캐릭터는 비주얼이 뛰어나야 함!
-
-⚠️ imagePrompt 작성 규칙:
-1. 위 캐릭터 미학 가이드를 모든 인물 묘사에 자연스럽게 녹여서 작성
-2. 선택한 studioStyle의 렌더링/분위기 특징을 자연스럽게 녹여서 묘사
-3. 선택한 characterStyle의 외모/분위기 특징을 자연스럽게 녹여서 묘사
-4. colorPalette 색상을 조명/배경/분위기에 반영
-5. 5-7문장의 응집력 있는 descriptive paragraph로 작성 (키워드 나열 금지!)
-6. 각 이미지마다 다른 구도/앵글/조명 사용하여 시각적 다양성 확보
-`;
+// 이미지 프롬프트 작성 가이드
+export const getImagePromptGuide = () => {
+    return `⚠️ imagePrompt 작성 규칙:
+- 10대 후반~20대 (17-24세), 젊고 예쁘고 매력적인 캐릭터만, 슬림하고 우아한 비율
+- 선택한 studioStyle 렌더링/분위기 + colorPalette 색상 반영
+- 5-7문장 응집력 있는 descriptive paragraph (키워드 나열 금지)
+- 각 이미지마다 다른 구도/앵글/조명으로 시각적 다양성`;
 };
 
 // 꿈 해몽 시스템 프롬프트 (티어별 동적 생성) - 캐싱됨
@@ -121,7 +94,7 @@ export const getDreamSystemPrompt = (tier = 'free', lang = 'ko') => {
 
 newDreamType은 null로 설정하고, dreamType에 기존 유형 key를 넣어.
 
-${getStyleReference()}
+${getImagePromptGuide()}
 
 ## JSON 형식으로만 반환:
 {
@@ -173,16 +146,15 @@ ${getStyleReference()}
     "future": "미래 암시 (150자) - 이 꿈이 예고하는 것. 구체적 시기/상황"
   },
 
-  "studioStyle": "🎬 스튜디오 1개만: shinkai/ghibli/kyoani/mappa/mappa_dark/shojo/clamp/takehiko/wit/ilya/minimalist/random 중 1개. ⚠️항상 첫번째만 고르지 말고 꿈에 맞게 다양하게!",
-  "characterStyle": "🎭 캐릭터 1개만: reze/makima/power/himeno/frieren/maomao/yor/anya/ai/ruby/gojo/maki/itadori/nezuko/mitsuri/rengoku/rem/emilia/mikasa/levi/violet/asuna/2b/random 중 1개. ⚠️항상 첫번째만 고르지 말고 다양하게!",
+  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 꿈의 감정/분위기를 가장 아름답게 표현할 스튜디오 스타일을 랜덤하게 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
   "colorPalette": "🎨 이 꿈만의 색상을 영어 1문장으로 자연스럽게 묘사. 예: 'warm amber tones flowing into deep twilight purple' 또는 'soft moonlit silver with hints of melancholic blue'. 단순 나열 금지!",
 
   "images": {
-    "hero": "🎬 너는 영화 감독. 이 꿈의 핵심 감정을 오프닝 씬으로 연출. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette를 자연스럽게 녹여서 응집력 있는 장면으로! 🎯인물: 20대 초중반. 꿈의 감정을 조명, 분위기, 공간감, 인물의 자세와 표정으로 구체적으로 묘사.",
-    "character": "캐릭터 외모 (영어 40단어). 20대 초중반 젊은 캐릭터.",
-    "dream": "🎬 이 꿈의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette 녹여서! hero와 다른 앵글/분위기. 꿈 속 초현실적 요소, 상징적 배경, 빛과 그림자를 구체적으로.",
-    "tarot": "🎬 선택된 타로 카드와 꿈의 연결. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette 녹여서! 카드 상징을 창의적으로 시각화. 신비로운 분위기, 상징적 소품, 인물과 카드의 관계를 구체적으로.",
-    "meaning": "🎬 이 꿈이 전하는 메시지의 시각화. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette 녹여서! 해석의 핵심을 임팩트 있는 클라이맥스 장면으로. 드라마틱한 조명, 감정의 정점을 구체적으로."
+    "hero": "🎬 너는 영화 감독. 이 꿈의 핵심 감정을 오프닝 씬으로 연출. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette를 자연스럽게 녹여서 응집력 있는 장면으로! 🎯인물: 20대 초중반 예쁘고 매력적인 캐릭터. 꿈의 감정을 조명, 분위기, 공간감, 인물의 자세와 표정으로 구체적으로 묘사.",
+    "character": "캐릭터 외모 (영어 40단어). 20대 초중반 젊고 매력적인 캐릭터.",
+    "dream": "🎬 이 꿈의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! hero와 다른 앵글/분위기. 꿈 속 초현실적 요소, 상징적 배경, 빛과 그림자를 구체적으로.",
+    "tarot": "🎬 선택된 타로 카드와 꿈의 연결. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! 카드 상징을 창의적으로 시각화. 신비로운 분위기, 상징적 소품, 인물과 카드의 관계를 구체적으로.",
+    "meaning": "🎬 이 꿈이 전하는 메시지의 시각화. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! 해석의 핵심을 임팩트 있는 클라이맥스 장면으로. 드라마틱한 조명, 감정의 정점을 구체적으로."
   }
 }
 
@@ -265,7 +237,7 @@ conclusionCard는 반드시:
 - 영상: BGM, 효과음 → 텍스트: '이건 말 안 하려고 했는데' 같은 문구
 - 영상: 다음 장면 기대 → 텍스트: 다음 문장에 뭐가 있을지 기대
 
-${getStyleReference()}
+${getImagePromptGuide()}
 
 ## JSON 형식으로만 반환 (⚠️순서 중요! 반드시 위에서부터 차례로 생성):
 {
@@ -281,21 +253,20 @@ ${getStyleReference()}
     {"word": "질문에서 추출한 핵심 키워드2 (명사형, 2-4글자)", "surface": "표면 의미", "hidden": "숨은 의미"}
   ],
 
-  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 위에서 작성한 hook, foreshadow, title, verdict의 감정톤과 topics, keywords를 보고, 이 리딩을 가장 아름답게 표현할 스튜디오 스타일 1개 선택. shinkai/ghibli/kyoani/mappa/mappa_dark/shojo/clamp/takehiko/wit/ilya/minimalist 중. ⚠️매번 다른 스튜디오 선택!",
-  "characterStyle": "🎬 연출 전문가로서 위 hook/title/verdict 분위기와 어울리며 가장 아름다운 이미지가 나올 캐릭터 미학 1개 선택. 여성 캐릭터 75% 우선: reze/makima/power/himeno/frieren/maomao/yor/anya/ai/ruby/nezuko/mitsuri/rem/emilia/mikasa/violet/asuna/2b/maki 중 택1. 남성 캐릭터 25%: gojo/itadori/rengoku/levi 중 택1. ⚠️특정 캐릭터 편향 금지! 여성 우선 선택하되 매번 다양하게!",
-  "colorPalette": "🎨 이 질문만의 색상을 영어 1문장으로 자연스럽게 묘사. 예: 'warm amber tones flowing into deep twilight purple' 또는 'soft moonlit silver with hints of melancholic blue'. 단순 나열 금지!",
+  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 위에서 작성한 hook, foreshadow, title, verdict의 감정톤과 topics, keywords를 보고, 이 리딩을 가장 아름답게 표현할 애니메이션 스튜디오 그림체 스타일을 랜덤하게 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
+  "colorPalette": "🎨 이 질문만의 품은 기운을 느껴봐. 몽환적인 장면 속에서 발산되며 피어오르는 빛처럼, 서로를 감싸며 번지는 2~3가지 색의 숨결을 영어 한 문장으로 담아. 단순 나열 금지!",
 
-  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 5-7문장 descriptive paragraph로 작성. 선택한 studioStyle과 characterStyle, colorPalette를 자연스럽게 녹여서 하나의 응집력 있는 장면 설명으로! 🎯나이: 10대 후반~20대. ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정. 조명, 분위기, 카메라 앵글, 인물의 감정과 자세까지 구체적으로 묘사.",
-  "card1ImagePrompt": "🎬 Scene 1: 첫번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소(예: The Star→별빛+물, The Tower→붕괴, The Moon→달빛+불안)를 studioStyle/characterStyle/colorPalette와 함께 응집력 있는 장면으로! ⚠️Hero와 다른 구도!",
+  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 5-7문장 descriptive paragraph로 작성. 선택한 studioStyle과 colorPalette를 자연스럽게 녹여서 하나의 응집력 있는 장면 설명으로! 🎯나이: 10대 후반~20대 예쁘고 매력적인 캐릭터. ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정. 조명, 분위기, 카메라 앵글, 인물의 감정과 자세까지 구체적으로 묘사.",
+  "card1ImagePrompt": "🎬 Scene 1: 첫번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소(예: The Star→별빛+물, The Tower→붕괴, The Moon→달빛+불안)를 studioStyle/colorPalette와 함께 응집력 있는 장면으로! ⚠️Hero와 다른 구도!",
   "card1Analysis": "🚨반드시 ${cardLen}자 이상! 구조: 1)현재 상황 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "card2ImagePrompt": "🎬 Scene 2: 두번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/characterStyle/colorPalette와 함께! ⚠️Scene 1과 다른 시각적 접근 필수! 다른 앵글, 다른 조명.",
+  "card2ImagePrompt": "🎬 Scene 2: 두번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께! ⚠️Scene 1과 다른 시각적 접근 필수! 다른 앵글, 다른 조명.",
   "card2Analysis": "🚨반드시 ${cardLen}자 이상! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "card3ImagePrompt": "🎬 Scene 3: 세번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/characterStyle/colorPalette와 함께! ⚠️앞 장면들과 완전히 다른 비주얼! 미래의 가능성을 시각화.",
+  "card3ImagePrompt": "🎬 Scene 3: 세번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께! ⚠️앞 장면들과 완전히 다른 비주얼! 미래의 가능성을 시각화.",
   "card3Analysis": "🚨반드시 ${cardLen}자 이상! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "conclusionImagePrompt": "🎬 Final Scene: 결론 타로 카드의 전통적 이미지/심볼이 클라이맥스! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/characterStyle/colorPalette와 함께 가장 임팩트 있게! 이 리딩의 핵심 메시지를 시각적 절정으로. 드라마틱한 조명, 감정의 정점.",
+  "conclusionImagePrompt": "🎬 Final Scene: 결론 타로 카드의 전통적 이미지/심볼이 클라이맥스! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께 가장 임팩트 있게! 이 리딩의 핵심 메시지를 시각적 절정으로. 드라마틱한 조명, 감정의 정점.",
   "conclusionCard": "🚨반드시 ${conclusionLen}자 이상! 가장 길고 감동적! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. ⭐결론 3-4개 **bold**!",
 
   "hiddenInsight": "🚨반드시 ${hiddenLen}자 이상! 결론 카드가 말해주는 숨겨진 메시지. 질문자도 몰랐던 진짜 답. ⭐시작 문구 다양화 필수! '원래 안 말할라 그랬는데' 금지! 대신: '아 근데 이건 진짜..', '어 잠깐, 이거 봐봐요', '마지막으로 하나만 더', '아 그리고 이건 좀 신기한데', '근데 솔직히 이게 진짜야', '아 맞다 이것도..', '어? 이거 진짜 신기하네' 등 자연스럽게 랜덤! 구조: 1)신선한 도입 2-3문장 2)⭐MBTI/별자리 특징 활용 반전! ⚠️'INFP라서', '사자자리니까' 직접 언급 금지! 대신 그 성향의 특징을 자연스럽게 녹여서 (예: INFP면 '혼자 상상 많이 하시잖아요, 머릿속으로 시뮬레이션 다 돌려보고' / 사자자리면 '자존심 때문에 먼저 연락 못하시잖아요') → 사용자가 '어 맞아 어떻게 알지?' 하는 도파민! 3-4문장 3)타로가 진짜 말하는 것 4-5문장 4)구체적 행동/시기 가이드 2-3문장. 문장 끝 반전 필수!",
@@ -381,7 +352,7 @@ synthesisAnalysis(종합 분석)는 반드시:
 - 학업운/시험운/진로운
 - 결혼운/출산운/가족운
 
-${getStyleReference()}
+${getImagePromptGuide()}
 
 ## JSON 형식으로만 반환:
 {
@@ -452,15 +423,14 @@ ${getStyleReference()}
   "doList": ["올해 꼭 해야 할 것 1 (구체적 시기/방법)", "꼭 해야 할 것 2", "꼭 해야 할 것 3"],
   "dontList": ["올해 피해야 할 것 1 (구체적 상황)", "피해야 할 것 2", "피해야 할 것 3"],
 
-  "studioStyle": "🎬 스튜디오 1개만: shinkai/ghibli/kyoani/mappa/mappa_dark/shojo/clamp/takehiko/wit/ilya/minimalist/random 중 1개. ⚠️항상 첫번째만 고르지 말고 운세에 맞게 다양하게!",
-  "characterStyle": "🎭 캐릭터 1개만: reze/makima/power/himeno/frieren/maomao/yor/anya/ai/ruby/gojo/maki/itadori/nezuko/mitsuri/rengoku/rem/emilia/mikasa/levi/violet/asuna/2b/random 중 1개. ⚠️항상 첫번째만 고르지 말고 다양하게!",
+  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 운세의 감정/분위기를 가장 아름답게 표현할 스튜디오 스타일을 랜덤하게 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
   "colorPalette": "🎨 이 운세만의 색상을 영어 1문장으로 자연스럽게 묘사. 예: 'warm amber tones flowing into deep twilight purple' 또는 'soft moonlit silver with hints of melancholic blue'. 단순 나열 금지!",
 
   "images": {
-    "hero": "🎬 너는 영화 감독. 이 사주/운세의 본질적 에너지를 오프닝 씬으로 연출. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette를 자연스럽게 녹여서 응집력 있는 장면으로! 🎯인물: 20대 초중반. 동양적 사주/운명의 신비로운 분위기를 조명, 공간, 상징적 요소로 구체적으로 묘사.",
-    "section1": "🎬 첫 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette 녹여서! hero와 다른 앵글/분위기. 이 섹션 테마의 에너지를 배경, 조명, 인물의 감정으로 구체적으로.",
-    "section2": "🎬 두 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette 녹여서! section1과 연결되면서도 변화된 분위기. 새로운 앵글, 다른 조명으로 전환점을 구체적으로.",
-    "section3": "🎬 세 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/characterStyle/colorPalette 녹여서! 이 리딩의 마무리 클라이맥스. 가장 임팩트 있는 조명, 상징적 구도, 감정의 정점을 구체적으로."
+    "hero": "🎬 너는 영화 감독. 이 사주/운세의 본질적 에너지를 오프닝 씬으로 연출. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette를 자연스럽게 녹여서 응집력 있는 장면으로! 🎯인물: 20대 초중반 예쁘고 매력적인 캐릭터. 동양적 사주/운명의 신비로운 분위기를 조명, 공간, 상징적 요소로 구체적으로 묘사.",
+    "section1": "🎬 첫 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! hero와 다른 앵글/분위기. 이 섹션 테마의 에너지를 배경, 조명, 인물의 감정으로 구체적으로.",
+    "section2": "🎬 두 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! section1과 연결되면서도 변화된 분위기. 새로운 앵글, 다른 조명으로 전환점을 구체적으로.",
+    "section3": "🎬 세 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! 이 리딩의 마무리 클라이맥스. 가장 임팩트 있는 조명, 상징적 구도, 감정의 정점을 구체적으로."
   }
 }`;
 };
@@ -603,7 +573,6 @@ export const callClaudeWithCacheStreaming = async (
         foreshadow: false,
         visualMode: false,
         studioStyle: false,
-        characterStyle: false,
         colorPalette: false,
         heroImagePrompt: false,
         card1: false,
@@ -633,8 +602,8 @@ export const callClaudeWithCacheStreaming = async (
         const match = text.match(regex);
         if (match) {
             const value = match[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-            // 디버깅: visualMode, studioStyle, characterStyle, colorPalette 값 확인
-            if (['visualMode', 'studioStyle', 'characterStyle', 'colorPalette'].includes(key)) {
+            // 디버깅: visualMode, studioStyle, colorPalette 값 확인
+            if (['visualMode', 'studioStyle', 'colorPalette'].includes(key)) {
                 console.log(`🔍 extractJsonValue(${key}) = "${value}"`);
             }
             return value;
@@ -680,7 +649,6 @@ export const callClaudeWithCacheStreaming = async (
         checkFieldStart('hook', 'Hook');
         checkFieldStart('foreshadow', 'Foreshadow');
         checkFieldStart('studioStyle', 'Studio Style');
-        checkFieldStart('characterStyle', 'Character Style');
         checkFieldStart('heroImagePrompt', 'Hero 이미지 프롬프트');
         checkFieldStart('card1ImagePrompt', 'Card1 이미지 프롬프트');
         checkFieldStart('card1Analysis', 'Card1 분석');
@@ -777,16 +745,6 @@ export const callClaudeWithCacheStreaming = async (
                 console.log('🎨 Claude 선택 스튜디오 스타일:', style);
                 callbacks.onStudioStyle(style);
                 parsed.studioStyle = true;
-            }
-        }
-
-        // characterStyle 감지 (heroImagePrompt 전에 파싱되어야 함)
-        if (!parsed.characterStyle && callbacks.onCharacterStyle) {
-            const style = extractJsonValue('characterStyle', buffer);
-            if (style) {
-                console.log('🎨 Claude 선택 캐릭터 스타일:', style);
-                callbacks.onCharacterStyle(style);
-                parsed.characterStyle = true;
             }
         }
 

@@ -16,19 +16,18 @@ export const useImageGeneration = (tier = 'free') => {
     };
 
     /**
-     * 단일 이미지 생성 (v2: 스튜디오 + 캐릭터 조합 지원)
+     * 단일 이미지 생성 (스튜디오 스타일 기반)
      * @param {string} prompt - 장면 묘사 (Claude가 생성한 프롬프트)
      * @param {string} studioStyle - 스튜디오 스타일 키 (shinkai, ghibli, random 등)
      * @param {string} characterDesc - 캐릭터 설명 (일관성용) - 레거시
      * @param {string} readingType - 리딩 타입 ('dream', 'tarot', 'fortune') - fallback용
      * @param {string} colorPalette - 감정 기반 색상 팔레트
-     * @param {string} characterStyle - 캐릭터 미학 키 (reze, frieren, random, none 등)
      */
-    const generateSingleImage = async (prompt, studioStyle = 'random', characterDesc = '', readingType = 'tarot', colorPalette = '', characterStyle = 'random') => {
+    const generateSingleImage = async (prompt, studioStyle = 'random', characterDesc = '', readingType = 'tarot', colorPalette = '') => {
         if (!geminiApiKey) return null;
 
-        // v2: 스튜디오 + 캐릭터 조합 (항상 사용)
-        const stylePrefix = combineStyles(studioStyle, characterStyle);
+        // 스튜디오 스타일 조합
+        const stylePrefix = combineStyles(studioStyle);
 
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
 
@@ -36,7 +35,7 @@ export const useImageGeneration = (tier = 'free') => {
         const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
 
         // 디버깅: 실제 사용되는 모델과 스타일 확인
-        console.log(`🎨 Image Generation - Tier: ${tier}, Model: ${imageModelName}, Studio: ${studioStyle}, Character: ${characterStyle || 'none'}, Colors: ${colorPalette || 'default'}`);
+        console.log(`🎨 Image Generation - Tier: ${tier}, Model: ${imageModelName}, Studio: ${studioStyle}, Colors: ${colorPalette || 'default'}`);
 
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });
@@ -97,13 +96,12 @@ export const useImageGeneration = (tier = 'free') => {
      * @param {string} readingType - 리딩 타입
      * @param {Function} onProgress - 진행 콜백
      * @param {string} colorPalette - 감정 기반 색상 팔레트
-     * @param {string} characterStyle - 캐릭터 미학 키
      */
-    const generateImages = async (prompts, studioStyle = 'random', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '', characterStyle = 'random') => {
+    const generateImages = async (prompts, studioStyle = 'random', characterDesc = '', readingType = 'tarot', onProgress = null, colorPalette = '') => {
         const images = [];
         for (let i = 0; i < prompts.length; i++) {
             if (onProgress) onProgress(i, prompts.length);
-            const image = await generateSingleImage(prompts[i], studioStyle, characterDesc, readingType, colorPalette, characterStyle);
+            const image = await generateSingleImage(prompts[i], studioStyle, characterDesc, readingType, colorPalette);
             images.push(image);
             // 이미지 생성 간 딜레이
             if (i < prompts.length - 1) {
@@ -120,18 +118,17 @@ export const useImageGeneration = (tier = 'free') => {
      * @param {string} characterDesc - 캐릭터 설명 (레거시)
      * @param {string} readingType - 리딩 타입
      * @param {string} colorPalette - 감정 기반 색상 팔레트
-     * @param {string} characterStyle - 캐릭터 미학 키
      */
-    const generateShareImage = async (prompt, studioStyle = 'random', characterDesc = '', readingType = 'tarot', colorPalette = '', characterStyle = 'random') => {
+    const generateShareImage = async (prompt, studioStyle = 'random', characterDesc = '', readingType = 'tarot', colorPalette = '') => {
         if (!geminiApiKey) return null;
 
-        // v2: 스튜디오 + 캐릭터 조합 (항상 사용)
-        const stylePrefix = combineStyles(studioStyle, characterStyle);
+        // 스튜디오 스타일 조합
+        const stylePrefix = combineStyles(studioStyle);
 
         const atmosphere = TYPE_ATMOSPHERE[readingType] || TYPE_ATMOSPHERE.tarot;
         const colorScheme = colorPalette ? `Color palette: ${colorPalette}.` : '';
 
-        console.log(`📱 Share Image Generation - Tier: ${tier}, Model: ${imageModelName}, Studio: ${studioStyle}, Character: ${characterStyle || 'none'}, Colors: ${colorPalette || 'default'}, Ratio: 9:16`);
+        console.log(`📱 Share Image Generation - Tier: ${tier}, Model: ${imageModelName}, Studio: ${studioStyle}, Colors: ${colorPalette || 'default'}, Ratio: 9:16`);
 
         try {
             const ai = new GoogleGenAI({ apiKey: geminiApiKey });

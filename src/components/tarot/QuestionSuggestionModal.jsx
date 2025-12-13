@@ -81,8 +81,9 @@ const QuestionSuggestionModal = ({ isOpen, onClose, onSelectQuestion }) => {
 
 시간 컨텍스트:
 - 현재: ${timeContext.year}년 ${timeContext.monthName} ${timeContext.weekName}
+- ⚠️ 올해 = ${timeContext.year}년, 내년 = ${timeContext.nextYear}년 (혼동 금지!)
 - 가능하면 "이번 주", "이번 달", "최근", "${timeContext.year}년", "올해 안에", "언제" 등 시기를 포함
-${timeContext.isNearYearEnd ? `- 연말 시즌! "${timeContext.nextYear}년", "내년", "새해" 관련 질문도 1-2개 포함하면 좋음 (사람들이 내년에 대해 궁금해하는 시기)` : ''}
+${timeContext.isNearYearEnd ? `- 연말 시즌! "${timeContext.nextYear}년", "내년", "새해" 관련 질문도 1-2개 포함하면 좋음 (내년 = ${timeContext.nextYear}년)` : ''}
 
 도파민 질문 원칙:
 - 사람들이 정말 궁금해서 클릭하고 싶은 질문

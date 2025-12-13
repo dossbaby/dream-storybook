@@ -366,11 +366,10 @@ export const useReading = ({
             const detailedAnalysisPromise = generateDetailedAnalysis(data, dreamDescription);
             const characterDesc = data.images.character;
 
-            // Claude가 선택한 스튜디오/캐릭터 스타일과 색상 팔레트 (없으면 기본값)
+            // Claude가 선택한 스튜디오 스타일과 색상 팔레트 (없으면 기본값)
             const studioStyle = data.studioStyle || 'random';
-            const characterStyle = data.characterStyle || 'random';
             const colorPalette = data.colorPalette || '';
-            console.log(`🎨 Dream Style: studio=${studioStyle}, character=${characterStyle}, Colors: ${colorPalette || 'default'}`);
+            console.log(`🎨 Dream Style: studio=${studioStyle}, Colors: ${colorPalette || 'default'}`);
 
             // 프로필 기반 인물 설명 생성 (꿈)
             const getDreamPersonDesc = () => {
@@ -386,19 +385,19 @@ export const useReading = ({
             const dreamHeroPrompt = userProfile?.gender
                 ? `${dreamHeroBasePrompt}. The dreamer is ${dreamPersonDesc}.`
                 : dreamHeroBasePrompt;
-            const heroImage = await generateSingleImage(dreamHeroPrompt, studioStyle, characterDesc, 'dream', colorPalette, characterStyle);
+            const heroImage = await generateSingleImage(dreamHeroPrompt, studioStyle, characterDesc, 'dream', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('🎨 당신의 꿈이 그림으로 피어나고 있어요...');
-            const dreamImage = await generateSingleImage(data.images.dream, studioStyle, characterDesc, 'dream', colorPalette, characterStyle);
+            const dreamImage = await generateSingleImage(data.images.dream, studioStyle, characterDesc, 'dream', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('🃏 우주의 카드가 펼쳐지고 있어요...');
-            const tarotImage = await generateSingleImage(data.images.tarot, studioStyle, characterDesc, 'dream', colorPalette, characterStyle);
+            const tarotImage = await generateSingleImage(data.images.tarot, studioStyle, characterDesc, 'dream', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             setProgress('✨ 꿈 속 비밀이 드러나고 있어요...');
-            const meaningImage = await generateSingleImage(data.images.meaning, studioStyle, characterDesc, 'dream', colorPalette, characterStyle);
+            const meaningImage = await generateSingleImage(data.images.meaning, studioStyle, characterDesc, 'dream', colorPalette);
 
             const detailedAnalysis = await detailedAnalysisPromise;
 
@@ -475,13 +474,16 @@ export const useReading = ({
             // 현재 날짜/시간 컨텍스트 생성
             const now = new Date();
             const currentYear = now.getFullYear();
+            const nextYear = currentYear + 1;
             const currentMonth = now.getMonth() + 1;
             const currentDay = now.getDate();
             const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
             const dateContext = `📅 오늘 날짜: ${currentYear}년 ${currentMonth}월 ${currentDay}일 (${dayOfWeek}요일)
-- 이 질문은 오늘 이 시점에서 물어본 것입니다
+- 올해 = ${currentYear}년, 내년 = ${nextYear}년 (⚠️ 절대 혼동 금지!)
+- "내년", "내년 초", "내년 상반기" 등은 모두 ${nextYear}년을 의미합니다
+- 질문에 "내년"이 있으면 반드시 ${nextYear}년 기준으로 답변하세요
 - 시기를 언급할 때 반드시 오늘 날짜 기준으로 과거/현재/미래를 구분하세요
-- 예: 오늘이 12월이면 "8월"은 과거이므로 "그때는 ~했을 거예요" / "내년 2월"은 미래이므로 "~할 거예요"
+- 예: 오늘이 12월이면 "8월"은 과거 / "내년 2월"은 ${nextYear}년 2월 (미래)
 - 올해가 거의 끝나가는 시점이면 "올해" 관련 질문에 대해 남은 기간을 고려하세요`;
 
             // ═══════════════════════════════════════════════════════════════
@@ -533,7 +535,6 @@ ${dateContext}
             // ═══════════════════════════════════════════════════════════════
 
             let studioStyle = 'random';
-            let characterStyle = 'random';
             let colorPalette = '';
 
             let heroImage = null;
@@ -687,11 +688,6 @@ ${dateContext}
                     studioStyle = style;
                     setAnalysisPhase(2); // Phase 2: 스타일/컬러 파싱
                 },
-                // characterStyle 감지 → 이미지 생성 전에 캐릭터 미학 설정
-                onCharacterStyle: (style) => {
-                    console.log(`🎭 캐릭터 미학 설정 ${elapsed()}:`, style);
-                    characterStyle = style;
-                },
                 // 레거시 호환: imageStyle → studioStyle로 처리
                 onImageStyle: (style) => {
                     console.log(`🎨 [레거시] imageStyle → studioStyle ${elapsed()}:`, style);
@@ -706,10 +702,10 @@ ${dateContext}
                 // Hero 이미지 프롬프트 → Hero 이미지 생성 시작 (Claude가 질문 기반으로 생성)
                 onHeroImagePrompt: (prompt) => {
                     console.log(`🎨 Hero 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
-                    console.log(`🎨 [DEBUG] Hero 이미지 파라미터: studio=${studioStyle}, character=${characterStyle}, colors=${colorPalette}`);
+                    console.log(`🎨 [DEBUG] Hero 이미지 파라미터: studio=${studioStyle}, colors=${colorPalette}`);
                     setAnalysisPhase(3); // Phase 3: Hero 이미지 생성
                     setProgress('🌌 당신의 세계가 펼쳐지고 있어요...');
-                    heroPromise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette, characterStyle)
+                    heroPromise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette)
                         .then(img => {
                             heroImage = img;
                             console.log(`✅ Hero 이미지 완료 ${elapsed()}`);
@@ -728,7 +724,7 @@ ${dateContext}
                     console.log(`🎨 Card1 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
                     setAnalysisPhase(4); // Phase 4: Card1 이미지 생성
                     setProgress('🎨 첫 번째 카드가 피어나고 있어요...');
-                    card1Promise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette, characterStyle)
+                    card1Promise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette)
                         .then(img => {
                             card1Image = img;
                             console.log(`✅ Card1 이미지 완료 ${elapsed()}`);
@@ -748,7 +744,7 @@ ${dateContext}
                 onCard2ImagePrompt: (prompt) => {
                     console.log(`🎨 Card2 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
                     setProgress('🃏 두 번째 카드가 나타나고 있어요...');
-                    card2Promise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette, characterStyle)
+                    card2Promise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette)
                         .then(img => {
                             card2Image = img;
                             console.log(`✅ Card2 이미지 완료 ${elapsed()}`);
@@ -767,7 +763,7 @@ ${dateContext}
                 onCard3ImagePrompt: (prompt) => {
                     console.log(`🎨 Card3 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
                     setProgress('✨ 세 번째 카드가 빛나고 있어요...');
-                    card3Promise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette, characterStyle)
+                    card3Promise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette)
                         .then(img => {
                             card3Image = img;
                             console.log(`✅ Card3 이미지 완료 ${elapsed()}`);
@@ -786,7 +782,7 @@ ${dateContext}
                 onConclusionImagePrompt: (prompt) => {
                     console.log(`🎨 Conclusion 이미지 생성 시작 ${elapsed()}:`, prompt.slice(0, 50) + '...');
                     setProgress('🎁 운명의 선물이 도착하고 있어요...');
-                    conclusionPromise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette, characterStyle)
+                    conclusionPromise = generateSingleImage(prompt, studioStyle, '', 'tarot', colorPalette)
                         .then(img => {
                             conclusionImage = img;
                             console.log(`✅ Conclusion 이미지 완료 ${elapsed()}`);
@@ -958,6 +954,7 @@ ${dateContext}
 
             // 현재 연도 동적 계산 (만세력 계산용)
             const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
             const todayFull = new Date();
 
             // ═══════════════════════════════════════════════════════════════
@@ -975,6 +972,8 @@ ${dateContext}
 ## 🚨 현재 연도 정보 (만세력 계산 필수!)
 ⚠️ 현재 연도: ${currentYear}년 (${todayFull.toISOString().split('T')[0]})
 ⚠️ 오늘 날짜: ${todayFull.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
+⚠️ 올해 = ${currentYear}년, 내년 = ${nextYear}년 (절대 혼동 금지!)
+- "내년", "내년 운세", "내년 상반기" 등은 모두 ${nextYear}년을 의미합니다
 
 ## 사주 유형
 "${selectedFortune.name}"
@@ -993,11 +992,10 @@ ${dateContext}
             };
             const fortunePersonDesc = getFortunePersonDesc();
 
-            // Claude가 선택한 스튜디오/캐릭터 스타일과 색상 팔레트 (없으면 기본값)
+            // Claude가 선택한 스튜디오 스타일과 색상 팔레트 (없으면 기본값)
             const studioStyle = data.studioStyle || 'random';
-            const characterStyle = data.characterStyle || 'random';
             const colorPalette = data.colorPalette || '';
-            console.log(`🎨 Fortune Style: studio=${studioStyle}, character=${characterStyle}, Colors: ${colorPalette || 'default'}`);
+            console.log(`🎨 Fortune Style: studio=${studioStyle}, Colors: ${colorPalette || 'default'}`);
 
             // 이미지 생성
             setAnalysisPhase(5);
@@ -1009,23 +1007,23 @@ ${dateContext}
             const fortuneHeroPrompt = userProfile?.gender
                 ? `${fortuneHeroBasePrompt}. The person is ${fortunePersonDesc}.`
                 : fortuneHeroBasePrompt;
-            const heroImage = await generateSingleImage(fortuneHeroPrompt, studioStyle, '', 'fortune', colorPalette, characterStyle);
+            const heroImage = await generateSingleImage(fortuneHeroPrompt, studioStyle, '', 'fortune', colorPalette);
             await new Promise(r => setTimeout(r, 400));
 
             // 섹션별 이미지 생성 (section1/2/3 구조)
             const section1Category = data.sections?.section1?.category || '첫 번째 운';
             setProgress(`${data.sections?.section1?.icon || '✨'} ${section1Category} 이미지 생성 중...`);
-            const section1Image = await generateSingleImage(data.images.section1, studioStyle, '', 'fortune', colorPalette, characterStyle);
+            const section1Image = await generateSingleImage(data.images.section1, studioStyle, '', 'fortune', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             const section2Category = data.sections?.section2?.category || '두 번째 운';
             setProgress(`${data.sections?.section2?.icon || '💫'} ${section2Category} 이미지 생성 중...`);
-            const section2Image = await generateSingleImage(data.images.section2, studioStyle, '', 'fortune', colorPalette, characterStyle);
+            const section2Image = await generateSingleImage(data.images.section2, studioStyle, '', 'fortune', colorPalette);
             await new Promise(r => setTimeout(r, 500));
 
             const section3Category = data.sections?.section3?.category || '세 번째 운';
             setProgress(`${data.sections?.section3?.icon || '🌟'} ${section3Category} 이미지 생성 중...`);
-            const section3Image = await generateSingleImage(data.images.section3, studioStyle, '', 'fortune', colorPalette, characterStyle);
+            const section3Image = await generateSingleImage(data.images.section3, studioStyle, '', 'fortune', colorPalette);
 
             setProgress('✨ 오늘의 사주가 완성되었어요');
 
