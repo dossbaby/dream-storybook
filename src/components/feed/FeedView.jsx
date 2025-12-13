@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Reactions from '../common/Reactions';
 import InlineComments from '../common/InlineComments';
+import OptimizedImage from '../common/OptimizedImage';
 import { getTagUrl } from '../../utils/tagUtils';
 import { getOptimizedImageUrl } from '../../utils/imageUtils';
 
@@ -324,8 +325,8 @@ const FeedView = ({
         const question = tarot.question || '질문';
         // 답변 표시 (title이 이제 공감형 답변)
         const answer = tarot.title;
-        // 썸네일 = heroImage 또는 pastImage (최적화된 URL)
-        const thumbImage = getOptimizedImageUrl(tarot.heroImage || tarot.pastImage, { size: 'small' });
+        // 썸네일 = heroImage 또는 pastImage
+        const thumbSrc = tarot.heroImage || tarot.pastImage;
 
         return (
             <div
@@ -335,8 +336,8 @@ const FeedView = ({
             >
                 {/* 썸네일 */}
                 <div className="compact-thumb">
-                    {thumbImage ? (
-                        <img src={thumbImage} alt="" loading="lazy" />
+                    {thumbSrc ? (
+                        <OptimizedImage src={thumbSrc} size="medium" alt="" loading="lazy" />
                     ) : (
                         <div className="compact-thumb-placeholder">🔮</div>
                     )}
@@ -365,8 +366,6 @@ const FeedView = ({
 
     // 컴팩트 카드 렌더링 (꿈) - 썸네일 + 제목 중심
     const renderCompactDreamCard = (dream) => {
-        const thumbImage = getOptimizedImageUrl(dream.dreamImage, { size: 'small' });
-
         return (
             <div
                 key={dream.id}
@@ -375,8 +374,8 @@ const FeedView = ({
             >
                 {/* 썸네일 */}
                 <div className="compact-thumb">
-                    {thumbImage ? (
-                        <img src={thumbImage} alt="" loading="lazy" />
+                    {dream.dreamImage ? (
+                        <OptimizedImage src={dream.dreamImage} size="medium" alt="" loading="lazy" />
                     ) : (
                         <div className="compact-thumb-placeholder">
                             {dreamTypes?.[dream.dreamType]?.emoji || '🌙'}
@@ -404,8 +403,6 @@ const FeedView = ({
 
     // 컴팩트 카드 렌더링 (사주) - 썸네일 + 제목 중심
     const renderCompactFortuneCard = (fortune) => {
-        const thumbImage = getOptimizedImageUrl(fortune.morningImage, { size: 'small' });
-
         return (
             <div
                 key={fortune.id}
@@ -414,8 +411,8 @@ const FeedView = ({
             >
                 {/* 썸네일 */}
                 <div className="compact-thumb">
-                    {thumbImage ? (
-                        <img src={thumbImage} alt="" loading="lazy" />
+                    {fortune.morningImage ? (
+                        <OptimizedImage src={fortune.morningImage} size="medium" alt="" loading="lazy" />
                     ) : (
                         <div className="compact-thumb-placeholder">☀️</div>
                     )}
@@ -448,7 +445,7 @@ const FeedView = ({
         >
             <div className="feed-card-thumb">
                 {dream.dreamImage ? (
-                    <img src={getOptimizedImageUrl(dream.dreamImage, { size: 'medium' })} alt="" />
+                    <OptimizedImage src={dream.dreamImage} size="large" alt="" />
                 ) : (
                     <div className="feed-card-emoji">
                         {dreamTypes?.[dream.dreamType]?.emoji || '🌙'}
@@ -497,7 +494,7 @@ const FeedView = ({
         >
             <div className="feed-card-thumb">
                 {tarot.pastImage ? (
-                    <img src={getOptimizedImageUrl(tarot.heroImage || tarot.pastImage, { size: 'medium' })} alt="" />
+                    <OptimizedImage src={tarot.heroImage || tarot.pastImage} size="large" alt="" />
                 ) : (
                     <div className="feed-card-emoji">🔮</div>
                 )}
@@ -552,7 +549,7 @@ const FeedView = ({
         >
             <div className="feed-card-thumb">
                 {fortune.morningImage ? (
-                    <img src={getOptimizedImageUrl(fortune.morningImage, { size: 'medium' })} alt="" />
+                    <OptimizedImage src={fortune.morningImage} size="large" alt="" />
                 ) : (
                     <div className="feed-card-emoji">🔮</div>
                 )}

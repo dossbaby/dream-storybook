@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import PremiumBadge from '../common/PremiumBadge';
+import { getOptimizedImageUrl } from '../../utils/imageUtils';
 
 const NavBar = ({
     mode,
@@ -123,7 +124,7 @@ const NavBar = ({
                             <div
                                 className="user-avatar-crop"
                                 style={{
-                                    backgroundImage: `url(${userProfile.profilePhoto.imageUrl})`,
+                                    backgroundImage: `url(${getOptimizedImageUrl(userProfile.profilePhoto.imageUrl, { size: 'medium' })})`,
                                     backgroundPosition: `${userProfile.profilePhoto.cropX}% ${userProfile.profilePhoto.cropY}%`,
                                     backgroundSize: `${(userProfile.profilePhoto.zoom || 1) * 177.78}% auto`
                                 }}

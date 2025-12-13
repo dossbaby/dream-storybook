@@ -8,11 +8,11 @@
 // WebP 지원 여부 캐시
 let webpSupported = null;
 
-// Firebase Resize Extension 크기 설정 (16:9 비율)
+// Firebase Resize Extension 크기 설정 (16:9 비율, 2K 기준)
 const FIREBASE_RESIZE_SIZES = {
-    small: '512x288',
-    medium: '1024x576',
-    large: '1376x768'
+    small: '688x384',
+    medium: '1376x768',
+    large: '2752x1536'
 };
 
 /**
@@ -43,7 +43,7 @@ export const getResizedFirebaseUrl = (url, size = 'medium') => {
     }
 
     // 이미 리사이즈된 URL이면 그대로 반환
-    if (url.includes('_512x288') || url.includes('_1024x576') || url.includes('_1376x768')) {
+    if (url.includes('_688x384') || url.includes('_1376x768') || url.includes('_2752x1536')) {
         return url;
     }
 
@@ -70,12 +70,10 @@ export const getRecommendedImageSize = () => {
     if (typeof window === 'undefined') return 'medium';
 
     const width = window.innerWidth;
-    const dpr = window.devicePixelRatio || 1;
-    const effectiveWidth = width * dpr;
 
-    if (effectiveWidth <= 640) return 'small';      // 모바일
-    if (effectiveWidth <= 1280) return 'medium';    // 태블릿/작은 데스크탑
-    return 'large';                                  // 큰 데스크탑
+    // 모바일도 medium 사용 (512x288은 화질 너무 낮음)
+    if (width <= 1024) return 'medium';     // 모바일/태블릿
+    return 'large';                          // 데스크탑
 };
 
 /**
@@ -122,7 +120,7 @@ export const generateSrcset = (src, widths = [320, 640, 1024, 1536]) => {
         // 리사이즈된 URL이 원본과 같으면 (리사이즈 안됨) null 반환
         if (smallUrl === src) return null;
 
-        return `${smallUrl} 512w, ${mediumUrl} 1024w, ${largeUrl} 1376w`;
+        return `${smallUrl} 688w, ${mediumUrl} 1376w, ${largeUrl} 2752w`;
     }
 
     // Cloudinary URL 처리

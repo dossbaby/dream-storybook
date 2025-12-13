@@ -60,7 +60,7 @@ export const useImageGeneration = (tier = 'free') => {
                         responseModalities: ['image', 'text'],
                         imageConfig: {
                             aspectRatio: '16:9',
-                            imageSize: '1K',
+                            imageSize: '2K',
                             output_format: 'webp'
                         }
                     }

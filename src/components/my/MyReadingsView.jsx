@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { HISTORY_LIMITS } from '../../utils/aiConfig';
 import { getOptimizedImageUrl } from '../../utils/imageUtils';
+import OptimizedImage from '../common/OptimizedImage';
 
 // 카테고리별 이모지
 const TOPIC_EMOJI = {
@@ -55,7 +56,7 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
     const [showPhotoPicker, setShowPhotoPicker] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const [cropPosition, setCropPosition] = useState({ x: 50, y: 50 }); // % 기준
-    const [zoom, setZoom] = useState(1); // 1 = 100%, 범위: 1~3
+    const [zoom, setZoom] = useState(1); // 1 = 100%, 범위: 1~5
     const [isDragging, setIsDragging] = useState(false);
     const cropperRef = useRef(null);
 
@@ -93,9 +94,19 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
         return images;
     };
 
-    // 드래그 핸들러
+    // 드래그 핸들러 (상대적 이동)
+    const dragStartRef = useRef({ x: 0, y: 0, cropX: 0, cropY: 0 });
+
     const handleDragStart = (e) => {
         e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        dragStartRef.current = {
+            x: clientX,
+            y: clientY,
+            cropX: cropPosition.x,
+            cropY: cropPosition.y
+        };
         setIsDragging(true);
     };
 
@@ -106,9 +117,13 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-        // 이미지 영역 내에서의 % 위치 계산
-        let x = ((clientX - rect.left) / rect.width) * 100;
-        let y = ((clientY - rect.top) / rect.height) * 100;
+        // 드래그 시작점에서 얼마나 이동했는지 계산 (% 단위)
+        const deltaX = ((clientX - dragStartRef.current.x) / rect.width) * 100;
+        const deltaY = ((clientY - dragStartRef.current.y) / rect.height) * 100;
+
+        // 드래그 방향과 반대로 이미지 이동 (자연스러운 패닝)
+        let x = dragStartRef.current.cropX - deltaX;
+        let y = dragStartRef.current.cropY - deltaY;
 
         // 0~100 범위로 제한
         x = Math.max(0, Math.min(100, x));
@@ -220,7 +235,7 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
                                                 setZoom(1);
                                             }}
                                         >
-                                            <img src={img.url + '?w=100'} alt={img.label} loading="lazy" />
+                                            <OptimizedImage src={img.url} size="medium" alt={img.label} loading="lazy" />
                                         </button>
                                     ))}
                                 </div>
@@ -239,20 +254,13 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
                                             onTouchStart={handleDragStart}
                                             onTouchMove={handleDragMove}
                                             onTouchEnd={handleDragEnd}
+                                            style={{
+                                                backgroundImage: `url(${getOptimizedImageUrl(selectedPhoto.url, { size: 'medium' })})`,
+                                                backgroundPosition: `${cropPosition.x}% ${cropPosition.y}%`,
+                                                backgroundSize: `${zoom * 177.78}% auto`
+                                            }}
                                         >
-                                            <img
-                                                src={selectedPhoto.url + '?w=400'}
-                                                alt="crop preview"
-                                                style={{ transform: `scale(${zoom})` }}
-                                            />
-                                            <div
-                                                className="crop-circle"
-                                                style={{
-                                                    left: `${cropPosition.x}%`,
-                                                    top: `${cropPosition.y}%`
-                                                }}
-                                            />
-                                            <div className="crop-overlay" />
+                                            <div className="crop-circle-center" />
                                         </div>
 
                                         {/* Zoom 슬라이더 */}
@@ -261,7 +269,7 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
                                             <input
                                                 type="range"
                                                 min="1"
-                                                max="3"
+                                                max="5"
                                                 step="0.1"
                                                 value={zoom}
                                                 onChange={(e) => setZoom(parseFloat(e.target.value))}
@@ -276,7 +284,7 @@ const ReadingActionModal = ({ isOpen, onClose, item, type, onUpdate, onDelete, o
                                             <div
                                                 className="preview-avatar"
                                                 style={{
-                                                    backgroundImage: `url(${selectedPhoto.url}?w=200)`,
+                                                    backgroundImage: `url(${getOptimizedImageUrl(selectedPhoto.url, { size: 'medium' })})`,
                                                     backgroundPosition: `${cropPosition.x}% ${cropPosition.y}%`,
                                                     backgroundSize: `${zoom * 177.78}% auto`
                                                 }}
@@ -475,7 +483,7 @@ const MyReadingsView = ({
         const rawTopics = tarot.topics || (tarot.topic ? [tarot.topic] : []);
         const mainTopic = normalizeCategory(rawTopics[0]);
         const topicEmoji = TOPIC_EMOJI[mainTopic] || '💬';
-        const thumbImage = getOptimizedImageUrl(tarot.heroImage || tarot.pastImage || tarot.card1Image, { size: 'small' });
+        const thumbSrc = tarot.heroImage || tarot.pastImage || tarot.card1Image;
         const question = tarot.question || '타로 리딩';
         const answer = tarot.title;
 
@@ -499,8 +507,8 @@ const MyReadingsView = ({
                 onClick={() => onOpenTarotDetail?.(tarot)}
             >
                 <div className="compact-thumb">
-                    {thumbImage ? (
-                        <img src={thumbImage} alt="" loading="lazy" />
+                    {thumbSrc ? (
+                        <OptimizedImage src={thumbSrc} size="medium" alt="" loading="lazy" />
                     ) : (
                         <div className="compact-thumb-placeholder">🔮</div>
                     )}
@@ -523,7 +531,6 @@ const MyReadingsView = ({
     // 꿈 카드 렌더링 - FeedView compact 스타일 완전 동일
     const renderDreamCard = (dream, index) => {
         const isLocked = index >= historyLimit;
-        const thumbImage = getOptimizedImageUrl(dream.dreamImage, { size: 'small' });
         const dreamType = dreamTypes[dream.dreamType];
 
         if (isLocked) {
@@ -546,8 +553,8 @@ const MyReadingsView = ({
                 onClick={() => onOpenDreamDetail?.(dream)}
             >
                 <div className="compact-thumb">
-                    {thumbImage ? (
-                        <img src={thumbImage} alt="" loading="lazy" />
+                    {dream.dreamImage ? (
+                        <OptimizedImage src={dream.dreamImage} size="medium" alt="" loading="lazy" />
                     ) : (
                         <div className="compact-thumb-placeholder">{dreamType?.emoji || '🌙'}</div>
                     )}
@@ -569,7 +576,7 @@ const MyReadingsView = ({
     // 사주 카드 렌더링 - FeedView compact 스타일 완전 동일
     const renderFortuneCard = (fortune, index) => {
         const isLocked = index >= historyLimit;
-        const thumbImage = getOptimizedImageUrl(fortune.morningImage, { size: 'small' });
+        const thumbImage = getOptimizedImageUrl(fortune.morningImage, { size: 'medium' });
 
         if (isLocked) {
             return (

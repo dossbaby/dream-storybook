@@ -3,8 +3,8 @@ import { useComments } from '../../hooks/useComments';
 import Reactions from '../common/Reactions';
 import AnalysisOverlay from '../common/AnalysisOverlay';
 import SEOHead from '../common/SEOHead';
+import OptimizedImage from '../common/OptimizedImage';
 import { generateSEOMeta } from '../../utils/seoConfig';
-import { getOptimizedImageUrl } from '../../utils/imageUtils';
 
 // 폴백용 인사이트 (AI 생성 실패 시)
 const FALLBACK_INSIGHTS = [
@@ -181,16 +181,14 @@ const TarotResultView = ({
     const foreshadowText = tarotResult.foreshadow || jenny.foreshadow || '카드가 말하고 싶은 이야기가 있어요. 함께 들어볼까요?';
 
     // 히어로 이미지 (질문 기반 생성 이미지, 없으면 카드1 이미지 폴백)
-    // 화면 크기에 맞게 자동 선택 (mobile: small, tablet: medium, desktop: large)
-    const heroImageRaw = tarotResult.heroImage || tarotResult.card1Image || tarotResult.pastImage;
-    const heroImage = getOptimizedImageUrl(heroImageRaw);
+    const heroImage = tarotResult.heroImage || tarotResult.card1Image || tarotResult.pastImage;
 
-    // 카드 이미지 매핑 (4장) - 최적화된 URL 사용
+    // 카드 이미지 매핑 (4장) - 원본 URL (OptimizedImage에서 fallback 처리)
     const cardImages = [
-        getOptimizedImageUrl(tarotResult.card1Image || tarotResult.pastImage),
-        getOptimizedImageUrl(tarotResult.card2Image || tarotResult.presentImage),
-        getOptimizedImageUrl(tarotResult.card3Image || tarotResult.futureImage),
-        getOptimizedImageUrl(tarotResult.conclusionImage)
+        tarotResult.card1Image || tarotResult.pastImage,
+        tarotResult.card2Image || tarotResult.presentImage,
+        tarotResult.card3Image || tarotResult.futureImage,
+        tarotResult.conclusionImage
     ];
 
     // 스토리 리딩 (flat 구조 또는 기존 storyReading 객체 지원)
@@ -487,7 +485,7 @@ const TarotResultView = ({
                 {/* 히어로 섹션 - 이미지 + 최소 오버레이 */}
                 <div className="reading-hero">
                     {heroImage && (
-                        <img src={heroImage} alt="" className="reading-hero-img" />
+                        <OptimizedImage src={heroImage} size="large" alt="" className="reading-hero-img" />
                     )}
                     <div className="reading-hero-overlay">
                         <span className="reading-type-badge">타로</span>
@@ -592,7 +590,7 @@ const TarotResultView = ({
                                         {isFlipped ? (
                                             <>
                                                 {cardImages[i] && (
-                                                    <img src={cardImages[i]} alt={card.nameKo} className="persona-card-img" />
+                                                    <OptimizedImage src={cardImages[i]} size="large" alt={card.nameKo} className="persona-card-img" />
                                                 )}
                                                 <div className="persona-card-overlay">
                                                     <span className="persona-card-name">{card.nameKo}</span>
@@ -650,7 +648,7 @@ const TarotResultView = ({
                                 {/* 풀 와이드 히어로 이미지 */}
                                 {cardImages[i] && (
                                     <div className="chapter-hero">
-                                        <img src={cardImages[i]} alt={card.nameKo} className="chapter-hero-img" />
+                                        <OptimizedImage src={cardImages[i]} size="large" alt={card.nameKo} className="chapter-hero-img" />
                                         <div className="chapter-hero-overlay">
                                             <span className="chapter-number">
                                                 {isConclusion ? 'FINAL' : `0${i + 1}`}

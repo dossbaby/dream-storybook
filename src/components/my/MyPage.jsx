@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { getOptimizedImageUrl } from '../../utils/imageUtils';
 
 const MBTI_TYPES = [
     'INTJ', 'INTP', 'ENTJ', 'ENTP',
@@ -185,7 +186,7 @@ const MyPage = ({
                                 <div
                                     className="my-avatar-crop"
                                     style={{
-                                        backgroundImage: `url(${userProfile.profilePhoto.imageUrl})`,
+                                        backgroundImage: `url(${getOptimizedImageUrl(userProfile.profilePhoto.imageUrl, { size: 'medium' })})`,
                                         backgroundPosition: `${userProfile.profilePhoto.cropX}% ${userProfile.profilePhoto.cropY}%`,
                                         backgroundSize: `${(userProfile.profilePhoto.zoom || 1) * 177.78}% auto`
                                     }}
