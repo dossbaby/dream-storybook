@@ -60,7 +60,8 @@ export const useImageGeneration = (tier = 'free') => {
                         responseModalities: ['image', 'text'],
                         imageConfig: {
                             aspectRatio: '16:9',
-                            imageSize: '1K'
+                            imageSize: '1K',
+                            output_format: 'webp'
                         }
                     }
                 });
@@ -149,8 +150,10 @@ export const useImageGeneration = (tier = 'free') => {
                     model: imageModelName,
                     contents: fullPrompt,
                     config: {
+                        responseModalities: ['image', 'text'],
                         imageConfig: {
-                            aspectRatio: '9:16'
+                            aspectRatio: '9:16',
+                            output_format: 'webp'
                         }
                     }
                 });

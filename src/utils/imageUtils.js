@@ -95,23 +95,12 @@ export const getOptimizedImageUrl = (url, options = {}) => {
         return url;
     }
 
-    // Extension 설치 이후 (2024-12-13 오후) 업로드된 이미지만 리사이즈됨
-    // 기존 이미지는 원본 URL 그대로 반환
-    // Extension 설치 시간: 약 1765579000000 (2024-12-13 오후)
-    const timestampMatch = url.match(/\/(\d{13})_/);
-    if (!timestampMatch) {
-        // 타임스탬프가 없는 URL = 구형식 = 리사이즈 없음 → 원본 반환
-        return url;
-    }
-
-    const timestamp = parseInt(timestampMatch[1]);
-    if (timestamp < 1765579000000) {
-        // Extension 설치 전 이미지 → 원본 반환
-        return url;
-    }
-
+    // 화면 크기에 맞는 리사이즈 버전 URL 생성
+    // Firebase Resize Extension이 자동으로 리사이즈 파일 생성
     const recommendedSize = size || getRecommendedImageSize();
-    return getResizedFirebaseUrl(url, recommendedSize);
+    const optimizedUrl = getResizedFirebaseUrl(url, recommendedSize);
+
+    return optimizedUrl;
 };
 
 /**

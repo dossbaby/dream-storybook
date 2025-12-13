@@ -181,8 +181,9 @@ const TarotResultView = ({
     const foreshadowText = tarotResult.foreshadow || jenny.foreshadow || '카드가 말하고 싶은 이야기가 있어요. 함께 들어볼까요?';
 
     // 히어로 이미지 (질문 기반 생성 이미지, 없으면 카드1 이미지 폴백)
+    // 화면 크기에 맞게 자동 선택 (mobile: small, tablet: medium, desktop: large)
     const heroImageRaw = tarotResult.heroImage || tarotResult.card1Image || tarotResult.pastImage;
-    const heroImage = getOptimizedImageUrl(heroImageRaw, { size: 'large' });
+    const heroImage = getOptimizedImageUrl(heroImageRaw);
 
     // 카드 이미지 매핑 (4장) - 최적화된 URL 사용
     const cardImages = [

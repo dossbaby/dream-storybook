@@ -57,7 +57,7 @@ const uploadImageToStorage = async (imageUrl, folder, userId, imageName) => {
         }
 
         const timestamp = Date.now();
-        const path = `${folder}/${userId}/${timestamp}_${imageName}.jpg`;
+        const path = `${folder}/${userId}/${timestamp}_${imageName}.webp`;
         const storageRef = ref(storage, path);
 
         // base64 문자열 업로드

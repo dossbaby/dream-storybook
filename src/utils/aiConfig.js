@@ -81,43 +81,162 @@ const MYSTIC_GUIDE = `The scene should be infused with mystical tarot energy - e
 const CINEMATIC_GUIDE = `Render with cinematic quality: volumetric lighting with god rays, thoughtful depth of field, bokeh backgrounds, rim lighting that defines the subject, and dramatic composition worthy of an official anime key visual.`;
 
 // ═══════════════════════════════════════════════════════════════
-// 스튜디오 스타일 (렌더링/분위기) - 11개 + random
+// 스튜디오 스타일 (렌더링/분위기) - 40개 + random
 // ═══════════════════════════════════════════════════════════════
 export const STUDIO_STYLES = {
-    // 로맨틱/몽환적 계열
-    shinkai: `Makoto Shinkai style (Your Name, Weathering With You). Golden hour lighting, hyper-detailed backgrounds with lens flare, dreamy twilight atmosphere, emotional expressive eyes with light reflections, flowing hair with wind movement`,
+    // ─── 로맨틱/몽환적 계열 ───
+    shinkai: `Makoto Shinkai style (Your Name, Weathering With You, Suzume). Golden hour lighting, hyper-detailed backgrounds with lens flare, dreamy twilight atmosphere, emotional expressive eyes with light reflections, flowing hair with wind movement`,
 
-    kyoani: `Kyoto Animation style (Violet Evergarden). Subsurface scattering on skin, delicate porcelain features, elegant emotional portrayal, intricate costume details, soft diffused lighting, character-focused composition`,
+    kyoani: `Kyoto Animation style (Violet Evergarden, A Silent Voice, Free!). Subsurface scattering on skin, delicate porcelain features, elegant emotional portrayal, intricate costume details, soft diffused lighting, character-focused composition`,
 
-    ghibli: `Studio Ghibli style (Spirited Away, Howl's Moving Castle). Hand-painted watercolor aesthetic, warm human emotions, whimsical fantasy elements, nature spirits, soft atmospheric haze, painterly texture`,
+    ghibli: `Studio Ghibli style (Spirited Away, Howl's Moving Castle, Princess Mononoke). Hand-painted watercolor aesthetic, warm human emotions, whimsical fantasy elements, nature spirits, soft atmospheric haze, painterly texture`,
 
-    // MAPPA 계열
-    mappa: `MAPPA studio style (Jujutsu Kaisen). Bold saturated colors, expressive action energy, fluid motion blur, modern anime aesthetic, sharp detailed linework, intense eyes, high contrast dramatic shadows`,
+    comix_wave: `CoMix Wave Films style (5 Centimeters per Second, Garden of Words). Photo-realistic backgrounds, melancholic romantic atmosphere, rain and weather effects, detailed urban landscapes, emotional distance portrayed visually`,
 
-    mappa_dark: `MAPPA dark style (Chainsaw Man). Edgy aesthetic, bold chiaroscuro shadows on face, visceral raw emotion, mature dramatic lighting, character silhouette prominent, blood moon atmosphere, noir color palette, gritty texture`,
+    pa_works: `P.A. Works style (Angel Beats!, Charlotte, Shirobako). Beautiful pastoral backgrounds, warm nostalgic lighting, detailed school/town settings, emotional coming-of-age atmosphere, soft color gradients`,
 
-    // 클래식/우아한 계열
-    shojo: `Classic shojo anime style. Breathtaking intricate details, sparkles and flower petals floating, elegant flowing hair with highlights, romantic pastel atmosphere, detailed lace and fabric, soft bloom effect, dreamy color palette`,
+    // ─── 액션/다이나믹 계열 ───
+    mappa: `MAPPA studio style (Jujutsu Kaisen, Attack on Titan Final). Bold saturated colors, expressive action energy, fluid motion blur, modern anime aesthetic, sharp detailed linework, intense eyes, high contrast dramatic shadows`,
 
-    clamp: `CLAMP style (Cardcaptor Sakura, xxxHolic). Elongated elegant proportions, flowing fabric and hair with movement, graceful ethereal poses, magical girl aesthetic, sophisticated dark beauty, art nouveau influences, dramatic cape/cloth flow, stained glass colors`,
+    mappa_dark: `MAPPA dark style (Chainsaw Man, Hell's Paradise). Edgy aesthetic, bold chiaroscuro shadows on face, visceral raw emotion, mature dramatic lighting, character silhouette prominent, blood moon atmosphere, noir color palette, gritty texture`,
 
-    // 역동적/스포츠 계열
-    takehiko: `Takehiko Inoue style (Slam Dunk, Vagabond). Dynamic human anatomy with muscle definition, powerful emotional moments, realistic yet stylized features, athletic movement captured, raw intensity in eyes, traditional ink wash texture, dramatic action lines, hand-drawn organic feel`,
+    ufotable: `Ufotable style (Demon Slayer, Fate series). Breathtaking special effects, fluid water/fire/lightning animation, dynamic camera movement, vivid color gradients, epic battle compositions, particle effects mastery`,
 
-    wit: `WIT Studio style (Attack on Titan, Spy x Family). Clean ultra-sharp linework, dynamic action poses with motion energy, expressive character acting, cinematic widescreen composition, high contrast lighting with ambient occlusion`,
+    bones: `Studio Bones style (Mob Psycho 100, My Hero Academia, Fullmetal Alchemist). Expressive animation squash-stretch, powerful impact frames, diverse art styles per scene, emotional character acting, dynamic perspective shifts`,
 
-    // 현대 일러스트 계열
-    ilya: `Ilya Kuvshinov style. Modern digital illustration, soft skin rendering with subsurface scattering, highly detailed eyes with multiple light reflections, contemporary fashion details, Instagram-popular aesthetic, painterly color blending, portrait focus, soft gradient backgrounds`,
+    trigger: `Studio Trigger style (Kill la Kill, Promare, Cyberpunk Edgerunners). Bold graphic compositions, neon color explosions, exaggerated dynamic poses, stylized thick outlines, punk rock energy, maximum impact visuals`,
 
-    // 미니멀/아트 계열
-    minimalist: `Minimalist artistic anime. Clean elegant character design, strategic negative space, subtle nuanced expressions, character as focal point, simple but impactful composition, limited color palette with accent colors, zen aesthetic, floating elements`,
+    wit: `WIT Studio style (Attack on Titan S1-3, Spy x Family, Vinland Saga). Clean ultra-sharp linework, dynamic action poses with motion energy, expressive character acting, cinematic widescreen composition, high contrast lighting`,
+
+    madhouse: `Madhouse style (Death Note, One Punch Man, Hunter x Hunter). Dramatic noir shadows, intense psychological atmosphere, crisp detailed linework, powerful action sequences, dark sophisticated color palette`,
+
+    sunrise: `Sunrise style (Gundam, Code Geass, Gintama). Mecha precision details, dramatic political atmosphere, vibrant action scenes, distinctive character designs, epic scale compositions`,
+
+    toei: `Toei Animation style (Dragon Ball, One Piece, Sailor Moon). Iconic character designs, vibrant saturated colors, powerful transformation sequences, dynamic action poses, legendary anime aesthetic`,
+
+    pierrot: `Studio Pierrot style (Naruto, Bleach, Tokyo Ghoul). Dynamic ninja/battle action, emotional character moments, bold color contrasts, intense eye expressions, shounen energy`,
+
+    takehiko: `Takehiko Inoue style (Slam Dunk, Vagabond, Real). Dynamic human anatomy with muscle definition, powerful emotional moments, realistic yet stylized features, raw intensity in eyes, traditional ink wash texture, hand-drawn organic feel`,
+
+    // ─── 클래식/우아한 계열 ───
+    shojo: `Classic shojo anime style (Sailor Moon, Fruits Basket). Breathtaking intricate details, sparkles and flower petals floating, elegant flowing hair with highlights, romantic pastel atmosphere, detailed lace and fabric, soft bloom effect`,
+
+    clamp: `CLAMP style (Cardcaptor Sakura, xxxHolic, Tsubasa). Elongated elegant proportions, flowing fabric and hair with movement, graceful ethereal poses, magical girl aesthetic, sophisticated dark beauty, art nouveau influences, stained glass colors`,
+
+    shaft: `SHAFT studio style (Monogatari series, Madoka Magica). Avant-garde compositions, dramatic head tilts, surreal abstract backgrounds, bold color blocking, psychological visual metaphors, unique artistic framing`,
+
+    gainax: `Gainax style (Evangelion, FLCL, Gurren Lagann). Psychedelic surreal imagery, bold experimental compositions, intense emotional sequences, iconic mecha designs, groundbreaking visual storytelling`,
+
+    production_ig: `Production I.G style (Ghost in the Shell, Psycho-Pass, Haikyuu!!). Sleek cyberpunk aesthetics, detailed sci-fi environments, fluid sports animation, philosophical visual depth, cinematic quality`,
+
+    // ─── 현대 일러스트 계열 ───
+    ilya: `Ilya Kuvshinov style. Modern digital illustration, soft skin rendering with subsurface scattering, highly detailed eyes with multiple light reflections, contemporary fashion details, Instagram-popular aesthetic, painterly color blending`,
+
+    a1: `A-1 Pictures style (Sword Art Online, Kaguya-sama, 86). Clean modern production, beautiful character designs, vibrant color palette, high production value, balanced action and drama, polished commercial aesthetic`,
+
+    cloverworks: `CloverWorks style (Spy x Family, Bocchi the Rock!, My Dress-Up Darling). Expressive character animation, cute moe aesthetic with depth, vibrant personality in movement, contemporary otaku appeal, dynamic comedic timing`,
+
+    jc_staff: `J.C.Staff style (Toradora!, Food Wars, One Punch Man S2). Versatile animation quality, expressive comedy moments, detailed food/daily life scenes, romantic comedy expertise`,
+
+    doga_kobo: `Doga Kobo style (Monthly Girls' Nozaki-kun, New Game!). Cute moe character designs, vibrant pastel colors, expressive comedic animation, slice-of-life warmth, adorable character acting`,
+
+    lerche: `Lerche style (Assassination Classroom, Given, Monster Musume). Clean modern aesthetic, versatile genre adaptation, emotional character moments, balanced comedy and drama`,
+
+    silver_link: `Silver Link style (Bofuri, Non Non Biyori). Soft moe aesthetics, peaceful rural settings, cute character interactions, warm color palettes, comfy atmosphere`,
+
+    kinema_citrus: `Kinema Citrus style (Made in Abyss, Shield Hero). Detailed fantasy worlds, cute-but-dark contrast, lush environmental art, adventurous atmosphere`,
+
+    science_saru: `Science SARU style (Devilman Crybaby, Keep Your Hands Off Eizouken). Bold experimental animation, unique art styles, fluid motion, artistic freedom`,
+
+    david_production: `David Production style (JoJo's Bizarre Adventure, Fire Force). Dramatic poses, bold color choices, stylized impact frames, menacing atmosphere, iconic visual effects`,
+
+    white_fox: `White Fox style (Re:Zero, Steins;Gate, Goblin Slayer). Dark fantasy atmosphere, psychological drama, detailed character expressions, intense emotional moments`,
+
+    // ─── 미니멀/아트 계열 ───
+    minimalist: `Minimalist artistic anime. Clean elegant character design, strategic negative space, subtle nuanced expressions, character as focal point, simple but impactful composition, limited color palette with accent colors, zen aesthetic`,
+
+    wabi_sabi: `Wabi-sabi aesthetic anime. Imperfect beauty, muted earth tones, contemplative atmosphere, traditional Japanese sensibility, subtle emotional resonance, quiet elegance`,
+
+    ukiyo_e: `Ukiyo-e inspired anime. Traditional Japanese woodblock print aesthetic, bold outlines, flat color areas, wave and nature motifs, Edo period elegance meets modern anime`,
 
     // 🎲 히든 카드: 위 스타일 중 랜덤 선택
     random: '_RANDOM_STUDIO_'
 };
 
 // 스튜디오 랜덤 선택용 리스트 (random 제외)
-export const STUDIO_LIST = ['shinkai', 'kyoani', 'ghibli', 'mappa', 'mappa_dark', 'shojo', 'clamp', 'takehiko', 'wit', 'ilya', 'minimalist'];
+export const STUDIO_LIST = [
+    // 로맨틱/몽환적
+    'shinkai', 'kyoani', 'ghibli', 'comix_wave', 'pa_works',
+    // 액션/다이나믹
+    'mappa', 'mappa_dark', 'ufotable', 'bones', 'trigger', 'wit', 'madhouse', 'sunrise', 'toei', 'pierrot', 'takehiko',
+    // 클래식/우아한
+    'shojo', 'clamp', 'shaft', 'gainax', 'production_ig',
+    // 현대 일러스트
+    'ilya', 'a1', 'cloverworks', 'jc_staff', 'doga_kobo', 'lerche', 'silver_link', 'kinema_citrus', 'science_saru', 'david_production', 'white_fox',
+    // 미니멀/아트
+    'minimalist', 'wabi_sabi', 'ukiyo_e'
+];
+
+// ═══════════════════════════════════════════════════════════════
+// 캐릭터 미학 팔레트 (CHARACTER AESTHETIC PALETTE)
+// 장면에 맞게 자유롭게 조합 가능한 미학 요소들
+// ═══════════════════════════════════════════════════════════════
+export const CHARACTER_AESTHETICS = {
+    // ─── 신비/미스터리 계열 ───
+    reze: `short dark hair with soft bangs, beautiful alluring eyes with mysterious depth, charming youthful face, romantic yet melancholic atmosphere, urban night with soft neon glow`,
+    makima: `long reddish-brown hair with bangs, hypnotic ringed eyes with absolute confidence, serene yet unsettling smile, elegant mature beauty, mysterious controlling aura`,
+    frieren: `long silver-white hair, pointed elf ears, serene timeless eyes with gentle melancholy, youthful yet ancient presence, peaceful nostalgic atmosphere`,
+
+    // ─── 다크/엣지 계열 ───
+    power: `long pink-blonde wild hair with small horns, sharp red eyes full of mischief, confident smirk with fang, chaotic cute energy, bold vivid colors`,
+    himeno: `short black hair covering one eye, playful yet sorrowful eye, mature cool beauty, urban night bar atmosphere, bittersweet melancholic charm`,
+    levi: `short black undercut hair, narrow sharp grey eyes with intimidating gaze, small but perfectly proportioned features, cold efficiency, military precision`,
+
+    // ─── 우아/클래식 계열 ───
+    yor: `long black hair with elegant style, beautiful red eyes, gentle smile hiding lethal grace, stunning mature beauty, elegant dangerous duality`,
+    violet: `golden blonde hair with ribbon, beautiful blue doll-like eyes, elegant military bearing, European classical beauty, learning to understand love`,
+    emilia: `long silver-white hair with delicate braids, beautiful purple eyes, half-elf pointed ears, ethereal angelic beauty, pure white snow aesthetic`,
+
+    // ─── 아이돌/스타 계열 ───
+    ai: `long gradient purple-pink hair, star-shaped pupils in mesmerizing eyes, radiant idol smile with hidden depth, dazzling starlight atmosphere, brilliant tragic star`,
+    ruby: `blonde twin-tails with ribbons, star-shaped ruby red pupils, bright energetic idol smile, petite cute frame, sparkling stage lights`,
+
+    // ─── 히어로/파워 계열 ───
+    gojo: `white spiky hair, striking blue Six Eyes, confident playful smirk, tall handsome features, dynamic powerful atmosphere, invincible charisma`,
+    itadori: `spiky pink-salmon hair, warm brown eyes with pure heart, athletic youthful face with bright smile, dynamic action energy, genuine heroic spirit`,
+    rengoku: `flame-colored gradient hair swept back, intense golden-red eyes burning with passion, broad bright smile, blazing flame effects, heroic determination`,
+    maki: `short dark hair with athletic build, sharp determined eyes, strong beautiful features with warrior spirit, powerful athletic aesthetic`,
+    mikasa: `short black hair with red scarf, intense dark eyes with unwavering loyalty, beautiful stoic face, athletic toned figure, protective warrior aura`,
+
+    // ─── 귀여움/사랑스러움 계열 ───
+    anya: `pink hair with small horn-like tufts, large green curious eyes, adorable innocent expressions, playful cute atmosphere, wholesome comedic energy`,
+    nezuko: `long black hair with orange tips, pink demon eyes, cute yet fierce expression, small frame with hidden power, protective sibling love`,
+    rem: `short blue hair covering one eye, gentle devoted blue eyes, sweet caring smile, maid-like grace, soft romantic atmosphere`,
+    mitsuri: `long gradient pink-green braided hair, bright green eyes full of love, bashful yet powerful expressions, romantic warrior aesthetic`,
+
+    // ─── 지적/신비 계열 ───
+    maomao: `dark hair in traditional style, sharp intelligent eyes with curiosity, petite features with subtle freckles, classical Chinese palace aesthetic, intellectual detective mood`,
+    '2b': `silver-white bob hair, black blindfold over eyes, gothic maid-inspired aesthetic, perfect cold beauty, post-apocalyptic elegance, mechanical angel`,
+    asuna: `long chestnut-orange hair flowing elegantly, warm amber-brown eyes with determination, graceful yet fierce warrior princess, virtual fantasy aesthetic`
+};
+
+// 캐릭터 미학 리스트
+export const CHARACTER_LIST = [
+    'reze', 'makima', 'frieren',
+    'power', 'himeno', 'levi',
+    'yor', 'violet', 'emilia',
+    'ai', 'ruby',
+    'gojo', 'itadori', 'rengoku', 'maki', 'mikasa',
+    'anya', 'nezuko', 'rem', 'mitsuri',
+    'maomao', '2b', 'asuna'
+];
+
+// 캐릭터 미학 레퍼런스 문자열 생성 (Gemini 프롬프트용)
+const getCharacterPalette = () => {
+    return Object.entries(CHARACTER_AESTHETICS)
+        .map(([key, value]) => `${key}: ${value.slice(0, 80)}...`)
+        .join(' | ');
+};
 
 // ═══════════════════════════════════════════════════════════════
 // 하위 호환용 ANIME_STYLES (기존 코드 지원)
@@ -136,28 +255,39 @@ export const ANIME_STYLES = Object.fromEntries(
 ANIME_STYLES._default = `${CHARACTER_AESTHETIC_GUIDE} Premium anime character with expressive eyes, beautiful flowing hair, captivating features balancing cute and cool, charismatic presence. ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`;
 
 // ═══════════════════════════════════════════════════════════════
-// 스타일 조합 헬퍼 함수 (스튜디오만)
+// 스타일 조합 헬퍼 함수 (스튜디오 + 캐릭터 미학)
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * 스튜디오 스타일 조합 (Gemini descriptive paragraph 스타일)
+ * 스튜디오 + 캐릭터 미학 조합 (Gemini descriptive paragraph 스타일)
  * @param {string} studioKey - 스튜디오 키 (shinkai, ghibli, random 등)
  * @returns {string} 조합된 프롬프트 (descriptive paragraph)
+ *
+ * 캐릭터 미학은 장면에 따라 자유롭게 활용하도록 팔레트 제공
+ * Gemini가 장면 내용에 맞게 1명 또는 여러명 자유롭게 선택
  */
 export const combineStyles = (studioKey) => {
-    // 랜덤 처리
+    // 랜덤 스튜디오 처리
     let actualStudio = studioKey;
-
     if (studioKey === 'random') {
         actualStudio = STUDIO_LIST[Math.floor(Math.random() * STUDIO_LIST.length)];
-        console.log(`🎲 Random Studio: ${actualStudio}`);
     }
 
     // 스튜디오 스타일 가져오기
     const studioStyle = STUDIO_STYLES[actualStudio] || STUDIO_STYLES.shinkai;
 
+    // 캐릭터 미학 팔레트 (Gemini가 장면에 맞게 자유롭게 선택하도록)
+    const characterPalette = Object.entries(CHARACTER_AESTHETICS)
+        .map(([key, value]) => `[${key}]: ${value}`)
+        .join(' | ');
+
+    // 디버깅 로그
+    console.log(`🎲 Studio: ${actualStudio} | Character palette provided (23 options)`);
+
     // Gemini 공식 가이드: descriptive paragraph로 조합
+    // 스튜디오 + 캐릭터 팔레트 + 신비/시네마틱 가이드
     let combined = `${CHARACTER_AESTHETIC_GUIDE} ${studioStyle}`;
+    combined += ` [CHARACTER AESTHETIC PALETTE - freely choose 1 or multiple based on scene]: ${characterPalette}.`;
     combined += ` ${MYSTIC_GUIDE} ${CINEMATIC_GUIDE}`;
 
     return combined;

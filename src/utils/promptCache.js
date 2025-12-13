@@ -253,20 +253,20 @@ ${getImagePromptGuide()}
     {"word": "질문에서 추출한 핵심 키워드2 (명사형, 2-4글자)", "surface": "표면 의미", "hidden": "숨은 의미"}
   ],
 
-  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 위에서 작성한 hook, foreshadow, title, verdict의 감정톤과 topics, keywords를 보고, 이 리딩을 가장 아름답게 표현할 애니메이션 스튜디오 그림체 스타일을 랜덤하게 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
-  "colorPalette": "🎨 이 질문만의 품은 기운을 느껴봐. 몽환적인 장면 속에서 발산되며 피어오르는 빛처럼, 서로를 감싸며 번지는 2~3가지 색의 숨결을 영어 한 문장으로 담아. 단순 나열 금지!",
+  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 위에서 작성한 hook, foreshadow, title, verdict의 감정톤과 topics, keywords를 보고, 이 리딩을 가장 아름답고 감성적으로 표현할 애니메이션 스튜디오 스타일을 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
+  "colorPalette": "🎨 이 질문만의 품은 기운을 느껴봐. 몽환적인 장면 속에서 발산되며 피어오르는 희망의 빛처럼, 서로를 감싸며 번지는 2~3가지 색의 숨결을 영어 한 문장으로 담아. 단순 나열 금지!",
 
-  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 5-7문장 descriptive paragraph로 작성. 선택한 studioStyle과 colorPalette를 자연스럽게 녹여서 하나의 응집력 있는 장면 설명으로! 🎯나이: 10대 후반~20대 예쁘고 매력적인 캐릭터. ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정. 조명, 분위기, 카메라 앵글, 인물의 감정과 자세까지 구체적으로 묘사.",
+  "heroImagePrompt": "🎬 영화 감독으로서 오프닝 씬 연출. 영어 5-7문장 descriptive paragraph로 작성. 선택한 고퀄리티 studioStyle과 colorPalette를 자연스럽게 녹여서 하나의 응집력 있는 장면 설명으로! ⚠️인물 구성은 질문에 맞게 네가 자유롭게 결정. 조명, 분위기, 카메라 앵글, 인물의 감정과 자세까지 구체적으로 묘사.",
   "card1ImagePrompt": "🎬 Scene 1: 첫번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소(예: The Star→별빛+물, The Tower→붕괴, The Moon→달빛+불안)를 studioStyle/colorPalette와 함께 응집력 있는 장면으로! ⚠️Hero와 다른 구도!",
   "card1Analysis": "🚨반드시 ${cardLen}자 이상! 구조: 1)현재 상황 4-5문장 2)질문자 감정 3-4문장 3)숨겨진 맥락 4-5문장 4)원인 분석 3-4문장 5)미처 몰랐던 것 3-4문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "card2ImagePrompt": "🎬 Scene 2: 두번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께! ⚠️Scene 1과 다른 시각적 접근 필수! 다른 앵글, 다른 조명.",
+  "card2ImagePrompt": "🎬 Scene 2: 두번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께 자유롭게 variation을 줘도 좋아! ⚠️Scene 1과 다른 시각적 접근 필수! 다른 앵글, 다른 조명.",
   "card2Analysis": "🚨반드시 ${cardLen}자 이상! But 구조. 1)첫 카드 연결 3-4문장 2)'근데' 예상과 다른 요소 4-5문장 3)숨겨진 면 4-5문장 4)모르던 정보 3-4문장 5)의미 2-3문장 6)반전 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "card3ImagePrompt": "🎬 Scene 3: 세번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께! ⚠️앞 장면들과 완전히 다른 비주얼! 미래의 가능성을 시각화.",
+  "card3ImagePrompt": "🎬 Scene 3: 세번째 타로 카드의 전통적 이미지/심볼을 창의적으로 재해석! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께 자유롭게 variation을 줘도 좋아! ⚠️앞 장면들과 완전히 다른 비주얼! 미래의 가능성을 시각화.",
   "card3Analysis": "🚨반드시 ${cardLen}자 이상! Therefore 구조. 1)흐름 방향 3-4문장 2)미래 일어날 일 4-5문장 3)변화 조짐 4-5문장 4)시기 힌트 3-4문장 5)결과 예측 2-3문장 6)행동 가이드 2-3문장. ⭐핵심 2-3개 **bold**!",
 
-  "conclusionImagePrompt": "🎬 Final Scene: 결론 타로 카드의 전통적 이미지/심볼이 클라이맥스! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께 가장 임팩트 있게! 이 리딩의 핵심 메시지를 시각적 절정으로. 드라마틱한 조명, 감정의 정점.",
+  "conclusionImagePrompt": "🎬 Final Scene: 결론 타로 카드의 전통적 이미지/심볼이 클라이맥스! 영어 5-7문장 descriptive paragraph. 타로 원본의 핵심 시각 요소를 studioStyle/colorPalette와 함께 가장 임팩트 있게! 이 리딩의 핵심 메시지를 시각적 절정으로. 드라마틱한 조명, 감정의 정점. 고퀄리티의 비쥬얼",
   "conclusionCard": "🚨반드시 ${conclusionLen}자 이상! 가장 길고 감동적! 1)확실한 답 5-6문장 2)예상 밖 방식 8-10문장 3)마무리 5-6문장. ⭐결론 3-4개 **bold**!",
 
   "hiddenInsight": "🚨반드시 ${hiddenLen}자 이상! 결론 카드가 말해주는 숨겨진 메시지. 질문자도 몰랐던 진짜 답. ⭐시작 문구 다양화 필수! '원래 안 말할라 그랬는데' 금지! 대신: '아 근데 이건 진짜..', '어 잠깐, 이거 봐봐요', '마지막으로 하나만 더', '아 그리고 이건 좀 신기한데', '근데 솔직히 이게 진짜야', '아 맞다 이것도..', '어? 이거 진짜 신기하네' 등 자연스럽게 랜덤! 구조: 1)신선한 도입 2-3문장 2)⭐MBTI/별자리 특징 활용 반전! ⚠️'INFP라서', '사자자리니까' 직접 언급 금지! 대신 그 성향의 특징을 자연스럽게 녹여서 (예: INFP면 '혼자 상상 많이 하시잖아요, 머릿속으로 시뮬레이션 다 돌려보고' / 사자자리면 '자존심 때문에 먼저 연락 못하시잖아요') → 사용자가 '어 맞아 어떻게 알지?' 하는 도파민! 3-4문장 3)타로가 진짜 말하는 것 4-5문장 4)구체적 행동/시기 가이드 2-3문장. 문장 끝 반전 필수!",
@@ -423,11 +423,11 @@ ${getImagePromptGuide()}
   "doList": ["올해 꼭 해야 할 것 1 (구체적 시기/방법)", "꼭 해야 할 것 2", "꼭 해야 할 것 3"],
   "dontList": ["올해 피해야 할 것 1 (구체적 상황)", "피해야 할 것 2", "피해야 할 것 3"],
 
-  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 운세의 감정/분위기를 가장 아름답게 표현할 스튜디오 스타일을 랜덤하게 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
+  "studioStyle": "🎬 너는 애니메이션 비주얼 연출 전문가. 운세의 감정/분위기를 가장 아름답게 표현할 고퀄리티 스튜디오 스타일을 랜덤하게 1개 선택. ⚠️매번 다른 스튜디오 선택! [스튜디오 레퍼런스] ${getStudioReference()}",
   "colorPalette": "🎨 이 운세만의 색상을 영어 1문장으로 자연스럽게 묘사. 예: 'warm amber tones flowing into deep twilight purple' 또는 'soft moonlit silver with hints of melancholic blue'. 단순 나열 금지!",
 
   "images": {
-    "hero": "🎬 너는 영화 감독. 이 사주/운세의 본질적 에너지를 오프닝 씬으로 연출. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette를 자연스럽게 녹여서 응집력 있는 장면으로! 🎯인물: 20대 초중반 예쁘고 매력적인 캐릭터. 동양적 사주/운명의 신비로운 분위기를 조명, 공간, 상징적 요소로 구체적으로 묘사.",
+    "hero": "🎬 너는 영화 감독. 이 사주/운세의 본질적 에너지를 오프닝 씬으로 연출. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette를 자연스럽게 녹여서 응집력 있는 장면으로! 🎯인물: 10-20대 예쁘고 매력적인 캐릭터. 동양적 사주/운명의 신비로운 분위기를 조명, 공간, 상징적 요소로 구체적으로 묘사.",
     "section1": "🎬 첫 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! hero와 다른 앵글/분위기. 이 섹션 테마의 에너지를 배경, 조명, 인물의 감정으로 구체적으로.",
     "section2": "🎬 두 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! section1과 연결되면서도 변화된 분위기. 새로운 앵글, 다른 조명으로 전환점을 구체적으로.",
     "section3": "🎬 세 번째 운세 섹션의 핵심 장면. 영어 5-7문장 descriptive paragraph. studioStyle/colorPalette 녹여서! 이 리딩의 마무리 클라이맥스. 가장 임팩트 있는 조명, 상징적 구도, 감정의 정점을 구체적으로."
